@@ -2,6 +2,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
+import { showSuccess } from "@/utils/toast";
 
 const TeamFormAdmin = () => {
   const navigate = useNavigate();
@@ -20,29 +21,29 @@ const TeamFormAdmin = () => {
           className="space-y-4"
           onSubmit={e => {
             e.preventDefault();
-            // Placeholder: qui chiamata API
+            showSuccess(isEdit ? "Squadra aggiornata con successo!" : "Squadra creata con successo!");
             navigate("/admin/teams");
           }}
         >
           <div>
-            <label className="block text-sm font-medium mb-1">Nome squadra</label>
-            <Input placeholder="Nome squadra" required />
+            <label className="block text-sm font-medium mb-1" htmlFor="team-name">Nome squadra</label>
+            <Input id="team-name" placeholder="Nome squadra" required autoFocus />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Parrocchia</label>
-            <Input placeholder="Parrocchia" />
+            <label className="block text-sm font-medium mb-1" htmlFor="team-parish">Parrocchia</label>
+            <Input id="team-parish" placeholder="Parrocchia" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Colori sociali</label>
-            <Input placeholder="Es: Blu/Bianco" />
+            <label className="block text-sm font-medium mb-1" htmlFor="team-colors">Colori sociali</label>
+            <Input id="team-colors" placeholder="Es: Blu/Bianco" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Campo</label>
-            <Input placeholder="Campo di gioco" />
+            <label className="block text-sm font-medium mb-1" htmlFor="team-venue">Campo</label>
+            <Input id="team-venue" placeholder="Campo di gioco" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Logo (URL)</label>
-            <Input placeholder="https://..." type="url" />
+            <label className="block text-sm font-medium mb-1" htmlFor="team-logo">Logo (URL)</label>
+            <Input id="team-logo" placeholder="https://..." type="url" />
           </div>
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="secondary" onClick={() => navigate("/admin/teams")}>
