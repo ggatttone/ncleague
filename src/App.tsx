@@ -22,6 +22,8 @@ import TeamsAdmin from "./pages/admin/TeamsAdmin";
 import PlayersAdmin from "./pages/admin/PlayersAdmin";
 import TeamDetailsAdmin from "./pages/admin/TeamDetailsAdmin";
 import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
+import TeamFormAdmin from "./pages/admin/TeamFormAdmin";
+import PlayerFormAdmin from "./pages/admin/PlayerFormAdmin";
 import { Navbar } from "@/components/Navbar";
 
 const queryClient = new QueryClient();
@@ -49,9 +51,13 @@ const App = () => (
           {/* Admin area */}
           <Route path="/admin" element={<AdminIndex />} />
           <Route path="/admin/teams" element={<TeamsAdmin />} />
+          <Route path="/admin/teams/new" element={<TeamFormAdmin />} />
           <Route path="/admin/teams/:id" element={<TeamDetailsAdmin />} />
+          <Route path="/admin/teams/:id/edit" element={<TeamFormAdmin />} />
           <Route path="/admin/players" element={<PlayersAdmin />} />
+          <Route path="/admin/players/new" element={<PlayerFormAdmin />} />
           <Route path="/admin/players/:id" element={<PlayerDetailsAdmin />} />
+          <Route path="/admin/players/:id/edit" element={<PlayerFormAdmin />} />
           <Route path="/admin/*" element={<NotFoundAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
