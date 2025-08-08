@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://REDACTED_PROJECT_1.supabase.co';
-const supabaseKey = 'REDACTED_SUPABASE_ANON_KEY_1';
+// ⚠️ SOSTITUISCI CON LE CREDENZIALI DEL TUO NUOVO PROGETTO
+const supabaseUrl = 'https://TUO_NUOVO_PROJECT_ID.supabase.co';
+const supabaseKey = 'TUA_NUOVA_ANON_KEY';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
