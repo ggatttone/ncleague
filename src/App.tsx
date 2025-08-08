@@ -24,6 +24,9 @@ import TeamDetailsAdmin from "./pages/admin/TeamDetailsAdmin";
 import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
 import TeamFormAdmin from "./pages/admin/TeamFormAdmin";
 import PlayerFormAdmin from "./pages/admin/PlayerFormAdmin";
+import FixturesAdmin from "./pages/admin/FixturesAdmin";
+import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
+import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
 import { Navbar } from "@/components/Navbar";
 
 const queryClient = new QueryClient();
@@ -58,6 +61,10 @@ const App = () => (
           <Route path="/admin/players/new" element={<PlayerFormAdmin />} />
           <Route path="/admin/players/:id" element={<PlayerDetailsAdmin />} />
           <Route path="/admin/players/:id/edit" element={<PlayerFormAdmin />} />
+          <Route path="/admin/fixtures" element={<FixturesAdmin />} />
+          <Route path="/admin/fixtures/new" element={<FixtureFormAdmin />} />
+          <Route path="/admin/fixtures/:id" element={<FixtureDetailsAdmin />} />
+          <Route path="/admin/fixtures/:id/edit" element={<FixtureFormAdmin />} />
           <Route path="/admin/*" element={<NotFoundAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
