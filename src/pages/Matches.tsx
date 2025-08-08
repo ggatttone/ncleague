@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Clock, Trophy } from "lucide-react";
+import { Calendar, MapPin, Clock, Trophy, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { useAuth } from "@/lib/supabase/auth-context";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -16,6 +17,7 @@ type MatchWithTeams = Match & {
 };
 
 const Matches = () => {
+  const { user } = useAuth();
   const { data: matches, isLoading, error } = useSupabaseQuery<MatchWithTeams[]>(
     ['matches-with-teams'],
     () => supabase
@@ -62,86 +64,134 @@ const Matches = () => {
   };
 
   const MatchCard = ({ match }: { match: MatchWithTeams }) => (
-    <Link to={`/matches/${match.id}`}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
-              </span>
-              <Clock className="h-4 w-4 text-muted-foreground ml-2" />
-              <span className="text-sm text-muted-foreground">
-                {format(new Date(match.match_date), 'HH:mm')}
-              </span>
+    <div className="relative group">
+      <Link to={`/matches/${match.id}`}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
+                </span>
+                <Clock className="h-4 w-4 text-muted-foreground ml-2" />
+                <span className="text-sm text-muted-foreground">
+                  {format(new Date(match.match_date), 'HH:mm')}
+                </span>
+              </div>
+              {getStatusBadge(match.status)}
             </div>
-            {getStatusBadge(match.status)}
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              {/* Home Team */}
+              <div className="flex items-center gap-3 flex-1">
+                {match.home_teams.logo_url ? (
+                  <img 
+                    src={match.home_teams.logo_url} 
+                    alt={`${match.home_teams.name} logo`}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Trophy className="h-4 w-4 text-primary" />
+                  </div>
+                )}
+                <span className="font-medium text-right">{match.home_teams.name}</span>
+              </div>
+
+              {/* Score */}
+              <div className="px-4">
+                {match.status === 'completed' ? (
+                  <div className="text-2xl font-bold text-center">
+                    {match.home_score} - {match.away_score}
+                  </div>
+                ) : (
+                  <div className="text-lg text-muted-foreground text-center">
+                    vs
+                  </div>
+                )}
+              </div>
+
+              {/* Away Team */}
+              <div className="flex items-center gap-3 flex-1">
+                <span className="font-medium">{match.away_teams.name}</span>
+                {match.away_teams.logo_url ? (
+                  <img 
+                    src={match.away_teams.logo_url} 
+                    alt={`${match.away_teams.name} logo`}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Trophy className="h-4 w-4 text-primary" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {match.venue && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span>{match.venue}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </Link>
+
+      {/* Admin Quick Actions */}
+      {user && (
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex gap-1">
+            <Link to={`/admin/fixtures/${match.id}/edit`}>
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm"
+                onClick={(e) => e.preventDefault()}
+              >
+                <Settings className="h-3 w-3" />
+              </Button>
+            </Link>
+            <Link to={`/admin/fixtures/${match.id}`}>
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="h-8 px-2 bg-white/90 hover:bg-white shadow-sm text-xs"
+                onClick={(e) => e.preventDefault()}
+              >
+                Admin
+              </Button>
+            </Link>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between mb-4">
-            {/* Home Team */}
-            <div className="flex items-center gap-3 flex-1">
-              {match.home_teams.logo_url ? (
-                <img 
-                  src={match.home_teams.logo_url} 
-                  alt={`${match.home_teams.name} logo`}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="h-4 w-4 text-primary" />
-                </div>
-              )}
-              <span className="font-medium text-right">{match.home_teams.name}</span>
-            </div>
-
-            {/* Score */}
-            <div className="px-4">
-              {match.status === 'completed' ? (
-                <div className="text-2xl font-bold text-center">
-                  {match.home_score} - {match.away_score}
-                </div>
-              ) : (
-                <div className="text-lg text-muted-foreground text-center">
-                  vs
-                </div>
-              )}
-            </div>
-
-            {/* Away Team */}
-            <div className="flex items-center gap-3 flex-1">
-              <span className="font-medium">{match.away_teams.name}</span>
-              {match.away_teams.logo_url ? (
-                <img 
-                  src={match.away_teams.logo_url} 
-                  alt={`${match.away_teams.name} logo`}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="h-4 w-4 text-primary" />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {match.venue && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>{match.venue}</span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+      )}
+    </div>
   );
 
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6">Matches</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Matches</h1>
+          {user && (
+            <div className="flex gap-2">
+              <Link to="/admin/fixtures/new">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nuova partita
+                </Button>
+              </Link>
+              <Link to="/admin/fixtures">
+                <Button variant="outline" size="sm">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Gestisci
+                </Button>
+              </Link>
+            </div>
+          )}
+        </div>
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <Card key={i} className="animate-pulse">
@@ -161,7 +211,25 @@ const Matches = () => {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6">Matches</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Matches</h1>
+          {user && (
+            <div className="flex gap-2">
+              <Link to="/admin/fixtures/new">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nuova partita
+                </Button>
+              </Link>
+              <Link to="/admin/fixtures">
+                <Button variant="outline" size="sm">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Gestisci
+                </Button>
+              </Link>
+            </div>
+          )}
+        </div>
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">Errore nel caricamento delle partite</p>
           <p className="text-muted-foreground">{error.message}</p>
@@ -172,7 +240,25 @@ const Matches = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Matches</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Matches</h1>
+        {user && (
+          <div className="flex gap-2">
+            <Link to="/admin/fixtures/new">
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Nuova partita
+              </Button>
+            </Link>
+            <Link to="/admin/fixtures">
+              <Button variant="outline" size="sm">
+                <Settings className="mr-2 h-4 w-4" />
+                Gestisci
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -189,7 +275,15 @@ const Matches = () => {
             <div className="text-center py-12">
               <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <p className="text-xl text-muted-foreground mb-2">Nessuna partita in programma</p>
-              <p className="text-muted-foreground">Le prossime partite verranno visualizzate qui.</p>
+              <p className="text-muted-foreground mb-4">Le prossime partite verranno visualizzate qui.</p>
+              {user && (
+                <Link to="/admin/fixtures/new">
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Aggiungi prima partita
+                  </Button>
+                </Link>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
