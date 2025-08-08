@@ -1,11 +1,230 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { supabase } from "@/lib/supabase/client";
+import { Player, Team, Goal, Match } from "@/types/database";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 
 const PlayerDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+
+  const { data: playerData, isLoading: playerLoading } = useSupabaseQuery<Player & { teams: Team }>(
+    ['player', id],
+    () => supabase
+      .from('players')
+      .select(`
+        *,
+        teams (
+          id,
+          name,
+          logo_url
+        )
+      `)
+      .eq('id', id)
+      .single()
+  );
+
+  const { data: goals, isLoading: goalsLoading } = useSupabaseQuery<(Goal & { matches: Match & { home_teams: Team, away_teams: Team } })[]>(
+    ['player-goals', id],
+    () => supabase
+      .from('goals')
+      .select(`
+        *,
+        matches (
+          id,
+          match_date,
+          home_score,
+          away_score,
+          home_teams:teams!matches_home_team_id_fkey (
+            id,
+            name
+          ),
+          away_teams:teams!matches_away_team_id_fkey (
+            id,
+            name
+          )
+        )
+      `)
+      .eq('player_id', id)
+      .order('created_at', { ascending: false })
+  );
+
+  if (playerLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+          <div className="h-32 bg-gray-200 rounded mb-6"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!playerData) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold mb-4">Giocatore non trovato</h1>
+          <Link to="/players">
+            <Button variant="outline">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Torna ai giocatori
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const age = playerData.date_of_birth 
+    ? new Date().getFullYear() - new Date(playerData.date_of_birth).getFullYear()
+    : null;
+
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Player Details</h1>
-      <p>Details for player ID: {id}</p>
+      <div className="mb-6">
+        <Link to="/players">
+          <Button variant="outline" size="sm" className="mb-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Torna ai giocatori
+          </Button>
+        </Link>
+      </div>
+
+      {/* Player Header */}
+      <Card className="mb-8">
+        <CardHeader>
+          <div className="flex items-center gap-6">
+            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
+              {playerData.jersey_number ? (
+                <span className="text-3xl font-bold text-primary">{playerData.jersey_number}</span>
+              ) : (
+                <User className="h-12 w-12 text-primary" />
+              )}
+            </div>
+            <div className="flex-1">
+              <CardTitle className="text-3xl mb-2">
+                {playerData.first_name} {playerData.last_name}
+              </CardTitle>
+              <div className="flex flex-wrap gap-4 text-muted-foreground mb-3">
+                {playerData.teams && (
+                  <Link 
+                    to={`/teams/${playerData.teams.id}`}
+                    className="flex items-center gap-2 hover:text-primary transition-colors"
+                  >
+                    <Trophy className="h-4 w-4" />
+                    <span>{playerData.teams.name}</span>
+                  </Link>
+                )}
+                {age && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>{age} anni</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {playerData.role && (
+                  <Badge variant="secondary">
+                    {playerData.role}
+                  </Badge>
+                )}
+                {playerData.jersey_number && (
+                  <Badge variant="outline">
+                    #{playerData.jersey_number}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Goal Segnati</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{goals?.length || 0}</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Partite Giocate</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">Dato non disponibile</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Media Goal</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">Dato non disponibile</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Goals History */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Cronologia Goal ({goals?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {goalsLoading ? (
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-3 animate-pulse">
+                  <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : !goals || goals.length === 0 ? (
+            <div className="text-center py-8">
+              <Target className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">Nessun goal registrato</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {goals.map((goal) => (
+                <div key={goal.id} className="flex items-center gap-4 p-3 rounded-lg border">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Target className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      {goal.matches.home_teams.name} vs {goal.matches.away_teams.name}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {goal.minute}' - {new Date(goal.matches.match_date).toLocaleDateString('it-IT')}
+                    </div>
+                  </div>
+                  <div className="text-sm font-medium">
+                    {goal.matches.home_score} - {goal.matches.away_score}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
