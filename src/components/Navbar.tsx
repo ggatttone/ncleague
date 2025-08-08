@@ -1,5 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { Button } from "./ui/button";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -13,6 +15,8 @@ const navLinks = [
 
 export const Navbar = () => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
   return (
     <nav className="bg-white border-b border-gray-200 dark:bg-background dark:border-border sticky top-0 z-30">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
@@ -34,6 +38,26 @@ export const Navbar = () => {
             </li>
           ))}
         </ul>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <>
+              <Link to="/admin">
+                <Button variant="outline" size="sm">
+                  Admin
+                </Button>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={() => signOut()}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Link to="/login">
+              <Button variant="outline" size="sm">
+                Login
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
     </nav>
   );
