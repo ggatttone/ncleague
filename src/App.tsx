@@ -5,8 +5,32 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/supabase/auth-context";
 import { RequireAuth } from "@/components/auth/RequireAuth";
+import { Navbar } from "@/components/Navbar";
 import Login from "./pages/auth/Login";
-// ... altri import
+import Index from "./pages/Index";
+import Matches from "./pages/Matches";
+import MatchDetails from "./pages/MatchDetails";
+import Tables from "./pages/Tables";
+import Statistics from "./pages/Statistics";
+import News from "./pages/News";
+import NewsDetails from "./pages/NewsDetails";
+import Players from "./pages/Players";
+import PlayerDetails from "./pages/PlayerDetails";
+import Teams from "./pages/Teams";
+import TeamDetails from "./pages/TeamDetails";
+import SeasonArchive from "./pages/SeasonArchive";
+import AdminIndex from "./pages/admin/AdminIndex";
+import TeamsAdmin from "./pages/admin/TeamsAdmin";
+import TeamFormAdmin from "./pages/admin/TeamFormAdmin";
+import TeamDetailsAdmin from "./pages/admin/TeamDetailsAdmin";
+import PlayersAdmin from "./pages/admin/PlayersAdmin";
+import PlayerFormAdmin from "./pages/admin/PlayerFormAdmin";
+import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
+import FixturesAdmin from "./pages/admin/FixturesAdmin";
+import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
+import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
+import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
