@@ -68,13 +68,13 @@ const Matches = () => {
       <Link to={`/matches/${match.id}`}>
         <Card className="hover:shadow-lg transition-shadow cursor-pointer">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
                 </span>
-                <Clock className="h-4 w-4 text-muted-foreground ml-2" />
+                <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   {format(new Date(match.match_date), 'HH:mm')}
                 </span>
@@ -83,7 +83,7 @@ const Matches = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4">
               {/* Home Team */}
               <div className="flex items-center gap-3 flex-1">
                 {match.home_teams.logo_url ? (
@@ -97,13 +97,13 @@ const Matches = () => {
                     <Trophy className="h-4 w-4 text-primary" />
                   </div>
                 )}
-                <span className="font-medium text-right">{match.home_teams.name}</span>
+                <span className="font-medium text-sm sm:text-base">{match.home_teams.name}</span>
               </div>
 
               {/* Score */}
               <div className="px-4">
                 {match.status === 'completed' ? (
-                  <div className="text-2xl font-bold text-center">
+                  <div className="text-xl sm:text-2xl font-bold text-center">
                     {match.home_score} - {match.away_score}
                   </div>
                 ) : (
@@ -114,8 +114,8 @@ const Matches = () => {
               </div>
 
               {/* Away Team */}
-              <div className="flex items-center gap-3 flex-1">
-                <span className="font-medium">{match.away_teams.name}</span>
+              <div className="flex items-center gap-3 flex-1 justify-end">
+                <span className="font-medium text-sm sm:text-base">{match.away_teams.name}</span>
                 {match.away_teams.logo_url ? (
                   <img 
                     src={match.away_teams.logo_url} 
@@ -172,11 +172,11 @@ const Matches = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Matches</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/fixtures/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -210,11 +210,11 @@ const Matches = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Matches</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/fixtures/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -239,11 +239,11 @@ const Matches = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Matches</h1>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
         {user && (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/fixtures/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />

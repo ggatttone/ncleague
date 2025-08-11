@@ -17,11 +17,11 @@ const Teams = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Clubs</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/teams/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -37,7 +37,7 @@ const Teams = () => {
             </div>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader>
@@ -57,11 +57,11 @@ const Teams = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Clubs</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/teams/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -86,11 +86,11 @@ const Teams = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Clubs</h1>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
         {user && (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/teams/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
@@ -101,7 +101,7 @@ const Teams = () => {
               <Button variant="outline" size="sm">
                 <Settings className="mr-2 h-4 w-4" />
                 Gestisci
-              </Button>
+                </Button>
             </Link>
           </div>
         )}
@@ -122,7 +122,7 @@ const Teams = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {teams.map((team) => (
             <div key={team.id} className="relative group">
               <Link to={`/teams/${team.id}`}>
@@ -140,10 +140,10 @@ const Teams = () => {
                           <Users className="h-6 w-6 text-primary" />
                         </div>
                       )}
-                      <div>
-                        <CardTitle className="text-lg">{team.name}</CardTitle>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg truncate">{team.name}</CardTitle>
                         {team.parish && (
-                          <p className="text-sm text-muted-foreground">{team.parish}</p>
+                          <p className="text-sm text-muted-foreground truncate">{team.parish}</p>
                         )}
                       </div>
                     </div>
@@ -152,8 +152,8 @@ const Teams = () => {
                     <div className="space-y-2">
                       {team.venue && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <MapPin className="h-4 w-4" />
-                          <span>{team.venue}</span>
+                          <MapPin className="h-4 w-4 flex-shrink-0" />
+                          <span className="truncate">{team.venue}</span>
                         </div>
                       )}
                       {team.colors && (

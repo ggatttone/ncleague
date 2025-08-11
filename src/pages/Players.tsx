@@ -41,11 +41,11 @@ const Players = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Players</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/players/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -64,7 +64,7 @@ const Players = () => {
         <div className="mb-6">
           <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {[...Array(9)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader>
@@ -84,11 +84,11 @@ const Players = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Players</h1>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
           {user && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/players/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
@@ -113,11 +113,11 @@ const Players = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Players</h1>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
         {user && (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/players/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
@@ -172,26 +172,26 @@ const Players = () => {
             {searchTerm && ` trovato per "${searchTerm}"`}
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {filteredPlayers.map((player) => (
               <div key={player.id} className="relative group">
                 <Link to={`/players/${player.id}`}>
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                           {player.jersey_number ? (
                             <span className="font-bold text-primary">{player.jersey_number}</span>
                           ) : (
                             <User className="h-6 w-6 text-primary" />
                           )}
                         </div>
-                        <div className="flex-1">
-                          <CardTitle className="text-lg">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg truncate">
                             {player.first_name} {player.last_name}
                           </CardTitle>
                           {player.teams && (
-                            <p className="text-sm text-muted-foreground">{player.teams.name}</p>
+                            <p className="text-sm text-muted-foreground truncate">{player.teams.name}</p>
                           )}
                         </div>
                       </div>

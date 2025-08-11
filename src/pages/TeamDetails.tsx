@@ -22,7 +22,7 @@ const TeamDetails = () => {
 
   if (teamLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
           <div className="h-32 bg-gray-200 rounded mb-6"></div>
@@ -34,7 +34,7 @@ const TeamDetails = () => {
 
   if (!team) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Squadra non trovata</h1>
           <Link to="/teams">
@@ -49,8 +49,8 @@ const TeamDetails = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-6">
+    <div className="container mx-auto py-8 px-4">
+      < <div className="mb-6">
         <Link to="/teams">
           <Button variant="outline" size="sm" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -62,29 +62,29 @@ const TeamDetails = () => {
       {/* Team Header */}
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             {team.logo_url ? (
               <img 
                 src={team.logo_url} 
                 alt={`${team.name} logo`}
-                className="w-24 h-24 rounded-full object-cover border-2"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
-                <Users className="h-12 w-12 text-primary" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
+                <Users className="text-primary h-10 w-10 sm:h-12 sm:w-12" />
               </div>
             )}
-            <div className="flex-1">
-              <CardTitle className="text-3xl mb-2">{team.name}</CardTitle>
-              <div className="flex flex-wrap gap-4 text-muted-foreground">
+            <div className="flex-1 text-center sm:text-left">
+              <CardTitle className="text-2xl sm:text-3xl mb-2">{team.name}</CardTitle>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground">
                 {team.parish && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
                     <Calendar className="h-4 w-4" />
                     <span>Parrocchia: {team.parish}</span>
                   </div>
                 )}
                 {team.venue && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
                     <MapPin className="h-4 w-4" />
                     <span>{team.venue}</span>
                   </div>
