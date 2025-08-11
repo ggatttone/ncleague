@@ -5,6 +5,7 @@ export interface Team {
   venue?: string;
   colors?: string;
   logo_url?: string;
+  captain_id?: string; // Added captain_id
   created_at: string;
   updated_at: string;
 }
@@ -12,6 +13,7 @@ export interface Team {
 export interface Player {
   id: string;
   team_id?: string;
+  user_id?: string; // Added user_id
   first_name: string;
   last_name: string;
   date_of_birth?: string;

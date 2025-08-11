@@ -3,21 +3,24 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/lib/supabase/auth-context";
 
 const adminLinks = [
-  { to: "/admin/teams", label: "Squadre" },
-  { to: "/admin/players", label: "Giocatori" },
-  { to: "/admin/fixtures", label: "Calendario" },
-  { to: "/admin/results", label: "Risultati" },
-  { to: "/admin/articles", label: "Articoli" },
-  { to: "/admin/penalties", label: "Penalità" },
-  { to: "/admin/audit-log", label: "Audit Log" },
+  { to: "/admin/teams", label: "Squadre", roles: ['admin', 'editor', 'captain'] },
+  { to: "/admin/players", label: "Giocatori", roles: ['admin', 'editor', 'captain'] },
+  { to: "/admin/fixtures", label: "Calendario", roles: ['admin', 'editor'] },
+  { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
+  { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
+  { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
+  { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
+  { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] }, // New link for UsersAdmin
 ];
 
 export const AdminSidebar = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
+  const { hasPermission } = useAuth(); // Get hasPermission
 
   const sidebarContent = (
     <aside className={cn(
@@ -27,20 +30,22 @@ export const AdminSidebar = () => {
       <div className="font-bold text-lg mb-8 text-sidebar-primary">Admin NC League</div>
       <ul className="space-y-2">
         {adminLinks.map((link) => (
-          <li key={link.to}>
-            <Link
-              to={link.to}
-              className={cn(
-                "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                location.pathname.startsWith(link.to)
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              )}
-              onClick={() => isMobile && setIsOpen(false)}
-            >
-              {link.label}
-            </Link>
-          </li>
+          hasPermission(link.roles as any) && ( // Check permission for each link
+            <li key={link.to}>
+              <Link
+                to={link.to}
+                className={cn(
+                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  location.pathname.startsWith(link.to)
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
+                onClick={() => isMobile && setIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            </li>
+          )
         ))}
       </ul>
     </aside>

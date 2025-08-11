@@ -29,6 +29,7 @@ import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
 import FixturesAdmin from "./pages/admin/FixturesAdmin";
 import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
 import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
+import UsersAdmin from "./pages/admin/UsersAdmin"; // Import the new UsersAdmin component
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -75,6 +76,7 @@ const App = () => (
                   <Route path="fixtures/new" element={<FixtureFormAdmin />} />
                   <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
                   <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
+                  <Route path="users" element={<UsersAdmin />} /> {/* New route for UsersAdmin */}
                   <Route path="*" element={<NotFoundAdmin />} />
                 </Routes>
               </RequireAuth>
