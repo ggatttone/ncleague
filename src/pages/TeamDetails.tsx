@@ -50,7 +50,7 @@ const TeamDetails = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      < <div className="mb-6">
+      <div className="mb-6">
         <Link to="/teams">
           <Button variant="outline" size="sm" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
