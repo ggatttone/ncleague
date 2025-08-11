@@ -17,8 +17,10 @@ const navLinks = [
 
 export const Navbar = () => {
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, hasPermission } = useAuth(); // Get hasPermission
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']); // Check if user has admin, editor or captain role
 
   return (
     <nav className="bg-white border-b border-gray-200 dark:bg-background dark:border-border sticky top-0 z-30">
@@ -51,11 +53,13 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-2">
             {user ? (
               <>
-                <Link to="/admin">
-                  <Button variant="outline" size="sm">
-                    Admin
-                  </Button>
-                </Link>
+                {isAdminOrEditor && ( // Only show Admin button if user has admin, editor or captain role
+                  <Link to="/admin">
+                    <Button variant="outline" size="sm">
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Button variant="ghost" size="sm" onClick={() => signOut()}>
                   Logout
                 </Button>
@@ -102,11 +106,13 @@ export const Navbar = () => {
             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-border">
               {user ? (
                 <div className="space-y-2">
-                  <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Admin
-                    </Button>
-                  </Link>
+                  {isAdminOrEditor && ( // Only show Admin button if user has admin, editor or captain role
+                    <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full">
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
                   <Button variant="ghost" size="sm" className="w-full" onClick={() => {
                     signOut();
                     setIsMobileMenuOpen(false);
