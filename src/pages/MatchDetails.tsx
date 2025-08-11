@@ -80,7 +80,7 @@ const MatchDetails = () => {
 
   if (matchLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
           <div className="h-32 bg-gray-200 rounded mb-6"></div>
@@ -92,7 +92,7 @@ const MatchDetails = () => {
 
   if (!match) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Partita non trovata</h1>
           <Link to="/matches">
@@ -110,7 +110,7 @@ const MatchDetails = () => {
   const awayGoals = goals?.filter(goal => goal.team_id === match.away_team_id) || [];
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
         <Link to="/matches">
           <Button variant="outline" size="sm" className="mb-4">
@@ -123,38 +123,42 @@ const MatchDetails = () => {
       {/* Match Header */}
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <Calendar className="h-5 w-5 text-muted-foreground" />
-              <span className="text-lg">
-                {format(new Date(match.match_date), 'dd MMMM yyyy', { locale: it })}
-              </span>
-              <Clock className="h-5 w-5 text-muted-foreground ml-2" />
-              <span className="text-lg">
-                {format(new Date(match.match_date), 'HH:mm')}
-              </span>
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg">
+                  {format(new Date(match.match_date), 'dd MMMM yyyy', { locale: it })}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg">
+                  {format(new Date(match.match_date), 'HH:mm')}
+                </span>
+              </div>
             </div>
             {getStatusBadge(match.status)}
           </div>
 
           {/* Teams and Score */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Home Team */}
-            <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-3 flex-1 justify-center sm:justify-start">
               {match.home_teams.logo_url ? (
                 <img 
                   src={match.home_teams.logo_url} 
                   alt={`${match.home_teams.name} logo`}
-                  className="w-16 h-16 rounded-full object-cover"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="h-8 w-8 text-primary" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Trophy className="text-primary h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
               )}
               <div>
                 <Link to={`/teams/${match.home_teams.id}`}>
-                  <h2 className="text-2xl font-bold hover:text-primary transition-colors">
+                  <h2 className="text-xl sm:text-2xl font-bold hover:text-primary transition-colors">
                     {match.home_teams.name}
                   </h2>
                 </Link>
@@ -163,23 +167,23 @@ const MatchDetails = () => {
             </div>
 
             {/* Score */}
-            <div className="px-8">
+            <div className="px-4">
               {match.status === 'completed' || match.status === 'ongoing' ? (
-                <div className="text-6xl font-bold text-center">
+                <div className="text-3xl sm:text-6xl font-bold text-center">
                   {match.home_score} - {match.away_score}
                 </div>
               ) : (
-                <div className="text-4xl text-muted-foreground text-center">
+                <div className="text-xl sm:text-4xl text-muted-foreground text-center">
                   vs
                 </div>
               )}
             </div>
 
             {/* Away Team */}
-            <div className="flex items-center gap-4 flex-1 justify-end text-right">
+            <div className="flex items-center gap-3 flex-1 justify-center sm:justify-end">
               <div>
                 <Link to={`/teams/${match.away_teams.id}`}>
-                  <h2 className="text-2xl font-bold hover:text-primary transition-colors">
+                  <h2 className="text-xl sm:text-2xl font-bold hover:text-primary transition-colors">
                     {match.away_teams.name}
                   </h2>
                 </Link>
@@ -189,18 +193,18 @@ const MatchDetails = () => {
                 <img 
                   src={match.away_teams.logo_url} 
                   alt={`${match.away_teams.name} logo`}
-                  className="w-16 h-16 rounded-full object-cover"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="h-8 w-8 text-primary" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Trophy className="text-primary h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
               )}
             </div>
           </div>
 
           {match.venue && (
-            <div className="flex items-center gap-2 text-muted-foreground mt-4">
+            <div className="flex items-center gap-2 text-muted-foreground mt-4 justify-center sm:justify-start">
               <MapPin className="h-4 w-4" />
               <span>{match.venue}</span>
             </div>
@@ -236,7 +240,7 @@ const MatchDetails = () => {
                 <p className="text-muted-foreground">Nessun goal registrato per questa partita</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Home Team Goals */}
                 <div>
                   <h3 className="font-semibold mb-3 text-center">{match.home_teams.name}</h3>

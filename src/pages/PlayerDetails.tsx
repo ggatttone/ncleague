@@ -53,7 +53,7 @@ const PlayerDetails = () => {
 
   if (playerLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
           <div className="h-32 bg-gray-200 rounded mb-6"></div>
@@ -65,7 +65,7 @@ const PlayerDetails = () => {
 
   if (!playerData) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4">
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Giocatore non trovato</h1>
           <Link to="/players">
@@ -84,7 +84,7 @@ const PlayerDetails = () => {
     : null;
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
         <Link to="/players">
           <Button variant="outline" size="sm" className="mb-4">
@@ -97,36 +97,36 @@ const PlayerDetails = () => {
       {/* Player Header */}
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
               {playerData.jersey_number ? (
-                <span className="text-3xl font-bold text-primary">{playerData.jersey_number}</span>
+                <span className="text-2xl sm:text-3xl font-bold text-primary">{playerData.jersey_number}</span>
               ) : (
-                <User className="h-12 w-12 text-primary" />
+                <User className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
               )}
             </div>
-            <div className="flex-1">
-              <CardTitle className="text-3xl mb-2">
+            <div className="flex-1 text-center sm:text-left">
+              <CardTitle className="text-2xl sm:text-3xl mb-2">
                 {playerData.first_name} {playerData.last_name}
               </CardTitle>
-              <div className="flex flex-wrap gap-4 text-muted-foreground mb-3">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground">
                 {playerData.teams && (
                   <Link 
                     to={`/teams/${playerData.teams.id}`}
-                    className="flex items-center gap-2 hover:text-primary transition-colors"
+                    className="flex items-center gap-2 hover:text-primary transition-colors justify-center sm:justify-start"
                   >
                     <Trophy className="h-4 w-4" />
                     <span>{playerData.teams.name}</span>
                   </Link>
                 )}
                 {age && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
                     <Calendar className="h-4 w-4" />
                     <span>{age} anni</span>
                   </div>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start mt-3">
                 {playerData.role && (
                   <Badge variant="secondary">
                     {playerData.role}
@@ -144,7 +144,7 @@ const PlayerDetails = () => {
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Goal Segnati</CardTitle>

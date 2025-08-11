@@ -3,28 +3,30 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="text-center mt-16">
-        <h1 className="text-5xl font-extrabold mb-4 text-primary">NC League</h1>
-        <p className="text-xl text-gray-600 mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+      <div className="text-center mt-16 max-w-2xl">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary">
+          NC League
+        </h1>
+        <p className="text-lg md:text-xl text-gray-600 mb-8">
           La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!
         </p>
-        <div className="flex flex-wrap gap-4 justify-center mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Link
             to="/matches"
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition text-center"
           >
             Prossime partite
           </Link>
           <Link
             to="/tables"
-            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-semibold hover:bg-secondary/80 transition"
+            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-semibold hover:bg-secondary/80 transition text-center"
           >
             Classifica
           </Link>
           <Link
             to="/news"
-            className="px-6 py-3 bg-muted text-foreground rounded-md font-semibold hover:bg-muted/80 transition"
+            className="px-6 py-3 bg-muted text-foreground rounded-md font-semibold hover:bg-muted/80 transition text-center"
           >
             News
           </Link>
