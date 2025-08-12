@@ -19,7 +19,7 @@ export interface UpdatePlayerData extends CreatePlayerData {
 export function usePlayers() {
   return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })[]>(
     ['players'],
-    () => supabase.from('players').select('*, teams (id, name)').order('last_name')
+    () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').order('last_name')
   );
 }
 
