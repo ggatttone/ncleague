@@ -5,7 +5,7 @@ import { Team } from '@/types/database';
 export interface CreateTeamData {
   name: string;
   parish?: string;
-  venue?: string;
+  venue_id?: string;
   colors?: string;
   logo_url?: string;
 }

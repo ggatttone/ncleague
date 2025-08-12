@@ -4,16 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCreateTeam, useUpdateTeam, useTeam } from "@/hooks/use-teams";
-import { useForm } from "react-hook-form";
+import { useVenues } from "@/hooks/use-venues";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const teamSchema = z.object({
   name: z.string().min(1, "Il nome della squadra è obbligatorio"),
   parish: z.string().optional(),
-  venue: z.string().optional(),
+  venue_id: z.string().optional(),
   colors: z.string().optional(),
   logo_url: z.string().url("Inserisci un URL valido").optional().or(z.literal(""))
 });
@@ -26,6 +28,7 @@ const TeamFormAdmin = () => {
   const isEdit = Boolean(id);
 
   const { data: team, isLoading: teamLoading } = useTeam(id);
+  const { data: venues, isLoading: venuesLoading } = useVenues();
   const createTeamMutation = useCreateTeam();
   const updateTeamMutation = useUpdateTeam();
 
@@ -33,25 +36,25 @@ const TeamFormAdmin = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
+    control
   } = useForm<TeamFormData>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
       name: "",
       parish: "",
-      venue: "",
+      venue_id: "",
       colors: "",
       logo_url: ""
     }
   });
 
-  // Reset form with team data when editing
   useEffect(() => {
     if (team && isEdit) {
       reset({
         name: team.name,
         parish: team.parish || "",
-        venue: team.venue || "",
+        venue_id: team.venue_id || "",
         colors: team.colors || "",
         logo_url: team.logo_url || ""
       });
@@ -60,11 +63,10 @@ const TeamFormAdmin = () => {
 
   const onSubmit = async (data: TeamFormData) => {
     try {
-      // Clean up empty strings to undefined for optional fields
       const cleanData = {
         ...data,
         parish: data.parish || undefined,
-        venue: data.venue || undefined,
+        venue_id: data.venue_id || undefined,
         colors: data.colors || undefined,
         logo_url: data.logo_url || undefined
       };
@@ -81,7 +83,7 @@ const TeamFormAdmin = () => {
     }
   };
 
-  if (teamLoading && isEdit) {
+  if ((teamLoading || venuesLoading) && isEdit) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-12">
@@ -119,9 +121,6 @@ const TeamFormAdmin = () => {
               {...register("parish")}
               placeholder="Parrocchia"
             />
-            {errors.parish && (
-              <p className="text-sm text-destructive mt-1">{errors.parish.message}</p>
-            )}
           </div>
 
           <div>
@@ -131,21 +130,33 @@ const TeamFormAdmin = () => {
               {...register("colors")}
               placeholder="Es: Blu/Bianco"
             />
-            {errors.colors && (
-              <p className="text-sm text-destructive mt-1">{errors.colors.message}</p>
-            )}
           </div>
 
           <div>
-            <Label htmlFor="venue">Campo</Label>
-            <Input
-              id="venue"
-              {...register("venue")}
-              placeholder="Campo di gioco"
+            <Label htmlFor="venue_id">Campo</Label>
+            <Controller
+              name="venue_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={venuesLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona un campo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Nessun campo</SelectItem>
+                    {venues?.map((venue) => (
+                      <SelectItem key={venue.id} value={venue.id}>
+                        {venue.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
-            {errors.venue && (
-              <p className="text-sm text-destructive mt-1">{errors.venue.message}</p>
-            )}
           </div>
 
           <div>
