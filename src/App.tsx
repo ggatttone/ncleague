@@ -31,6 +31,8 @@ import FixturesAdmin from "./pages/admin/FixturesAdmin";
 import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
 import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
 import UsersAdmin from "./pages/admin/UsersAdmin";
+import VenuesAdmin from "./pages/admin/VenuesAdmin";
+import VenueFormAdmin from "./pages/admin/VenueFormAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -85,6 +87,9 @@ const App = () => (
                   <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
                   <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
                   <Route path="users" element={<UsersAdmin />} />
+                  <Route path="venues" element={<VenuesAdmin />} />
+                  <Route path="venues/new" element={<VenueFormAdmin />} />
+                  <Route path="venues/:id/edit" element={<VenueFormAdmin />} />
                   <Route path="*" element={<NotFoundAdmin />} />
                 </Routes>
               </RequireAuth>

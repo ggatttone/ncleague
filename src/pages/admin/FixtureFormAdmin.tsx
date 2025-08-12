@@ -5,11 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { showSuccess } from "@/utils/toast";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useVenues } from "@/hooks/use-venues";
 
 const FixtureFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { data: venues, isLoading: venuesLoading } = useVenues();
 
   return (
     <AdminLayout>
@@ -58,8 +60,19 @@ const FixtureFormAdmin = () => {
           </div>
           
           <div>
-            <Label htmlFor="match-venue">Campo</Label>
-            <Input id="match-venue" placeholder="Campo di gioco" />
+            <Label htmlFor="venue_id">Campo</Label>
+            <Select disabled={venuesLoading}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleziona un campo" />
+              </SelectTrigger>
+              <SelectContent>
+                {venues?.map((venue) => (
+                  <SelectItem key={venue.id} value={venue.id}>
+                    {venue.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div>
