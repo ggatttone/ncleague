@@ -17,6 +17,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { GoalForm } from "@/components/admin/GoalForm";
+import { useState } from "react";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -26,6 +36,7 @@ type MatchWithTeams = Match & {
 const FixtureDetailsAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [isGoalFormOpen, setIsGoalFormOpen] = useState(false);
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match-admin', id],
@@ -132,9 +143,27 @@ const FixtureDetailsAdmin = () => {
             </div>
           )}
           
-          <Button variant="outline" className="mt-4">
-            + Aggiungi marcatore
-          </Button>
+          <Dialog open={isGoalFormOpen} onOpenChange={setIsGoalFormOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="mt-4">
+                + Aggiungi marcatore
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Aggiungi Marcatore</DialogTitle>
+                <DialogDescription>
+                  Seleziona la squadra, il giocatore e il minuto del goal.
+                </DialogDescription>
+              </DialogHeader>
+              <GoalForm 
+                matchId={match.id}
+                homeTeam={match.home_teams}
+                awayTeam={match.away_teams}
+                onSuccess={() => setIsGoalFormOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </AdminLayout>
