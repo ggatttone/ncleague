@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const teamSchema = z.object({
   name: z.string().min(1, "Il nome della squadra è obbligatorio"),
   parish: z.string().optional(),
-  venue_id: z.string().optional(),
+  venue_id: z.string().optional().nullable(),
   colors: z.string().optional(),
   logo_url: z.string().url("Inserisci un URL valido").optional().or(z.literal(""))
 });
@@ -43,7 +43,7 @@ const TeamFormAdmin = () => {
     defaultValues: {
       name: "",
       parish: "",
-      venue_id: "",
+      venue_id: null,
       colors: "",
       logo_url: ""
     }
@@ -54,7 +54,7 @@ const TeamFormAdmin = () => {
       reset({
         name: team.name,
         parish: team.parish || "",
-        venue_id: team.venue_id || "",
+        venue_id: team.venue_id || null,
         colors: team.colors || "",
         logo_url: team.logo_url || ""
       });
@@ -140,14 +140,13 @@ const TeamFormAdmin = () => {
               render={({ field }) => (
                 <Select
                   onValueChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ""}
                   disabled={venuesLoading}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleziona un campo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nessun campo</SelectItem>
                     {venues?.map((venue) => (
                       <SelectItem key={venue.id} value={venue.id}>
                         {venue.name}
