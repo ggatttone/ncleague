@@ -107,3 +107,16 @@ export interface LeagueTableRow {
   goal_difference: number;
   points: number;
 }
+
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  content?: string;
+  cover_image_url?: string;
+  author_id?: string;
+  status: 'draft' | 'published';
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+}
