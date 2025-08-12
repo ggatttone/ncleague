@@ -10,6 +10,7 @@ const adminLinks = [
   { to: "/admin/players", label: "Giocatori", roles: ['admin', 'editor', 'captain'] },
   { to: "/admin/fixtures", label: "Calendario", roles: ['admin', 'editor'] },
   { to: "/admin/competitions", label: "Competizioni", roles: ['admin', 'editor'] },
+  { to: "/admin/seasons", label: "Stagioni", roles: ['admin', 'editor'] },
   { to: "/admin/venues", label: "Campi", roles: ['admin', 'editor'] },
   { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
   { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
