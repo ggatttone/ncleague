@@ -7,6 +7,22 @@ export type MatchWithTeams = Match & {
   away_teams: Team;
 };
 
+export interface UpsertMatchData {
+  home_team_id: string;
+  away_team_id: string;
+  match_date: string;
+  status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
+  venue_id?: string;
+  competition_id?: string;
+  season_id?: string;
+  home_score?: number;
+  away_score?: number;
+}
+
+export interface UpdateMatchData extends UpsertMatchData {
+  id: string;
+}
+
 export function useMatches() {
   return useSupabaseQuery<MatchWithTeams[]>(
     ['matches'],
@@ -19,6 +35,30 @@ export function useMatches() {
       `)
       .order('match_date', { ascending: false })
   );
+}
+
+export function useMatch(id: string | undefined) {
+    return useSupabaseQuery<Match>(
+        ['match', id],
+        () => supabase.from('matches').select('*').eq('id', id).single(),
+        { enabled: !!id }
+    );
+}
+
+export function useCreateMatch() {
+    return useSupabaseMutation<Match>(
+        ['matches'],
+        (data: UpsertMatchData) =>
+            supabase.from('matches').insert([data]).select().single()
+    );
+}
+
+export function useUpdateMatch() {
+    return useSupabaseMutation<Match>(
+        ['matches'],
+        ({ id, ...data }: UpdateMatchData) =>
+            supabase.from('matches').update(data).eq('id', id).select().single()
+    );
 }
 
 export function useDeleteMatch() {
