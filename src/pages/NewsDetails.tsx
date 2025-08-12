@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { PublicLayout } from "@/components/PublicLayout";
+import { MainLayout } from "@/components/MainLayout";
 import { usePublishedArticleBySlug } from "@/hooks/use-articles";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, User, Calendar } from "lucide-react";
@@ -12,7 +12,7 @@ const NewsDetails = () => {
 
   if (isLoading) {
     return (
-      <PublicLayout>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8 max-w-3xl">
           <div className="animate-pulse">
             <div className="h-10 bg-gray-200 rounded w-3/4 mb-4"></div>
@@ -25,13 +25,13 @@ const NewsDetails = () => {
             </div>
           </div>
         </div>
-      </PublicLayout>
+      </MainLayout>
     );
   }
 
   if (error || !article) {
     return (
-      <PublicLayout>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Articolo non trovato</h1>
           <p className="text-muted-foreground mb-6">L'articolo che stai cercando non esiste o non è più disponibile.</p>
@@ -42,12 +42,12 @@ const NewsDetails = () => {
             </Button>
           </Link>
         </div>
-      </PublicLayout>
+      </MainLayout>
     );
   }
 
   return (
-    <PublicLayout>
+    <MainLayout>
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <Link to="/news" className="mb-8 inline-block">
           <Button variant="outline">
@@ -87,7 +87,7 @@ const NewsDetails = () => {
           </div>
         </article>
       </div>
-    </PublicLayout>
+    </MainLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export const PublicLayout = ({ children }: { children: ReactNode }) => {
+export const MainLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="bg-background text-foreground">
       {children}
