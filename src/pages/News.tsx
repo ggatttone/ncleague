@@ -1,4 +1,4 @@
-import { PublicLayout } from "@/components/PublicLayout";
+import { MainLayout } from "@/components/MainLayout";
 import { usePublishedArticles } from "@/hooks/use-articles";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ const News = () => {
 
   if (isLoading) {
     return (
-      <PublicLayout>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold mb-6">News</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -31,23 +31,23 @@ const News = () => {
             ))}
           </div>
         </div>
-      </PublicLayout>
+      </MainLayout>
     );
   }
 
   if (error) {
     return (
-      <PublicLayout>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-3xl font-bold mb-6">News</h1>
           <p className="text-destructive">Errore nel caricamento delle notizie.</p>
         </div>
-      </PublicLayout>
+      </MainLayout>
     );
   }
 
   return (
-    <PublicLayout>
+    <MainLayout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">News</h1>
         
@@ -98,7 +98,7 @@ const News = () => {
           </div>
         )}
       </div>
-    </PublicLayout>
+    </MainLayout>
   );
 };
 

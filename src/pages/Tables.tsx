@@ -1,4 +1,4 @@
-import { PublicLayout } from "@/components/PublicLayout";
+import { MainLayout } from "@/components/MainLayout";
 import { Table } from "@/components/Table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCompetitions } from "@/hooks/use-competitions";
@@ -52,7 +52,7 @@ const Tables = () => {
   })) || [];
 
   return (
-    <PublicLayout>
+    <MainLayout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Classifiche</h1>
 
@@ -106,7 +106,7 @@ const Tables = () => {
           </div>
         )}
       </div>
-    </PublicLayout>
+    </MainLayout>
   );
 };
 
