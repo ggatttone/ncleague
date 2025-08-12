@@ -13,14 +13,14 @@ const adminLinks = [
   { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
   { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
   { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
-  { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] }, // New link for UsersAdmin
+  { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
 ];
 
 export const AdminSidebar = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
-  const { hasPermission } = useAuth(); // Get hasPermission
+  const { hasPermission } = useAuth();
 
   const sidebarContent = (
     <aside className={cn(
@@ -30,7 +30,7 @@ export const AdminSidebar = () => {
       <div className="font-bold text-lg mb-8 text-sidebar-primary">Admin NC League</div>
       <ul className="space-y-2">
         {adminLinks.map((link) => (
-          hasPermission(link.roles as any) && ( // Check permission for each link
+          hasPermission(link.roles as any) && (
             <li key={link.to}>
               <Link
                 to={link.to}
@@ -55,7 +55,7 @@ export const AdminSidebar = () => {
     return (
       <>
         <button
-          className="fixed top-18 left-4 z-50 p-2 bg-primary text-primary-foreground rounded-md shadow-lg"
+          className="fixed top-20 left-4 z-50 p-2 bg-primary text-primary-foreground rounded-md shadow-lg"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
