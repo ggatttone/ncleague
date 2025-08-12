@@ -93,3 +93,17 @@ export interface Goal {
   minute: number;
   created_at: string;
 }
+
+export interface LeagueTableRow {
+  team_id: string;
+  team_name: string;
+  team_logo_url?: string;
+  matches_played: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goals_for: number;
+  goals_against: number;
+  goal_difference: number;
+  points: number;
+}
