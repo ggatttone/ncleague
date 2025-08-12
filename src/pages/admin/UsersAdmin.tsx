@@ -9,58 +9,42 @@ import { Loader2, Search, User as UserIcon, CheckCircle2, XCircle } from "lucide
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { showError } from "@/utils/toast";
+import { Badge } from "@/components/ui/badge";
 
 interface Profile {
   id: string;
   first_name: string | null;
   last_name: string | null;
   role: 'admin' | 'editor' | 'player' | 'captain';
-  email: string; // Assuming email can be fetched or joined
+  email: string;
 }
 
 const UsersAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { hasPermission, user: currentUser } = useAuth();
 
-  // Fetch profiles and join with auth.users for email
+  // Utilizza la nuova Edge Function per recuperare gli utenti in modo sicuro
   const { data: profiles, isLoading, error, refetch } = useSupabaseQuery<Profile[]>(
-    ['profiles'],
+    ['admin-users'],
     async () => {
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('last_name');
-
-      if (profilesError) throw profilesError;
-
-      // Fetch user emails from auth.users for display
-      const userIds = profilesData.map(p => p.id);
-      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers({
-        page: 1,
-        perPage: 100, // Adjust as needed, or implement pagination
-      });
-
-      if (usersError) {
-        console.error("Error fetching users for emails:", usersError);
-        // Proceed without emails if there's an error fetching them
-        return profilesData.map(profile => ({
-          ...profile,
-          email: 'N/A'
-        }));
+      const { data, error } = await supabase.functions.invoke('get-users');
+      if (error) {
+        // Se l'errore è di autorizzazione, mostriamo un messaggio specifico
+        if (error instanceof Error && error.message.includes('401')) {
+          throw new Error("Non hai i permessi per visualizzare gli utenti.");
+        }
+        throw error;
       }
-
-      const userMap = new Map(usersData.users.map(u => [u.id, u.email]));
-
-      return profilesData.map(profile => ({
-        ...profile,
-        email: userMap.get(profile.id) || 'N/A'
-      }));
+      return data;
     },
-    { enabled: hasPermission(['admin']) } // Only fetch if current user is admin
+    { 
+      enabled: hasPermission(['admin']),
+      retry: false // Non ritentare in caso di errore di autorizzazione
+    }
   );
 
   const updateRoleMutation = useSupabaseMutation<Profile>(
-    ['profiles'],
+    ['admin-users'],
     async ({ id, role }: { id: string; role: Profile['role'] }) => {
       const { data, error } = await supabase
         .from('profiles')
@@ -73,7 +57,7 @@ const UsersAdmin = () => {
     },
     {
       onSuccess: () => {
-        refetch(); // Re-fetch profiles to update the list
+        refetch(); // Ricarica la lista degli utenti per visualizzare le modifiche
       },
       onError: (err) => {
         showError(`Errore nell'aggiornamento del ruolo: ${err.message}`);
@@ -111,7 +95,7 @@ const UsersAdmin = () => {
     name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'N/A',
     email: profile.email,
     role: (
-      <Badge variant="secondary" className="capitalize">
+      <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
         {profile.role}
       </Badge>
     ),
@@ -119,7 +103,7 @@ const UsersAdmin = () => {
       <Select
         value={profile.role}
         onValueChange={(newRole: Profile['role']) => handleRoleChange(profile.id, newRole)}
-        disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id && profile.role === 'admin' && newRole !== 'admin')}
+        disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Seleziona ruolo" />
@@ -173,7 +157,6 @@ const UsersAdmin = () => {
         <h1 className="text-2xl font-bold">Gestione Utenti</h1>
       </div>
 
-      {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -186,7 +169,7 @@ const UsersAdmin = () => {
         </div>
       </div>
 
-      {filteredProfiles && filteredProfiles.length > 0 && (
+      {filteredProfiles && (
         <div className="mb-4 text-sm text-muted-foreground">
           {filteredProfiles.length} utent{filteredProfiles.length === 1 ? 'e' : 'i'} 
           {searchTerm && ` trovati per "${searchTerm}"`}
