@@ -2,8 +2,21 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -17,10 +30,62 @@ const navLinks = [
 
 export const Navbar = () => {
   const location = useLocation();
-  const { user, signOut, hasPermission } = useAuth(); // Get hasPermission
+  const { user, signOut, hasPermission, profile } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']); // Check if user has admin, editor or captain role
+  const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']);
+
+  const getInitials = (firstName?: string, lastName?: string) => {
+    const first = firstName?.[0] || '';
+    const last = lastName?.[0] || '';
+    const initials = `${first}${last}`.toUpperCase();
+    return initials || <User className="h-4 w-4" />;
+  };
+
+  const userMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={profile?.avatar_url || ""} alt="User avatar" />
+            <AvatarFallback>{getInitials(profile?.first_name, profile?.last_name)}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {profile?.first_name || 'Utente'} {profile?.last_name || ''}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profilo</span>
+          </Link>
+        </DropdownMenuItem>
+        {isAdminOrEditor && (
+          <DropdownMenuItem asChild>
+            <Link to="/admin">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Admin</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Logout</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   return (
     <nav className="bg-white border-b border-gray-200 dark:bg-background dark:border-border sticky top-0 z-30">
@@ -51,20 +116,7 @@ export const Navbar = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-2">
-            {user ? (
-              <>
-                {isAdminOrEditor && ( // Only show Admin button if user has admin, editor or captain role
-                  <Link to="/admin">
-                    <Button variant="outline" size="sm">
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-                <Button variant="ghost" size="sm" onClick={() => signOut()}>
-                  Logout
-                </Button>
-              </>
-            ) : (
+            {user ? userMenu : (
               <Link to="/login">
                 <Button variant="outline" size="sm">
                   Login
@@ -106,18 +158,23 @@ export const Navbar = () => {
             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-border">
               {user ? (
                 <div className="space-y-2">
-                  {isAdminOrEditor && ( // Only show Admin button if user has admin, editor or captain role
+                  <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <User className="mr-2 h-4 w-4" /> Profilo
+                    </Button>
+                  </Link>
+                  {isAdminOrEditor && (
                     <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" size="sm" className="w-full">
-                        Admin
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <LayoutDashboard className="mr-2 h-4 w-4" /> Admin
                       </Button>
                     </Link>
                   )}
-                  <Button variant="ghost" size="sm" className="w-full" onClick={() => {
+                  <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => {
                     signOut();
                     setIsMobileMenuOpen(false);
                   }}>
-                    Logout
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
                   </Button>
                 </div>
               ) : (

@@ -55,7 +55,7 @@ export const AdminSidebar = () => {
     return (
       <>
         <button
-          className="fixed top-4 left-4 z-50 p-2 bg-primary text-primary-foreground rounded-md shadow-lg"
+          className="fixed top-18 left-4 z-50 p-2 bg-primary text-primary-foreground rounded-md shadow-lg"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
