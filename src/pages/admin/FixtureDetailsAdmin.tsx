@@ -1,16 +1,63 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { useDeleteGoal, useGoalsForMatch } from "@/hooks/use-goals";
+import { supabase } from "@/lib/supabase/client";
+import { Match, Team } from "@/types/database";
+import { Loader2, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+type MatchWithTeams = Match & {
+  home_teams: Team;
+  away_teams: Team;
+};
 
 const FixtureDetailsAdmin = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
+    ['match-admin', id],
+    () => supabase
+      .from('matches')
+      .select('*, home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*)')
+      .eq('id', id)
+      .single(),
+    { enabled: !!id }
+  );
+
+  const { data: goals, isLoading: goalsLoading } = useGoalsForMatch(id);
+  const deleteGoalMutation = useDeleteGoal();
+
+  const handleDeleteGoal = async (goalId: string) => {
+    await deleteGoalMutation.mutateAsync(goalId);
+  };
+
+  if (matchLoading) {
+    return <AdminLayout><div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div></AdminLayout>;
+  }
+
+  if (!match) {
+    return <AdminLayout><div>Partita non trovata.</div></AdminLayout>;
+  }
   
   return (
     <AdminLayout>
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Dettaglio Partita</h1>
-          <Button onClick={() => navigate("/admin/fixtures/1/edit")}>
+          <Button onClick={() => navigate(`/admin/fixtures/${id}/edit`)}>
             Modifica
           </Button>
         </div>
@@ -18,12 +65,12 @@ const FixtureDetailsAdmin = () => {
         <div className="bg-card rounded-lg shadow p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <div className="text-center">
-              <div className="text-xl font-bold">FC Example</div>
+              <div className="text-xl font-bold">{match.home_teams.name}</div>
               <div className="text-muted-foreground">Casa</div>
             </div>
-            <div className="text-3xl font-bold">2 - 1</div>
+            <div className="text-3xl font-bold">{match.home_score} - {match.away_score}</div>
             <div className="text-center">
-              <div className="text-xl font-bold">FC Test</div>
+              <div className="text-xl font-bold">{match.away_teams.name}</div>
               <div className="text-muted-foreground">Ospite</div>
             </div>
           </div>
@@ -31,39 +78,59 @@ const FixtureDetailsAdmin = () => {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <div className="font-semibold">Data e ora</div>
-              <div>15 Maggio 2024, 20:30</div>
+              <div>{new Date(match.match_date).toLocaleString('it-IT')}</div>
             </div>
             <div>
               <div className="font-semibold">Campo</div>
-              <div>Campo A</div>
+              <div>{match.venue || '-'}</div>
             </div>
             <div>
               <div className="font-semibold">Stato</div>
-              <div className="text-green-600">Completata</div>
-            </div>
-            <div>
-              <div className="font-semibold">Arbitro</div>
-              <div>Mario Rossi</div>
+              <div className="capitalize">{match.status}</div>
             </div>
           </div>
         </div>
         
         <div className="bg-card rounded-lg shadow p-6">
           <h2 className="text-xl font-bold mb-4">Marcatori</h2>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <div>⚽ Marco Bianchi (FC Example) - 23'</div>
-              <Button variant="link" size="sm" className="text-destructive">Elimina</Button>
+          {goalsLoading ? (
+            <div className="flex justify-center items-center h-24"><Loader2 className="h-6 w-6 animate-spin" /></div>
+          ) : (
+            <div className="space-y-2">
+              {goals?.map(goal => (
+                <div key={goal.id} className="flex justify-between items-center">
+                  <div>⚽ {goal.players.first_name} {goal.players.last_name} - {goal.minute}'</div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="link" size="sm" className="text-destructive hover:text-destructive">
+                        <Trash2 className="h-4 w-4 mr-1" /> Elimina
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Elimina marcatore</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Sei sicuro di voler eliminare questo goal? L'azione non può essere annullata.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annulla</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteGoal(goal.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          disabled={deleteGoalMutation.isPending}
+                        >
+                          {deleteGoalMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                          Elimina
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              ))}
+              {goals?.length === 0 && <p className="text-muted-foreground text-sm">Nessun marcatore registrato.</p>}
             </div>
-            <div className="flex justify-between">
-              <div>⚽ Luca Verdi (FC Example) - 45'</div>
-              <Button variant="link" size="sm" className="text-destructive">Elimina</Button>
-            </div>
-            <div className="flex justify-between">
-              <div>⚽ Giovanni Neri (FC Test) - 78'</div>
-              <Button variant="link" size="sm" className="text-destructive">Elimina</Button>
-            </div>
-          </div>
+          )}
           
           <Button variant="outline" className="mt-4">
             + Aggiungi marcatore
