@@ -14,7 +14,7 @@ const Players = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuth();
 
-  const { data: playersData, isLoading, error } = useSupabaseQuery<(Player & { teams: Team })[]>(
+  const { data: playersData, isLoading, error } = useSupabaseQuery<(Player & { teams: Team | null })[]>(
     ['players-with-teams'],
     () => supabase
       .from('players')
@@ -32,10 +32,12 @@ const Players = () => {
   const filteredPlayers = useMemo(() => {
     if (!playersData || !searchTerm) return playersData;
     
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
     return playersData.filter(player => 
-      `${player.first_name} ${player.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.teams?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.role?.toLowerCase().includes(searchTerm.toLowerCase())
+      `${player.first_name} ${player.last_name}`.toLowerCase().includes(lowerCaseSearchTerm) ||
+      (player.teams?.name ?? '').toLowerCase().includes(lowerCaseSearchTerm) ||
+      (player.role ?? '').toLowerCase().includes(lowerCaseSearchTerm)
     );
   }, [playersData, searchTerm]);
 

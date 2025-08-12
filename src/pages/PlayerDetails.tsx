@@ -10,7 +10,7 @@ import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data: playerData, isLoading: playerLoading } = useSupabaseQuery<Player & { teams: Team }>(
+  const { data: playerData, isLoading: playerLoading } = useSupabaseQuery<Player & { teams: Team | null }>(
     ['player', id],
     () => supabase
       .from('players')
