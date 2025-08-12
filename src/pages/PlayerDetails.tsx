@@ -16,7 +16,7 @@ const PlayerDetails = () => {
       .from('players')
       .select(`
         *,
-        teams (
+        teams:teams!players_team_id_fkey (
           id,
           name,
           logo_url
