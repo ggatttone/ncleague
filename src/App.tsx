@@ -7,6 +7,7 @@ import { AuthProvider } from "@/lib/supabase/auth-context";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Navbar } from "@/components/Navbar";
 import Login from "./pages/auth/Login";
+import ProfilePage from "./pages/auth/Profile";
 import Index from "./pages/Index";
 import Matches from "./pages/Matches";
 import MatchDetails from "./pages/MatchDetails";
@@ -29,7 +30,7 @@ import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
 import FixturesAdmin from "./pages/admin/FixturesAdmin";
 import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
 import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
-import UsersAdmin from "./pages/admin/UsersAdmin"; // Import the new UsersAdmin component
+import UsersAdmin from "./pages/admin/UsersAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -59,6 +60,13 @@ const App = () => (
             <Route path="/teams/:id" element={<TeamDetails />} />
             <Route path="/season/:yyyy/:competition/:division" element={<SeasonArchive />} />
             
+            {/* Protected routes */}
+            <Route path="/profile" element={
+              <RequireAuth>
+                <ProfilePage />
+              </RequireAuth>
+            } />
+
             {/* Protected admin routes */}
             <Route path="/admin/*" element={
               <RequireAuth>
@@ -76,7 +84,7 @@ const App = () => (
                   <Route path="fixtures/new" element={<FixtureFormAdmin />} />
                   <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
                   <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
-                  <Route path="users" element={<UsersAdmin />} /> {/* New route for UsersAdmin */}
+                  <Route path="users" element={<UsersAdmin />} />
                   <Route path="*" element={<NotFoundAdmin />} />
                 </Routes>
               </RequireAuth>
