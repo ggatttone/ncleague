@@ -35,6 +35,8 @@ import VenuesAdmin from "./pages/admin/VenuesAdmin";
 import VenueFormAdmin from "./pages/admin/VenueFormAdmin";
 import CompetitionsAdmin from "./pages/admin/CompetitionsAdmin";
 import CompetitionFormAdmin from "./pages/admin/CompetitionFormAdmin";
+import SeasonsAdmin from "./pages/admin/SeasonsAdmin";
+import SeasonFormAdmin from "./pages/admin/SeasonFormAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -95,6 +97,9 @@ const App = () => (
                   <Route path="competitions" element={<CompetitionsAdmin />} />
                   <Route path="competitions/new" element={<CompetitionFormAdmin />} />
                   <Route path="competitions/:id/edit" element={<CompetitionFormAdmin />} />
+                  <Route path="seasons" element={<SeasonsAdmin />} />
+                  <Route path="seasons/new" element={<SeasonFormAdmin />} />
+                  <Route path="seasons/:id/edit" element={<SeasonFormAdmin />} />
                   <Route path="*" element={<NotFoundAdmin />} />
                 </Routes>
               </RequireAuth>
