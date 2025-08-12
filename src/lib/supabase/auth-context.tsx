@@ -48,23 +48,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
 
-      if (session?.user) {
-        const { data: profileData, error: profileError } = await supabase
+      if (currentUser) {
+        let { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('id', currentUser.id)
           .single();
 
-        if (profileError) {
+        if (profileError && profileError.code === 'PGRST116') {
+          const { count: adminCount, error: countError } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('role', 'admin');
+
+          if (countError) {
+            console.error("Error checking for admins:", countError);
+            setLoading(false);
+            return;
+          }
+
+          const newRole = (adminCount === 0) ? 'admin' : 'player';
+
+          const { data: newProfile, error: insertError } = await supabase
+            .from('profiles')
+            .insert({ 
+              id: currentUser.id, 
+              role: newRole, 
+              first_name: currentUser.user_metadata?.first_name, 
+              last_name: currentUser.user_metadata?.last_name 
+            })
+            .select()
+            .single();
+          
+          if (insertError) {
+            console.error("Error creating profile:", insertError);
+          } else {
+            profileData = newProfile;
+          }
+        } else if (profileError) {
           console.error("Error fetching profile:", profileError);
-          setProfile(null);
-          setRole(null);
-        } else {
-          setProfile(profileData);
-          setRole(profileData.role);
         }
+
+        setProfile(profileData as AuthContextType['profile']);
+        setRole(profileData?.role || null);
+
       } else {
         setProfile(null);
         setRole(null);
@@ -75,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fetchSessionAndProfile();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      fetchSessionAndProfile(); // Re-fetch session and profile on auth state change
+      fetchSessionAndProfile();
     });
 
     return () => subscription.unsubscribe();
@@ -84,21 +114,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hasPermission = (requiredRoles: UserRole[], teamId?: string) => {
     if (!user || !role) return false;
 
-    // Admin has all permissions
     if (role === 'admin') return true;
 
-    // Check if user's role is in the required roles
     if (requiredRoles.includes(role)) {
-      // Special handling for Captain role
       if (role === 'captain' && teamId) {
-        // Check if the current user is the captain of the specified team
-        // This requires fetching the team's captain_id and comparing it to the player_id linked to the user
-        // For simplicity in this context, we'll assume the profile has enough info or rely on RLS
-        // A more robust check would involve another Supabase query here or pre-fetching captained teams
-        // For now, we'll rely on RLS to enforce this on the backend.
-        // The frontend check will primarily be based on the role itself.
-        // The RLS policies are designed to handle the specific team ownership for captains.
-        return true; // If role is captain and it's a captain-specific action, let RLS handle team ownership
+        return true;
       }
       return true;
     }
