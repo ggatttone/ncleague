@@ -88,7 +88,7 @@ const PlayerFormAdmin = () => {
         role: data.role || undefined,
         jersey_number: data.jersey_number || undefined,
         document_id: data.document_id || undefined,
-        photo_url: data.photo_url || undefined,
+        photo_url: data.photo_url || null,
       };
 
       if (isEdit && id) {
