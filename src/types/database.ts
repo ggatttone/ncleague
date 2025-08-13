@@ -54,6 +54,7 @@ export interface Player {
   role?: string; // This is 'position'
   jersey_number?: number;
   document_id?: string;
+  nationality?: string;
   created_at: string;
   updated_at: string;
 }

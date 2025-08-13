@@ -10,6 +10,7 @@ export interface CreatePlayerData {
   role?: string;
   jersey_number?: number;
   document_id?: string;
+  nationality?: string;
 }
 
 export interface UpdatePlayerData extends CreatePlayerData {
