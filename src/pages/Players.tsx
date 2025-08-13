@@ -9,6 +9,7 @@ import { User, Search, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -181,13 +182,16 @@ const Players = () => {
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          {player.jersey_number ? (
-                            <span className="font-bold text-primary">{player.jersey_number}</span>
-                          ) : (
-                            <User className="h-6 w-6 text-primary" />
-                          )}
-                        </div>
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={player.photo_url || undefined} alt={`${player.first_name} ${player.last_name}`} />
+                          <AvatarFallback className="bg-primary/10">
+                            {player.jersey_number ? (
+                              <span className="font-bold text-primary">{player.jersey_number}</span>
+                            ) : (
+                              <User className="h-6 w-6 text-primary" />
+                            )}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <CardTitle className="text-lg truncate">
                             {player.first_name} {player.last_name}

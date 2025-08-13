@@ -26,9 +26,9 @@ export function usePlayers() {
 }
 
 export function usePlayer(id: string | undefined) {
-  return useSupabaseQuery<Player>(
+  return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })>(
     ['player', id],
-    () => supabase.from('players').select('*').eq('id', id).single(),
+    () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').eq('id', id).single(),
     { enabled: !!id }
   );
 }

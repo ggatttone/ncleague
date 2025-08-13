@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -98,13 +99,16 @@ const PlayerDetails = () => {
       <Card className="mb-8">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center border-2">
-              {playerData.jersey_number ? (
-                <span className="text-2xl sm:text-3xl font-bold text-primary">{playerData.jersey_number}</span>
-              ) : (
-                <User className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-              )}
-            </div>
+            <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-2">
+              <AvatarImage src={playerData.photo_url || undefined} alt={`${playerData.first_name} ${playerData.last_name}`} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {playerData.jersey_number ? (
+                  <span className="text-2xl sm:text-3xl font-bold">{playerData.jersey_number}</span>
+                ) : (
+                  <User className="h-10 w-10 sm:h-12 sm:w-12" />
+                )}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1 text-center sm:text-left">
               <CardTitle className="text-2xl sm:text-3xl mb-2">
                 {playerData.first_name} {playerData.last_name}
