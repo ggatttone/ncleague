@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCreateTeam, useUpdateTeam, useTeam } from "@/hooks/use-teams";
+import { useCreateTeam, useUpdateTeam, useTeam, CreateTeamData } from "@/hooks/use-teams";
 import { useVenues } from "@/hooks/use-venues";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,12 +12,28 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { MultiSelect, OptionType } from "@/components/ui/multi-select";
+
+const colorOptions: OptionType[] = [
+  { value: "Rosso", label: "Rosso" },
+  { value: "Blu", label: "Blu" },
+  { value: "Verde", label: "Verde" },
+  { value: "Giallo", label: "Giallo" },
+  { value: "Nero", label: "Nero" },
+  { value: "Bianco", label: "Bianco" },
+  { value: "Arancione", label: "Arancione" },
+  { value: "Viola", label: "Viola" },
+  { value: "Azzurro", label: "Azzurro" },
+  { value: "Granata", label: "Granata" },
+  { value: "Rosa", label: "Rosa" },
+  { value: "Celeste", label: "Celeste" },
+];
 
 const teamSchema = z.object({
   name: z.string().min(1, "Il nome della squadra è obbligatorio"),
   parish: z.string().optional(),
   venue_id: z.string().optional().nullable(),
-  colors: z.string().optional(),
+  colors: z.array(z.string()).max(2, "Puoi selezionare al massimo due colori").optional(),
   logo_url: z.string().url("URL non valido").optional().nullable(),
 });
 
@@ -47,7 +63,7 @@ const TeamFormAdmin = () => {
       name: "",
       parish: "",
       venue_id: null,
-      colors: "",
+      colors: [],
       logo_url: null,
     }
   });
@@ -60,25 +76,25 @@ const TeamFormAdmin = () => {
         name: team.name,
         parish: team.parish || "",
         venue_id: team.venue_id || null,
-        colors: team.colors || "",
+        colors: team.colors ? team.colors.split('/') : [],
         logo_url: team.logo_url || null,
       });
     }
   }, [team, isEdit, reset]);
 
   const onSubmit = async (data: TeamFormData) => {
-    const cleanData = {
-      ...data,
+    const submissionData: CreateTeamData = {
+      name: data.name,
       parish: data.parish || undefined,
       venue_id: data.venue_id || undefined,
-      colors: data.colors || undefined,
+      colors: data.colors?.join('/') || undefined,
       logo_url: data.logo_url || undefined
     };
 
     if (isEdit && id) {
-      await updateTeamMutation.mutateAsync({ id, ...cleanData });
+      await updateTeamMutation.mutateAsync({ id, ...submissionData });
     } else {
-      await createTeamMutation.mutateAsync(cleanData);
+      await createTeamMutation.mutateAsync(submissionData);
     }
     
     navigate("/admin/teams");
@@ -134,11 +150,20 @@ const TeamFormAdmin = () => {
 
           <div>
             <Label htmlFor="colors">Colori sociali</Label>
-            <Input
-              id="colors"
-              {...register("colors")}
-              placeholder="Es: Blu/Bianco"
+            <Controller
+              name="colors"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  options={colorOptions}
+                  selected={field.value || []}
+                  onChange={field.onChange}
+                  placeholder="Seleziona fino a due colori"
+                  maxCount={2}
+                />
+              )}
             />
+            {errors.colors && <p className="text-sm text-destructive mt-1">{errors.colors.message}</p>}
           </div>
 
           <div>
@@ -181,7 +206,7 @@ const TeamFormAdmin = () => {
               type="submit" 
               disabled={isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending}
             >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {(isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Salva modifiche" : "Crea squadra"}
             </Button>
           </div>
