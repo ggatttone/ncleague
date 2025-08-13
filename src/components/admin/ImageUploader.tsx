@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,11 +15,6 @@ interface ImageUploaderProps {
 
 export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, label = "Immagine" }: ImageUploaderProps) => {
   const [uploading, setUploading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null | undefined>(currentImageUrl);
-
-  useEffect(() => {
-    setImageUrl(currentImageUrl);
-  }, [currentImageUrl]);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -53,7 +47,6 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
         throw new Error("Impossibile ottenere l'URL pubblico dell'immagine.");
       }
 
-      setImageUrl(publicUrl);
       onUploadSuccess(publicUrl);
 
     } catch (error: any) {
@@ -68,7 +61,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       <Label>{label}</Label>
       <div className="flex items-center gap-4 mt-2">
         <Avatar className="h-20 w-20">
-          <AvatarImage src={imageUrl || undefined} alt="Avatar" />
+          <AvatarImage src={currentImageUrl || undefined} alt="Avatar" />
           <AvatarFallback className="h-20 w-20">
             <User className="h-10 w-10" />
           </AvatarFallback>
