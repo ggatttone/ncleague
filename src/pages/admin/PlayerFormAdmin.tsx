@@ -131,15 +131,15 @@ const PlayerFormAdmin = () => {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
-                  value={field.value || ""}
+                  onValueChange={(value) => field.onChange(value === "no-team" ? null : value)}
+                  value={field.value || "no-team"}
                   disabled={teamsLoading}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleziona una squadra" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nessuna squadra</SelectItem>
+                    <SelectItem value="no-team">Nessuna squadra</SelectItem>
                     {teams?.map((team) => (
                       <SelectItem key={team.id} value={team.id}>
                         {team.name}
