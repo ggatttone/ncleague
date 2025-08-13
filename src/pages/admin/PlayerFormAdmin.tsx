@@ -17,6 +17,7 @@ const playerSchema = z.object({
   first_name: z.string().min(1, "Il nome è obbligatorio"),
   last_name: z.string().min(1, "Il cognome è obbligatorio"),
   date_of_birth: z.string().optional(),
+  nationality: z.string().optional(),
   role: z.string().optional(),
   jersey_number: z.coerce.number().optional(),
   document_id: z.string().optional(),
@@ -26,6 +27,9 @@ const playerSchema = z.object({
 type PlayerFormData = z.infer<typeof playerSchema>;
 
 const playerRoles = ["Portiere", "Difensore", "Centrocampista", "Attaccante"];
+const nationalities = [
+  "Italiana", "Albanese", "Argentina", "Belga", "Brasiliana", "Croata", "Danese", "Egiziana", "Francese", "Tedesca", "Inglese", "Ghanese", "Greca", "Ivoriana", "Marocchina", "Olandese", "Nigeriana", "Polacca", "Portoghese", "Rumena", "Senegalese", "Serba", "Spagnola", "Svedese", "Svizzera", "Tunisina", "Turca", "Uruguayana", "Statunitense", "Altra"
+].sort();
 
 const PlayerFormAdmin = () => {
   const navigate = useNavigate();
@@ -50,6 +54,7 @@ const PlayerFormAdmin = () => {
       first_name: "",
       last_name: "",
       date_of_birth: "",
+      nationality: "",
       role: "",
       jersey_number: undefined,
       document_id: "",
@@ -63,6 +68,7 @@ const PlayerFormAdmin = () => {
       reset({
         ...player,
         date_of_birth: player.date_of_birth ? player.date_of_birth.split('T')[0] : '',
+        nationality: player.nationality || "",
         team_id: player.team_id || null,
       });
     }
@@ -74,6 +80,7 @@ const PlayerFormAdmin = () => {
         ...data,
         team_id: data.team_id || undefined,
         date_of_birth: data.date_of_birth || undefined,
+        nationality: data.nationality || undefined,
         role: data.role || undefined,
         jersey_number: data.jersey_number || undefined,
         document_id: data.document_id || undefined,
@@ -153,9 +160,33 @@ const PlayerFormAdmin = () => {
             />
           </div>
 
-          <div>
-            <Label htmlFor="date_of_birth">Data di nascita</Label>
-            <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="date_of_birth">Data di nascita</Label>
+              <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
+            </div>
+            <div>
+              <Label htmlFor="nationality">Nazionalità</Label>
+              <Controller
+                name="nationality"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona nazionalità" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {nationalities.map(nat => (
+                        <SelectItem key={nat} value={nat}>{nat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
