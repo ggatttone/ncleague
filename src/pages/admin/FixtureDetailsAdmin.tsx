@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { GoalForm } from "@/components/admin/GoalForm";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -37,6 +38,7 @@ const FixtureDetailsAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isGoalFormOpen, setIsGoalFormOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match-admin', id],
@@ -51,8 +53,13 @@ const FixtureDetailsAdmin = () => {
   const { data: goals, isLoading: goalsLoading } = useGoalsForMatch(id);
   const deleteGoalMutation = useDeleteGoal();
 
-  const handleDeleteGoal = async (goalId: string) => {
-    await deleteGoalMutation.mutateAsync(goalId);
+  const handleDeleteGoal = (goalId: string) => {
+    deleteGoalMutation.mutate(goalId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['goals', id] });
+        queryClient.invalidateQueries({ queryKey: ['match-admin', id] });
+      }
+    });
   };
 
   if (matchLoading) {
