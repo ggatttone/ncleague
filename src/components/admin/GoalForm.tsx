@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase/client";
 import { Player, Team } from "@/types/database";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const goalSchema = z.object({
   team_id: z.string().min(1, "Seleziona una squadra"),
@@ -28,6 +29,7 @@ interface GoalFormProps {
 }
 
 export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormProps) => {
+  const queryClient = useQueryClient();
   const [selectedTeamId, setSelectedTeamId] = useState<string | undefined>();
   const createGoalMutation = useCreateGoal();
 
@@ -55,10 +57,15 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
     setValue("player_id", ""); // Reset player when team changes
   }, [watchedTeamId, setValue]);
 
-  const onSubmit = async (data: GoalFormData) => {
-    await createGoalMutation.mutateAsync({ ...data, match_id: matchId });
-    reset();
-    onSuccess();
+  const onSubmit = (data: GoalFormData) => {
+    createGoalMutation.mutate({ ...data, match_id: matchId }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['goals', matchId] });
+        queryClient.invalidateQueries({ queryKey: ['match-admin', matchId] });
+        reset();
+        onSuccess();
+      }
+    });
   };
 
   return (
