@@ -11,13 +11,14 @@ import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 const teamSchema = z.object({
   name: z.string().min(1, "Il nome della squadra è obbligatorio"),
   parish: z.string().optional(),
   venue_id: z.string().optional().nullable(),
   colors: z.string().optional(),
-  logo_url: z.string().url("Inserisci un URL valido").optional().or(z.literal(""))
+  logo_url: z.string().url("URL non valido").optional().nullable(),
 });
 
 type TeamFormData = z.infer<typeof teamSchema>;
@@ -37,7 +38,9 @@ const TeamFormAdmin = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    control
+    control,
+    watch,
+    setValue,
   } = useForm<TeamFormData>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
@@ -45,9 +48,11 @@ const TeamFormAdmin = () => {
       parish: "",
       venue_id: null,
       colors: "",
-      logo_url: ""
+      logo_url: null,
     }
   });
+
+  const logoUrlValue = watch('logo_url');
 
   useEffect(() => {
     if (team && isEdit) {
@@ -56,7 +61,7 @@ const TeamFormAdmin = () => {
         parish: team.parish || "",
         venue_id: team.venue_id || null,
         colors: team.colors || "",
-        logo_url: team.logo_url || ""
+        logo_url: team.logo_url || null,
       });
     }
   }, [team, isEdit, reset]);
@@ -96,7 +101,15 @@ const TeamFormAdmin = () => {
           {isEdit ? "Modifica squadra" : "Nuova squadra"}
         </h1>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <ImageUploader
+            bucketName="team-logos"
+            currentImageUrl={logoUrlValue}
+            onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true, shouldDirty: true })}
+            label="Logo squadra"
+          />
+          {errors.logo_url && <p className="text-sm text-destructive mt-1">{errors.logo_url.message}</p>}
+
           <div>
             <Label htmlFor="name">Nome squadra *</Label>
             <Input
@@ -135,14 +148,15 @@ const TeamFormAdmin = () => {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
-                  value={field.value || ""}
+                  onValueChange={(value) => field.onChange(value === "no-venue" ? null : value)}
+                  value={field.value || "no-venue"}
                   disabled={venuesLoading}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleziona un campo" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="no-venue">Nessun campo</SelectItem>
                     {venues?.map((venue) => (
                       <SelectItem key={venue.id} value={venue.id}>
                         {venue.name}
@@ -152,19 +166,6 @@ const TeamFormAdmin = () => {
                 </Select>
               )}
             />
-          </div>
-
-          <div>
-            <Label htmlFor="logo_url">Logo (URL)</Label>
-            <Input
-              id="logo_url"
-              {...register("logo_url")}
-              placeholder="https://..."
-              type="url"
-            />
-            {errors.logo_url && (
-              <p className="text-sm text-destructive mt-1">{errors.logo_url.message}</p>
-            )}
           </div>
 
           <div className="flex gap-2 justify-end pt-4">
