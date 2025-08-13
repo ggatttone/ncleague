@@ -11,6 +11,7 @@ export interface CreatePlayerData {
   jersey_number?: number;
   document_id?: string;
   nationality?: string;
+  photo_url?: string;
 }
 
 export interface UpdatePlayerData extends CreatePlayerData {
