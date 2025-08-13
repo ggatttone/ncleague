@@ -47,16 +47,12 @@ const SeasonFormAdmin = () => {
   }, [season, isEdit, reset]);
 
   const onSubmit = async (data: SeasonFormData) => {
-    try {
-      if (isEdit && id) {
-        await updateMutation.mutateAsync({ id, ...data });
-      } else {
-        await createMutation.mutateAsync(data);
-      }
-      navigate("/admin/seasons");
-    } catch (error) {
-      console.error("Error saving season:", error);
+    if (isEdit && id) {
+      await updateMutation.mutateAsync({ id, ...data });
+    } else {
+      await createMutation.mutateAsync(data);
     }
+    navigate("/admin/seasons");
   };
 
   if (seasonLoading && isEdit) {

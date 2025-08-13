@@ -62,25 +62,21 @@ const TeamFormAdmin = () => {
   }, [team, isEdit, reset]);
 
   const onSubmit = async (data: TeamFormData) => {
-    try {
-      const cleanData = {
-        ...data,
-        parish: data.parish || undefined,
-        venue_id: data.venue_id || undefined,
-        colors: data.colors || undefined,
-        logo_url: data.logo_url || undefined
-      };
+    const cleanData = {
+      ...data,
+      parish: data.parish || undefined,
+      venue_id: data.venue_id || undefined,
+      colors: data.colors || undefined,
+      logo_url: data.logo_url || undefined
+    };
 
-      if (isEdit && id) {
-        await updateTeamMutation.mutateAsync({ id, ...cleanData });
-      } else {
-        await createTeamMutation.mutateAsync(cleanData);
-      }
-      
-      navigate("/admin/teams");
-    } catch (error) {
-      console.error("Error saving team:", error);
+    if (isEdit && id) {
+      await updateTeamMutation.mutateAsync({ id, ...cleanData });
+    } else {
+      await createTeamMutation.mutateAsync(cleanData);
     }
+    
+    navigate("/admin/teams");
   };
 
   if ((teamLoading || venuesLoading) && isEdit) {
