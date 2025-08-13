@@ -43,16 +43,12 @@ const CompetitionFormAdmin = () => {
   }, [competition, isEdit, reset]);
 
   const onSubmit = async (data: CompetitionFormData) => {
-    try {
-      if (isEdit && id) {
-        await updateMutation.mutateAsync({ id, ...data });
-      } else {
-        await createMutation.mutateAsync(data);
-      }
-      navigate("/admin/competitions");
-    } catch (error) {
-      console.error("Error saving competition:", error);
+    if (isEdit && id) {
+      await updateMutation.mutateAsync({ id, ...data });
+    } else {
+      await createMutation.mutateAsync(data);
     }
+    navigate("/admin/competitions");
   };
 
   if (competitionLoading && isEdit) {

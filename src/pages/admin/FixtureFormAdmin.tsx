@@ -77,25 +77,21 @@ const FixtureFormAdmin = () => {
   }, [match, isEdit, reset]);
 
   const onSubmit = async (data: MatchFormData) => {
-    try {
-      const submissionData = {
-        ...data,
-        venue_id: data.venue_id || undefined,
-        competition_id: data.competition_id || undefined,
-        season_id: data.season_id || undefined,
-        home_score: data.status === 'completed' ? data.home_score : 0,
-        away_score: data.status === 'completed' ? data.away_score : 0,
-      };
+    const submissionData = {
+      ...data,
+      venue_id: data.venue_id || undefined,
+      competition_id: data.competition_id || undefined,
+      season_id: data.season_id || undefined,
+      home_score: data.status === 'completed' ? data.home_score : 0,
+      away_score: data.status === 'completed' ? data.away_score : 0,
+    };
 
-      if (isEdit && id) {
-        await updateMutation.mutateAsync({ id, ...submissionData });
-      } else {
-        await createMutation.mutateAsync(submissionData);
-      }
-      navigate("/admin/fixtures");
-    } catch (error) {
-      console.error("Error saving match:", error);
+    if (isEdit && id) {
+      await updateMutation.mutateAsync({ id, ...submissionData });
+    } else {
+      await createMutation.mutateAsync(submissionData);
     }
+    navigate("/admin/fixtures");
   };
 
   const isLoading = teamsLoading || venuesLoading || competitionsLoading || seasonsLoading || (isEdit && matchLoading);

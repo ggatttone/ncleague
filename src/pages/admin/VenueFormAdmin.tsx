@@ -43,16 +43,12 @@ const VenueFormAdmin = () => {
   }, [venue, isEdit, reset]);
 
   const onSubmit = async (data: VenueFormData) => {
-    try {
-      if (isEdit && id) {
-        await updateVenueMutation.mutateAsync({ id, ...data });
-      } else {
-        await createVenueMutation.mutateAsync(data);
-      }
-      navigate("/admin/venues");
-    } catch (error) {
-      console.error("Error saving venue:", error);
+    if (isEdit && id) {
+      await updateVenueMutation.mutateAsync({ id, ...data });
+    } else {
+      await createVenueMutation.mutateAsync(data);
     }
+    navigate("/admin/venues");
   };
 
   if (venueLoading && isEdit) {

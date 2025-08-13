@@ -83,28 +83,24 @@ const PlayerFormAdmin = () => {
   }, [player, isEdit, reset]);
 
   const onSubmit = async (data: PlayerFormData) => {
-    try {
-      const cleanData = {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        team_id: data.team_id || null,
-        date_of_birth: data.date_of_birth || null,
-        nationality: data.nationality || null,
-        role: data.role || null,
-        jersey_number: data.jersey_number && !isNaN(data.jersey_number) ? data.jersey_number : null,
-        document_id: data.document_id || null,
-        photo_url: data.photo_url || null,
-      };
+    const cleanData = {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      team_id: data.team_id || null,
+      date_of_birth: data.date_of_birth || null,
+      nationality: data.nationality || null,
+      role: data.role || null,
+      jersey_number: data.jersey_number && !isNaN(data.jersey_number) ? data.jersey_number : null,
+      document_id: data.document_id || null,
+      photo_url: data.photo_url || null,
+    };
 
-      if (isEdit && id) {
-        await updatePlayerMutation.mutateAsync({ id, ...cleanData });
-      } else {
-        await createPlayerMutation.mutateAsync(cleanData);
-      }
-      navigate("/admin/players");
-    } catch (error) {
-      console.error("Error saving player:", error);
+    if (isEdit && id) {
+      await updatePlayerMutation.mutateAsync({ id, ...cleanData });
+    } else {
+      await createPlayerMutation.mutateAsync(cleanData);
     }
+    navigate("/admin/players");
   };
 
   const isLoading = (playerLoading || teamsLoading) && isEdit;

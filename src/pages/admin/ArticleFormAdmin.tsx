@@ -84,16 +84,12 @@ const ArticleFormAdmin = () => {
         : article?.published_at,
     };
 
-    try {
-      if (isEdit && id) {
-        await updateMutation.mutateAsync({ id, ...submissionData });
-      } else {
-        await createMutation.mutateAsync(submissionData);
-      }
-      navigate("/admin/articles");
-    } catch (error) {
-      console.error("Error saving article:", error);
+    if (isEdit && id) {
+      await updateMutation.mutateAsync({ id, ...submissionData });
+    } else {
+      await createMutation.mutateAsync(submissionData);
     }
+    navigate("/admin/articles");
   };
 
   if (articleLoading && isEdit) {
