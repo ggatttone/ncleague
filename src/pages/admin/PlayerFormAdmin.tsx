@@ -49,7 +49,9 @@ const PlayerFormAdmin = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    control
+    control,
+    setValue, // Using setValue directly
+    watch,    // And watch to get the current value
   } = useForm<PlayerFormData>({
     resolver: zodResolver(playerSchema),
     defaultValues: {
@@ -64,6 +66,8 @@ const PlayerFormAdmin = () => {
       photo_url: null,
     }
   });
+
+  const photoUrlValue = watch('photo_url'); // Get the current photo_url
 
   // Pre-fill form if editing
   useEffect(() => {
@@ -80,6 +84,7 @@ const PlayerFormAdmin = () => {
 
   const onSubmit = async (data: PlayerFormData) => {
     try {
+      // The data from handleSubmit is already the most up-to-date
       const cleanData = {
         ...data,
         team_id: data.team_id || undefined,
@@ -125,18 +130,15 @@ const PlayerFormAdmin = () => {
           className="space-y-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Controller
-            name="photo_url"
-            control={control}
-            render={({ field }) => (
-              <ImageUploader
-                bucketName="player-photos"
-                currentImageUrl={field.value}
-                onUploadSuccess={(url) => field.onChange(url)}
-                label="Foto del giocatore"
-              />
-            )}
+          {/* Removed Controller, using setValue and watch instead */}
+          <ImageUploader
+            bucketName="player-photos"
+            currentImageUrl={photoUrlValue}
+            onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
+            label="Foto del giocatore"
           />
+          {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
