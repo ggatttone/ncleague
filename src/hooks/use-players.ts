@@ -5,13 +5,13 @@ import { Player } from '@/types/database';
 export interface CreatePlayerData {
   first_name: string;
   last_name: string;
-  team_id?: string;
-  date_of_birth?: string;
-  role?: string;
-  jersey_number?: number;
-  document_id?: string;
-  nationality?: string;
-  photo_url?: string;
+  team_id?: string | null;
+  date_of_birth?: string | null;
+  role?: string | null;
+  jersey_number?: number | null;
+  document_id?: string | null;
+  nationality?: string | null;
+  photo_url?: string | null;
 }
 
 export interface UpdatePlayerData extends CreatePlayerData {

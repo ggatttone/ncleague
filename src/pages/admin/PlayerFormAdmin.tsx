@@ -50,8 +50,6 @@ const PlayerFormAdmin = () => {
     formState: { errors, isSubmitting },
     reset,
     control,
-    setValue, // Using setValue directly
-    watch,    // And watch to get the current value
   } = useForm<PlayerFormData>({
     resolver: zodResolver(playerSchema),
     defaultValues: {
@@ -66,8 +64,6 @@ const PlayerFormAdmin = () => {
       photo_url: null,
     }
   });
-
-  const photoUrlValue = watch('photo_url'); // Get the current photo_url
 
   // Pre-fill form if editing
   useEffect(() => {
@@ -84,15 +80,15 @@ const PlayerFormAdmin = () => {
 
   const onSubmit = async (data: PlayerFormData) => {
     try {
-      // The data from handleSubmit is already the most up-to-date
       const cleanData = {
-        ...data,
-        team_id: data.team_id || undefined,
-        date_of_birth: data.date_of_birth || undefined,
-        nationality: data.nationality || undefined,
-        role: data.role || undefined,
-        jersey_number: data.jersey_number || undefined,
-        document_id: data.document_id || undefined,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        team_id: data.team_id,
+        date_of_birth: data.date_of_birth || null,
+        nationality: data.nationality || null,
+        role: data.role || null,
+        jersey_number: data.jersey_number && !isNaN(data.jersey_number) ? data.jersey_number : null,
+        document_id: data.document_id || null,
         photo_url: data.photo_url || null,
       };
 
@@ -130,12 +126,17 @@ const PlayerFormAdmin = () => {
           className="space-y-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          {/* Removed Controller, using setValue and watch instead */}
-          <ImageUploader
-            bucketName="player-photos"
-            currentImageUrl={photoUrlValue}
-            onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
-            label="Foto del giocatore"
+          <Controller
+            name="photo_url"
+            control={control}
+            render={({ field }) => (
+              <ImageUploader
+                bucketName="player-photos"
+                currentImageUrl={field.value}
+                onUploadSuccess={(url) => field.onChange(url)}
+                label="Foto del giocatore"
+              />
+            )}
           />
           {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
 
