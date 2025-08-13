@@ -28,7 +28,7 @@ export function useArticles() {
     ['articles'],
     () => supabase
       .from('articles')
-      .select('*, profiles!articles_author_id_fkey(first_name, last_name)')
+      .select('*, profiles(first_name, last_name)')
       .order('created_at', { ascending: false })
   );
 }
@@ -39,7 +39,7 @@ export function usePublishedArticles() {
     ['published-articles'],
     () => supabase
       .from('articles')
-      .select('*, profiles!articles_author_id_fkey(first_name, last_name)')
+      .select('*, profiles(first_name, last_name)')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
   );
@@ -60,7 +60,7 @@ export function usePublishedArticleBySlug(slug: string | undefined) {
     ['article', slug],
     () => supabase
       .from('articles')
-      .select('*, profiles!articles_author_id_fkey(first_name, last_name)')
+      .select('*, profiles(first_name, last_name)')
       .eq('slug', slug)
       .eq('status', 'published')
       .single(),
