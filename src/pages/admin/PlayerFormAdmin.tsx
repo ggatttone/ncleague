@@ -25,6 +25,8 @@ const playerSchema = z.object({
 
 type PlayerFormData = z.infer<typeof playerSchema>;
 
+const playerRoles = ["Portiere", "Difensore", "Centrocampista", "Attaccante"];
+
 const PlayerFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -159,7 +161,25 @@ const PlayerFormAdmin = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="role">Ruolo</Label>
-              <Input id="role" {...register("role")} placeholder="Es: Portiere, Difensore..." />
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleziona un ruolo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {playerRoles.map(role => (
+                        <SelectItem key={role} value={role}>{role}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div>
               <Label htmlFor="jersey_number">Numero maglia</Label>
