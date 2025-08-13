@@ -1,10 +1,15 @@
 import { MainLayout } from "@/components/MainLayout";
 import { usePublishedArticles } from "@/hooks/use-articles";
 import { ArticlePostCard } from "@/components/ArticlePostCard";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare, Plus } from "lucide-react";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const News = () => {
   const { data: articles, isLoading, error } = usePublishedArticles();
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission(['admin', 'editor']);
 
   const renderContent = () => {
     if (isLoading) {
@@ -45,8 +50,16 @@ const News = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-0 sm:px-4 py-8 max-w-2xl">
-        <div className="px-4 sm:px-0">
-          <h1 className="text-3xl font-bold mb-6">Feed</h1>
+        <div className="px-4 sm:px-0 flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Feed</h1>
+          {canCreate && (
+            <Link to="/admin/articles/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Nuovo Post
+              </Button>
+            </Link>
+          )}
         </div>
         {renderContent()}
       </div>
