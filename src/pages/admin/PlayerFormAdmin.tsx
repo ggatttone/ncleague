@@ -1,15 +1,105 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate, useParams } from "react-router-dom";
-import { showSuccess } from "@/utils/toast";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import { usePlayer, useCreatePlayer, useUpdatePlayer } from "@/hooks/use-players";
+import { useTeams } from "@/hooks/use-teams";
+
+// Schema for form validation
+const playerSchema = z.object({
+  first_name: z.string().min(1, "Il nome è obbligatorio"),
+  last_name: z.string().min(1, "Il cognome è obbligatorio"),
+  date_of_birth: z.string().optional(),
+  role: z.string().optional(),
+  jersey_number: z.coerce.number().optional(),
+  document_id: z.string().optional(),
+  team_id: z.string().optional().nullable(),
+});
+
+type PlayerFormData = z.infer<typeof playerSchema>;
 
 const PlayerFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
-  // Placeholder: in futuro caricare dati se id presente
   const isEdit = Boolean(id);
+
+  // Fetch data
+  const { data: player, isLoading: playerLoading } = usePlayer(id);
+  const { data: teams, isLoading: teamsLoading } = useTeams();
+  const createPlayerMutation = useCreatePlayer();
+  const updatePlayerMutation = useUpdatePlayer();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    control
+  } = useForm<PlayerFormData>({
+    resolver: zodResolver(playerSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      date_of_birth: "",
+      role: "",
+      jersey_number: undefined,
+      document_id: "",
+      team_id: null,
+    }
+  });
+
+  // Pre-fill form if editing
+  useEffect(() => {
+    if (player && isEdit) {
+      reset({
+        ...player,
+        date_of_birth: player.date_of_birth ? player.date_of_birth.split('T')[0] : '',
+        team_id: player.team_id || null,
+      });
+    }
+  }, [player, isEdit, reset]);
+
+  const onSubmit = async (data: PlayerFormData) => {
+    try {
+      const cleanData = {
+        ...data,
+        team_id: data.team_id || undefined,
+        date_of_birth: data.date_of_birth || undefined,
+        role: data.role || undefined,
+        jersey_number: data.jersey_number || undefined,
+        document_id: data.document_id || undefined,
+      };
+
+      if (isEdit && id) {
+        await updatePlayerMutation.mutateAsync({ id, ...cleanData });
+      } else {
+        await createPlayerMutation.mutateAsync(cleanData);
+      }
+      navigate("/admin/players");
+    } catch (error) {
+      console.error("Error saving player:", error);
+    }
+  };
+
+  const isLoading = (playerLoading || teamsLoading) && isEdit;
+  const isMutating = isSubmitting || createPlayerMutation.isPending || updatePlayerMutation.isPending;
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -19,41 +109,77 @@ const PlayerFormAdmin = () => {
         </h1>
         <form
           className="space-y-4"
-          onSubmit={e => {
-            e.preventDefault();
-            showSuccess(isEdit ? "Giocatore aggiornato con successo!" : "Giocatore creato con successo!");
-            navigate("/admin/players");
-          }}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-name">Nome</label>
-            <Input id="player-name" placeholder="Nome" required autoFocus />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="first_name">Nome *</Label>
+              <Input id="first_name" {...register("first_name")} placeholder="Nome" autoFocus />
+              {errors.first_name && <p className="text-sm text-destructive mt-1">{errors.first_name.message}</p>}
+            </div>
+            <div>
+              <Label htmlFor="last_name">Cognome *</Label>
+              <Input id="last_name" {...register("last_name")} placeholder="Cognome" />
+              {errors.last_name && <p className="text-sm text-destructive mt-1">{errors.last_name.message}</p>}
+            </div>
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-surname">Cognome</label>
-            <Input id="player-surname" placeholder="Cognome" required />
+            <Label htmlFor="team_id">Squadra</Label>
+            <Controller
+              name="team_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                  disabled={teamsLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona una squadra" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Nessuna squadra</SelectItem>
+                    {teams?.map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-dob">Data di nascita</label>
-            <Input id="player-dob" type="date" required />
+            <Label htmlFor="date_of_birth">Data di nascita</Label>
+            <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="role">Ruolo</Label>
+              <Input id="role" {...register("role")} placeholder="Es: Portiere, Difensore..." />
+            </div>
+            <div>
+              <Label htmlFor="jersey_number">Numero maglia</Label>
+              <Input id="jersey_number" type="number" min={1} max={99} {...register("jersey_number")} />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-role">Ruolo</label>
-            <Input id="player-role" placeholder="Es: Portiere, Difensore..." />
+            <Label htmlFor="document_id">Documento (opzionale)</Label>
+            <Input id="document_id" {...register("document_id")} placeholder="ID documento" />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-number">Numero maglia</label>
-            <Input id="player-number" type="number" min={1} max={99} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="player-doc">Documento (opzionale)</label>
-            <Input id="player-doc" placeholder="ID documento" />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")}>
+
+          <div className="flex gap-2 justify-end pt-4">
+            <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")} disabled={isMutating}>
               Annulla
             </Button>
-            <Button type="submit">{isEdit ? "Salva modifiche" : "Crea giocatore"}</Button>
+            <Button type="submit" disabled={isMutating}>
+              {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEdit ? "Salva modifiche" : "Crea giocatore"}
+            </Button>
           </div>
         </form>
       </div>
