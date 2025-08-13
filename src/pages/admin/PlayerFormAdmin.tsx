@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { usePlayer, useCreatePlayer, useUpdatePlayer } from "@/hooks/use-players";
 import { useTeams } from "@/hooks/use-teams";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 // Schema for form validation
 const playerSchema = z.object({
@@ -22,6 +23,7 @@ const playerSchema = z.object({
   jersey_number: z.coerce.number().optional(),
   document_id: z.string().optional(),
   team_id: z.string().optional().nullable(),
+  photo_url: z.string().url("URL non valido").optional().nullable(),
 });
 
 type PlayerFormData = z.infer<typeof playerSchema>;
@@ -59,6 +61,7 @@ const PlayerFormAdmin = () => {
       jersey_number: undefined,
       document_id: "",
       team_id: null,
+      photo_url: null,
     }
   });
 
@@ -70,6 +73,7 @@ const PlayerFormAdmin = () => {
         date_of_birth: player.date_of_birth ? player.date_of_birth.split('T')[0] : '',
         nationality: player.nationality || "",
         team_id: player.team_id || null,
+        photo_url: player.photo_url || null,
       });
     }
   }, [player, isEdit, reset]);
@@ -84,6 +88,7 @@ const PlayerFormAdmin = () => {
         role: data.role || undefined,
         jersey_number: data.jersey_number || undefined,
         document_id: data.document_id || undefined,
+        photo_url: data.photo_url || undefined,
       };
 
       if (isEdit && id) {
@@ -117,9 +122,22 @@ const PlayerFormAdmin = () => {
           {isEdit ? "Modifica giocatore" : "Nuovo giocatore"}
         </h1>
         <form
-          className="space-y-4"
+          className="space-y-6"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <Controller
+            name="photo_url"
+            control={control}
+            render={({ field }) => (
+              <ImageUploader
+                bucketName="player-photos"
+                currentImageUrl={field.value}
+                onUploadSuccess={(url) => field.onChange(url)}
+                label="Foto del giocatore"
+              />
+            )}
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="first_name">Nome *</Label>
