@@ -50,6 +50,8 @@ const PlayerFormAdmin = () => {
     formState: { errors, isSubmitting },
     reset,
     control,
+    setValue,
+    watch,
   } = useForm<PlayerFormData>({
     resolver: zodResolver(playerSchema),
     defaultValues: {
@@ -64,6 +66,8 @@ const PlayerFormAdmin = () => {
       photo_url: null,
     }
   });
+
+  const photoUrlValue = watch('photo_url');
 
   // Pre-fill form if editing
   useEffect(() => {
@@ -83,7 +87,7 @@ const PlayerFormAdmin = () => {
       const cleanData = {
         first_name: data.first_name,
         last_name: data.last_name,
-        team_id: data.team_id,
+        team_id: data.team_id || null,
         date_of_birth: data.date_of_birth || null,
         nationality: data.nationality || null,
         role: data.role || null,
@@ -126,17 +130,11 @@ const PlayerFormAdmin = () => {
           className="space-y-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Controller
-            name="photo_url"
-            control={control}
-            render={({ field }) => (
-              <ImageUploader
-                bucketName="player-photos"
-                currentImageUrl={field.value}
-                onUploadSuccess={(url) => field.onChange(url)}
-                label="Foto del giocatore"
-              />
-            )}
+          <ImageUploader
+            bucketName="player-photos"
+            currentImageUrl={photoUrlValue}
+            onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
+            label="Foto del giocatore"
           />
           {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
 
