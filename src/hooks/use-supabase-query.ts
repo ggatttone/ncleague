@@ -26,6 +26,29 @@ export function useSupabaseQuery<T>(
   });
 }
 
+export function useSupabaseCountQuery(
+  key: any[],
+  query: () => Promise<{ data: any; count: number | null; error: PostgrestError | null }> | null,
+  options = {}
+) {
+  return useQuery({
+    queryKey: key,
+    queryFn: async () => {
+      const promise = query();
+      if (!promise) {
+        return null;
+      }
+      const { count, error } = await promise;
+      if (error) {
+        showError(error.message);
+        throw error;
+      }
+      return count;
+    },
+    ...options,
+  });
+}
+
 export function useSupabaseMutation<T, V = any>(
   key: string[],
   mutation: (variables: V) => Promise<{ data: T | null; error: PostgrestError | null }>,
