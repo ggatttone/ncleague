@@ -64,6 +64,16 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           --ring: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;
 
           --radius: 0.5rem;
+
+          /* Sidebar specific variables */
+          --sidebar-background: 240 4.8% 98.9%;
+          --sidebar-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% ${Math.max(0, secondaryHsl.l - 40)}%;
+          --sidebar-primary: ${hslToString(primaryHsl)};
+          --sidebar-primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --sidebar-accent: ${secondaryHsl.h} ${secondaryHsl.s}% 94%;
+          --sidebar-accent-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 10%;
+          --sidebar-border: ${secondaryHsl.h} ${secondaryHsl.s}% 91.4%;
+          --sidebar-ring: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;
         }
 
         .dark {
