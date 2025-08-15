@@ -1,38 +1,28 @@
+import { HeroSection } from "@/components/HeroSection";
+import { LatestNews } from "@/components/LatestNews";
+import { LeagueTableWidget } from "@/components/LeagueTableWidget";
+import { UpcomingMatches } from "@/components/UpcomingMatches";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
-      <div className="text-center mt-16 max-w-2xl">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-primary">
-          NC League
-        </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8">
-          La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link
-            to="/matches"
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition text-center"
-          >
-            Prossime partite
-          </Link>
-          <Link
-            to="/tables"
-            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-semibold hover:bg-secondary/80 transition text-center"
-          >
-            Classifica
-          </Link>
-          <Link
-            to="/news"
-            className="px-6 py-3 bg-muted text-foreground rounded-md font-semibold hover:bg-muted/80 transition text-center"
-          >
-            News
-          </Link>
+    <div className="bg-gray-50 dark:bg-background min-h-screen">
+      <main className="container mx-auto py-8 px-4">
+        <HeroSection />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main column */}
+          <div className="lg:col-span-2 space-y-8">
+            <UpcomingMatches />
+            <LatestNews />
+          </div>
+
+          {/* Sidebar column */}
+          <div className="lg:col-span-1">
+            <LeagueTableWidget />
+          </div>
         </div>
-      </div>
-      <div className="flex-1" />
+      </main>
       <MadeWithDyad />
     </div>
   );
