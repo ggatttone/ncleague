@@ -25,7 +25,7 @@ const steps = [
 const REQUIRED_FIELDS = [
   { id: 'home_team_name', label: 'Squadra Casa' },
   { id: 'away_team_name', label: 'Squadra Ospite' },
-  { id: 'match_date', label: 'Data Partita' },
+  { id: 'match_date', label: 'Data e Ora Partita' },
   { id: 'home_score', label: 'Punteggio Casa' },
   { id: 'away_score', label: 'Punteggio Ospite' },
   { id: 'venue_name', label: 'Campo (Opzionale)' },
