@@ -16,8 +16,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
-import { showError, showSuccess } from "@/utils/toast";
+import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast";
 import { useQueryClient } from "@tanstack/react-query";
+import heic2any from "heic2any";
 
 const uploadSchema = z.object({
   album_id: z.string().optional().nullable(),
@@ -43,10 +44,41 @@ const GalleryPage = () => {
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    const filesToUpload = Array.from(data.file);
-
+    let conversionToastId: string | undefined;
     try {
-      // 1. Upload all files to storage in parallel
+      const initialFiles = Array.from(data.file);
+      
+      const hasHeic = initialFiles.some(file => 
+        file.type === 'image/heic' || 
+        file.type === 'image/heif' || 
+        file.name.toLowerCase().endsWith('.heic') || 
+        file.name.toLowerCase().endsWith('.heif')
+      );
+
+      if (hasHeic) {
+        conversionToastId = showLoading('Conversione immagini HEIC in corso...');
+      }
+
+      const filesToUpload = await Promise.all(
+        initialFiles.map(async (file) => {
+          const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+          if (isHeic) {
+            const convertedBlob = await heic2any({
+              blob: file,
+              toType: 'image/jpeg',
+              quality: 0.8,
+            });
+            const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
+            return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
+          }
+          return file;
+        })
+      );
+
+      if (conversionToastId) {
+        dismissToast(conversionToastId);
+      }
+
       const uploadPromises = filesToUpload.map(file => {
         const fileExt = file.name.split('.').pop();
         const filePath = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
@@ -58,21 +90,18 @@ const GalleryPage = () => {
 
       const uploadedFiles = await Promise.all(uploadPromises);
 
-      // 2. Prepare records for the database
       const galleryItemsToInsert = uploadedFiles.map(({ file, filePath }) => ({
         user_id: user.id,
         album_id: data.album_id || null,
         file_path: filePath,
         file_name: file.name,
         mime_type: file.type,
-        title: file.name, // Use filename as title
+        title: file.name,
       }));
 
-      // 3. Bulk insert into the database
       const { error: dbError } = await supabase.from('gallery_items').insert(galleryItemsToInsert);
       if (dbError) throw dbError;
 
-      // 4. Update album cover if needed (with the first image)
       if (data.album_id) {
         const targetAlbum = albums?.find(a => a.id === data.album_id);
         const firstImage = uploadedFiles.find(({ file }) => file.type.startsWith('image/'));
@@ -87,6 +116,9 @@ const GalleryPage = () => {
       reset();
       setUploadOpen(false);
     } catch (err: any) {
+      if (conversionToastId) {
+        dismissToast(conversionToastId);
+      }
       showError(`Errore durante il caricamento: ${err.message}`);
     }
   };
@@ -113,7 +145,7 @@ const GalleryPage = () => {
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
                       <Label htmlFor="file">File *</Label>
-                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*" multiple />
+                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*,.heic,.heif" multiple />
                       {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
                     </div>
                     <div>
