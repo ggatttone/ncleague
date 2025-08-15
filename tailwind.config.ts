@@ -66,10 +66,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        brand: {
-          primary: 'var(--brand-primary)',
-          secondary: 'var(--brand-secondary)',
-        }
       },
       borderRadius: {
         lg: "var(--radius)",
