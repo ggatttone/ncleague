@@ -10,7 +10,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useTeams } from "@/hooks/use-teams";
 import { useVenues } from "@/hooks/use-venues";
 import { useCreateMultipleMatches } from "@/hooks/use-matches";
-import { excelSerialDateToJSDate } from "@/lib/utils";
 import { read, utils, WorkBook } from "xlsx";
 import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
@@ -42,7 +41,7 @@ type PreviewRow = {
     home_score: number;
     away_score: number;
     venue_id?: string;
-    status: 'completed';
+    status: 'completed' | 'scheduled';
   } | null;
 };
 
@@ -71,19 +70,16 @@ const FixtureImportAdmin = () => {
         const workbook: WorkBook = read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
-        
-        const fileHeaders = jsonData[0] as string[];
-        const fileRows = jsonData.slice(1).map(rowArray => {
-          const rowObject: { [key: string]: any } = {};
-          fileHeaders.forEach((header, index) => {
-            rowObject[header] = (rowArray as any[])[index];
-          });
-          return rowObject;
-        });
+        const jsonData = utils.sheet_to_json(worksheet, { raw: false });
 
+        if (jsonData.length === 0) {
+          showError("Il file è vuoto o non contiene dati validi.");
+          return;
+        }
+
+        const fileHeaders = Object.keys(jsonData[0] as any);
         setHeaders(fileHeaders);
-        setRows(fileRows);
+        setRows(jsonData);
         setCurrentStep(1);
       } catch (err) {
         showError("Errore nella lettura del file. Assicurati che sia un formato valido (.xlsx, .csv).");
@@ -117,13 +113,8 @@ const FixtureImportAdmin = () => {
         previewRow.errors.push("Squadra casa e ospite non possono essere le stesse.");
       }
 
-      let matchDate;
       const dateValue = row[mapping.match_date];
-      if (typeof dateValue === 'number') {
-        matchDate = excelSerialDateToJSDate(dateValue);
-      } else if (typeof dateValue === 'string') {
-        matchDate = new Date(dateValue);
-      }
+      const matchDate = new Date(dateValue);
       if (!matchDate || isNaN(matchDate.getTime())) {
         previewRow.isValid = false;
         previewRow.errors.push(`Data non valida: "${dateValue}"`);
@@ -146,6 +137,8 @@ const FixtureImportAdmin = () => {
         }
       }
 
+      const status = matchDate && matchDate > new Date() ? 'scheduled' : 'completed';
+
       if (previewRow.isValid) {
         previewRow.data = {
           home_team_id: homeTeamId!,
@@ -154,7 +147,7 @@ const FixtureImportAdmin = () => {
           home_score: homeScore,
           away_score: awayScore,
           venue_id: venueId,
-          status: 'completed',
+          status: status,
         };
       }
       return previewRow;
