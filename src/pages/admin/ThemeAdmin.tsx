@@ -31,7 +31,6 @@ const ThemeAdmin = () => {
   const updateThemeMutation = useUpdateTheme();
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -91,18 +90,48 @@ const ThemeAdmin = () => {
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="primary_color">Colore Primario</Label>
-                  <div className="flex items-center gap-2">
-                    <Input type="color" {...register("primary_color")} className="p-1 h-10 w-14" />
-                    <Input {...register("primary_color")} placeholder="#000000" />
-                  </div>
+                  <Controller
+                    name="primary_color"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="color"
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          className="p-1 h-10 w-14"
+                        />
+                        <Input
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          placeholder="#000000"
+                        />
+                      </div>
+                    )}
+                  />
                   {errors.primary_color && <p className="text-sm text-destructive mt-1">{errors.primary_color.message}</p>}
                 </div>
                 <div>
                   <Label htmlFor="secondary_color">Colore Secondario</Label>
-                  <div className="flex items-center gap-2">
-                    <Input type="color" {...register("secondary_color")} className="p-1 h-10 w-14" />
-                    <Input {...register("secondary_color")} placeholder="#64748b" />
-                  </div>
+                  <Controller
+                    name="secondary_color"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="color"
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          className="p-1 h-10 w-14"
+                        />
+                        <Input
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          placeholder="#64748b"
+                        />
+                      </div>
+                    )}
+                  />
                   {errors.secondary_color && <p className="text-sm text-destructive mt-1">{errors.secondary_color.message}</p>}
                 </div>
               </CardContent>
