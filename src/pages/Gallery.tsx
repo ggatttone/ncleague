@@ -207,10 +207,10 @@ const GalleryPage = () => {
                   <Card key={item.id} className="overflow-hidden group">
                     <CardContent className="p-0">
                       <div className="aspect-square bg-muted flex items-center justify-center">
-                        {item.mime_type?.startsWith('image/') ? (
-                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
-                        ) : (
+                        {item.mime_type?.startsWith('video/') ? (
                           <video src={publicURL} className="w-full h-full object-contain" controls playsInline />
+                        ) : (
+                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
                         )}
                       </div>
                     </CardContent>
