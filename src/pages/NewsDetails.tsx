@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, User, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { Separator } from "@/components/ui/separator";
+import { LikeButton } from "@/components/LikeButton";
+import { CommentForm } from "@/components/comments/CommentForm";
+import { CommentList } from "@/components/comments/CommentList";
 
 const NewsDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -86,6 +90,18 @@ const NewsDetails = () => {
             {article.content}
           </div>
         </article>
+
+        <Separator className="my-8" />
+
+        <div className="flex items-center gap-4">
+          <LikeButton articleId={article.id} />
+        </div>
+
+        <div id="comments" className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Commenti</h2>
+          <CommentForm articleId={article.id} />
+          <CommentList articleId={article.id} />
+        </div>
       </div>
     </MainLayout>
   );

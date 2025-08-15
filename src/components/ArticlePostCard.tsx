@@ -2,23 +2,26 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Heart, Repeat, Share } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { ArticleWithAuthor } from "@/hooks/use-articles";
-import { formatDateRelative } from "@/lib/utils";
+import { formatDateRelative, getInitials } from "@/lib/utils";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { supabase } from "@/lib/supabase/client";
+import { LikeButton } from "@/components/LikeButton";
 
 interface ArticlePostCardProps {
   article: ArticleWithAuthor;
 }
 
-const getInitials = (firstName?: string, lastName?: string) => {
-  const first = firstName?.[0] || '';
-  const last = lastName?.[0] || '';
-  return `${first}${last}`.toUpperCase() || 'N/A';
-};
-
 export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
   const authorName = `${article.profiles?.first_name || ''} ${article.profiles?.last_name || ''}`.trim() || 'Autore Sconosciuto';
   const relativeDate = formatDateRelative(article.published_at);
+
+  const { data: commentData } = useSupabaseQuery(
+    ['comments', article.id, 'count'],
+    () => supabase.from('comments').select('*', { count: 'exact', head: true }).eq('article_id', article.id)
+  );
+  const commentCount = commentData?.count || 0;
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden border-x-0 border-t-0 rounded-none last:border-b-0">
@@ -54,22 +57,14 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
               </Link>
             )}
 
-            <div className="flex items-center justify-between mt-4 text-muted-foreground">
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:text-blue-500">
-                <MessageCircle className="h-5 w-5" />
-                <span className="text-xs">12</span>
+            <div className="flex items-center justify-start gap-4 mt-4 text-muted-foreground">
+              <Button asChild variant="ghost" size="sm" className="flex items-center gap-2 hover:text-blue-500">
+                <Link to={`/news/${article.slug}#comments`}>
+                  <MessageCircle className="h-5 w-5" />
+                  <span className="text-xs">{commentCount}</span>
+                </Link>
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:text-green-500">
-                <Repeat className="h-5 w-5" />
-                <span className="text-xs">5</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:text-red-500">
-                <Heart className="h-5 w-5" />
-                <span className="text-xs">34</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="hover:text-blue-500">
-                <Share className="h-5 w-5" />
-              </Button>
+              <LikeButton articleId={article.id} />
             </div>
           </div>
         </div>
