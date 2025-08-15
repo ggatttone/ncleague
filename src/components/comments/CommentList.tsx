@@ -4,22 +4,15 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { formatDateRelative, getInitials } from '@/lib/utils';
-import { useQueryClient } from '@tanstack/react-query';
 
 const CommentItem = ({ comment }: { comment: CommentWithAuthor }) => {
   const { user, hasPermission } = useAuth();
-  const queryClient = useQueryClient();
   const deleteCommentMutation = useDeleteComment();
   const author = comment.profiles;
   const canDelete = user?.id === comment.user_id || hasPermission(['admin']);
 
   const handleDelete = () => {
-    deleteCommentMutation.mutate(comment.id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['comments', comment.article_id] });
-        queryClient.invalidateQueries({ queryKey: ['comments', comment.article_id, 'count'] });
-      }
-    });
+    deleteCommentMutation.mutate({ commentId: comment.id, articleId: comment.article_id });
   };
 
   return (
