@@ -32,6 +32,7 @@ import PlayerDetailsAdmin from "./pages/admin/PlayerDetailsAdmin";
 import FixturesAdmin from "./pages/admin/FixturesAdmin";
 import FixtureFormAdmin from "./pages/admin/FixtureFormAdmin";
 import FixtureDetailsAdmin from "./pages/admin/FixtureDetailsAdmin";
+import FixtureBulkFormAdmin from "./pages/admin/FixtureBulkFormAdmin";
 import UsersAdmin from "./pages/admin/UsersAdmin";
 import VenuesAdmin from "./pages/admin/VenuesAdmin";
 import VenueFormAdmin from "./pages/admin/VenueFormAdmin";
@@ -96,6 +97,7 @@ const App = () => (
                   <Route path="players/:id/edit" element={<PlayerFormAdmin />} />
                   <Route path="fixtures" element={<FixturesAdmin />} />
                   <Route path="fixtures/new" element={<FixtureFormAdmin />} />
+                  <Route path="fixtures/new/bulk" element={<FixtureBulkFormAdmin />} />
                   <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
                   <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
                   <Route path="users" element={<UsersAdmin />} />

@@ -129,12 +129,20 @@ const FixturesAdmin = () => {
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Calendario Partite</h1>
-        <Link
-          to="/admin/fixtures/new"
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition"
-        >
-          Nuova partita
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/admin/fixtures/new/bulk">
+            <Button variant="outline">
+              <Plus className="mr-2 h-4 w-4" />
+              Inserimento Multiplo
+            </Button>
+          </Link>
+          <Link to="/admin/fixtures/new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Nuova partita
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6">
