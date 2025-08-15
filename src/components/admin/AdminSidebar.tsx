@@ -16,6 +16,7 @@ const adminLinks = [
   { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
   { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
   { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
+  { to: "/admin/theme", label: "Aspetto", roles: ['admin'] },
 ];
 
 /**

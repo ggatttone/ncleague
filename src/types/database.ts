@@ -159,3 +159,13 @@ export interface GalleryItem {
   created_at: string;
   profiles?: { first_name: string | null; last_name: string | null; };
 }
+
+export interface Theme {
+  id: number;
+  primary_color: string;
+  secondary_color: string;
+  font_family: string;
+  logo_url: string | null;
+  created_at: string;
+  updated_at: string;
+}

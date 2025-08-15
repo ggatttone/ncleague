@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export const HeroSection = () => {
   return (
-    <div className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20 px-4 rounded-lg shadow-lg mb-12">
+    <div className="w-full bg-brand-primary text-primary-foreground py-20 px-4 rounded-lg shadow-lg mb-12">
       <div className="container mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
           Benvenuti su NC League
