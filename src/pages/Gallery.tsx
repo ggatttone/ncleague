@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
@@ -85,57 +85,57 @@ const GalleryPage = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Galleria</h1>
           {user && (
-            <Dialog open={isUploadOpen} onOpenChange={setUploadOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Carica Media
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Carica un nuovo media</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
-                  <div>
-                    <Label htmlFor="file">File *</Label>
-                    <Input id="file" type="file" {...register("file")} accept="image/*,video/*" />
-                    {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="title">Titolo *</Label>
-                    <Input id="title" {...register("title")} />
-                    {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Descrizione</Label>
-                    <Textarea id="description" {...register("description")} />
-                  </div>
-                  <div>
-                    <Label htmlFor="album_id">Album (opzionale)</Label>
-                    <Controller
-                      name="album_id"
-                      control={control}
-                      render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""}>
-                          <SelectTrigger><SelectValue placeholder="Nessun album" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="">Nessun album</SelectItem>
-                            {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Carica
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button onClick={() => setUploadOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Carica Media
+              </Button>
+              <Dialog open={isUploadOpen} onOpenChange={setUploadOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Carica un nuovo media</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
+                    <div>
+                      <Label htmlFor="file">File *</Label>
+                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*" />
+                      {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="title">Titolo *</Label>
+                      <Input id="title" {...register("title")} />
+                      {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="description">Descrizione</Label>
+                      <Textarea id="description" {...register("description")} />
+                    </div>
+                    <div>
+                      <Label htmlFor="album_id">Album (opzionale)</Label>
+                      <Controller
+                        name="album_id"
+                        control={control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger><SelectValue placeholder="Nessun album" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">Nessun album</SelectItem>
+                              {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                    <div className="flex justify-end">
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Carica
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </>
           )}
         </div>
 
