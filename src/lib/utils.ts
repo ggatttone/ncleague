@@ -26,18 +26,19 @@ export function getInitials(firstName?: string, lastName?: string) {
 };
 
 /**
- * Converts an Excel serial number date to a JavaScript Date object.
+ * Converts an Excel serial number date (which includes time in the decimal part)
+ * to a JavaScript Date object.
  * @param serial The Excel serial number.
  * @returns A JavaScript Date object.
  */
 export function excelSerialDateToJSDate(serial: number): Date {
-  // Excel's epoch starts on 1900-01-01, which it incorrectly treats as a leap year.
-  // JavaScript's epoch is 1970-01-01.
-  // The difference is 25569 days (70 years + 17 leap days + 1 for the 1900 bug).
-  const utc_days = Math.floor(serial - 25569);
-  const date = new Date(utc_days * 86400 * 1000);
+  // Excel's epoch starts on 1900-01-01. JavaScript's is 1970-01-01.
+  // The difference is 25569 days.
+  // The integer part of the serial is the number of days.
+  // The fractional part is the fraction of a 24-hour day (the time).
+  // We multiply by milliseconds in a day (86400 * 1000).
+  const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+  const jsDate = new Date(excelEpoch.getTime() + serial * 86400 * 1000);
 
-  // Adjust for timezone offset
-  const tz_offset_minutes = date.getTimezoneOffset();
-  return new Date(date.getTime() + tz_offset_minutes * 60 * 1000);
+  return jsDate;
 }
