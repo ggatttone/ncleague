@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/supabase/auth-context";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { DynamicFavicon } from "@/components/theme/DynamicFavicon";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Navbar } from "@/components/Navbar";
 import Login from "./pages/auth/Login";
@@ -56,6 +57,7 @@ const App = () => (
     <AuthProvider>
       <ThemeProvider>
         <TooltipProvider>
+          <DynamicFavicon />
           <Toaster />
           <Sonner />
           <BrowserRouter>
