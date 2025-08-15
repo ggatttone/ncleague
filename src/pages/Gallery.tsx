@@ -12,19 +12,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react/query";
 
 const uploadSchema = z.object({
-  title: z.string().min(1, "Il titolo è obbligatorio"),
-  description: z.string().optional(),
   album_id: z.string().optional().nullable(),
-  file: z.instanceof(FileList).refine(files => files.length > 0, "È richiesto un file."),
+  file: z.instanceof(FileList)
+    .refine(files => files.length > 0, "È richiesto almeno un file.")
+    .refine(files => files.length <= 10, "Puoi caricare un massimo di 10 file alla volta."),
 });
 
 type UploadFormData = z.infer<typeof uploadSchema>;
@@ -42,40 +41,53 @@ const GalleryPage = () => {
   });
 
   const onUploadSubmit = async (data: UploadFormData) => {
-    if (!user) return;
-    const file = data.file[0];
-    const fileExt = file.name.split('.').pop();
-    const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+    if (!user || data.file.length === 0) return;
+
+    const filesToUpload = Array.from(data.file);
 
     try {
-      const { error: uploadError } = await supabase.storage.from('gallery_media').upload(filePath, file);
-      if (uploadError) throw uploadError;
+      // 1. Upload all files to storage in parallel
+      const uploadPromises = filesToUpload.map(file => {
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
+        return supabase.storage.from('gallery_media').upload(filePath, file).then(result => {
+          if (result.error) throw result.error;
+          return { file, filePath };
+        });
+      });
 
-      const { error: dbError } = await supabase.from('gallery_items').insert({
+      const uploadedFiles = await Promise.all(uploadPromises);
+
+      // 2. Prepare records for the database
+      const galleryItemsToInsert = uploadedFiles.map(({ file, filePath }) => ({
         user_id: user.id,
         album_id: data.album_id || null,
         file_path: filePath,
         file_name: file.name,
         mime_type: file.type,
-        title: data.title,
-        description: data.description,
-      });
+        title: file.name, // Use filename as title
+      }));
+
+      // 3. Bulk insert into the database
+      const { error: dbError } = await supabase.from('gallery_items').insert(galleryItemsToInsert);
       if (dbError) throw dbError;
 
+      // 4. Update album cover if needed (with the first image)
       if (data.album_id) {
         const targetAlbum = albums?.find(a => a.id === data.album_id);
-        if (targetAlbum && !targetAlbum.cover_image_path) {
-          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: filePath });
+        const firstImage = uploadedFiles.find(({ file }) => file.type.startsWith('image/'));
+        if (targetAlbum && !targetAlbum.cover_image_path && firstImage) {
+          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.filePath });
         }
       }
 
-      showSuccess("Media caricato con successo!");
+      showSuccess(`${uploadedFiles.length} file caricati con successo!`);
       queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
       queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
       setUploadOpen(false);
     } catch (err: any) {
-      showError(err.message);
+      showError(`Errore durante il caricamento: ${err.message}`);
     }
   };
 
@@ -93,22 +105,16 @@ const GalleryPage = () => {
               <Dialog open={isUploadOpen} onOpenChange={setUploadOpen}>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Carica un nuovo media</DialogTitle>
+                    <DialogTitle>Carica nuovi media</DialogTitle>
+                    <DialogDescription>
+                      Puoi selezionare fino a 10 file (immagini o video) alla volta.
+                    </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
                       <Label htmlFor="file">File *</Label>
-                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*" />
+                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*" multiple />
                       {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
-                    </div>
-                    <div>
-                      <Label htmlFor="title">Titolo *</Label>
-                      <Input id="title" {...register("title")} />
-                      {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Descrizione</Label>
-                      <Textarea id="description" {...register("description")} />
                     </div>
                     <div>
                       <Label htmlFor="album_id">Album (opzionale)</Label>
