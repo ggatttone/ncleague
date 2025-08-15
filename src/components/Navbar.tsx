@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { useThemeContext } from "@/components/theme/ThemeProvider";
 import { Button } from "./ui/button";
 import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
@@ -32,6 +33,7 @@ const navLinks = [
 export const Navbar = () => {
   const location = useLocation();
   const { user, signOut, hasPermission, profile } = useAuth();
+  const { theme } = useThemeContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']);
@@ -93,7 +95,11 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="font-bold text-xl text-primary">
-            NC League
+            {theme?.logo_url ? (
+              <img src={theme.logo_url} alt="Logo" className="h-10 max-w-xs" />
+            ) : (
+              <span>NC League</span>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
