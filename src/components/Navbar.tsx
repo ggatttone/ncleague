@@ -26,6 +26,7 @@ const navLinks = [
   { to: "/news", label: "News" },
   { to: "/players", label: "Players" },
   { to: "/teams", label: "Clubs" },
+  { to: "/gallery", label: "Gallery" },
 ];
 
 export const Navbar = () => {
