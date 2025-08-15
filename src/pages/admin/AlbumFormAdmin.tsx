@@ -67,7 +67,7 @@ const AlbumFormAdmin = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
           {isEdit ? "Modifica album" : "Nuovo album"}
         </h1>
