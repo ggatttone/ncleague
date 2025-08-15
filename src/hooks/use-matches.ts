@@ -53,6 +53,14 @@ export function useCreateMatch() {
     );
 }
 
+export function useCreateMultipleMatches() {
+    return useSupabaseMutation<Match[]>(
+        ['matches'],
+        (data: UpsertMatchData[]) =>
+            supabase.from('matches').insert(data).select()
+    );
+}
+
 export function useUpdateMatch() {
     return useSupabaseMutation<Match>(
         ['matches'],
