@@ -65,7 +65,7 @@ const AlbumDetails = () => {
                       {item.mime_type?.startsWith('image/') ? (
                         <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
                       ) : (
-                        <video src={publicURL} className="w-full h-full object-cover" controls />
+                        <video src={publicURL} className="w-full h-full object-contain" controls playsInline />
                       )}
                     </div>
                   </CardContent>
