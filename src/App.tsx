@@ -19,6 +19,7 @@ import Players from "./pages/Players";
 import PlayerDetails from "./pages/PlayerDetails";
 import Teams from "./pages/Teams";
 import TeamDetails from "./pages/TeamDetails";
+import GalleryPage from "./pages/Gallery";
 import SeasonArchive from "./pages/SeasonArchive";
 import AdminIndex from "./pages/admin/AdminIndex";
 import TeamsAdmin from "./pages/admin/TeamsAdmin";
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/players/:id" element={<PlayerDetails />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/teams/:id" element={<TeamDetails />} />
+            <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/season/:yyyy/:competition/:division" element={<SeasonArchive />} />
             
             {/* Protected routes */}

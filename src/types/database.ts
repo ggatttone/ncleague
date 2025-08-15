@@ -136,3 +136,15 @@ export interface Comment {
   content: string;
   created_at: string;
 }
+
+export interface GalleryItem {
+  id: string;
+  user_id: string;
+  file_path: string;
+  file_name: string;
+  mime_type: string;
+  title?: string;
+  description?: string;
+  created_at: string;
+  profiles?: { first_name: string | null; last_name: string | null; };
+}
