@@ -23,7 +23,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const uploadSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
   description: z.string().optional(),
-  album_id: z.string().optional(),
+  album_id: z.string().optional().nullable(),
   file: z.instanceof(FileList).refine(files => files.length > 0, "È richiesto un file."),
 });
 
@@ -116,10 +116,13 @@ const GalleryPage = () => {
                         name="album_id"
                         control={control}
                         render={({ field }) => (
-                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                          <Select
+                            onValueChange={(value) => field.onChange(value === "no-album" ? null : value)}
+                            value={field.value || "no-album"}
+                          >
                             <SelectTrigger><SelectValue placeholder="Nessun album" /></SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Nessun album</SelectItem>
+                              <SelectItem value="no-album">Nessun album</SelectItem>
                               {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
                             </SelectContent>
                           </Select>
