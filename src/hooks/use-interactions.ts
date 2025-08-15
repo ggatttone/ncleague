@@ -98,15 +98,13 @@ export function useDeleteComment() {
   const queryClient = useQueryClient();
   return useSupabaseMutation(
     ['comments'],
-    (commentId: string) => supabase.from('comments').delete().eq('id', commentId),
+    ({ commentId }: { commentId: string; articleId: string }) =>
+      supabase.from('comments').delete().eq('id', commentId),
     {
-      onSuccess: (data) => {
-        // Invalidate after deletion
-        if (data && (data as any).article_id) {
-            queryClient.invalidateQueries({ queryKey: ['comments', (data as any).article_id] });
-            queryClient.invalidateQueries({ queryKey: ['comments', (data as any).article_id, 'count'] });
-        }
-      }
+      onSuccess: (_data, variables) => {
+        queryClient.invalidateQueries({ queryKey: ['comments', variables.articleId] });
+        queryClient.invalidateQueries({ queryKey: ['comments', variables.articleId, 'count'] });
+      },
     }
   );
 }

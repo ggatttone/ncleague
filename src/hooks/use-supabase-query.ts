@@ -26,16 +26,16 @@ export function useSupabaseQuery<T>(
   });
 }
 
-export function useSupabaseMutation<T>(
+export function useSupabaseMutation<T, V = any>(
   key: string[],
-  mutation: (variables: any) => Promise<{ data: T | null; error: PostgrestError | null }>,
-  options: { onSuccess?: (data: T | null) => void, [key: string]: any } = {}
+  mutation: (variables: V) => Promise<{ data: T | null; error: PostgrestError | null }>,
+  options: { onSuccess?: (data: T | null, variables: V) => void, [key: string]: any } = {}
 ) {
   const queryClient = useQueryClient();
   const { onSuccess: customOnSuccess, ...restOptions } = options;
 
-  return useMutation({
-    mutationFn: async (variables: any) => {
+  return useMutation<T | null, Error, V>({
+    mutationFn: async (variables: V) => {
       const { data, error } = await mutation(variables);
       if (error) {
         showError(error.message);
@@ -43,7 +43,7 @@ export function useSupabaseMutation<T>(
       }
       return data;
     },
-    onSuccess: (data: T | null) => {
+    onSuccess: (data: T | null, variables: V) => {
       queryClient.invalidateQueries({ queryKey: key });
 
       if (data && (data as any).id && key.length > 0 && typeof key[0] === 'string' && key[0].endsWith('s')) {
@@ -52,7 +52,7 @@ export function useSupabaseMutation<T>(
       }
       
       if (customOnSuccess) {
-        customOnSuccess(data);
+        customOnSuccess(data, variables);
       }
     },
     ...restOptions,
