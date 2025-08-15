@@ -20,6 +20,7 @@ import PlayerDetails from "./pages/PlayerDetails";
 import Teams from "./pages/Teams";
 import TeamDetails from "./pages/TeamDetails";
 import GalleryPage from "./pages/Gallery";
+import AlbumDetails from "./pages/AlbumDetails";
 import SeasonArchive from "./pages/SeasonArchive";
 import AdminIndex from "./pages/admin/AdminIndex";
 import TeamsAdmin from "./pages/admin/TeamsAdmin";
@@ -40,6 +41,8 @@ import SeasonsAdmin from "./pages/admin/SeasonsAdmin";
 import SeasonFormAdmin from "./pages/admin/SeasonFormAdmin";
 import ArticlesAdmin from "./pages/admin/ArticlesAdmin";
 import ArticleFormAdmin from "./pages/admin/ArticleFormAdmin";
+import AlbumsAdmin from "./pages/admin/AlbumsAdmin";
+import AlbumFormAdmin from "./pages/admin/AlbumFormAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -68,6 +71,7 @@ const App = () => (
             <Route path="/teams" element={<Teams />} />
             <Route path="/teams/:id" element={<TeamDetails />} />
             <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/gallery/albums/:id" element={<AlbumDetails />} />
             <Route path="/season/:yyyy/:competition/:division" element={<SeasonArchive />} />
             
             {/* Protected routes */}
@@ -107,6 +111,9 @@ const App = () => (
                   <Route path="articles" element={<ArticlesAdmin />} />
                   <Route path="articles/new" element={<ArticleFormAdmin />} />
                   <Route path="articles/:id/edit" element={<ArticleFormAdmin />} />
+                  <Route path="albums" element={<AlbumsAdmin />} />
+                  <Route path="albums/new" element={<AlbumFormAdmin />} />
+                  <Route path="albums/:id/edit" element={<AlbumFormAdmin />} />
                   <Route path="*" element={<NotFoundAdmin />} />
                 </Routes>
               </RequireAuth>

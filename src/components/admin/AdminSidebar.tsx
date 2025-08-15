@@ -12,6 +12,7 @@ const adminLinks = [
   { to: "/admin/venues", label: "Campi", roles: ['admin', 'editor'] },
   { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
   { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
+  { to: "/admin/albums", label: "Album Galleria", roles: ['admin', 'editor'] },
   { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
   { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
   { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
