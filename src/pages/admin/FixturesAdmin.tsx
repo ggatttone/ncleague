@@ -5,7 +5,7 @@ import { useMatches, useDeleteMatch } from "@/hooks/use-matches";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Loader2, Plus, Edit, Trash2, Upload } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -130,6 +130,12 @@ const FixturesAdmin = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Calendario Partite</h1>
         <div className="flex items-center gap-2">
+          <Link to="/admin/fixtures/import">
+            <Button variant="outline">
+              <Upload className="mr-2 h-4 w-4" />
+              Importa da File
+            </Button>
+          </Link>
           <Link to="/admin/fixtures/new/bulk">
             <Button variant="outline">
               <Plus className="mr-2 h-4 w-4" />
