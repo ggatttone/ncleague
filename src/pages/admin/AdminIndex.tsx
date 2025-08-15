@@ -104,7 +104,9 @@ const AdminIndex = () => {
                 <Link to="/admin/fixtures/new">
                   <Button className="w-full">Nuova Partita</Button>
                 </Link>
-                <Button className="w-full" disabled>Nuovo Articolo</Button>
+                <Link to="/admin/articles/new">
+                  <Button className="w-full">Nuovo Articolo</Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
