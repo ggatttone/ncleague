@@ -16,9 +16,21 @@ export function useGalleryItems() {
   );
 }
 
+export function useGalleryItemsByAlbum(albumId: string | undefined) {
+  return useSupabaseQuery<GalleryItemWithAuthor[]>(
+    ['gallery-items', { albumId }],
+    () => supabase
+      .from('gallery_items')
+      .select('*, profiles(first_name, last_name)')
+      .eq('album_id', albumId)
+      .order('created_at', { ascending: false }),
+    { enabled: !!albumId }
+  );
+}
+
 export function useDeleteGalleryItem() {
   return useSupabaseMutation(
-    ['gallery-items'],
+    ['gallery-items', 'albums'],
     async (item: GalleryItem) => {
       // 1. Delete from storage
       const { error: storageError } = await supabase.storage

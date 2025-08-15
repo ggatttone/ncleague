@@ -1,37 +1,40 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/MainLayout";
-import { useGalleryItems, useDeleteGalleryItem } from "@/hooks/use-gallery";
+import { useAlbums, useUpdateAlbum } from "@/hooks/use-albums";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
 import { useQueryClient } from "@tanstack/react-query";
 
 const uploadSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
   description: z.string().optional(),
+  album_id: z.string().optional(),
   file: z.instanceof(FileList).refine(files => files.length > 0, "È richiesto un file."),
 });
 
 type UploadFormData = z.infer<typeof uploadSchema>;
 
 const GalleryPage = () => {
-  const { user, hasPermission } = useAuth();
-  const { data: items, isLoading, error } = useGalleryItems();
-  const deleteItemMutation = useDeleteGalleryItem();
+  const { user } = useAuth();
+  const { data: albums, isLoading, error } = useAlbums();
+  const updateAlbumMutation = useUpdateAlbum();
   const [isUploadOpen, setUploadOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<UploadFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, control } = useForm<UploadFormData>({
     resolver: zodResolver(uploadSchema),
   });
 
@@ -42,13 +45,12 @@ const GalleryPage = () => {
     const filePath = `${user.id}/${Date.now()}.${fileExt}`;
 
     try {
-      const { error: uploadError } = await supabase.storage
-        .from('gallery_media')
-        .upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('gallery_media').upload(filePath, file);
       if (uploadError) throw uploadError;
 
       const { error: dbError } = await supabase.from('gallery_items').insert({
         user_id: user.id,
+        album_id: data.album_id || null,
         file_path: filePath,
         file_name: file.name,
         mime_type: file.type,
@@ -57,17 +59,22 @@ const GalleryPage = () => {
       });
       if (dbError) throw dbError;
 
+      // If item was added to an album, check if we need to set its cover
+      if (data.album_id) {
+        const targetAlbum = albums?.find(a => a.id === data.album_id);
+        if (targetAlbum && !targetAlbum.cover_image_path) {
+          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: filePath });
+        }
+      }
+
       showSuccess("Immagine caricata con successo!");
       queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
+      queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
       setUploadOpen(false);
     } catch (err: any) {
       showError(err.message);
     }
-  };
-
-  const handleDelete = (item: any) => {
-    deleteItemMutation.mutate(item);
   };
 
   return (
@@ -80,7 +87,7 @@ const GalleryPage = () => {
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  Carica Immagine
+                  Carica Media
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -88,6 +95,11 @@ const GalleryPage = () => {
                   <DialogTitle>Carica un nuovo media</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
+                  <div>
+                    <Label htmlFor="file">File *</Label>
+                    <Input id="file" type="file" {...register("file")} accept="image/*,video/*" />
+                    {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
+                  </div>
                   <div>
                     <Label htmlFor="title">Titolo *</Label>
                     <Input id="title" {...register("title")} />
@@ -98,9 +110,20 @@ const GalleryPage = () => {
                     <Textarea id="description" {...register("description")} />
                   </div>
                   <div>
-                    <Label htmlFor="file">File *</Label>
-                    <Input id="file" type="file" {...register("file")} accept="image/*,video/*" />
-                    {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
+                    <Label htmlFor="album_id">Album (opzionale)</Label>
+                    <Controller
+                      name="album_id"
+                      control={control}
+                      render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger><SelectValue placeholder="Nessun album" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Nessun album</SelectItem>
+                            {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
                   </div>
                   <div className="flex justify-end">
                     <Button type="submit" disabled={isSubmitting}>
@@ -115,50 +138,37 @@ const GalleryPage = () => {
         </div>
 
         {isLoading && <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-        {error && <p className="text-center text-destructive">Errore nel caricamento della galleria.</p>}
+        {error && <p className="text-center text-destructive">Errore nel caricamento degli album.</p>}
         
-        {!isLoading && items && items.length === 0 && (
+        {!isLoading && albums && albums.length === 0 && (
           <div className="text-center py-20">
             <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold">La galleria è vuota.</h2>
-            <p className="text-muted-foreground mt-2">Carica la prima immagine per iniziare.</p>
+            <h2 className="text-xl font-semibold">Nessun album creato.</h2>
+            <p className="text-muted-foreground mt-2">Crea il primo album per iniziare a organizzare la galleria.</p>
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {items?.map(item => {
-            const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
-            const canDelete = user?.id === item.user_id || hasPermission(['admin']);
+          {albums?.map(album => {
+            const publicURL = album.cover_image_path ? supabase.storage.from('gallery_media').getPublicUrl(album.cover_image_path).data.publicUrl : null;
             return (
-              <Card key={item.id} className="overflow-hidden group">
-                <CardHeader className="p-0">
-                  <div className="aspect-square bg-muted flex items-center justify-center">
-                    {item.mime_type?.startsWith('image/') ? (
-                      <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
-                    ) : (
-                      <video src={publicURL} className="w-full h-full object-cover" controls />
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-base font-semibold truncate">{item.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground truncate">{item.description}</p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  {canDelete && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="w-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleDelete(item)}
-                      disabled={deleteItemMutation.isPending}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Elimina
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
+              <Link to={`/gallery/albums/${album.id}`} key={album.id}>
+                <Card className="overflow-hidden group hover:shadow-lg transition-shadow">
+                  <CardHeader className="p-0">
+                    <div className="aspect-video bg-muted flex items-center justify-center">
+                      {publicURL ? (
+                        <img src={publicURL} alt={album.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Folder className="h-12 w-12 text-muted-foreground" />
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <CardTitle className="text-base font-semibold truncate">{album.name}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{album.item_count} elementi</p>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>

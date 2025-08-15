@@ -137,9 +137,20 @@ export interface Comment {
   created_at: string;
 }
 
+export interface Album {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  cover_image_path?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface GalleryItem {
   id: string;
   user_id: string;
+  album_id?: string;
   file_path: string;
   file_name: string;
   mime_type: string;
