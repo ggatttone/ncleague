@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
-import { useQueryClient } from "@tanstack/react/query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const uploadSchema = z.object({
   album_id: z.string().optional().nullable(),
