@@ -17,3 +17,10 @@ export function formatDateRelative(dateString: string | null | undefined): strin
     return '';
   }
 }
+
+export function getInitials(firstName?: string, lastName?: string) {
+  const first = firstName?.[0] || '';
+  const last = lastName?.[0] || '';
+  const initials = `${first}${last}`.toUpperCase();
+  return initials || 'N/A';
+};

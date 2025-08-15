@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
-import { showError, showSuccess } from '@/utils/toast';
+import { showError } from '@/utils/toast';
 
 export function useSupabaseQuery<T>(
   key: any[],
@@ -51,8 +51,6 @@ export function useSupabaseMutation<T>(
         queryClient.invalidateQueries({ queryKey: singleItemQueryKey });
       }
       
-      showSuccess('Operazione completata con successo');
-
       if (customOnSuccess) {
         customOnSuccess(data);
       }
