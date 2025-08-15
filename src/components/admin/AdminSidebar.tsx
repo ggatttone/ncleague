@@ -1,8 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Shield } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 
 const adminLinks = [
@@ -19,65 +17,44 @@ const adminLinks = [
   { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
 ];
 
-export const AdminSidebar = () => {
+/**
+ * This component renders the content of the admin sidebar.
+ * The responsive layout logic (static on desktop, sheet on mobile) is handled in AdminLayout.
+ */
+export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const location = useLocation();
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
   const { hasPermission } = useAuth();
 
-  const sidebarContent = (
-    <aside className={cn(
-      "bg-sidebar px-4 py-8 border-r border-sidebar-border",
-      isMobile ? "w-full" : "w-56 min-h-screen"
-    )}>
-      <div className="font-bold text-lg mb-8 text-sidebar-primary">Admin NC League</div>
-      <ul className="space-y-2">
-        {adminLinks.map((link) => (
-          hasPermission(link.roles as any) && (
-            <li key={link.to}>
-              <Link
-                to={link.to}
-                className={cn(
-                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  location.pathname.startsWith(link.to)
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-                onClick={() => isMobile && setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            </li>
-          )
-        ))}
-      </ul>
-    </aside>
+  return (
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b border-sidebar-border">
+        <Link to="/admin" className="flex items-center gap-2" onClick={onLinkClick}>
+          <Shield className="h-6 w-6 text-sidebar-primary" />
+          <span className="font-bold text-lg text-sidebar-primary">Admin NC League</span>
+        </Link>
+      </div>
+      <nav className="flex-1 px-4 py-4">
+        <ul className="space-y-2">
+          {adminLinks.map((link) => (
+            hasPermission(link.roles as any) && (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className={cn(
+                    "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    location.pathname.startsWith(link.to)
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                  onClick={onLinkClick}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            )
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
-
-  if (isMobile) {
-    return (
-      <>
-        <button
-          className="fixed top-20 left-4 z-50 p-2 bg-primary text-primary-foreground rounded-md shadow-lg"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-        
-        {isOpen && (
-          <div className="fixed inset-0 z-40">
-            <div 
-              className="absolute inset-0 bg-black/50" 
-              onClick={() => setIsOpen(false)}
-            />
-            <div className="absolute left-0 top-0 h-full w-64">
-              {sidebarContent}
-            </div>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  return sidebarContent;
 };
