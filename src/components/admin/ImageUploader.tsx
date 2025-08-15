@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Loader2 } from 'lucide-react';
-import { showError } from '@/utils/toast';
+import { showError, showLoading, dismissToast } from '@/utils/toast';
+import heic2any from 'heic2any';
 
 interface ImageUploaderProps {
   bucketName: string;
@@ -17,17 +18,32 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    let conversionToastId: string | undefined;
     try {
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('Devi selezionare un file da caricare.');
       }
 
-      const file = event.target.files[0];
+      let file = event.target.files[0];
+      const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+
+      setUploading(true);
+
+      if (isHeic) {
+        conversionToastId = showLoading('Conversione immagine HEIC in corso...');
+        const convertedBlob = await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.8,
+        });
+        const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
+        file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
+        if (conversionToastId) dismissToast(conversionToastId);
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
-
-      setUploading(true);
 
       const { error: uploadError } = await supabase.storage
         .from(bucketName)
@@ -50,6 +66,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       onUploadSuccess(publicUrl);
 
     } catch (error: any) {
+      if (conversionToastId) dismissToast(conversionToastId);
       showError(error.message);
     } finally {
       setUploading(false);
