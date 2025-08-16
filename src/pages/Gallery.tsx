@@ -67,7 +67,7 @@ const GalleryPage = () => {
               blob: file,
               toType: 'image/jpeg',
               quality: 0.8,
-              heif_base_path: 'https://unpkg.com/libheif-wasm@1.0.0/',
+              heif_base_path: '/libheif/',
             });
             const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
             return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
