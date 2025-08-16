@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Loader2 } from 'lucide-react';
 import { showError, showLoading, dismissToast } from '@/utils/toast';
-import heic2any from 'heic2any';
 
 interface ImageUploaderProps {
   bucketName: string;
@@ -24,61 +23,34 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
         throw new Error('Devi selezionare un file da caricare.');
       }
 
-      let file = event.target.files[0];
-      const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-
+      const file = event.target.files[0];
+      
       setUploading(true);
-      uploadToastId = showLoading('Caricamento in corso...');
-
-      if (isHeic) {
-        dismissToast(uploadToastId);
-        uploadToastId = showLoading('Conversione immagine HEIC in corso...');
-        try {
-          const convertedBlob = await heic2any({
-            blob: file,
-            toType: 'image/jpeg',
-            quality: 0.8,
-          });
-          const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
-          file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
-        } catch (heicError) {
-          console.error("HEIC Conversion Error:", heicError);
-          dismissToast(uploadToastId);
-          showError('Impossibile convertire il file HEIC. Prova a convertirlo manualmente in JPEG e ricaricalo.');
-          setUploading(false);
-          return;
-        }
-      }
-
-      dismissToast(uploadToastId);
       uploadToastId = showLoading(`Caricamento di ${file.name}...`);
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bucketName', bucketName);
 
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-          contentType: file.type,
-        });
+      const { data, error } = await supabase.functions.invoke('convert-and-upload-image', {
+        body: formData,
+      });
 
-      if (uploadError) {
-        throw uploadError;
+      if (error) {
+        const errorMessage = error.context?.error?.message || error.message;
+        throw new Error(errorMessage);
       }
 
-      const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(filePath);
-      
+      const { publicUrl } = data;
+
       if (!publicUrl) {
-        throw new Error("Impossibile ottenere l'URL pubblico dell'immagine.");
+        throw new Error("Impossibile ottenere l'URL pubblico dell'immagine dopo la conversione.");
       }
 
       onUploadSuccess(publicUrl);
 
     } catch (error: any) {
-      showError(error.message);
+      showError(`Errore: ${error.message}`);
     } finally {
       if (uploadToastId) dismissToast(uploadToastId as string);
       setUploading(false);
