@@ -1,9 +1,9 @@
 import { usePublishedArticles } from "@/hooks/use-articles";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { NewsItem } from "@/components/NewsItem";
+import { ArticlePostCard } from "@/components/ArticlePostCard";
 
 export const LatestNews = () => {
   const { data: articles, isLoading } = usePublishedArticles();
@@ -23,18 +23,18 @@ export const LatestNews = () => {
             <p>Nessuna notizia pubblicata.</p>
           </div>
         ) : (
-          <div>
-            {articles.slice(0, 2).map(article => (
-              <NewsItem key={article.id} article={article} />
+          <div className="border-t">
+            {articles.slice(0, 3).map(article => (
+              <ArticlePostCard key={article.id} article={article} />
             ))}
           </div>
         )}
       </CardContent>
-      <div className="p-6 pt-2 text-center">
+      <CardFooter className="pt-4 justify-center">
         <Button asChild variant="outline" size="sm">
           <Link to="/news">Leggi tutte le notizie</Link>
         </Button>
-      </div>
+      </CardFooter>
     </Card>
   );
 };
