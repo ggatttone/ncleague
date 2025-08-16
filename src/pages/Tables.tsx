@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { useLeagueTable } from "@/hooks/use-league-table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -16,6 +16,19 @@ const Tables = () => {
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
   const { data: tableData, isLoading: tableLoading, error: tableError } = useLeagueTable(selectedCompetition, selectedSeason);
+
+  useEffect(() => {
+    // Auto-select competition if there's only one and none is selected yet
+    if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
+      setSelectedCompetition(competitions[0].id);
+    }
+
+    // Auto-select the most recent season if none is selected yet
+    // The useSeasons hook already sorts them by date descending
+    if (!seasonsLoading && seasons?.length > 0 && !selectedSeason) {
+      setSelectedSeason(seasons[0].id);
+    }
+  }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
 
   const columns = [
     { key: "position", label: "Pos" },
