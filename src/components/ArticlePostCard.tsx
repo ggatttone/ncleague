@@ -51,7 +51,7 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
                 <img
                   src={article.cover_image_url}
                   alt={article.title}
-                  className="w-full h-auto object-cover rounded-lg border"
+                  className="w-full h-auto max-h-80 object-cover rounded-lg border"
                 />
               </Link>
             )}
