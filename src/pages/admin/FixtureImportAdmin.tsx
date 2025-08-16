@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useTeams } from "@/hooks/use-teams";
 import { useVenues } from "@/hooks/use-venues";
 import { useCreateMultipleMatches } from "@/hooks/use-matches";
-import { read, utils, WorkBook } from "xlsx";
+import * as XLSX from "xlsx";
 import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { showError, showSuccess } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
@@ -67,10 +67,10 @@ const FixtureImportAdmin = () => {
     reader.onload = (event) => {
       try {
         const data = event.target?.result;
-        const workbook: WorkBook = read(data, { type: 'binary' });
+        const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = utils.sheet_to_json(worksheet, { raw: false });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
         if (jsonData.length === 0) {
           showError("Il file è vuoto o non contiene dati validi.");
