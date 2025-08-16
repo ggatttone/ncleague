@@ -43,14 +43,11 @@ const GalleryPage = () => {
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    const uploadToastId = showLoading(`Preparazione di ${data.file.length} file...`);
+    const uploadToastId = showLoading(`Caricamento di ${data.file.length} file...`);
     
     try {
       const filesToUpload = Array.from(data.file);
       
-      dismissToast(uploadToastId);
-      showLoading(`Caricamento di ${filesToUpload.length} file...`);
-
       const uploadPromises = filesToUpload.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
