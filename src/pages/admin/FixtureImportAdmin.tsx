@@ -25,8 +25,8 @@ const REQUIRED_FIELDS = [
   { id: 'home_team_name', label: 'Squadra Casa' },
   { id: 'away_team_name', label: 'Squadra Ospite' },
   { id: 'match_date', label: 'Data e Ora Partita' },
-  { id: 'home_score', label: 'Punteggio Casa' },
-  { id: 'away_score', label: 'Punteggio Ospite' },
+  { id: 'home_score', label: 'Punteggio Casa (se completata)' },
+  { id: 'away_score', label: 'Punteggio Ospite (se completata)' },
   { id: 'venue_name', label: 'Campo (Opzionale)' },
 ];
 
@@ -70,7 +70,7 @@ const FixtureImportAdmin = () => {
         const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, cellDates: true });
 
         if (jsonData.length === 0) {
           showError("Il file è vuoto o non contiene dati validi.");
@@ -114,22 +114,30 @@ const FixtureImportAdmin = () => {
       }
 
       const dateValue = row[mapping.match_date];
-      const matchDate = new Date(dateValue);
-      if (!matchDate || isNaN(matchDate.getTime())) {
+      const matchDate = dateValue instanceof Date ? dateValue : new Date(dateValue);
+      if (!dateValue || isNaN(matchDate.getTime())) {
         previewRow.isValid = false;
-        previewRow.errors.push(`Data non valida: "${dateValue}"`);
+        previewRow.errors.push(`Data non valida: "${row[mapping.match_date]}"`);
       }
 
-      const homeScore = parseInt(row[mapping.home_score], 10);
-      const awayScore = parseInt(row[mapping.away_score], 10);
-      if (isNaN(homeScore) || isNaN(awayScore)) {
-        previewRow.isValid = false;
-        previewRow.errors.push("Punteggi non validi.");
+      const status = matchDate && matchDate < new Date() ? 'completed' : 'scheduled';
+
+      const homeScoreRaw = row[mapping.home_score];
+      const awayScoreRaw = row[mapping.away_score];
+      const homeScore = parseInt(homeScoreRaw, 10);
+      const awayScore = parseInt(awayScoreRaw, 10);
+
+      if (status === 'completed') {
+        if (homeScoreRaw === undefined || awayScoreRaw === undefined || isNaN(homeScore) || isNaN(awayScore)) {
+          previewRow.isValid = false;
+          previewRow.errors.push("Punteggi obbligatori e numerici per partite completate.");
+        }
       }
 
       let venueId;
-      const venueName = row[mapping.venue_name]?.toString().trim().toLowerCase();
-      if (venueName) {
+      const venueNameRaw = row[mapping.venue_name];
+      if (venueNameRaw) {
+        const venueName = venueNameRaw.toString().trim().toLowerCase();
         venueId = venuesMap.get(venueName);
         if (!venueId) {
           previewRow.isValid = false;
@@ -137,15 +145,13 @@ const FixtureImportAdmin = () => {
         }
       }
 
-      const status = matchDate && matchDate > new Date() ? 'scheduled' : 'completed';
-
       if (previewRow.isValid) {
         previewRow.data = {
           home_team_id: homeTeamId!,
           away_team_id: awayTeamId!,
           match_date: matchDate!.toISOString(),
-          home_score: homeScore,
-          away_score: awayScore,
+          home_score: status === 'completed' ? homeScore : 0,
+          away_score: status === 'completed' ? awayScore : 0,
           venue_id: venueId,
           status: status,
         };
@@ -250,7 +256,7 @@ const FixtureImportAdmin = () => {
                       </TableCell>
                       <TableCell>{row.original[mapping.home_team_name]}</TableCell>
                       <TableCell>{row.original[mapping.away_team_name]}</TableCell>
-                      <TableCell>{new Date(row.data?.match_date || Date.now()).toLocaleString('it-IT')}</TableCell>
+                      <TableCell>{row.data?.match_date ? new Date(row.data.match_date).toLocaleString('it-IT') : 'Data invalida'}</TableCell>
                       <TableCell>{row.original[mapping.home_score]}</TableCell>
                       <TableCell>{row.original[mapping.away_score]}</TableCell>
                       <TableCell>{row.original[mapping.venue_name] || '-'}</TableCell>
