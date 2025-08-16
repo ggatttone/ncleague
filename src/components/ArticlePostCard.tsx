@@ -19,7 +19,7 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
 
   const { data: commentCount } = useSupabaseCountQuery(
     ['comments', article.id, 'count'],
-    () => supabase.from('comments').select('*', { count: 'exact', head: true }).eq('article_id', article.id)
+    async () => supabase.from('comments').select('*', { count: 'exact', head: true }).eq('article_id', article.id)
   );
 
   return (

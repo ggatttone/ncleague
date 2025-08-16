@@ -12,7 +12,7 @@ const Teams = () => {
   const { user } = useAuth();
   const { data: teams, isLoading, error } = useSupabaseQuery<Team[]>(
     ['teams'],
-    () => supabase.from('teams').select('*, venues(*)').order('name')
+    async () => supabase.from('teams').select('*, venues(name)').order('name')
   );
 
   if (isLoading) {

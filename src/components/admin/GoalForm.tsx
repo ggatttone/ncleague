@@ -35,7 +35,7 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
 
   const { data: players, isLoading: playersLoading } = useSupabaseQuery<Player[]>(
     ['players-for-team', selectedTeamId],
-    () => supabase.from('players').select('*').eq('team_id', selectedTeamId),
+    async () => supabase.from('players').select('*').eq('team_id', selectedTeamId),
     { enabled: !!selectedTeamId }
   );
 

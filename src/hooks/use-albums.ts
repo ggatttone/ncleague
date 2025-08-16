@@ -19,14 +19,14 @@ export interface UpdateAlbumData {
 export function useAlbums() {
   return useSupabaseQuery<(Album & { item_count: number })[]>(
     ['albums'],
-    () => supabase.rpc('get_albums_with_item_count')
+    async () => supabase.rpc('get_albums_with_item_count')
   );
 }
 
 export function useAlbum(id: string | undefined) {
   return useSupabaseQuery<Album>(
     ['album', id],
-    () => supabase.from('albums').select('*').eq('id', id).single(),
+    async () => supabase.from('albums').select('*').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -34,7 +34,7 @@ export function useAlbum(id: string | undefined) {
 export function useCreateAlbum() {
   return useSupabaseMutation<Album>(
     ['albums'],
-    (data: UpsertAlbumData) => 
+    async (data: UpsertAlbumData) => 
       supabase.from('albums').insert([data]).select().single()
   );
 }
@@ -42,7 +42,7 @@ export function useCreateAlbum() {
 export function useUpdateAlbum() {
   return useSupabaseMutation<Album>(
     ['albums'],
-    ({ id, ...data }: UpdateAlbumData) => 
+    async ({ id, ...data }: UpdateAlbumData) => 
       supabase.from('albums').update(data).eq('id', id).select().single()
   );
 }
@@ -50,7 +50,7 @@ export function useUpdateAlbum() {
 export function useDeleteAlbum() {
   return useSupabaseMutation<void>(
     ['albums'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('albums').delete().eq('id', id)
   );
 }

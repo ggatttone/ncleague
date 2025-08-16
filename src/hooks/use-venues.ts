@@ -15,14 +15,14 @@ export interface UpdateVenueData extends CreateVenueData {
 export function useVenues() {
   return useSupabaseQuery<Venue[]>(
     ['venues'],
-    () => supabase.from('venues').select('*').order('name')
+    async () => supabase.from('venues').select('*').order('name')
   );
 }
 
 export function useVenue(id: string | undefined) {
   return useSupabaseQuery<Venue>(
     ['venue', id],
-    () => supabase.from('venues').select('*').eq('id', id).single(),
+    async () => supabase.from('venues').select('*').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -30,7 +30,7 @@ export function useVenue(id: string | undefined) {
 export function useCreateVenue() {
   return useSupabaseMutation<Venue>(
     ['venues'],
-    (data: CreateVenueData) => 
+    async (data: CreateVenueData) => 
       supabase.from('venues').insert([data]).select().single()
   );
 }
@@ -38,7 +38,7 @@ export function useCreateVenue() {
 export function useUpdateVenue() {
   return useSupabaseMutation<Venue>(
     ['venues'],
-    ({ id, ...data }: UpdateVenueData) => 
+    async ({ id, ...data }: UpdateVenueData) => 
       supabase.from('venues').update(data).eq('id', id).select().single()
   );
 }
@@ -46,7 +46,7 @@ export function useUpdateVenue() {
 export function useDeleteVenue() {
   return useSupabaseMutation<void>(
     ['venues'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('venues').delete().eq('id', id)
   );
 }

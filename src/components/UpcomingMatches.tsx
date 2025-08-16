@@ -51,13 +51,13 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
 export const UpcomingMatches = () => {
   const { data: matches, isLoading } = useSupabaseQuery<MatchWithTeams[]>(
     ['upcoming-matches'],
-    () => supabase
+    async () => supabase
       .from('matches')
       .select(`
         *,
+        venues(name),
         home_teams:teams!matches_home_team_id_fkey (name, logo_url),
-        away_teams:teams!matches_away_team_id_fkey (name, logo_url),
-        venues(name)
+        away_teams:teams!matches_away_team_id_fkey (name, logo_url)
       `)
       .eq('status', 'scheduled')
       .order('match_date', { ascending: true })

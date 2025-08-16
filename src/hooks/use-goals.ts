@@ -16,7 +16,7 @@ export interface CreateGoalData {
 export function useGoalsForMatch(matchId: string | undefined) {
   return useSupabaseQuery<GoalWithPlayer[]>(
     ['goals', matchId],
-    () => supabase
+    async () => supabase
       .from('goals')
       .select('*, players(*)')
       .eq('match_id', matchId)
@@ -28,7 +28,7 @@ export function useGoalsForMatch(matchId: string | undefined) {
 export function useCreateGoal() {
   return useSupabaseMutation<Goal>(
     ['goals'],
-    (data: CreateGoalData) => 
+    async (data: CreateGoalData) => 
       supabase.from('goals').insert([data]).select().single()
   );
 }
@@ -36,7 +36,7 @@ export function useCreateGoal() {
 export function useDeleteGoal() {
   return useSupabaseMutation<void>(
     ['goals'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('goals').delete().eq('id', id)
   );
 }

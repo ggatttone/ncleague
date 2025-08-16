@@ -21,14 +21,14 @@ export interface UpdatePlayerData extends CreatePlayerData {
 export function usePlayers() {
   return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })[]>(
     ['players'],
-    () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').order('last_name')
+    async () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').order('last_name')
   );
 }
 
 export function usePlayer(id: string | undefined) {
   return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })>(
     ['player', id],
-    () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').eq('id', id).single(),
+    async () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -36,7 +36,7 @@ export function usePlayer(id: string | undefined) {
 export function useCreatePlayer() {
   return useSupabaseMutation<Player>(
     ['players'],
-    (data: CreatePlayerData) => 
+    async (data: CreatePlayerData) => 
       supabase.from('players').insert([data]).select().single()
   );
 }
@@ -44,7 +44,7 @@ export function useCreatePlayer() {
 export function useUpdatePlayer() {
   return useSupabaseMutation<Player>(
     ['players'],
-    ({ id, ...data }: UpdatePlayerData) => 
+    async ({ id, ...data }: UpdatePlayerData) => 
       supabase.from('players').update(data).eq('id', id).select().single()
   );
 }
@@ -52,7 +52,7 @@ export function useUpdatePlayer() {
 export function useDeletePlayer() {
   return useSupabaseMutation<void>(
     ['players'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('players').delete().eq('id', id)
   );
 }

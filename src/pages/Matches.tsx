@@ -20,10 +20,11 @@ const Matches = () => {
   const { user } = useAuth();
   const { data: matches, isLoading, error } = useSupabaseQuery<MatchWithTeams[]>(
     ['matches-with-teams'],
-    () => supabase
+    async () => supabase
       .from('matches')
       .select(`
         *,
+        venues(name),
         home_teams:teams!matches_home_team_id_fkey (
           id,
           name,
@@ -33,8 +34,7 @@ const Matches = () => {
           id,
           name,
           logo_url
-        ),
-        venues(*)
+        )
       `)
       .order('match_date', { ascending: true })
   );

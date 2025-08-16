@@ -17,7 +17,7 @@ const TeamDetailsAdmin = () => {
   
   const { data: players, isLoading: playersLoading } = useSupabaseQuery<Player[]>(
     ['team-players', id],
-    () => supabase.from('players').select('*').eq('team_id', id).order('jersey_number'),
+    async () => supabase.from('players').select('*').eq('team_id', id).order('jersey_number'),
     { enabled: !!id }
   );
 

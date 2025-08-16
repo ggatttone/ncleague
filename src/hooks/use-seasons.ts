@@ -15,14 +15,14 @@ export interface UpdateSeasonData extends CreateSeasonData {
 export function useSeasons() {
   return useSupabaseQuery<Season[]>(
     ['seasons'],
-    () => supabase.from('seasons').select('*').order('start_date', { ascending: false })
+    async () => supabase.from('seasons').select('*').order('start_date', { ascending: false })
   );
 }
 
 export function useSeason(id: string | undefined) {
   return useSupabaseQuery<Season>(
     ['season', id],
-    () => supabase.from('seasons').select('*').eq('id', id).single(),
+    async () => supabase.from('seasons').select('*').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -30,7 +30,7 @@ export function useSeason(id: string | undefined) {
 export function useCreateSeason() {
   return useSupabaseMutation<Season>(
     ['seasons'],
-    (data: CreateSeasonData) => 
+    async (data: CreateSeasonData) => 
       supabase.from('seasons').insert([data]).select().single()
   );
 }
@@ -38,7 +38,7 @@ export function useCreateSeason() {
 export function useUpdateSeason() {
   return useSupabaseMutation<Season>(
     ['seasons'],
-    ({ id, ...data }: UpdateSeasonData) => 
+    async ({ id, ...data }: UpdateSeasonData) => 
       supabase.from('seasons').update(data).eq('id', id).select().single()
   );
 }
@@ -46,7 +46,7 @@ export function useUpdateSeason() {
 export function useDeleteSeason() {
   return useSupabaseMutation<void>(
     ['seasons'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('seasons').delete().eq('id', id)
   );
 }

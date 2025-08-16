@@ -12,12 +12,12 @@ const TeamDetails = () => {
 
   const { data: team, isLoading: teamLoading } = useSupabaseQuery<Team>(
     ['team', id],
-    () => supabase.from('teams').select('*, venues(*)').eq('id', id).single()
+    async () => supabase.from('teams').select('*, venues(name)').eq('id', id).single()
   );
 
   const { data: players, isLoading: playersLoading } = useSupabaseQuery<Player[]>(
     ['team-players', id],
-    () => supabase.from('players').select('*').eq('team_id', id).order('jersey_number')
+    async () => supabase.from('players').select('*').eq('team_id', id).order('jersey_number')
   );
 
   if (teamLoading) {

@@ -15,14 +15,14 @@ export interface UpdateCompetitionData extends CreateCompetitionData {
 export function useCompetitions() {
   return useSupabaseQuery<Competition[]>(
     ['competitions'],
-    () => supabase.from('competitions').select('*').order('level').order('name')
+    async () => supabase.from('competitions').select('*').order('level').order('name')
   );
 }
 
 export function useCompetition(id: string | undefined) {
   return useSupabaseQuery<Competition>(
     ['competition', id],
-    () => supabase.from('competitions').select('*').eq('id', id).single(),
+    async () => supabase.from('competitions').select('*').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -30,7 +30,7 @@ export function useCompetition(id: string | undefined) {
 export function useCreateCompetition() {
   return useSupabaseMutation<Competition>(
     ['competitions'],
-    (data: CreateCompetitionData) => 
+    async (data: CreateCompetitionData) => 
       supabase.from('competitions').insert([data]).select().single()
   );
 }
@@ -38,7 +38,7 @@ export function useCreateCompetition() {
 export function useUpdateCompetition() {
   return useSupabaseMutation<Competition>(
     ['competitions'],
-    ({ id, ...data }: UpdateCompetitionData) => 
+    async ({ id, ...data }: UpdateCompetitionData) => 
       supabase.from('competitions').update(data).eq('id', id).select().single()
   );
 }
@@ -46,7 +46,7 @@ export function useUpdateCompetition() {
 export function useDeleteCompetition() {
   return useSupabaseMutation<void>(
     ['competitions'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('competitions').delete().eq('id', id)
   );
 }

@@ -3,7 +3,6 @@ import { supabase } from '@/lib/supabase/client';
 import { useAuth } from '@/lib/supabase/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { Comment, Like } from '@/types/database';
-import { PostgrestError } from '@supabase/supabase-js';
 
 // Type for comments with author profile
 export type CommentWithAuthor = Comment & {
@@ -15,19 +14,17 @@ export type CommentWithAuthor = Comment & {
 // Hook to get like count and user's like status for an article
 export function useArticleLikes(articleId: string) {
   const { user } = useAuth();
-  type LikesData = { count: number; isLiked: boolean; userLikeId: string | undefined; };
-  return useSupabaseQuery<Like[], PostgrestError, LikesData>(
+  return useSupabaseQuery(
     ['likes', articleId],
-    () => supabase
+    async () => supabase
       .from('likes')
       .select('*', { count: 'exact' })
       .eq('article_id', articleId),
     {
       select: (data) => {
-        if (!data) return { count: 0, isLiked: false, userLikeId: undefined };
-        const userLike = data.find(like => like.user_id === user?.id);
+        const userLike = data?.find(like => like.user_id === user?.id);
         return {
-          count: data.length || 0,
+          count: data?.length || 0,
           isLiked: !!userLike,
           userLikeId: userLike?.id,
         };
@@ -40,9 +37,9 @@ export function useArticleLikes(articleId: string) {
 // Hook to add a like
 export function useAddLike() {
   const queryClient = useQueryClient();
-  return useSupabaseMutation<Like>(
+  return useSupabaseMutation<Like, { article_id: string; user_id: string }>(
     ['likes'],
-    (data: { article_id: string; user_id: string }) =>
+    async (data: { article_id: string; user_id: string }) =>
       supabase.from('likes').insert(data).select().single(),
     {
       onSuccess: (data) => {
@@ -56,9 +53,9 @@ export function useAddLike() {
 
 // Hook to remove a like
 export function useRemoveLike() {
-  return useSupabaseMutation<any>(
+  return useSupabaseMutation<any, string>(
     ['likes'],
-    (likeId: string) => supabase.from('likes').delete().eq('id', likeId)
+    async (likeId: string) => supabase.from('likes').delete().eq('id', likeId)
   );
 }
 
@@ -69,7 +66,7 @@ export function useRemoveLike() {
 export function useArticleComments(articleId: string) {
   return useSupabaseQuery<CommentWithAuthor[]>(
     ['comments', articleId],
-    () => supabase
+    async () => supabase
       .from('comments')
       .select('*, profiles(first_name, last_name, avatar_url)')
       .eq('article_id', articleId)
@@ -81,9 +78,9 @@ export function useArticleComments(articleId: string) {
 // Hook to add a comment
 export function useAddComment() {
   const queryClient = useQueryClient();
-  return useSupabaseMutation<Comment>(
+  return useSupabaseMutation<Comment, { article_id: string; user_id: string; content: string }>(
     ['comments'],
-    (data: { article_id: string; user_id: string; content: string }) =>
+    async (data: { article_id: string; user_id: string; content: string }) =>
       supabase.from('comments').insert(data).select().single(),
     {
       onSuccess: (data) => {
@@ -99,9 +96,9 @@ export function useAddComment() {
 // Hook to delete a comment
 export function useDeleteComment() {
   const queryClient = useQueryClient();
-  return useSupabaseMutation<any>(
+  return useSupabaseMutation<any, { commentId: string; articleId: string }>(
     ['comments'],
-    ({ commentId }: { commentId: string; articleId: string }) =>
+    async ({ commentId }: { commentId: string; articleId: string }) =>
       supabase.from('comments').delete().eq('id', commentId),
     {
       onSuccess: (_data, variables) => {

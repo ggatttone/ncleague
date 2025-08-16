@@ -34,12 +34,12 @@ export interface Team {
   short_name?: string;
   parish?: string;
   venue_id?: string;
-  venues?: Venue | null;
   colors?: string;
   logo_url?: string;
   captain_id?: string;
   created_at: string;
   updated_at: string;
+  venues?: { name: string } | null;
 }
 
 export interface Player {
@@ -77,7 +77,6 @@ export interface Match {
   competition_id?: string;
   season_id?: string;
   venue_id?: string;
-  venues?: Venue | null;
   home_team_id: string;
   away_team_id: string;
   match_date: string;
@@ -86,6 +85,7 @@ export interface Match {
   status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
   created_at: string;
   updated_at: string;
+  venues?: { name: string } | null;
 }
 
 export interface Goal {
