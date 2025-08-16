@@ -13,13 +13,13 @@ export const LeagueTableWidget = () => {
   // Fetch the main competition (assuming level 1 is the main one)
   const { data: competition, isLoading: competitionLoading } = useSupabaseQuery<Competition>(
     ['main-competition'],
-    () => supabase.from('competitions').select('*').order('level').limit(1).single()
+    async () => supabase.from('competitions').select('*').order('level').limit(1).single()
   );
 
   // Fetch the latest season
   const { data: season, isLoading: seasonLoading } = useSupabaseQuery<Season>(
     ['latest-season'],
-    () => supabase.from('seasons').select('*').order('start_date', { ascending: false }).limit(1).single()
+    async () => supabase.from('seasons').select('*').order('start_date', { ascending: false }).limit(1).single()
   );
 
   const { data: tableData, isLoading: tableLoading } = useLeagueTable(competition?.id, season?.id);

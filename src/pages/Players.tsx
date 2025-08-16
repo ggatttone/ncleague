@@ -17,7 +17,7 @@ const Players = () => {
 
   const { data: playersData, isLoading, error } = useSupabaseQuery<(Player & { teams: Team | null })[]>(
     ['players-with-teams'],
-    () => supabase
+    async () => supabase
       .from('players')
       .select(`
         *,

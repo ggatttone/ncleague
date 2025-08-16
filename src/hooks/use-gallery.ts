@@ -9,7 +9,7 @@ export type GalleryItemWithAuthor = GalleryItem & {
 export function useGalleryItems() {
   return useSupabaseQuery<GalleryItemWithAuthor[]>(
     ['gallery-items'],
-    () => supabase
+    async () => supabase
       .from('gallery_items')
       .select('*, profiles(first_name, last_name)')
       .order('created_at', { ascending: false })
@@ -19,7 +19,7 @@ export function useGalleryItems() {
 export function useGalleryItemsByAlbum(albumId: string | undefined) {
   return useSupabaseQuery<GalleryItemWithAuthor[]>(
     ['gallery-items', { albumId }],
-    () => supabase
+    async () => supabase
       .from('gallery_items')
       .select('*, profiles(first_name, last_name)')
       .eq('album_id', albumId)

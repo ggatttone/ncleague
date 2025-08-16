@@ -17,14 +17,14 @@ export interface UpdateTeamData extends CreateTeamData {
 export function useTeams() {
   return useSupabaseQuery<Team[]>(
     ['teams'],
-    () => supabase.from('teams').select('*, venues(*)').order('name')
+    async () => supabase.from('teams').select('*, venues(name)').order('name')
   );
 }
 
 export function useTeam(id: string | undefined) {
   return useSupabaseQuery<Team>(
     ['team', id],
-    () => supabase.from('teams').select('*, venues(*)').eq('id', id).single(),
+    async () => supabase.from('teams').select('*, venues(name)').eq('id', id).single(),
     { enabled: !!id }
   );
 }
@@ -32,7 +32,7 @@ export function useTeam(id: string | undefined) {
 export function useCreateTeam() {
   return useSupabaseMutation<Team>(
     ['teams'],
-    (data: CreateTeamData) => 
+    async (data: CreateTeamData) => 
       supabase.from('teams').insert([data]).select().single()
   );
 }
@@ -40,7 +40,7 @@ export function useCreateTeam() {
 export function useUpdateTeam() {
   return useSupabaseMutation<Team>(
     ['teams'],
-    ({ id, ...data }: UpdateTeamData) => 
+    async ({ id, ...data }: UpdateTeamData) => 
       supabase.from('teams').update(data).eq('id', id).select().single()
   );
 }
@@ -48,7 +48,7 @@ export function useUpdateTeam() {
 export function useDeleteTeam() {
   return useSupabaseMutation<void>(
     ['teams'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('teams').delete().eq('id', id)
   );
 }

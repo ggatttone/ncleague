@@ -1,15 +1,22 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
 import { Link } from "react-router-dom";
 import { Loader2, Users, Shield, Calendar, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+
+interface DashboardStats {
+  teamsCount: number | null;
+  playersCount: number | null;
+  matchesCount: number | null;
+  usersCount: number | null;
+}
 
 const AdminIndex = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['admin-dashboard-stats'],
-    queryFn: async () => {
+  const { data, isLoading } = useSupabaseQuery<DashboardStats>(
+    ['admin-dashboard-stats'],
+    async () => {
       const [
         { count: teamsCount, error: teamsError },
         { count: playersCount, error: playersError },
@@ -27,9 +34,9 @@ const AdminIndex = () => {
       if (matchesError) throw matchesError;
       if (usersError) throw usersError;
 
-      return { teamsCount, playersCount, matchesCount, usersCount };
+      return { data: { teamsCount, playersCount, matchesCount, usersCount }, error: null };
     }
-  });
+  );
 
   const stats = [
     {

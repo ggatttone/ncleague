@@ -5,7 +5,7 @@ import { LeagueTableRow } from '@/types/database';
 export function useLeagueTable(competitionId: string | undefined, seasonId: string | undefined) {
   return useSupabaseQuery<LeagueTableRow[]>(
     ['league-table', competitionId, seasonId],
-    () => {
+    async () => {
       if (!competitionId || !seasonId) return null;
       return supabase.rpc('get_league_table', {
         p_competition_id: competitionId,

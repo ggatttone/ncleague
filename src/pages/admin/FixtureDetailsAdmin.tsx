@@ -42,9 +42,9 @@ const FixtureDetailsAdmin = () => {
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match-admin', id],
-    () => supabase
+    async () => supabase
       .from('matches')
-      .select('*, home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*), venues(*)')
+      .select('*, venues(name), home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*)')
       .eq('id', id)
       .single(),
     { enabled: !!id }

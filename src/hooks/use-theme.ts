@@ -12,7 +12,7 @@ export interface UpdateThemeData {
 export function useTheme() {
   return useSupabaseQuery<Theme>(
     ['theme'],
-    () => supabase.from('themes').select('*').eq('id', 1).single(),
+    async () => supabase.from('themes').select('*').eq('id', 1).single(),
     {
       staleTime: Infinity, // Theme data doesn't change often
     }
@@ -22,7 +22,7 @@ export function useTheme() {
 export function useUpdateTheme() {
   return useSupabaseMutation<Theme, UpdateThemeData>(
     ['theme'],
-    (data) => 
+    async (data) => 
       supabase.from('themes').update(data).eq('id', 1).select().single()
   );
 }

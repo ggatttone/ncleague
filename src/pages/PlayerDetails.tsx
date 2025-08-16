@@ -13,7 +13,7 @@ const PlayerDetails = () => {
 
   const { data: playerData, isLoading: playerLoading } = useSupabaseQuery<Player & { teams: Team | null }>(
     ['player', id],
-    () => supabase
+    async () => supabase
       .from('players')
       .select(`
         *,
@@ -29,7 +29,7 @@ const PlayerDetails = () => {
 
   const { data: goals, isLoading: goalsLoading } = useSupabaseQuery<(Goal & { matches: Match & { home_teams: Team, away_teams: Team } })[]>(
     ['player-goals', id],
-    () => supabase
+    async () => supabase
       .from('goals')
       .select(`
         *,

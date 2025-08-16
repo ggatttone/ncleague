@@ -23,10 +23,11 @@ const MatchDetails = () => {
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match', id],
-    () => supabase
+    async () => supabase
       .from('matches')
       .select(`
         *,
+        venues(name),
         home_teams:teams!matches_home_team_id_fkey (
           id,
           name,
@@ -38,8 +39,7 @@ const MatchDetails = () => {
           name,
           logo_url,
           colors
-        ),
-        venues(*)
+        )
       `)
       .eq('id', id)
       .single()
@@ -47,7 +47,7 @@ const MatchDetails = () => {
 
   const { data: goals, isLoading: goalsLoading } = useSupabaseQuery<GoalWithPlayer[]>(
     ['match-goals', id],
-    () => supabase
+    async () => supabase
       .from('goals')
       .select(`
         *,

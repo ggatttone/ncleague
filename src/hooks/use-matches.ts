@@ -26,13 +26,13 @@ export interface UpdateMatchData extends UpsertMatchData {
 export function useMatches() {
   return useSupabaseQuery<MatchWithTeams[]>(
     ['matches'],
-    () => supabase
+    async () => supabase
       .from('matches')
       .select(`
         *,
+        venues(name),
         home_teams:teams!matches_home_team_id_fkey(*),
-        away_teams:teams!matches_away_team_id_fkey(*),
-        venues(*)
+        away_teams:teams!matches_away_team_id_fkey(*)
       `)
       .order('match_date', { ascending: false })
   );
@@ -41,7 +41,7 @@ export function useMatches() {
 export function useMatch(id: string | undefined) {
     return useSupabaseQuery<Match>(
         ['match', id],
-        () => supabase.from('matches').select('*, venues(*)').eq('id', id).single(),
+        async () => supabase.from('matches').select('*, venues(name)').eq('id', id).single(),
         { enabled: !!id }
     );
 }
@@ -49,7 +49,7 @@ export function useMatch(id: string | undefined) {
 export function useCreateMatch() {
     return useSupabaseMutation<Match>(
         ['matches'],
-        (data: UpsertMatchData) =>
+        async (data: UpsertMatchData) =>
             supabase.from('matches').insert([data]).select().single()
     );
 }
@@ -57,7 +57,7 @@ export function useCreateMatch() {
 export function useCreateMultipleMatches() {
     return useSupabaseMutation<Match[]>(
         ['matches'],
-        (data: UpsertMatchData[]) =>
+        async (data: UpsertMatchData[]) =>
             supabase.from('matches').insert(data).select()
     );
 }
@@ -65,7 +65,7 @@ export function useCreateMultipleMatches() {
 export function useUpdateMatch() {
     return useSupabaseMutation<Match>(
         ['matches'],
-        ({ id, ...data }: UpdateMatchData) =>
+        async ({ id, ...data }: UpdateMatchData) =>
             supabase.from('matches').update(data).eq('id', id).select().single()
     );
 }
@@ -73,7 +73,7 @@ export function useUpdateMatch() {
 export function useDeleteMatch() {
   return useSupabaseMutation<void>(
     ['matches'],
-    (id: string) => 
+    async (id: string) => 
       supabase.from('matches').delete().eq('id', id)
   );
 }
