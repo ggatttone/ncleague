@@ -17,23 +17,27 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const { data: theme, isLoading } = useTheme();
 
   useEffect(() => {
-    if (theme) {
-      const styleId = 'dynamic-theme-styles';
-      let styleElement = document.getElementById(styleId);
-      if (!styleElement) {
-        styleElement = document.createElement('style');
-        styleElement.id = styleId;
-        document.head.appendChild(styleElement);
-      }
+    // Use theme data if available, otherwise provide sensible defaults.
+    const primaryColor = theme?.primary_color || '#09090b';
+    const secondaryColor = theme?.secondary_color || '#64748b';
+    const fontFamily = theme?.font_family || 'Inter';
 
-      const primaryHsl = hexToHsl(theme.primary_color);
-      const secondaryHsl = hexToHsl(theme.secondary_color);
+    const styleId = 'dynamic-theme-styles';
+    let styleElement = document.getElementById(styleId);
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = styleId;
+      document.head.appendChild(styleElement);
+    }
 
-      const themeCss = `
-        @import url('https://fonts.googleapis.com/css2?family=${theme.font_family.replace(/ /g, '+')}:wght@400;500;600;700&display=swap');
+    const primaryHsl = hexToHsl(primaryColor);
+    const secondaryHsl = hexToHsl(secondaryColor);
+
+    const themeCss = `
+        @import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap');
         
         :root {
-          --font-sans: "${theme.font_family}", sans-serif;
+          --font-sans: "${fontFamily}", sans-serif;
 
           --background: 0 0% 100%;
           --foreground: ${secondaryHsl.h} ${secondaryHsl.s}% ${Math.max(0, secondaryHsl.l - 40)}%;
@@ -45,10 +49,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           --popover-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% ${Math.max(0, secondaryHsl.l - 40)}%;
 
           --primary: ${hslToString(primaryHsl)};
-          --primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --primary-foreground: ${getContrastingColor(primaryColor)};
 
           --secondary: ${hslToString(secondaryHsl)};
-          --secondary-foreground: ${getContrastingColor(theme.secondary_color)};
+          --secondary-foreground: ${getContrastingColor(secondaryColor)};
 
           --muted: ${secondaryHsl.h} ${secondaryHsl.s}% 96.1%;
           --muted-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 40%;
@@ -69,7 +73,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           --sidebar-background: 240 4.8% 98.9%;
           --sidebar-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% ${Math.max(0, secondaryHsl.l - 40)}%;
           --sidebar-primary: ${hslToString(primaryHsl)};
-          --sidebar-primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --sidebar-primary-foreground: ${getContrastingColor(primaryColor)};
           --sidebar-accent: ${secondaryHsl.h} ${secondaryHsl.s}% 94%;
           --sidebar-accent-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 10%;
           --sidebar-border: ${secondaryHsl.h} ${secondaryHsl.s}% 91.4%;
@@ -87,10 +91,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           --popover-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
 
           --primary: ${hslToString(primaryHsl)};
-          --primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --primary-foreground: ${getContrastingColor(primaryColor)};
 
           --secondary: ${hslToString(secondaryHsl)};
-          --secondary-foreground: ${getContrastingColor(theme.secondary_color)};
+          --secondary-foreground: ${getContrastingColor(secondaryColor)};
 
           --muted: ${secondaryHsl.h} ${secondaryHsl.s}% 15%;
           --muted-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 65%;
@@ -109,7 +113,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
           --sidebar-background: ${secondaryHsl.h} ${secondaryHsl.s}% 8%;
           --sidebar-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
           --sidebar-primary: ${hslToString(primaryHsl)};
-          --sidebar-primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --sidebar-primary-foreground: ${getContrastingColor(primaryColor)};
           --sidebar-accent: ${secondaryHsl.h} ${secondaryHsl.s}% 15%;
           --sidebar-accent-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
           --sidebar-border: ${secondaryHsl.h} ${secondaryHsl.s}% 18%;
@@ -117,8 +121,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         }
       `;
 
-      styleElement.innerHTML = themeCss;
-    }
+    styleElement.innerHTML = themeCss;
   }, [theme]);
 
   return (

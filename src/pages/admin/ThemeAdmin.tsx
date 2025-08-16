@@ -45,7 +45,12 @@ const ThemeAdmin = () => {
 
   useEffect(() => {
     if (theme) {
-      reset(theme);
+      reset({
+        ...theme,
+        primary_color: theme.primary_color || '#09090b',
+        secondary_color: theme.secondary_color || '#64748b',
+        font_family: theme.font_family || 'Inter',
+      });
     }
   }, [theme, reset]);
 

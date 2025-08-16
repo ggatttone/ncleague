@@ -166,9 +166,9 @@ export interface GalleryItem {
 
 export interface Theme {
   id: number;
-  primary_color: string;
-  secondary_color: string;
-  font_family: string;
+  primary_color: string | null;
+  secondary_color: string | null;
+  font_family: string | null;
   logo_url: string | null;
   created_at: string;
   updated_at: string;
