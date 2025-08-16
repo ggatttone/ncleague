@@ -23,6 +23,11 @@ export interface UpdateMatchData extends UpsertMatchData {
   id: string;
 }
 
+export interface BulkUpdateData {
+  ids: string[];
+  updates: Partial<Omit<Match, 'id'>>;
+}
+
 export function useMatches() {
   return useSupabaseQuery<MatchWithTeams[]>(
     ['matches'],
@@ -75,5 +80,21 @@ export function useDeleteMatch() {
     ['matches'],
     async (id: string) => 
       supabase.from('matches').delete().eq('id', id)
+  );
+}
+
+export function useUpdateMultipleMatches() {
+  return useSupabaseMutation<Match[], BulkUpdateData>(
+    ['matches'],
+    async ({ ids, updates }) =>
+      supabase.from('matches').update(updates).in('id', ids).select()
+  );
+}
+
+export function useDeleteMultipleMatches() {
+  return useSupabaseMutation<void, string[]>(
+    ['matches'],
+    async (ids: string[]) =>
+      supabase.from('matches').delete().in('id', ids)
   );
 }
