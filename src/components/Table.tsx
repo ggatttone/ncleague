@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 interface TableProps {
-  columns: { key: string; label: string }[];
+  columns: { key: string; label: ReactNode }[];
   data: Record<string, ReactNode>[];
 }
 
