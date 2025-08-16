@@ -4,6 +4,7 @@ import { LeagueTableWidget } from "@/components/LeagueTableWidget";
 import { UpcomingMatches } from "@/components/UpcomingMatches";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import Countdown from "@/components/Countdown";
+import { MediaCarousel } from "@/components/MediaCarousel";
 
 const Index = () => {
   return (
@@ -11,6 +12,7 @@ const Index = () => {
       <main className="container mx-auto py-8 px-4">
         <HeroSection />
         <Countdown />
+        <MediaCarousel />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main column */}
