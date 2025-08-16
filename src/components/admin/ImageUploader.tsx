@@ -31,15 +31,21 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
 
       if (isHeic) {
         conversionToastId = showLoading('Conversione immagine HEIC in corso...');
-        const convertedBlob = await heic2any({
-          blob: file,
-          toType: 'image/jpeg',
-          quality: 0.8,
-          heif_base_path: '/libheif/',
-        });
-        const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
-        file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
-        if (conversionToastId) dismissToast(conversionToastId);
+        try {
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.8,
+          });
+          const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
+          file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
+          if (conversionToastId) dismissToast(conversionToastId);
+        } catch (heicError) {
+          if (conversionToastId) dismissToast(conversionToastId);
+          showError('Impossibile convertire il file HEIC. Prova a convertirlo manualmente in JPEG.');
+          setUploading(false);
+          return;
+        }
       }
 
       const fileExt = file.name.split('.').pop();
