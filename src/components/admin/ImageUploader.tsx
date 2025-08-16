@@ -18,7 +18,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    let conversionToastId: string | number | undefined;
+    let uploadToastId: string | number | undefined;
     try {
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('Devi selezionare un file da caricare.');
@@ -28,9 +28,11 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
 
       setUploading(true);
+      uploadToastId = showLoading('Caricamento in corso...');
 
       if (isHeic) {
-        conversionToastId = showLoading('Conversione immagine HEIC in corso...');
+        dismissToast(uploadToastId);
+        uploadToastId = showLoading('Conversione immagine HEIC in corso...');
         try {
           const convertedBlob = await heic2any({
             blob: file,
@@ -39,14 +41,17 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
           });
           const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
           file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
-          if (conversionToastId) dismissToast(conversionToastId as string);
         } catch (heicError) {
-          if (conversionToastId) dismissToast(conversionToastId as string);
-          showError('Impossibile convertire il file HEIC. Prova a convertirlo manualmente in JPEG.');
+          console.error("HEIC Conversion Error:", heicError);
+          dismissToast(uploadToastId);
+          showError('Impossibile convertire il file HEIC. Prova a convertirlo manualmente in JPEG e ricaricalo.');
           setUploading(false);
           return;
         }
       }
+
+      dismissToast(uploadToastId);
+      uploadToastId = showLoading(`Caricamento di ${file.name}...`);
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -73,9 +78,9 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       onUploadSuccess(publicUrl);
 
     } catch (error: any) {
-      if (conversionToastId) dismissToast(conversionToastId as string);
       showError(error.message);
     } finally {
+      if (uploadToastId) dismissToast(uploadToastId as string);
       setUploading(false);
     }
   };
@@ -95,7 +100,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
           {uploading && (
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Caricamento...</span>
+              <span>Elaborazione...</span>
             </div>
           )}
         </div>
