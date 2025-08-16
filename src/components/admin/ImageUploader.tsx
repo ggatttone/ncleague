@@ -91,7 +91,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <Input id="single" type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
+          <Input id="single" type="file" accept="image/*,.heic,.heif" onChange={handleUpload} disabled={uploading} />
           {uploading && (
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="h-4 w-4 animate-spin" />
