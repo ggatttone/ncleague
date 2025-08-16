@@ -63,24 +63,35 @@ const GalleryPage = () => {
         initialFiles.map(async (file) => {
           const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
           if (isHeic) {
-            const convertedBlob = await heic2any({
-              blob: file,
-              toType: 'image/jpeg',
-              quality: 0.8,
-              heif_base_path: '/libheif/',
-            });
-            const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
-            return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
+            try {
+              const convertedBlob = await heic2any({
+                blob: file,
+                toType: 'image/jpeg',
+                quality: 0.8,
+              });
+              const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
+              return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
+            } catch (heicError) {
+              console.warn(`Impossibile convertire ${file.name}, verrà saltato`);
+              return null;
+            }
           }
           return file;
         })
       );
 
+      const validFiles = filesToUpload.filter(file => file !== null) as File[];
+
       if (conversionToastId) {
         dismissToast(conversionToastId);
       }
 
-      const uploadPromises = filesToUpload.map(file => {
+      if (validFiles.length === 0) {
+        showError('Nessun file valido da caricare.');
+        return;
+      }
+
+      const uploadPromises = validFiles.map(file => {
         const fileExt = file.name.split('.').pop();
         const filePath = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
         return supabase.storage.from('gallery_media').upload(filePath, file).then(result => {
