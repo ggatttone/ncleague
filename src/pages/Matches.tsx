@@ -1,7 +1,7 @@
 import { useSupabaseQuery } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
 import { Match, Team } from "@/types/database";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,11 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { useState, useEffect } from "react";
+import { useCompetitions } from "@/hooks/use-competitions";
+import { useSeasons } from "@/hooks/use-seasons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -18,25 +23,48 @@ type MatchWithTeams = Match & {
 
 const Matches = () => {
   const { user } = useAuth();
+  const [selectedCompetition, setSelectedCompetition] = useState<string | undefined>();
+  const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
+
+  const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
+  const { data: seasons, isLoading: seasonsLoading } = useSeasons();
+
+  useEffect(() => {
+    if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
+      setSelectedCompetition(competitions[0].id);
+    }
+    if (!seasonsLoading && seasons?.length > 0 && !selectedSeason) {
+      setSelectedSeason(seasons[0].id);
+    }
+  }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
+
   const { data: matches, isLoading, error } = useSupabaseQuery<MatchWithTeams[]>(
-    ['matches-with-teams'],
-    async () => supabase
-      .from('matches')
-      .select(`
-        *,
-        venues(name),
-        home_teams:teams!matches_home_team_id_fkey (
-          id,
-          name,
-          logo_url
-        ),
-        away_teams:teams!matches_away_team_id_fkey (
-          id,
-          name,
-          logo_url
-        )
-      `)
-      .order('match_date', { ascending: true })
+    ['matches-with-teams', selectedCompetition, selectedSeason],
+    async () => {
+      if (!selectedCompetition || !selectedSeason) return null;
+      return supabase
+        .from('matches')
+        .select(`
+          *,
+          venues(name),
+          home_teams:teams!matches_home_team_id_fkey (
+            id,
+            name,
+            logo_url
+          ),
+          away_teams:teams!matches_away_team_id_fkey (
+            id,
+            name,
+            logo_url
+          )
+        `)
+        .eq('competition_id', selectedCompetition)
+        .eq('season_id', selectedSeason)
+        .order('match_date', { ascending: true });
+    },
+    {
+      enabled: !!selectedCompetition && !!selectedSeason,
+    }
   );
 
   const upcomingMatches = matches?.filter(match => 
@@ -171,96 +199,33 @@ const Matches = () => {
     </div>
   );
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
-          {user && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Link to="/admin/fixtures/new">
-                <Button size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nuova partita
-                </Button>
-              </Link>
-              <Link to="/admin/fixtures">
-                <Button variant="outline" size="sm">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
-                </Button>
-              </Link>
-            </div>
-          )}
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-        <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-16 bg-gray-200 rounded"></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (error) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
-          {user && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Link to="/admin/fixtures/new">
-                <Button size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nuova partita
-                </Button>
-              </Link>
-              <Link to="/admin/fixtures">
-                <Button variant="outline" size="sm">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
+    if (error) {
+      return (
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">Errore nel caricamento delle partite</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
-        {user && (
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Link to="/admin/fixtures/new">
-              <Button size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Nuova partita
-              </Button>
-            </Link>
-            <Link to="/admin/fixtures">
-              <Button variant="outline" size="sm">
-                <Settings className="mr-2 h-4 w-4" />
-                Gestisci
-              </Button>
-            </Link>
-          </div>
-        )}
-      </div>
+    if (!selectedCompetition || !selectedSeason) {
+      return (
+        <div className="text-center py-12 bg-muted/50 rounded-lg">
+          <p className="text-muted-foreground">Seleziona una competizione e una stagione per visualizzare le partite.</p>
+        </div>
+      );
+    }
 
+    return (
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upcoming">
@@ -311,6 +276,51 @@ const Matches = () => {
           )}
         </TabsContent>
       </Tabs>
+    );
+  };
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
+        {user && (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Link to="/admin/fixtures/new">
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Nuova partita
+              </Button>
+            </Link>
+            <Link to="/admin/fixtures">
+              <Button variant="outline" size="sm">
+                <Settings className="mr-2 h-4 w-4" />
+                Gestisci
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-lg">
+        <Select onValueChange={setSelectedCompetition} value={selectedCompetition} disabled={competitionsLoading}>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleziona Competizione" />
+          </SelectTrigger>
+          <SelectContent>
+            {competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select onValueChange={setSelectedSeason} value={selectedSeason} disabled={seasonsLoading}>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleziona Stagione" />
+          </SelectTrigger>
+          <SelectContent>
+            {seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {renderContent()}
     </div>
   );
 };
