@@ -76,7 +76,7 @@ const TeamDetailsAdmin = () => {
         title={team.name}
         subtitle={[
           team.parish && `Parrocchia: ${team.parish}`,
-          team.venue && `Campo: ${team.venue}`
+          team.venues?.name && `Campo: ${team.venues.name}`
         ].filter(Boolean).join(" | ")}
         imageUrl={team.logo_url}
       >

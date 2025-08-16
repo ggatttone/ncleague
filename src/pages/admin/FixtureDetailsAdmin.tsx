@@ -44,7 +44,7 @@ const FixtureDetailsAdmin = () => {
     ['match-admin', id],
     () => supabase
       .from('matches')
-      .select('*, home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*)')
+      .select('*, home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*), venues(*)')
       .eq('id', id)
       .single(),
     { enabled: !!id }
@@ -100,7 +100,7 @@ const FixtureDetailsAdmin = () => {
             </div>
             <div>
               <div className="font-semibold">Campo</div>
-              <div>{match.venue || '-'}</div>
+              <div>{match.venues?.name || '-'}</div>
             </div>
             <div>
               <div className="font-semibold">Stato</div>

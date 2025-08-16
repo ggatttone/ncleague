@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from './client';
 
 // Define possible roles
@@ -11,7 +11,7 @@ interface AuthContextType {
   loading: boolean;
   role: UserRole | null;
   profile: { id: string; first_name?: string; last_name?: string; avatar_url?: string; role: UserRole } | null;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: AuthError | null }>;
   hasPermission: (requiredRoles: UserRole[], teamId?: string) => boolean;
 }
 
@@ -21,7 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   role: null,
   profile: null,
-  signOut: async () => {},
+  signOut: () => supabase.auth.signOut(),
   hasPermission: () => false,
 });
 

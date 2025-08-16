@@ -38,7 +38,8 @@ const MatchDetails = () => {
           name,
           logo_url,
           colors
-        )
+        ),
+        venues(*)
       `)
       .eq('id', id)
       .single()
@@ -203,10 +204,10 @@ const MatchDetails = () => {
             </div>
           </div>
 
-          {match.venue && (
+          {match.venues?.name && (
             <div className="flex items-center gap-2 text-muted-foreground mt-4 justify-center sm:justify-start">
               <MapPin className="h-4 w-4" />
-              <span>{match.venue}</span>
+              <span>{match.venues.name}</span>
             </div>
           )}
         </CardHeader>

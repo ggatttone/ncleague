@@ -18,7 +18,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    let conversionToastId: string | undefined;
+    let conversionToastId: string | number | undefined;
     try {
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('Devi selezionare un file da caricare.');
@@ -39,9 +39,9 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
           });
           const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
           file = new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
-          if (conversionToastId) dismissToast(conversionToastId);
+          if (conversionToastId) dismissToast(conversionToastId as string);
         } catch (heicError) {
-          if (conversionToastId) dismissToast(conversionToastId);
+          if (conversionToastId) dismissToast(conversionToastId as string);
           showError('Impossibile convertire il file HEIC. Prova a convertirlo manualmente in JPEG.');
           setUploading(false);
           return;
@@ -73,7 +73,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       onUploadSuccess(publicUrl);
 
     } catch (error: any) {
-      if (conversionToastId) dismissToast(conversionToastId);
+      if (conversionToastId) dismissToast(conversionToastId as string);
       showError(error.message);
     } finally {
       setUploading(false);

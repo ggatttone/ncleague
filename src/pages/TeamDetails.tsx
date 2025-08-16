@@ -12,7 +12,7 @@ const TeamDetails = () => {
 
   const { data: team, isLoading: teamLoading } = useSupabaseQuery<Team>(
     ['team', id],
-    () => supabase.from('teams').select('*').eq('id', id).single()
+    () => supabase.from('teams').select('*, venues(*)').eq('id', id).single()
   );
 
   const { data: players, isLoading: playersLoading } = useSupabaseQuery<Player[]>(
@@ -83,10 +83,10 @@ const TeamDetails = () => {
                     <span>Parrocchia: {team.parish}</span>
                   </div>
                 )}
-                {team.venue && (
+                {team.venues?.name && (
                   <div className="flex items-center gap-2 justify-center sm:justify-start">
                     <MapPin className="h-4 w-4" />
-                    <span>{team.venue}</span>
+                    <span>{team.venues.name}</span>
                   </div>
                 )}
               </div>

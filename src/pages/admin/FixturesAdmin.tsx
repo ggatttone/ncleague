@@ -32,7 +32,7 @@ const FixturesAdmin = () => {
     return matches.filter(match => 
       match.home_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       match.away_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.venue?.toLowerCase().includes(searchTerm.toLowerCase())
+      match.venues?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [matches, searchTerm]);
 

@@ -1,23 +1,25 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 import { showError } from '@/utils/toast';
 
-export function useSupabaseQuery<T>(
+export function useSupabaseQuery<
+  TQueryFnData,
+  TError = PostgrestError,
+  TData = TQueryFnData
+>(
   key: any[],
-  query: () => Promise<{ data: T | null; error: PostgrestError | null }> | null,
-  options = {}
-) {
+  query: () => PromiseLike<{ data: TQueryFnData | null; error: TError | null }> | null,
+  options?: Omit<UseQueryOptions<TQueryFnData | null, TError, TData | null, any[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<TData | null, TError> {
   return useQuery({
     queryKey: key,
     queryFn: async () => {
       const promise = query();
-      if (!promise) {
-        return null;
-      }
+      if (!promise) return null;
       const { data, error } = await promise;
       if (error) {
-        showError(error.message);
+        showError((error as any).message);
         throw error;
       }
       return data;
@@ -28,7 +30,7 @@ export function useSupabaseQuery<T>(
 
 export function useSupabaseCountQuery(
   key: any[],
-  query: () => Promise<{ data: any; count: number | null; error: PostgrestError | null }> | null,
+  query: () => PromiseLike<{ data: any; count: number | null; error: PostgrestError | null }> | null,
   options = {}
 ) {
   return useQuery({
@@ -51,7 +53,7 @@ export function useSupabaseCountQuery(
 
 export function useSupabaseMutation<T, V = any>(
   key: string[],
-  mutation: (variables: V) => Promise<{ data: T | null; error: PostgrestError | null }>,
+  mutation: (variables: V) => PromiseLike<{ data: T | null; error: PostgrestError | null }>,
   options: { onSuccess?: (data: T | null, variables: V) => void, [key: string]: any } = {}
 ) {
   const queryClient = useQueryClient();

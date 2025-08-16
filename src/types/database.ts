@@ -34,6 +34,7 @@ export interface Team {
   short_name?: string;
   parish?: string;
   venue_id?: string;
+  venues?: Venue | null;
   colors?: string;
   logo_url?: string;
   captain_id?: string;
@@ -76,6 +77,7 @@ export interface Match {
   competition_id?: string;
   season_id?: string;
   venue_id?: string;
+  venues?: Venue | null;
   home_team_id: string;
   away_team_id: string;
   match_date: string;
