@@ -42,7 +42,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
         </div>
       </div>
       <div className="text-xs text-muted-foreground mt-2 truncate text-center">
-        {match.venue || 'Campo da definire'}
+        {match.venues?.name || 'Campo da definire'}
       </div>
     </CardContent>
   </Card>
@@ -56,7 +56,8 @@ export const UpcomingMatches = () => {
       .select(`
         *,
         home_teams:teams!matches_home_team_id_fkey (name, logo_url),
-        away_teams:teams!matches_away_team_id_fkey (name, logo_url)
+        away_teams:teams!matches_away_team_id_fkey (name, logo_url),
+        venues(name)
       `)
       .eq('status', 'scheduled')
       .order('match_date', { ascending: true })

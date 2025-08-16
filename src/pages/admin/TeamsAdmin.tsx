@@ -29,7 +29,7 @@ const TeamsAdmin = () => {
     return teams.filter(team => 
       team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.parish?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.venue?.toLowerCase().includes(searchTerm.toLowerCase())
+      team.venues?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [teams, searchTerm]);
 
@@ -56,7 +56,7 @@ const TeamsAdmin = () => {
       </Link>
     ),
     parish: team.parish || "-",
-    venue: team.venue || "-",
+    venue: team.venues?.name || "-",
     colors: team.colors || "-",
     actions: (
       <div className="flex items-center gap-2">

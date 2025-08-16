@@ -31,7 +31,8 @@ export function useMatches() {
       .select(`
         *,
         home_teams:teams!matches_home_team_id_fkey(*),
-        away_teams:teams!matches_away_team_id_fkey(*)
+        away_teams:teams!matches_away_team_id_fkey(*),
+        venues(*)
       `)
       .order('match_date', { ascending: false })
   );
@@ -40,7 +41,7 @@ export function useMatches() {
 export function useMatch(id: string | undefined) {
     return useSupabaseQuery<Match>(
         ['match', id],
-        () => supabase.from('matches').select('*').eq('id', id).single(),
+        () => supabase.from('matches').select('*, venues(*)').eq('id', id).single(),
         { enabled: !!id }
     );
 }

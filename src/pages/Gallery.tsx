@@ -44,7 +44,7 @@ const GalleryPage = () => {
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    let conversionToastId: string | undefined;
+    let conversionToastId: string | number | undefined;
     try {
       const initialFiles = Array.from(data.file);
       
@@ -83,7 +83,7 @@ const GalleryPage = () => {
       const validFiles = filesToUpload.filter(file => file !== null) as File[];
 
       if (conversionToastId) {
-        dismissToast(conversionToastId);
+        dismissToast(conversionToastId as string);
       }
 
       if (validFiles.length === 0) {
@@ -129,7 +129,7 @@ const GalleryPage = () => {
       setUploadOpen(false);
     } catch (err: any) {
       if (conversionToastId) {
-        dismissToast(conversionToastId);
+        dismissToast(conversionToastId as string);
       }
       showError(`Errore durante il caricamento: ${err.message}`);
     }

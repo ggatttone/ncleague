@@ -17,14 +17,14 @@ export interface UpdateTeamData extends CreateTeamData {
 export function useTeams() {
   return useSupabaseQuery<Team[]>(
     ['teams'],
-    () => supabase.from('teams').select('*').order('name')
+    () => supabase.from('teams').select('*, venues(*)').order('name')
   );
 }
 
 export function useTeam(id: string | undefined) {
   return useSupabaseQuery<Team>(
     ['team', id],
-    () => supabase.from('teams').select('*').eq('id', id).single(),
+    () => supabase.from('teams').select('*, venues(*)').eq('id', id).single(),
     { enabled: !!id }
   );
 }

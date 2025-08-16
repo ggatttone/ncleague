@@ -33,7 +33,8 @@ const Matches = () => {
           id,
           name,
           logo_url
-        )
+        ),
+        venues(*)
       `)
       .order('match_date', { ascending: true })
   );
@@ -130,10 +131,10 @@ const Matches = () => {
               </div>
             </div>
 
-            {match.venue && (
+            {match.venues?.name && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                <span>{match.venue}</span>
+                <span>{match.venues.name}</span>
               </div>
             )}
           </CardContent>

@@ -12,7 +12,7 @@ const Teams = () => {
   const { user } = useAuth();
   const { data: teams, isLoading, error } = useSupabaseQuery<Team[]>(
     ['teams'],
-    () => supabase.from('teams').select('*').order('name')
+    () => supabase.from('teams').select('*, venues(*)').order('name')
   );
 
   if (isLoading) {
@@ -150,10 +150,10 @@ const Teams = () => {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="space-y-2">
-                      {team.venue && (
+                      {team.venues?.name && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <MapPin className="h-4 w-4 flex-shrink-0" />
-                          <span className="truncate">{team.venue}</span>
+                          <span className="truncate">{team.venues.name}</span>
                         </div>
                       )}
                       {team.colors && (
