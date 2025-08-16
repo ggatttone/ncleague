@@ -28,6 +28,7 @@ const VenuesAdmin = () => {
     
     return venues.filter(venue => 
       venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      venue.struttura?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       venue.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       venue.city?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -39,6 +40,7 @@ const VenuesAdmin = () => {
 
   const columns = [
     { key: "name", label: "Nome" },
+    { key: "struttura", label: "Struttura" },
     { key: "address", label: "Indirizzo" },
     { key: "city", label: "Città" },
     { key: "actions", label: "Azioni" },
@@ -46,6 +48,7 @@ const VenuesAdmin = () => {
 
   const data = filteredVenues?.map(venue => ({
     name: venue.name,
+    struttura: venue.struttura || "-",
     address: venue.address || "-",
     city: venue.city || "-",
     actions: (

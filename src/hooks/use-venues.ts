@@ -6,6 +6,10 @@ export interface CreateVenueData {
   name: string;
   address?: string;
   city?: string;
+  struttura?: string;
+  photo_url?: string;
+  lat?: number;
+  lon?: number;
 }
 
 export interface UpdateVenueData extends CreateVenueData {
