@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTeams } from "@/hooks/use-teams";
 import { useVenues } from "@/hooks/use-venues";
+import { useCompetitions } from "@/hooks/use-competitions";
+import { useSeasons } from "@/hooks/use-seasons";
 import { useCreateMultipleMatches } from "@/hooks/use-matches";
 import * as XLSX from "xlsx";
 import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -25,6 +27,8 @@ const REQUIRED_FIELDS = [
   { id: 'home_team_name', label: 'Squadra Casa' },
   { id: 'away_team_name', label: 'Squadra Ospite' },
   { id: 'match_date', label: 'Data e Ora Partita' },
+  { id: 'competition_name', label: 'Nome Competizione (Opzionale)' },
+  { id: 'season_name', label: 'Nome Stagione (Opzionale)' },
   { id: 'home_score', label: 'Punteggio Casa (se completata)' },
   { id: 'away_score', label: 'Punteggio Ospite (se completata)' },
   { id: 'venue_name', label: 'Campo (Opzionale)' },
@@ -41,15 +45,12 @@ type PreviewRow = {
     home_score: number;
     away_score: number;
     venue_id?: string;
+    competition_id?: string;
+    season_id?: string;
     status: 'completed' | 'scheduled';
   } | null;
 };
 
-/**
- * Parses a date string in DD/MM/YYYY HH:mm format.
- * @param dateString The date string to parse.
- * @returns A Date object or an invalid Date if parsing fails.
- */
 const parseItalianDate = (dateString: string): Date => {
   if (typeof dateString !== 'string') return new Date(NaN);
 
@@ -71,7 +72,6 @@ const parseItalianDate = (dateString: string): Date => {
     return new Date(NaN);
   }
 
-  // Month is 0-indexed in JavaScript's Date constructor
   return new Date(year, month - 1, day, hours, minutes);
 };
 
@@ -87,6 +87,8 @@ const FixtureImportAdmin = () => {
 
   const { data: teams, isLoading: teamsLoading } = useTeams();
   const { data: venues, isLoading: venuesLoading } = useVenues();
+  const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
+  const { data: seasons, isLoading: seasonsLoading } = useSeasons();
   const createMultipleMatchesMutation = useCreateMultipleMatches();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,6 +124,8 @@ const FixtureImportAdmin = () => {
   const handleMappingSubmit = () => {
     const teamsMap = new Map(teams?.map(t => [t.name.toLowerCase(), t.id]));
     const venuesMap = new Map(venues?.map(v => [v.name.toLowerCase(), v.id]));
+    const competitionsMap = new Map(competitions?.map(c => [c.name.toLowerCase(), c.id]));
+    const seasonsMap = new Map(seasons?.map(s => [s.name.toLowerCase(), s.id]));
 
     const processedData = rows.map(row => {
       const previewRow: PreviewRow = { original: row, isValid: true, errors: [], data: null };
@@ -166,7 +170,8 @@ const FixtureImportAdmin = () => {
         }
       }
 
-      let venueId;
+      let venueId, competitionId, seasonId;
+      
       const venueNameRaw = row[mapping.venue_name];
       if (venueNameRaw) {
         const venueName = venueNameRaw.toString().trim().toLowerCase();
@@ -174,6 +179,26 @@ const FixtureImportAdmin = () => {
         if (!venueId) {
           previewRow.isValid = false;
           previewRow.errors.push(`Campo non trovato: "${row[mapping.venue_name]}"`);
+        }
+      }
+
+      const competitionNameRaw = row[mapping.competition_name];
+      if (competitionNameRaw) {
+        const competitionName = competitionNameRaw.toString().trim().toLowerCase();
+        competitionId = competitionsMap.get(competitionName);
+        if (!competitionId) {
+          previewRow.isValid = false;
+          previewRow.errors.push(`Competizione non trovata: "${row[mapping.competition_name]}"`);
+        }
+      }
+
+      const seasonNameRaw = row[mapping.season_name];
+      if (seasonNameRaw) {
+        const seasonName = seasonNameRaw.toString().trim().toLowerCase();
+        seasonId = seasonsMap.get(seasonName);
+        if (!seasonId) {
+          previewRow.isValid = false;
+          previewRow.errors.push(`Stagione non trovata: "${row[mapping.season_name]}"`);
         }
       }
 
@@ -185,6 +210,8 @@ const FixtureImportAdmin = () => {
           home_score: status === 'completed' ? homeScore : 0,
           away_score: status === 'completed' ? awayScore : 0,
           venue_id: venueId,
+          competition_id: competitionId,
+          season_id: seasonId,
           status: status,
         };
       }
@@ -255,8 +282,8 @@ const FixtureImportAdmin = () => {
             ))}
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setCurrentStep(0)}>Indietro</Button>
-              <Button onClick={handleMappingSubmit} disabled={teamsLoading || venuesLoading}>
-                {(teamsLoading || venuesLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button onClick={handleMappingSubmit} disabled={teamsLoading || venuesLoading || competitionsLoading || seasonsLoading}>
+                {(teamsLoading || venuesLoading || competitionsLoading || seasonsLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Vai all'Anteprima
               </Button>
             </div>
@@ -289,6 +316,8 @@ const FixtureImportAdmin = () => {
                       <TableCell>{row.original[mapping.home_team_name]}</TableCell>
                       <TableCell>{row.original[mapping.away_team_name]}</TableCell>
                       <TableCell>{row.data?.match_date ? new Date(row.data.match_date).toLocaleString('it-IT') : 'Data invalida'}</TableCell>
+                      <TableCell>{row.original[mapping.competition_name] || '-'}</TableCell>
+                      <TableCell>{row.original[mapping.season_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.home_score]}</TableCell>
                       <TableCell>{row.original[mapping.away_score]}</TableCell>
                       <TableCell>{row.original[mapping.venue_name] || '-'}</TableCell>
