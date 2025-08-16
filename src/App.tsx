@@ -49,6 +49,7 @@ import ArticleFormAdmin from "./pages/admin/ArticleFormAdmin";
 import AlbumsAdmin from "./pages/admin/AlbumsAdmin";
 import AlbumFormAdmin from "./pages/admin/AlbumFormAdmin";
 import ThemeAdmin from "./pages/admin/ThemeAdmin";
+import EventAdmin from "./pages/admin/EventAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -125,6 +126,7 @@ const App = () => (
                       <Route path="albums" element={<AlbumsAdmin />} />
                       <Route path="albums/new" element={<AlbumFormAdmin />} />
                       <Route path="albums/:id/edit" element={<AlbumFormAdmin />} />
+                      <Route path="event" element={<EventAdmin />} />
                       <Route path="theme" element={<ThemeAdmin />} />
                       <Route path="*" element={<NotFoundAdmin />} />
                     </Routes>

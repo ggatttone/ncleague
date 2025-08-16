@@ -13,6 +13,7 @@ const adminLinks = [
   { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
   { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
   { to: "/admin/albums", label: "Album Galleria", roles: ['admin', 'editor'] },
+  { to: "/admin/event", label: "Gestione Evento", roles: ['admin'] },
   { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
   { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
   { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },

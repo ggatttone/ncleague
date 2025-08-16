@@ -171,3 +171,11 @@ export interface Theme {
   created_at: string;
   updated_at: string;
 }
+
+export interface Event {
+  id: number;
+  title: string | null;
+  event_date: string | null;
+  is_active: boolean;
+  updated_at: string;
+}
