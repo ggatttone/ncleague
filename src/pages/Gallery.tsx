@@ -44,62 +44,52 @@ const GalleryPage = () => {
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    let conversionToastId: string | number | undefined;
+    const uploadToastId = showLoading(`Preparazione di ${data.file.length} file...`);
+    
     try {
       const initialFiles = Array.from(data.file);
-      const failedConversions: string[] = [];
-      
-      const hasHeic = initialFiles.some(file => 
-        file.type === 'image/heic' || 
-        file.type === 'image/heif' || 
-        file.name.toLowerCase().endsWith('.heic') || 
-        file.name.toLowerCase().endsWith('.heif')
-      );
+      const processedFiles: File[] = [];
+      const failedFiles: string[] = [];
 
-      if (hasHeic) {
-        conversionToastId = showLoading('Conversione immagini HEIC in corso...');
-      }
-
-      const filesToUpload = await Promise.all(
-        initialFiles.map(async (file) => {
-          const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-          if (isHeic) {
-            try {
-              const convertedBlob = await heic2any({
-                blob: file,
-                toType: 'image/jpeg',
-                quality: 0.8,
-              });
-              const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
-              return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
-            } catch (heicError) {
-              console.error(`Impossibile convertire ${file.name}:`, heicError);
-              failedConversions.push(file.name);
-              return null;
-            }
+      // Step 1: Convert all HEIC files, tracking failures.
+      for (const file of initialFiles) {
+        const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+        if (isHeic) {
+          try {
+            const convertedBlob = await heic2any({
+              blob: file,
+              toType: 'image/jpeg',
+              quality: 0.8,
+            });
+            const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
+            processedFiles.push(new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' }));
+          } catch (heicError) {
+            console.error(`Impossibile convertire ${file.name}:`, heicError);
+            failedFiles.push(file.name);
           }
-          return file;
-        })
-      );
-
-      if (conversionToastId) {
-        dismissToast(conversionToastId as string);
+        } else {
+          processedFiles.push(file);
+        }
       }
 
-      if (failedConversions.length > 0) {
-        showError(`Impossibile convertire i seguenti file: ${failedConversions.join(', ')}. Saranno saltati.`);
+      // Step 2: Show errors for failed conversions.
+      if (failedFiles.length > 0) {
+        showError(`Conversione fallita per: ${failedFiles.join(', ')}. Prova a convertirli manualmente in JPEG.`);
       }
 
-      const validFiles = filesToUpload.filter(file => file !== null) as File[];
-
-      if (validFiles.length === 0) {
-        if (failedConversions.length === 0) {
+      // Step 3: Upload the successfully processed files.
+      if (processedFiles.length === 0) {
+        dismissToast(uploadToastId);
+        if (failedFiles.length === 0) {
           showError('Nessun file valido da caricare.');
         }
         return;
       }
 
-      const uploadPromises = validFiles.map(file => {
+      dismissToast(uploadToastId);
+      showLoading(`Caricamento di ${processedFiles.length} file...`);
+
+      const uploadPromises = processedFiles.map(file => {
         const fileExt = file.name.split('.').pop();
         const filePath = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
         return supabase.storage.from('gallery_media').upload(filePath, file).then(result => {
@@ -130,15 +120,14 @@ const GalleryPage = () => {
         }
       }
 
+      dismissToast(uploadToastId);
       showSuccess(`${uploadedFiles.length} file caricati con successo!`);
       queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
       queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
       setUploadOpen(false);
     } catch (err: any) {
-      if (conversionToastId) {
-        dismissToast(conversionToastId as string);
-      }
+      dismissToast(uploadToastId);
       showError(`Errore durante il caricamento: ${err.message}`);
     }
   };
