@@ -45,6 +45,37 @@ type PreviewRow = {
   } | null;
 };
 
+/**
+ * Parses a date string in DD/MM/YYYY HH:mm format.
+ * @param dateString The date string to parse.
+ * @returns A Date object or an invalid Date if parsing fails.
+ */
+const parseItalianDate = (dateString: string): Date => {
+  if (typeof dateString !== 'string') return new Date(NaN);
+
+  const parts = dateString.split(' ');
+  if (parts.length < 1) return new Date(NaN);
+
+  const dateParts = parts[0].split('/');
+  const timeParts = parts.length > 1 ? parts[1].split(':') : ['0', '0'];
+
+  if (dateParts.length !== 3) return new Date(NaN);
+
+  const day = parseInt(dateParts[0], 10);
+  const month = parseInt(dateParts[1], 10);
+  const year = parseInt(dateParts[2], 10);
+  const hours = parseInt(timeParts[0], 10);
+  const minutes = parseInt(timeParts[1], 10);
+
+  if (isNaN(day) || isNaN(month) || isNaN(year) || isNaN(hours) || isNaN(minutes)) {
+    return new Date(NaN);
+  }
+
+  // Month is 0-indexed in JavaScript's Date constructor
+  return new Date(year, month - 1, day, hours, minutes);
+};
+
+
 const FixtureImportAdmin = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -70,7 +101,7 @@ const FixtureImportAdmin = () => {
         const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, cellDates: true });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, cellDates: true, dateNF: 'dd/mm/yyyy hh:mm' });
 
         if (jsonData.length === 0) {
           showError("Il file è vuoto o non contiene dati validi.");
@@ -114,7 +145,8 @@ const FixtureImportAdmin = () => {
       }
 
       const dateValue = row[mapping.match_date];
-      const matchDate = dateValue instanceof Date ? dateValue : new Date(dateValue);
+      const matchDate = dateValue instanceof Date ? dateValue : parseItalianDate(dateValue);
+      
       if (!dateValue || isNaN(matchDate.getTime())) {
         previewRow.isValid = false;
         previewRow.errors.push(`Data non valida: "${row[mapping.match_date]}"`);
