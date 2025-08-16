@@ -11,6 +11,12 @@ const CLOUDINARY_CLOUD_NAME = Deno.env.get('CLOUDINARY_CLOUD_NAME');
 const CLOUDINARY_API_KEY = Deno.env.get('CLOUDINARY_API_KEY');
 const CLOUDINARY_API_SECRET = Deno.env.get('CLOUDINARY_API_SECRET');
 
+// Helper function to generate SHA-1 hash
+async function sha1(text: string): Promise<string> {
+  const hash = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -30,7 +36,6 @@ serve(async (req) => {
     if (!file) throw new Error('No file provided.');
     if (!bucketName) throw new Error('No bucket name provided.');
 
-    // If the file is not a HEIC, we can skip Cloudinary and upload directly
     const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
     
     let imageBuffer: ArrayBuffer;
@@ -38,21 +43,31 @@ serve(async (req) => {
     let fileExt = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (isHeic) {
-      // 3. Upload the HEIC file to Cloudinary for conversion
+      // 3. Prepare parameters for Cloudinary upload
       const timestamp = Math.round((new Date()).getTime() / 1000);
-      const signatureString = `timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
-      const signature = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(signatureString))
-        .then(hash => Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join(''));
+      const paramsToSign = {
+        format: 'jpg',
+        timestamp: timestamp.toString(),
+      };
 
+      // 4. Generate the signature required by Cloudinary by sorting parameters
+      const signatureString = Object.keys(paramsToSign)
+        .sort()
+        .map(key => `${key}=${paramsToSign[key as keyof typeof paramsToSign]}`)
+        .join('&') + CLOUDINARY_API_SECRET;
+      
+      const signature = await sha1(signatureString);
+
+      // 5. Create form data for the Cloudinary request
       const cloudinaryFormData = new FormData();
       cloudinaryFormData.append('file', file);
-      cloudinaryFormData.append('api_key', CLOUDINARY_API_KEY);
-      cloudinaryFormData.append('timestamp', timestamp.toString());
+      cloudinaryFormData.append('api_key', CLOUDINARY_API_KEY!);
+      cloudinaryFormData.append('timestamp', paramsToSign.timestamp);
       cloudinaryFormData.append('signature', signature);
-      cloudinaryFormData.append('format', 'jpg'); // Tell Cloudinary to convert to jpg
+      cloudinaryFormData.append('format', paramsToSign.format);
 
+      // 6. Upload the HEIC file to Cloudinary for conversion
       const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-      
       const cloudinaryResponse = await fetch(cloudinaryUrl, { method: 'POST', body: cloudinaryFormData });
 
       if (!cloudinaryResponse.ok) {
@@ -63,7 +78,7 @@ serve(async (req) => {
       const cloudinaryData = await cloudinaryResponse.json();
       const convertedImageUrl = cloudinaryData.secure_url;
 
-      // 4. Download the converted JPEG from Cloudinary
+      // 7. Download the converted JPEG from Cloudinary
       const imageResponse = await fetch(convertedImageUrl);
       if (!imageResponse.ok) throw new Error('Failed to download converted image from Cloudinary.');
       
@@ -76,7 +91,7 @@ serve(async (req) => {
       imageBuffer = await file.arrayBuffer();
     }
 
-    // 5. Upload the final image buffer to Supabase Storage
+    // 8. Upload the final image buffer to Supabase Storage
     const supabaseAdminClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -91,7 +106,7 @@ serve(async (req) => {
 
     if (uploadError) throw uploadError;
 
-    // 6. Get the public URL from Supabase and return it along with the path
+    // 9. Get the public URL from Supabase and return it along with the path
     const { data: { publicUrl } } = supabaseAdminClient.storage
       .from(bucketName)
       .getPublicUrl(filePath);
