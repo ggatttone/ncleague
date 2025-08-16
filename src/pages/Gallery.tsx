@@ -18,7 +18,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast";
 import { useQueryClient } from "@tanstack/react-query";
-import heic2any from "heic2any";
 
 const uploadSchema = z.object({
   album_id: z.string().optional().nullable(),
@@ -47,66 +46,39 @@ const GalleryPage = () => {
     const uploadToastId = showLoading(`Preparazione di ${data.file.length} file...`);
     
     try {
-      const initialFiles = Array.from(data.file);
-      const processedFiles: File[] = [];
-      const failedFiles: string[] = [];
-
-      // Step 1: Convert all HEIC files, tracking failures.
-      for (const file of initialFiles) {
-        const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-        if (isHeic) {
-          try {
-            const convertedBlob = await heic2any({
-              blob: file,
-              toType: 'image/jpeg',
-              quality: 0.8,
-            });
-            const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
-            processedFiles.push(new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' }));
-          } catch (heicError) {
-            console.error(`Impossibile convertire ${file.name}:`, heicError);
-            failedFiles.push(file.name);
-          }
-        } else {
-          processedFiles.push(file);
-        }
-      }
-
-      // Step 2: Show errors for failed conversions.
-      if (failedFiles.length > 0) {
-        showError(`Conversione fallita per: ${failedFiles.join(', ')}. Prova a convertirli manualmente in JPEG.`);
-      }
-
-      // Step 3: Upload the successfully processed files.
-      if (processedFiles.length === 0) {
-        dismissToast(uploadToastId);
-        if (failedFiles.length === 0) {
-          showError('Nessun file valido da caricare.');
-        }
-        return;
-      }
-
+      const filesToUpload = Array.from(data.file);
+      
       dismissToast(uploadToastId);
-      showLoading(`Caricamento di ${processedFiles.length} file...`);
+      showLoading(`Caricamento di ${filesToUpload.length} file...`);
 
-      const uploadPromises = processedFiles.map(file => {
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${user.id}/${Date.now()}-${Math.random()}.${fileExt}`;
-        return supabase.storage.from('gallery_media').upload(filePath, file).then(result => {
-          if (result.error) throw result.error;
-          return { file, filePath };
+      const uploadPromises = filesToUpload.map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('bucketName', 'gallery_media');
+
+        const { data: functionData, error } = await supabase.functions.invoke('convert-and-upload-image', {
+          body: formData,
         });
+
+        if (error) {
+          throw new Error(`Caricamento fallito per ${file.name}: ${error.message}`);
+        }
+        
+        return {
+          functionData,
+          originalFile: file,
+        };
       });
 
-      const uploadedFiles = await Promise.all(uploadPromises);
+      const uploadResults = await Promise.all(uploadPromises);
 
-      const galleryItemsToInsert = uploadedFiles.map(({ file, filePath }) => ({
+      const galleryItemsToInsert = uploadResults.map(({ functionData, originalFile }) => ({
         user_id: user.id,
         album_id: data.album_id || null,
-        file_path: filePath,
-        file_name: file.name,
-        mime_type: file.type,
-        title: file.name,
+        file_path: functionData.filePath,
+        file_name: originalFile.name,
+        mime_type: originalFile.type.startsWith('video/') ? originalFile.type : 'image/jpeg',
+        title: originalFile.name,
       }));
 
       const { error: dbError } = await supabase.from('gallery_items').insert(galleryItemsToInsert);
@@ -114,14 +86,14 @@ const GalleryPage = () => {
 
       if (data.album_id) {
         const targetAlbum = albums?.find(a => a.id === data.album_id);
-        const firstImage = uploadedFiles.find(({ file }) => file.type.startsWith('image/'));
+        const firstImage = uploadResults.find(({ originalFile }) => !originalFile.type.startsWith('video/'));
         if (targetAlbum && !targetAlbum.cover_image_path && firstImage) {
-          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.filePath });
+          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.functionData.filePath });
         }
       }
 
       dismissToast(uploadToastId);
-      showSuccess(`${uploadedFiles.length} file caricati con successo!`);
+      showSuccess(`${uploadResults.length} file caricati con successo!`);
       queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
       queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
