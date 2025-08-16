@@ -1,6 +1,8 @@
 import { useSupabaseQuery, useSupabaseMutation } from './use-supabase-query';
 import { supabase } from '@/lib/supabase/client';
 import { Team } from '@/types/database';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { showError } from '@/utils/toast';
 
 export interface CreateTeamData {
   name: string;
@@ -30,11 +32,53 @@ export function useTeam(id: string | undefined) {
 }
 
 export function useCreateTeam() {
-  return useSupabaseMutation<Team>(
-    ['teams'],
-    async (data: CreateTeamData) => 
-      supabase.from('teams').insert([data]).select().single()
-  );
+  const queryClient = useQueryClient();
+
+  return useMutation<Team | null, Error, CreateTeamData>({
+    mutationFn: async (data: CreateTeamData) => {
+      // 1. Inserisci la nuova squadra e ottieni l'ID
+      const { data: insertedTeam, error: insertError } = await supabase
+        .from('teams')
+        .insert([data])
+        .select('id')
+        .single();
+
+      if (insertError) {
+        showError(insertError.message);
+        throw insertError;
+      }
+      if (!insertedTeam) {
+        throw new Error("Creazione squadra fallita.");
+      }
+
+      // 2. Recupera i dati completi della nuova squadra, incluse le relazioni
+      const { data: newTeamWithRelations, error: fetchError } = await supabase
+        .from('teams')
+        .select('*, venues(name)')
+        .eq('id', insertedTeam.id)
+        .single();
+
+      if (fetchError) {
+        showError(fetchError.message);
+        throw fetchError;
+      }
+
+      return newTeamWithRelations;
+    },
+    onSuccess: (newTeam) => {
+      if (!newTeam) return;
+
+      // 3. Aggiorna manualmente la cache con la nuova squadra
+      queryClient.setQueryData<Team[]>(['teams'], (oldData) => {
+        if (!oldData) return [newTeam];
+        
+        const newData = [...oldData, newTeam];
+        // Mantieni l'ordine alfabetico
+        newData.sort((a, b) => a.name.localeCompare(b.name));
+        return newData;
+      });
+    },
+  });
 }
 
 export function useUpdateTeam() {
