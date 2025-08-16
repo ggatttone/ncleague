@@ -77,7 +77,43 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         }
 
         .dark {
-          /* Dark theme can be implemented here */
+          --background: ${secondaryHsl.h} ${secondaryHsl.s}% 10%;
+          --foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+
+          --card: ${secondaryHsl.h} ${secondaryHsl.s}% 12%;
+          --card-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+
+          --popover: ${secondaryHsl.h} ${secondaryHsl.s}% 10%;
+          --popover-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+
+          --primary: ${hslToString(primaryHsl)};
+          --primary-foreground: ${getContrastingColor(theme.primary_color)};
+
+          --secondary: ${hslToString(secondaryHsl)};
+          --secondary-foreground: ${getContrastingColor(theme.secondary_color)};
+
+          --muted: ${secondaryHsl.h} ${secondaryHsl.s}% 15%;
+          --muted-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 65%;
+
+          --accent: ${secondaryHsl.h} ${secondaryHsl.s}% 15%;
+          --accent-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+
+          --destructive: 0 62.8% 30.6%;
+          --destructive-foreground: 0 0% 98%;
+
+          --border: ${secondaryHsl.h} ${secondaryHsl.s}% 20%;
+          --input: ${secondaryHsl.h} ${secondaryHsl.s}% 20%;
+          --ring: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;
+
+          /* Sidebar specific variables for dark mode */
+          --sidebar-background: ${secondaryHsl.h} ${secondaryHsl.s}% 8%;
+          --sidebar-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+          --sidebar-primary: ${hslToString(primaryHsl)};
+          --sidebar-primary-foreground: ${getContrastingColor(theme.primary_color)};
+          --sidebar-accent: ${secondaryHsl.h} ${secondaryHsl.s}% 15%;
+          --sidebar-accent-foreground: ${secondaryHsl.h} ${secondaryHsl.s}% 98%;
+          --sidebar-border: ${secondaryHsl.h} ${secondaryHsl.s}% 18%;
+          --sidebar-ring: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;
         }
       `;
 

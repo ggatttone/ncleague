@@ -7,10 +7,6 @@
     /* Colors are now injected by ThemeProvider */
     --radius: 0.5rem;
   }
-
-  .dark {
-    /* Dark theme colors can be defined here or injected by ThemeProvider */
-  }
 }
 
 @layer base {
