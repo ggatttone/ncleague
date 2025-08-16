@@ -47,6 +47,7 @@ const GalleryPage = () => {
     let conversionToastId: string | number | undefined;
     try {
       const initialFiles = Array.from(data.file);
+      const failedConversions: string[] = [];
       
       const hasHeic = initialFiles.some(file => 
         file.type === 'image/heic' || 
@@ -72,7 +73,8 @@ const GalleryPage = () => {
               const newFileName = file.name.replace(/\.(heic|heif)$/i, '.jpeg');
               return new File([convertedBlob as Blob], newFileName, { type: 'image/jpeg' });
             } catch (heicError) {
-              console.warn(`Impossibile convertire ${file.name}, verrà saltato`);
+              console.error(`Impossibile convertire ${file.name}:`, heicError);
+              failedConversions.push(file.name);
               return null;
             }
           }
@@ -80,14 +82,20 @@ const GalleryPage = () => {
         })
       );
 
-      const validFiles = filesToUpload.filter(file => file !== null) as File[];
-
       if (conversionToastId) {
         dismissToast(conversionToastId as string);
       }
 
+      if (failedConversions.length > 0) {
+        showError(`Impossibile convertire i seguenti file: ${failedConversions.join(', ')}. Saranno saltati.`);
+      }
+
+      const validFiles = filesToUpload.filter(file => file !== null) as File[];
+
       if (validFiles.length === 0) {
-        showError('Nessun file valido da caricare.');
+        if (failedConversions.length === 0) {
+          showError('Nessun file valido da caricare.');
+        }
         return;
       }
 
@@ -157,7 +165,7 @@ const GalleryPage = () => {
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
                       <Label htmlFor="file">File *</Label>
-                      <Input id="file" type="file" {...register("file")} accept="image/*,video/*,.heic,.heif" multiple />
+                      <Input id="file" type="file" {...register("file")} accept="image/jpeg, image/png, image/webp, image/gif, video/*, .heic, .heif, image/heic, image/heif" multiple />
                       {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
                     </div>
                     <div>
