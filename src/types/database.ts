@@ -21,10 +21,12 @@ export interface Venue {
   name: string;
   address?: string;
   city?: string;
-  lat?: number;
-  lon?: number;
+  lat?: number | null;
+  lon?: number | null;
   created_at: string;
   updated_at: string;
+  struttura?: string | null;
+  photo_url?: string | null;
 }
 
 export interface Team {
