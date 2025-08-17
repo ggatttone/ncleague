@@ -5,7 +5,7 @@ import { Match, Team, Goal, Player } from "@/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Whistle } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 
@@ -214,7 +214,7 @@ const MatchDetails = () => {
           )}
           {match.referee_teams?.name && (
             <div className="flex items-center gap-2 text-muted-foreground mt-2 justify-center sm:justify-start">
-              <Whistle className="h-4 w-4" />
+              <Gavel className="h-4 w-4" />
               <span>Arbitro: {match.referee_teams.name}</span>
             </div>
           )}
