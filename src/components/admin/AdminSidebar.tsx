@@ -2,6 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useMemo } from "react";
 
 const adminMenuConfig = [
   {
@@ -16,9 +18,6 @@ const adminMenuConfig = [
       { to: "/admin/venues", label: "Campi da Gioco", roles: ['admin', 'editor'] },
       { to: "/admin/sponsors", label: "Sponsor", roles: ['admin', 'editor'] },
       { to: "/admin/honors", label: "Albo d'Oro", roles: ['admin', 'editor'] },
-      // Le seguenti voci non hanno ancora una pagina, quindi sono commentate
-      // { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
-      // { to: "/admin/penalties", label: "Penalità", roles: ['admin'] },
     ]
   },
   {
@@ -40,19 +39,30 @@ const adminMenuConfig = [
     category: "Amministrazione",
     links: [
       { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
-      // { to: "/admin/audit-log", label: "Audit Log", roles: ['admin'] },
     ]
   }
 ];
 
-
-/**
- * This component renders the content of the admin sidebar.
- * The responsive layout logic (static on desktop, sheet on mobile) is handled in AdminLayout.
- */
 export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const location = useLocation();
   const { hasPermission } = useAuth();
+
+  const activeCategory = useMemo(() => {
+    let bestMatch: string | undefined = undefined;
+    let longestPath = -1;
+
+    for (const group of adminMenuConfig) {
+      for (const link of group.links) {
+        if (location.pathname.startsWith(link.to)) {
+          if (link.to.length > longestPath) {
+            longestPath = link.to.length;
+            bestMatch = group.category;
+          }
+        }
+      }
+    }
+    return bestMatch;
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col h-full">
@@ -62,45 +72,47 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
           <span className="font-bold text-lg text-sidebar-primary">Admin NC League</span>
         </Link>
       </div>
-      <nav className="flex-1 px-4 py-4 overflow-y-auto">
-        <ul className="space-y-4">
+      <nav className="flex-1 px-2 py-4 overflow-y-auto">
+        <Accordion type="single" collapsible defaultValue={activeCategory} className="w-full">
           {adminMenuConfig.map((group) => {
             const visibleLinks = group.links.filter(link => hasPermission(link.roles as any));
             if (visibleLinks.length === 0) return null;
 
             return (
-              <li key={group.category}>
-                <h4 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <AccordionItem value={group.category} key={group.category} className="border-b-0">
+                <AccordionTrigger className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:no-underline hover:bg-sidebar-accent rounded-md">
                   {group.category}
-                </h4>
-                <ul className="space-y-1">
-                  {visibleLinks.map((link) => {
-                    const isActive = link.exact 
-                      ? location.pathname === link.to 
-                      : location.pathname.startsWith(link.to);
-                    
-                    return (
-                      <li key={link.to}>
-                        <Link
-                          to={link.to}
-                          className={cn(
-                            "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                            isActive
-                              ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                          )}
-                          onClick={onLinkClick}
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
+                </AccordionTrigger>
+                <AccordionContent className="pt-1 pb-2">
+                  <ul className="space-y-1">
+                    {visibleLinks.map((link) => {
+                      const isActive = link.exact
+                        ? location.pathname === link.to
+                        : location.pathname.startsWith(link.to);
+
+                      return (
+                        <li key={link.to}>
+                          <Link
+                            to={link.to}
+                            className={cn(
+                              "block pl-8 pr-3 py-2 rounded-md text-sm font-medium transition-colors",
+                              isActive
+                                ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                                : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                            )}
+                            onClick={onLinkClick}
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
             );
           })}
-        </ul>
+        </Accordion>
       </nav>
     </div>
   );
