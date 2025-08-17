@@ -1,8 +1,15 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { GripVertical } from "lucide-react";
 
-export const WIDGET_CONFIG = {
-  hero: { name: 'Hero Section' },
+type WidgetConfig = {
+  [key: string]: {
+    name: string;
+    configurable?: boolean;
+  };
+};
+
+export const WIDGET_CONFIG: WidgetConfig = {
+  hero: { name: 'Hero Section', configurable: true },
   countdown: { name: 'Countdown Evento' },
   media_carousel: { name: 'Carosello Media' },
   upcoming_matches: { name: 'Prossime Partite' },
