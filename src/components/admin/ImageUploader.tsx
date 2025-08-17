@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Loader2 } from 'lucide-react';
-import { showError, showLoading, dismissToast } from '@/utils/toast';
+import { showError, showLoading, dismissToast, showSuccess } from '@/utils/toast';
 
 interface ImageUploaderProps {
   bucketName: string;
@@ -24,30 +24,26 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       }
 
       const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${Date.now()}.${fileExt}`;
       
       setUploading(true);
       uploadToastId = showLoading(`Caricamento di ${file.name}...`);
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('bucketName', bucketName);
+      const { error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
 
-      const { data, error } = await supabase.functions.invoke('convert-and-upload-image', {
-        body: formData,
-      });
-
-      if (error) {
-        const errorMessage = error.context?.error?.message || error.message;
-        throw new Error(errorMessage);
+      if (uploadError) {
+        throw uploadError;
       }
 
-      const { publicUrl } = data;
-
-      if (!publicUrl) {
-        throw new Error("Impossibile ottenere l'URL pubblico dell'immagine dopo la conversione.");
-      }
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
 
       onUploadSuccess(publicUrl);
+      showSuccess("Immagine caricata con successo!");
 
     } catch (error: any) {
       showError(`Errore: ${error.message}`);
@@ -68,11 +64,11 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <Input id="single" type="file" accept="image/jpeg, image/png, image/webp, image/gif, .heic, .heif, image/heic, image/heif" onChange={handleUpload} disabled={uploading} />
+          <Input id="single" type="file" accept="image/jpeg, image/png, image/webp, image/gif" onChange={handleUpload} disabled={uploading} />
           {uploading && (
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Elaborazione...</span>
+              <span>Caricamento...</span>
             </div>
           )}
         </div>
