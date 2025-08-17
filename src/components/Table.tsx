@@ -13,7 +13,7 @@ export const Table = ({ columns, data }: TableProps) => (
           {columns.map((col) => (
             <th
               key={col.key}
-              className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground uppercase"
+              className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground uppercase whitespace-nowrap"
             >
               {col.label}
             </th>
@@ -31,7 +31,7 @@ export const Table = ({ columns, data }: TableProps) => (
           data.map((row, i) => (
             <tr key={i} className="hover:bg-muted/50">
               {columns.map((col) => (
-                <td key={col.key} className="px-4 py-2">
+                <td key={col.key} className="px-4 py-2 whitespace-nowrap">
                   {row[col.key]}
                 </td>
               ))}
