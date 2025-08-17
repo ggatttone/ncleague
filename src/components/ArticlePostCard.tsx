@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Pin } from "lucide-react";
 import { ArticleWithAuthor } from "@/hooks/use-articles";
 import { formatDateRelative, getInitials } from "@/lib/utils";
 import { useSupabaseCountQuery } from "@/hooks/use-supabase-query";
@@ -31,6 +31,12 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
           </Avatar>
 
           <div className="flex-1">
+            {article.is_pinned && (
+              <div className="flex items-center gap-2 text-xs text-amber-600 font-semibold mb-2">
+                <Pin className="h-3 w-3" />
+                <span>In evidenza</span>
+              </div>
+            )}
             <div className="flex items-center gap-2 text-sm">
               <span className="font-bold">{authorName}</span>
               <span className="text-muted-foreground">·</span>

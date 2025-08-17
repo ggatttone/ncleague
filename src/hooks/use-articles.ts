@@ -16,6 +16,7 @@ export interface UpsertArticleData {
   author_id: string;
   status: 'draft' | 'published';
   published_at?: string | null;
+  is_pinned?: boolean;
 }
 
 export interface UpdateArticleData extends UpsertArticleData {
@@ -33,10 +34,23 @@ export function useArticles() {
   );
 }
 
-// Hook per recuperare gli articoli pubblicati (per il pubblico)
+// Hook per recuperare gli articoli pubblicati (per il pubblico), con i fissati in cima
 export function usePublishedArticles() {
   return useSupabaseQuery<ArticleWithAuthor[]>(
     ['published-articles'],
+    async () => supabase
+      .from('articles')
+      .select('*, profiles(first_name, last_name)')
+      .eq('status', 'published')
+      .order('is_pinned', { ascending: false })
+      .order('published_at', { ascending: false })
+  );
+}
+
+// Hook per recuperare solo gli ultimi articoli (per il widget)
+export function useLatestArticles() {
+  return useSupabaseQuery<ArticleWithAuthor[]>(
+    ['latest-articles'],
     async () => supabase
       .from('articles')
       .select('*, profiles(first_name, last_name)')
@@ -45,11 +59,28 @@ export function usePublishedArticles() {
   );
 }
 
-// Hook per recuperare un singolo articolo tramite ID (per l'admin)
+// Hook per recuperare solo gli articoli fissati (per il widget in evidenza)
+export function usePinnedArticles() {
+  return useSupabaseQuery<ArticleWithAuthor[]>(
+    ['pinned-articles'],
+    async () => supabase
+      .from('articles')
+      .select('*, profiles(first_name, last_name)')
+      .eq('status', 'published')
+      .eq('is_pinned', true)
+      .order('published_at', { ascending: false })
+  );
+}
+
+// Hook per recuperare un singolo articolo tramite ID (per l'admin e widget)
 export function useArticle(id: string | undefined) {
-  return useSupabaseQuery<Article>(
+  return useSupabaseQuery<ArticleWithAuthor>(
     ['article', id],
-    async () => supabase.from('articles').select('*').eq('id', id).single(),
+    async () => supabase
+      .from('articles')
+      .select('*, profiles(first_name, last_name)')
+      .eq('id', id)
+      .single(),
     { enabled: !!id }
   );
 }
@@ -83,6 +114,15 @@ export function useUpdateArticle() {
     ['articles'],
     async ({ id, ...data }: UpdateArticleData) => 
       supabase.from('articles').update(data).eq('id', id).select().single()
+  );
+}
+
+// Hook per fissare/sbloccare un articolo
+export function useTogglePinArticle() {
+  return useSupabaseMutation<Article, { id: string; is_pinned: boolean }>(
+    ['articles'],
+    async ({ id, is_pinned }) =>
+      supabase.from('articles').update({ is_pinned }).eq('id', id).select().single()
   );
 }
 
