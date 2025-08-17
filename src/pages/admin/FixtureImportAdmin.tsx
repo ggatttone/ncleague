@@ -286,7 +286,7 @@ const FixtureImportAdmin = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {REQUIRED_FIELDS.map(field => (
-              <div key={field.id} className="grid grid-cols-2 gap-4 items-center">
+              <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <Label>{field.label}</Label>
                 <Select onValueChange={(value) => setMapping(prev => ({ ...prev, [field.id]: value }))}>
                   <SelectTrigger><SelectValue placeholder="Seleziona colonna..." /></SelectTrigger>

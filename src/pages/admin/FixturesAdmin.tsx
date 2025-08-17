@@ -174,12 +174,12 @@ const FixturesAdmin = () => {
   return (
     <AdminLayout>
       <AlertDialog>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">Calendario Partite</h1>
-          <div className="flex items-center gap-2">
-            <Link to="/admin/fixtures/import"><Button variant="outline"><Upload className="mr-2 h-4 w-4" />Importa</Button></Link>
-            <Link to="/admin/fixtures/new/bulk"><Button variant="outline"><Plus className="mr-2 h-4 w-4" />Multiplo</Button></Link>
-            <Link to="/admin/fixtures/new"><Button><Plus className="mr-2 h-4 w-4" />Nuova partita</Button></Link>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <Link to="/admin/fixtures/import" className="w-full"><Button variant="outline" className="w-full"><Upload className="mr-2 h-4 w-4" />Importa</Button></Link>
+            <Link to="/admin/fixtures/new/bulk" className="w-full"><Button variant="outline" className="w-full"><Plus className="mr-2 h-4 w-4" />Multiplo</Button></Link>
+            <Link to="/admin/fixtures/new" className="w-full"><Button className="w-full"><Plus className="mr-2 h-4 w-4" />Nuova partita</Button></Link>
           </div>
         </div>
 

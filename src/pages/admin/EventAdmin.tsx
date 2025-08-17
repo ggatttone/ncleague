@@ -69,9 +69,9 @@ const EventAdmin = () => {
   return (
     <AdminLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">Gestione Evento Countdown</h1>
-          <Button type="submit" disabled={isSubmitting || updateEventMutation.isPending}>
+          <Button type="submit" disabled={isSubmitting || updateEventMutation.isPending} className="w-full sm:w-auto">
             {(isSubmitting || updateEventMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Salva Modifiche
           </Button>

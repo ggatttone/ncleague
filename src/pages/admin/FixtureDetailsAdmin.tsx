@@ -74,9 +74,9 @@ const FixtureDetailsAdmin = () => {
   return (
     <AdminLayout>
       <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">Dettaglio Partita</h1>
-          <Button onClick={() => navigate(`/admin/fixtures/${id}/edit`)}>
+          <Button onClick={() => navigate(`/admin/fixtures/${id}/edit`)} className="w-full sm:w-auto">
             Modifica
           </Button>
         </div>
