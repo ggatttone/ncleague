@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { HomepageWidget } from '@/hooks/use-homepage-layout';
+import { Widget } from '@/hooks/use-homepage-layout';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const heroSchema = z.object({
 type HeroFormData = z.infer<typeof heroSchema>;
 
 interface HeroWidgetFormProps {
-  widget: HomepageWidget | null;
+  widget: Widget | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (data: any) => void;
