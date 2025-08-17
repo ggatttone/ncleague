@@ -118,12 +118,21 @@ const TeamFormAdmin = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? "Modifica squadra" : "Nuova squadra"}
-        </h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-2xl font-bold">
+            {isEdit ? "Modifica squadra" : "Nuova squadra"}
+          </h1>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button type="button" variant="secondary" onClick={() => navigate("/admin/teams")} disabled={isSubmitting} className="w-full">Annulla</Button>
+            <Button type="submit" disabled={isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending} className="w-full">
+              {(isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEdit ? "Salva modifiche" : "Crea squadra"}
+            </Button>
+          </div>
+        </div>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6">
           <Card>
             <CardHeader><CardTitle>Informazioni di Base</CardTitle></CardHeader>
             <CardContent className="space-y-4">
@@ -176,16 +185,8 @@ const TeamFormAdmin = () => {
               {errors.squad_photo_url && <p className="text-sm text-destructive mt-1">{errors.squad_photo_url.message}</p>}
             </CardContent>
           </Card>
-
-          <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="secondary" onClick={() => navigate("/admin/teams")} disabled={isSubmitting}>Annulla</Button>
-            <Button type="submit" disabled={isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending}>
-              {(isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? "Salva modifiche" : "Crea squadra"}
-            </Button>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </AdminLayout>
   );
 };
