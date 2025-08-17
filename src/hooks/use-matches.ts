@@ -47,9 +47,19 @@ export function useMatches() {
 }
 
 export function useMatch(id: string | undefined) {
-    return useSupabaseQuery<Match>(
+    return useSupabaseQuery<MatchWithTeams>(
         ['match', id],
-        async () => supabase.from('matches').select('*, venues(name), referee_teams:teams!matches_referee_team_id_fkey(*)').eq('id', id).single(),
+        async () => supabase
+          .from('matches')
+          .select(`
+            *,
+            venues(name),
+            home_teams:teams!matches_home_team_id_fkey(*),
+            away_teams:teams!matches_away_team_id_fkey(*),
+            referee_teams:teams!matches_referee_team_id_fkey(*)
+          `)
+          .eq('id', id)
+          .single(),
         { enabled: !!id }
     );
 }

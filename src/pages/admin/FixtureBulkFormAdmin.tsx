@@ -114,7 +114,7 @@ const FixtureBulkFormAdmin = () => {
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
                             <SelectTrigger><SelectValue placeholder="Squadra Casa" /></SelectTrigger>
-                            <SelectContent>{teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
+                            <SelectContent>{teams?.filter(t => t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
                       />
@@ -124,7 +124,7 @@ const FixtureBulkFormAdmin = () => {
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
                             <SelectTrigger><SelectValue placeholder="Squadra Ospite" /></SelectTrigger>
-                            <SelectContent>{teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
+                            <SelectContent>{teams?.filter(t => t.id !== homeTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
                       />

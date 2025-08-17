@@ -76,6 +76,8 @@ const FixtureFormAdmin = () => {
     if (match && isEdit) {
       reset({
         ...match,
+        home_team_id: match.home_teams.id,
+        away_team_id: match.away_teams.id,
         match_date: match.match_date ? new Date(match.match_date).toISOString().substring(0, 16) : '',
         venue_id: match.venue_id || null,
         competition_id: match.competition_id || null,
@@ -162,7 +164,7 @@ const FixtureFormAdmin = () => {
                   <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
                     <SelectTrigger><SelectValue placeholder="Seleziona squadra" /></SelectTrigger>
                     <SelectContent>
-                      {teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                      {teams?.filter(t => t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 )}
@@ -178,7 +180,7 @@ const FixtureFormAdmin = () => {
                   <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
                     <SelectTrigger><SelectValue placeholder="Seleziona squadra" /></SelectTrigger>
                     <SelectContent>
-                      {teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                      {teams?.filter(t => t.id !== homeTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 )}
