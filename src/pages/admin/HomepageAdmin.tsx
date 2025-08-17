@@ -8,7 +8,7 @@ import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, u
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Loader2, Plus, Trash2, GripVertical, Edit, Layout, Columns, ChevronsLeftRight } from 'lucide-react';
+import { Loader2, Plus, Trash2, GripVertical, Edit, Layout } from 'lucide-react';
 import { WIDGET_CONFIG } from '@/components/admin/layout-builder/WidgetRendererAdmin';
 import { showSuccess } from '@/utils/toast';
 import { createPortal } from 'react-dom';
@@ -17,23 +17,23 @@ import { HeroWidgetForm } from '@/components/admin/HeroWidgetForm';
 type WidgetType = keyof typeof WIDGET_CONFIG;
 
 const COLUMN_LAYOUTS = {
-  '100': [100],
-  '50/50': [50, 50],
-  '70/30': [70, 30],
-  '30/70': [30, 70],
-  '33/33/33': [33.33, 33.33, 33.33],
+  '100%': [100],
+  '50% / 50%': [50, 50],
+  '70% / 30%': [70, 30],
+  '30% / 70%': [30, 70],
+  '33% / 33% / 33%': [33.33, 33.33, 33.33],
 };
 
 // Componente per un singolo Widget nella colonna
 const SortableWidget = ({ widget, onEdit, onDelete }: { widget: Widget, onEdit: () => void, onDelete: () => void }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: widget.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: widget.id, data: { type: 'Widget' } });
   const style = { transform: CSS.Transform.toString(transform), transition };
   const config = WIDGET_CONFIG[widget.widget_type as WidgetType];
 
   return (
     <div ref={setNodeRef} style={style} className="p-3 border rounded bg-background flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <button {...attributes} {...listeners} className="cursor-grab"><GripVertical className="h-5 w-5 text-muted-foreground" /></button>
+        <button {...attributes} {...listeners} className="cursor-grab touch-none"><GripVertical className="h-5 w-5 text-muted-foreground" /></button>
         <span className="text-sm font-medium">{config?.name || widget.widget_type}</span>
       </div>
       <div className="flex items-center gap-1">
@@ -63,7 +63,7 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
     <div ref={setNodeRef} style={style} className="p-4 border rounded-lg bg-background space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <button {...attributes} {...listeners} className="cursor-grab"><GripVertical /></button>
+          <button {...attributes} {...listeners} className="cursor-grab touch-none"><GripVertical /></button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild><Button variant="outline" size="sm"><Layout className="h-4 w-4 mr-2" /> Layout</Button></DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -75,32 +75,24 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
         </div>
         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDeleteRow(row.id)}><Trash2 className="h-4 w-4 mr-2" />Elimina Riga</Button>
       </div>
-      <div className="flex gap-4">{children}</div>
+      <div className="flex flex-col md:flex-row gap-4">{children}</div>
     </div>
   );
 };
 
 // Componente per la Palette dei Widget
-const WidgetPalette = () => {
+const WidgetPalette = ({ onAddWidget }: { onAddWidget: (type: string) => void }) => {
   return (
     <Card className="w-full lg:w-64">
       <CardHeader><CardTitle className="text-base">Widget Disponibili</CardTitle></CardHeader>
       <CardContent className="space-y-2">
         {Object.entries(WIDGET_CONFIG).map(([type, { name }]) => (
-          <DraggablePaletteWidget key={type} id={type} name={name} />
+          <Button key={type} variant="outline" className="w-full justify-start" onClick={() => onAddWidget(type)}>
+            <Plus className="h-4 w-4 mr-2" /> {name}
+          </Button>
         ))}
       </CardContent>
     </Card>
-  );
-};
-
-const DraggablePaletteWidget = ({ id, name }: { id: string, name: string }) => {
-  const { attributes, listeners, setNodeRef } = useSortable({ id: `palette-${id}`, data: { type: 'PaletteWidget', widgetType: id } });
-  return (
-    <div ref={setNodeRef} {...attributes} {...listeners} className="p-2 border rounded bg-background cursor-grab flex items-center gap-2">
-      <GripVertical className="h-5 w-5 text-muted-foreground" />
-      <span className="text-sm">{name}</span>
-    </div>
   );
 };
 
@@ -116,26 +108,11 @@ const HomepageAdmin = () => {
     if (layoutData) setLayout(layoutData.layout_data);
   }, [layoutData]);
 
-  const findContainer = (id: string): { type: 'row' | 'column', container: Row | Column } | null => {
-    if (layout.find(r => r.id === id)) return { type: 'row', container: layout.find(r => r.id === id)! };
-    for (const row of layout) {
-      const column = row.columns.find(c => c.id === id);
-      if (column) return { type: 'column', container: column };
-      const widget = row.columns.flatMap(c => c.widgets).find(w => w.id === id);
-      if (widget) {
-        const parentColumn = row.columns.find(c => c.widgets.some(w => w.id === id));
-        return { type: 'column', container: parentColumn! };
-      }
-    }
-    return null;
-  };
-
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const type = active.data.current?.type;
     if (type === 'Row') setActiveItem(layout.find(r => r.id === active.id));
     if (type === 'Widget') setActiveItem(layout.flatMap(r => r.columns).flatMap(c => c.widgets).find(w => w.id === active.id));
-    if (type === 'PaletteWidget') setActiveItem({ id: active.id, type: 'PaletteWidget', widgetType: active.data.current?.widgetType });
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -146,63 +123,60 @@ const HomepageAdmin = () => {
     const activeId = active.id.toString();
     const overId = over.id.toString();
     const activeType = active.data.current?.type;
-    const overType = over.data.current?.type;
 
-    // Reordering rows
-    if (activeType === 'Row' && overType === 'Row' && activeId !== overId) {
-      setLayout(items => arrayMove(items, items.findIndex(i => i.id === activeId), items.findIndex(i => i.id === overId)));
+    // --- 1. Handle Row Reordering ---
+    if (activeType === 'Row' && over.data.current?.type === 'Row' && activeId !== overId) {
+      setLayout(items => {
+        const oldIndex = items.findIndex(i => i.id === activeId);
+        const newIndex = items.findIndex(i => i.id === overId);
+        return arrayMove(items, oldIndex, newIndex);
+      });
       return;
     }
 
-    const activeContainerInfo = findContainer(activeId);
-    const overContainerInfo = findContainer(overId);
-
-    // Moving widgets
-    if (activeType === 'Widget' || activeType === 'PaletteWidget') {
+    // --- 2. Handle Widget Dragging ---
+    if (activeType === 'Widget') {
       setLayout(prevLayout => {
-        const newLayout = JSON.parse(JSON.stringify(prevLayout));
-        const overColumnId = overType === 'Column' ? overId : overContainerInfo?.type === 'column' ? overContainerInfo.container.id : null;
-        if (!overColumnId) return prevLayout;
+        let sourceColumn: Column | undefined, overColumn: Column | undefined;
+        let sourceWidgetIndex = -1, overWidgetIndex = -1;
 
-        let widgetToAdd: Widget;
-        let activeColumnId: string | null = null;
-        let activeWidgetIndex = -1;
-
-        // Find and remove active widget if it's not from palette
-        if (activeType === 'Widget') {
-          for (const row of newLayout) {
-            for (const col of row.columns) {
-              const idx = col.widgets.findIndex(w => w.id === activeId);
-              if (idx !== -1) {
-                activeColumnId = col.id;
-                activeWidgetIndex = idx;
-                break;
-              }
+        // Find source and destination columns and indices
+        for (const row of prevLayout) {
+          for (const col of row.columns) {
+            const sIndex = col.widgets.findIndex(w => w.id === activeId);
+            if (sIndex !== -1) {
+              sourceColumn = col;
+              sourceWidgetIndex = sIndex;
             }
-            if (activeColumnId) break;
+            const oIndex = col.widgets.findIndex(w => w.id === overId);
+            if (oIndex !== -1) {
+              overColumn = col;
+              overWidgetIndex = oIndex;
+            }
+            if (col.id === overId) {
+              overColumn = col;
+              overWidgetIndex = col.widgets.length;
+            }
           }
-          if (activeColumnId) {
-            const [removedWidget] = newLayout.flatMap(r => r.columns).find(c => c.id === activeColumnId)!.widgets.splice(activeWidgetIndex, 1);
-            widgetToAdd = removedWidget;
-          } else {
-            return prevLayout; // Should not happen
-          }
-        } else { // New widget from palette
-          const widgetType = active.data.current?.widgetType;
-          widgetToAdd = {
-            id: `widget_${Date.now()}`,
-            widget_type: widgetType,
-            settings: WIDGET_CONFIG[widgetType as WidgetType]?.configurable ? {} : null,
-          };
         }
 
-        // Add widget to new column
-        const overColumn = newLayout.flatMap(r => r.columns).find(c => c.id === overColumnId);
-        if (!overColumn) return prevLayout;
+        if (!sourceColumn || !overColumn) return prevLayout;
 
-        const overWidgetIndex = overType === 'Widget' ? overColumn.widgets.findIndex(w => w.id === overId) : overColumn.widgets.length;
-        overColumn.widgets.splice(overWidgetIndex, 0, widgetToAdd);
+        const newLayout = JSON.parse(JSON.stringify(prevLayout));
+        const realSourceColumn = newLayout.flatMap((r: Row) => r.columns).find((c: Column) => c.id === sourceColumn!.id)!;
+        const realOverColumn = newLayout.flatMap((r: Row) => r.columns).find((c: Column) => c.id === overColumn!.id)!;
+        
+        const [draggedWidget] = realSourceColumn.widgets.splice(sourceWidgetIndex, 1);
 
+        if (realSourceColumn.id === realOverColumn.id) {
+          // Reordering in the same column
+          realOverColumn.widgets.splice(overWidgetIndex, 0, draggedWidget);
+        } else {
+          // Moving to a different column
+          const finalOverIndex = overWidgetIndex === -1 ? realOverColumn.widgets.length : overWidgetIndex;
+          realOverColumn.widgets.splice(finalOverIndex, 0, draggedWidget);
+        }
+        
         return newLayout;
       });
     }
@@ -218,13 +192,26 @@ const HomepageAdmin = () => {
         width,
         widgets: row.columns[index]?.widgets || [],
       }));
-      // Move widgets from removed columns to the first new column
       if (row.columns.length > newColumns.length) {
         const orphanedWidgets = row.columns.slice(newColumns.length).flatMap(c => c.widgets);
         newColumns[0].widgets.push(...orphanedWidgets);
       }
       return { ...row, columns: newColumns };
     }));
+  };
+
+  const handleAddWidget = (type: string) => {
+    setLayout(prev => {
+      if (prev.length === 0) return prev;
+      const newLayout = JSON.parse(JSON.stringify(prev));
+      const firstColumn = newLayout[0].columns[0];
+      firstColumn.widgets.push({
+        id: `widget_${Date.now()}`,
+        widget_type: type,
+        settings: WIDGET_CONFIG[type as WidgetType]?.configurable ? {} : null,
+      });
+      return newLayout;
+    });
   };
 
   const handleDeleteWidget = (widgetId: string) => {
@@ -258,7 +245,6 @@ const HomepageAdmin = () => {
   const handleSaveLayout = () => updateLayoutMutation.mutate(layout, { onSuccess: () => showSuccess("Layout salvato!") });
 
   const allColumnIds = useMemo(() => layout.flatMap(r => r.columns.map(c => c.id)), [layout]);
-  const allWidgetIds = useMemo(() => layout.flatMap(r => r.columns.flatMap(c => c.widgets.map(w => w.id))), [layout]);
 
   return (
     <AdminLayout>
@@ -275,7 +261,7 @@ const HomepageAdmin = () => {
               </div>
             </div>
             <Card>
-              <CardHeader><CardTitle>Layout</CardTitle><CardDescription>Trascina righe e widget per costruire la pagina.</CardDescription></CardHeader>
+              <CardHeader><CardTitle>Layout</CardTitle><CardDescription>Trascina le righe per riordinarle e i widget per spostarli.</CardDescription></CardHeader>
               <CardContent>
                 {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
                   <SortableContext items={layout.map(r => r.id)} strategy={verticalListSortingStrategy}>
@@ -300,15 +286,12 @@ const HomepageAdmin = () => {
               </CardContent>
             </Card>
           </div>
-          <SortableContext items={Object.keys(WIDGET_CONFIG).map(t => `palette-${t}`)}>
-            <WidgetPalette />
-          </SortableContext>
+          <WidgetPalette onAddWidget={handleAddWidget} />
         </div>
         {createPortal(
           <DragOverlay>
             {activeItem?.type === 'Row' && <div className="p-4 border rounded-lg bg-muted/80 h-[150px]"><p className="font-bold">Riga</p></div>}
             {activeItem?.type === 'Widget' && <div className="p-3 border rounded bg-background opacity-90"><span className="font-medium">{WIDGET_CONFIG[activeItem.widget_type as WidgetType]?.name}</span></div>}
-            {activeItem?.type === 'PaletteWidget' && <div className="p-2 border rounded bg-background opacity-90"><span className="text-sm">{WIDGET_CONFIG[activeItem.widgetType as WidgetType]?.name}</span></div>}
           </DragOverlay>,
           document.body
         )}
@@ -319,7 +302,7 @@ const HomepageAdmin = () => {
           open={!!editingWidget}
           onOpenChange={() => setEditingWidget(null)}
           onSave={handleSaveSettings}
-          isSaving={false} // The main save button handles the mutation state
+          isSaving={false}
         />
       )}
     </AdminLayout>
