@@ -49,32 +49,31 @@ const GalleryPage = () => {
       const filesToUpload = Array.from(data.file);
       
       const uploadPromises = filesToUpload.map(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('bucketName', 'gallery_media');
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}_${Math.random()}.${fileExt}`;
 
-        const { data: functionData, error } = await supabase.functions.invoke('convert-and-upload-image', {
-          body: formData,
-        });
+        const { error: uploadError } = await supabase.storage
+          .from('gallery_media')
+          .upload(filePath, file);
 
-        if (error) {
-          throw new Error(`Caricamento fallito per ${file.name}: ${error.message}`);
+        if (uploadError) {
+          throw new Error(`Caricamento fallito per ${file.name}: ${uploadError.message}`);
         }
         
         return {
-          functionData,
+          filePath,
           originalFile: file,
         };
       });
 
       const uploadResults = await Promise.all(uploadPromises);
 
-      const galleryItemsToInsert = uploadResults.map(({ functionData, originalFile }) => ({
+      const galleryItemsToInsert = uploadResults.map(({ filePath, originalFile }) => ({
         user_id: user.id,
         album_id: data.album_id || null,
-        file_path: functionData.filePath,
+        file_path: filePath,
         file_name: originalFile.name,
-        mime_type: originalFile.type.startsWith('video/') ? originalFile.type : 'image/jpeg',
+        mime_type: originalFile.type,
         title: originalFile.name,
       }));
 
@@ -83,9 +82,9 @@ const GalleryPage = () => {
 
       if (data.album_id) {
         const targetAlbum = albums?.find(a => a.id === data.album_id);
-        const firstImage = uploadResults.find(({ originalFile }) => !originalFile.type.startsWith('video/'));
+        const firstImage = uploadResults.find(({ originalFile }) => originalFile.type.startsWith('image/'));
         if (targetAlbum && !targetAlbum.cover_image_path && firstImage) {
-          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.functionData.filePath });
+          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.filePath });
         }
       }
 
@@ -123,7 +122,7 @@ const GalleryPage = () => {
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
                       <Label htmlFor="file">File *</Label>
-                      <Input id="file" type="file" {...register("file")} accept="image/jpeg, image/png, image/webp, image/gif, video/*, .heic, .heif, image/heic, image/heif" multiple />
+                      <Input id="file" type="file" {...register("file")} accept="image/jpeg, image/png, image/webp, image/gif, video/*" multiple />
                       {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
                     </div>
                     <div>
