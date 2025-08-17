@@ -107,8 +107,8 @@ const VenueFormAdmin = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-6">
             <Card>
               <CardHeader><CardTitle>Informazioni Principali</CardTitle></CardHeader>
               <CardContent className="space-y-4">
@@ -148,7 +148,7 @@ const VenueFormAdmin = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="lg:col-span-1">
+          <div className="md:col-span-1">
             <Card>
               <CardHeader><CardTitle>Immagine</CardTitle></CardHeader>
               <CardContent>
