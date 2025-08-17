@@ -17,11 +17,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const SeasonsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: seasons, isLoading, error } = useSeasons();
   const deleteSeasonMutation = useDeleteSeason();
+  const isMobile = useIsMobile();
 
   const filteredSeasons = useMemo(() => {
     if (!seasons || !searchTerm) return seasons;
@@ -95,6 +98,41 @@ const SeasonsAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredSeasons?.map(season => {
+        const actions = (
+          <>
+            <Link to={`/admin/seasons/${season.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina stagione</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{season.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDelete(season.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteSeasonMutation.isPending}>
+                    {deleteSeasonMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        const subtitle = (season.start_date && season.end_date) 
+          ? `${new Date(season.start_date).toLocaleDateString('it-IT')} - ${new Date(season.end_date).toLocaleDateString('it-IT')}`
+          : "Date non specificate";
+        return (
+          <AdminMobileCard
+            key={season.id}
+            title={season.name}
+            subtitle={subtitle}
+            actions={actions}
+          />
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -124,7 +162,7 @@ const SeasonsAdmin = () => {
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <Table columns={columns} data={data} />
+        isMobile ? renderMobileList() : <Table columns={columns} data={data} />
       )}
     </AdminLayout>
   );
