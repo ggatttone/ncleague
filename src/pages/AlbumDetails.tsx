@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { MainLayout } from "@/components/MainLayout";
 import { useAlbum } from "@/hooks/use-albums";
@@ -6,11 +7,14 @@ import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { MediaViewer } from "@/components/MediaViewer";
+import { GalleryItem } from "@/types/database";
 
 const AlbumDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: album, isLoading: albumLoading } = useAlbum(id);
   const { data: items, isLoading: itemsLoading } = useGalleryItemsByAlbum(id);
+  const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
 
   const isLoading = albumLoading || itemsLoading;
 
@@ -59,11 +63,15 @@ const AlbumDetails = () => {
             {items.map(item => {
               const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
               return (
-                <Card key={item.id} className="overflow-hidden group">
+                <Card
+                  key={item.id}
+                  className="overflow-hidden group cursor-pointer"
+                  onClick={() => setSelectedMedia(item)}
+                >
                   <CardContent className="p-0">
                     <div className="aspect-square bg-muted flex items-center justify-center">
                       {item.mime_type?.startsWith('video/') ? (
-                        <video src={publicURL} className="w-full h-full object-contain" controls playsInline />
+                        <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                       ) : (
                         <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
                       )}
@@ -81,6 +89,11 @@ const AlbumDetails = () => {
           </div>
         )}
       </div>
+      <MediaViewer
+        item={selectedMedia}
+        open={!!selectedMedia}
+        onOpenChange={() => setSelectedMedia(null)}
+      />
     </MainLayout>
   );
 };
