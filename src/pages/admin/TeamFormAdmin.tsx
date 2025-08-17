@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MultiSelect, OptionType } from "@/components/ui/multi-select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const colorOptions: OptionType[] = [
   { value: "Rosso", label: "Rosso" },
@@ -35,6 +36,7 @@ const teamSchema = z.object({
   venue_id: z.string().optional().nullable(),
   colors: z.array(z.string()).max(2, "Puoi selezionare al massimo due colori").optional(),
   logo_url: z.string().url("URL non valido").optional().nullable(),
+  squad_photo_url: z.string().url("URL non valido").optional().nullable(),
 });
 
 type TeamFormData = z.infer<typeof teamSchema>;
@@ -65,10 +67,12 @@ const TeamFormAdmin = () => {
       venue_id: null,
       colors: [],
       logo_url: null,
+      squad_photo_url: null,
     }
   });
 
   const logoUrlValue = watch('logo_url');
+  const squadPhotoUrlValue = watch('squad_photo_url');
 
   useEffect(() => {
     if (team && isEdit) {
@@ -78,6 +82,7 @@ const TeamFormAdmin = () => {
         venue_id: team.venue_id || null,
         colors: team.colors ? team.colors.split('/') : [],
         logo_url: team.logo_url || null,
+        squad_photo_url: team.squad_photo_url || null,
       });
     }
   }, [team, isEdit, reset]);
@@ -88,7 +93,8 @@ const TeamFormAdmin = () => {
       parish: data.parish || undefined,
       venue_id: data.venue_id || undefined,
       colors: data.colors?.join('/') || undefined,
-      logo_url: data.logo_url || undefined
+      logo_url: data.logo_url || undefined,
+      squad_photo_url: data.squad_photo_url || undefined,
     };
 
     if (isEdit && id) {
@@ -112,100 +118,68 @@ const TeamFormAdmin = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
           {isEdit ? "Modifica squadra" : "Nuova squadra"}
         </h1>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <ImageUploader
-            bucketName="team-logos"
-            currentImageUrl={logoUrlValue}
-            onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true, shouldDirty: true })}
-            label="Logo squadra"
-          />
-          {errors.logo_url && <p className="text-sm text-destructive mt-1">{errors.logo_url.message}</p>}
-
-          <div>
-            <Label htmlFor="name">Nome squadra *</Label>
-            <Input
-              id="name"
-              {...register("name")}
-              placeholder="Nome squadra"
-              autoFocus
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="parish">Parrocchia</Label>
-            <Input
-              id="parish"
-              {...register("parish")}
-              placeholder="Parrocchia"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="colors">Colori sociali</Label>
-            <Controller
-              name="colors"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  options={colorOptions}
-                  selected={field.value || []}
-                  onChange={field.onChange}
-                  placeholder="Seleziona fino a due colori"
-                  maxCount={2}
+          <Card>
+            <CardHeader><CardTitle>Informazioni di Base</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nome squadra *</Label>
+                <Input id="name" {...register("name")} placeholder="Nome squadra" autoFocus />
+                {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="parish">Parrocchia</Label>
+                <Input id="parish" {...register("parish")} placeholder="Parrocchia" />
+              </div>
+              <div>
+                <Label htmlFor="colors">Colori sociali</Label>
+                <Controller
+                  name="colors"
+                  control={control}
+                  render={({ field }) => (
+                    <MultiSelect options={colorOptions} selected={field.value || []} onChange={field.onChange} placeholder="Seleziona fino a due colori" maxCount={2} />
+                  )}
                 />
-              )}
-            />
-            {errors.colors && <p className="text-sm text-destructive mt-1">{errors.colors.message}</p>}
-          </div>
+                {errors.colors && <p className="text-sm text-destructive mt-1">{errors.colors.message}</p>}
+              </div>
+              <div>
+                <Label htmlFor="venue_id">Campo</Label>
+                <Controller
+                  name="venue_id"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={(value) => field.onChange(value === "no-venue" ? null : value)} value={field.value || "no-venue"} disabled={venuesLoading}>
+                      <SelectTrigger><SelectValue placeholder="Seleziona un campo" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="no-venue">Nessun campo</SelectItem>
+                        {venues?.map((venue) => (<SelectItem key={venue.id} value={venue.id}>{venue.name}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-          <div>
-            <Label htmlFor="venue_id">Campo</Label>
-            <Controller
-              name="venue_id"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  onValueChange={(value) => field.onChange(value === "no-venue" ? null : value)}
-                  value={field.value || "no-venue"}
-                  disabled={venuesLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleziona un campo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="no-venue">Nessun campo</SelectItem>
-                    {venues?.map((venue) => (
-                      <SelectItem key={venue.id} value={venue.id}>
-                        {venue.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
+          <Card>
+            <CardHeader><CardTitle>Immagini</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
+              <ImageUploader bucketName="team-logos" currentImageUrl={logoUrlValue} onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true, shouldDirty: true })} label="Logo squadra" />
+              {errors.logo_url && <p className="text-sm text-destructive mt-1">{errors.logo_url.message}</p>}
+              
+              <ImageUploader bucketName="squad-photos" currentImageUrl={squadPhotoUrlValue} onUploadSuccess={(url) => setValue('squad_photo_url', url, { shouldValidate: true, shouldDirty: true })} label="Foto della rosa" />
+              {errors.squad_photo_url && <p className="text-sm text-destructive mt-1">{errors.squad_photo_url.message}</p>}
+            </CardContent>
+          </Card>
 
           <div className="flex gap-2 justify-end pt-4">
-            <Button 
-              type="button" 
-              variant="secondary" 
-              onClick={() => navigate("/admin/teams")}
-              disabled={isSubmitting}
-            >
-              Annulla
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending}
-            >
+            <Button type="button" variant="secondary" onClick={() => navigate("/admin/teams")} disabled={isSubmitting}>Annulla</Button>
+            <Button type="submit" disabled={isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending}>
               {(isSubmitting || createTeamMutation.isPending || updateTeamMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Salva modifiche" : "Crea squadra"}
             </Button>

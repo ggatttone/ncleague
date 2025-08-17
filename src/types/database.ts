@@ -38,6 +38,7 @@ export interface Team {
   venue_id?: string;
   colors?: string;
   logo_url?: string;
+  squad_photo_url?: string;
   captain_id?: string;
   created_at: string;
   updated_at: string;
@@ -180,4 +181,22 @@ export interface Event {
   event_date: string | null;
   is_active: boolean;
   updated_at: string;
+}
+
+export interface Sponsor {
+  id: string;
+  team_id: string;
+  name: string;
+  logo_url?: string;
+  website_url?: string;
+  created_at: string;
+}
+
+export interface Honor {
+  id: string;
+  team_id: string;
+  competition_id: string;
+  season_id: string;
+  achievement: string;
+  created_at: string;
 }

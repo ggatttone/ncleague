@@ -10,6 +10,8 @@ const adminLinks = [
   { to: "/admin/competitions", label: "Competizioni", roles: ['admin', 'editor'] },
   { to: "/admin/seasons", label: "Stagioni", roles: ['admin', 'editor'] },
   { to: "/admin/venues", label: "Campi", roles: ['admin', 'editor'] },
+  { to: "/admin/sponsors", label: "Sponsor", roles: ['admin', 'editor'] },
+  { to: "/admin/honors", label: "Albo d'oro", roles: ['admin', 'editor'] },
   { to: "/admin/results", label: "Risultati", roles: ['admin', 'editor'] },
   { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
   { to: "/admin/albums", label: "Album Galleria", roles: ['admin', 'editor'] },

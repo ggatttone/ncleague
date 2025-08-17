@@ -51,6 +51,26 @@ export function useMatch(id: string | undefined) {
     );
 }
 
+export function useTeamMatches(teamId?: string) {
+  return useSupabaseQuery<MatchWithTeams[]>(
+    ['matches', { teamId }],
+    () => {
+      if (!teamId) return null;
+      return supabase
+        .from('matches')
+        .select(`
+          *,
+          venues(name),
+          home_teams:teams!matches_home_team_id_fkey(*),
+          away_teams:teams!matches_away_team_id_fkey(*)
+        `)
+        .or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`)
+        .order('match_date', { ascending: false });
+    },
+    { enabled: !!teamId }
+  );
+}
+
 export function useCreateMatch() {
     return useSupabaseMutation<Match>(
         ['matches'],
