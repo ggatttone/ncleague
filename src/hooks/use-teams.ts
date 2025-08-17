@@ -10,6 +10,7 @@ export interface CreateTeamData {
   venue_id?: string;
   colors?: string;
   logo_url?: string;
+  squad_photo_url?: string;
 }
 
 export interface UpdateTeamData extends CreateTeamData {

@@ -50,6 +50,10 @@ import AlbumsAdmin from "./pages/admin/AlbumsAdmin";
 import AlbumFormAdmin from "./pages/admin/AlbumFormAdmin";
 import ThemeAdmin from "./pages/admin/ThemeAdmin";
 import EventAdmin from "./pages/admin/EventAdmin";
+import SponsorsAdmin from "./pages/admin/SponsorsAdmin";
+import SponsorFormAdmin from "./pages/admin/SponsorFormAdmin";
+import HonorsAdmin from "./pages/admin/HonorsAdmin";
+import HonorFormAdmin from "./pages/admin/HonorFormAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -126,6 +130,12 @@ const App = () => (
                       <Route path="albums" element={<AlbumsAdmin />} />
                       <Route path="albums/new" element={<AlbumFormAdmin />} />
                       <Route path="albums/:id/edit" element={<AlbumFormAdmin />} />
+                      <Route path="sponsors" element={<SponsorsAdmin />} />
+                      <Route path="sponsors/new" element={<SponsorFormAdmin />} />
+                      <Route path="sponsors/:id/edit" element={<SponsorFormAdmin />} />
+                      <Route path="honors" element={<HonorsAdmin />} />
+                      <Route path="honors/new" element={<HonorFormAdmin />} />
+                      <Route path="honors/:id/edit" element={<HonorFormAdmin />} />
                       <Route path="event" element={<EventAdmin />} />
                       <Route path="theme" element={<ThemeAdmin />} />
                       <Route path="*" element={<NotFoundAdmin />} />
