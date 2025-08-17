@@ -10,10 +10,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { showSuccess, showError } from "@/utils/toast";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { AvatarUploader } from "@/components/auth/AvatarUploader";
 
 const profileSchema = z.object({
   first_name: z.string().min(1, "Il nome è obbligatorio"),
   last_name: z.string().min(1, "Il cognome è obbligatorio"),
+  avatar_url: z.string().url("URL non valido").nullable(),
 });
 
 const passwordSchema = z.object({
@@ -31,6 +33,7 @@ const ProfilePage = () => {
     defaultValues: {
       first_name: "",
       last_name: "",
+      avatar_url: null,
     },
   });
 
@@ -43,6 +46,7 @@ const ProfilePage = () => {
       profileForm.reset({
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
+        avatar_url: profile.avatar_url || null,
       });
     }
   }, [profile, profileForm.reset]);
@@ -51,7 +55,12 @@ const ProfilePage = () => {
     if (!user) return;
     const { error } = await supabase
       .from("profiles")
-      .update({ first_name: data.first_name, last_name: data.last_name, updated_at: new Date().toISOString() })
+      .update({ 
+        first_name: data.first_name, 
+        last_name: data.last_name, 
+        avatar_url: data.avatar_url,
+        updated_at: new Date().toISOString() 
+      })
       .eq("id", user.id);
 
     if (error) {
@@ -89,10 +98,23 @@ const ProfilePage = () => {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Informazioni personali</CardTitle>
-          <CardDescription>Aggiorna il tuo nome e cognome.</CardDescription>
+          <CardDescription>Aggiorna il tuo nome, cognome e foto profilo.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-4">
+          <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-6">
+            
+            <div>
+              <Label>Foto Profilo</Label>
+              <AvatarUploader 
+                onUpload={(url) => {
+                  profileForm.setValue('avatar_url', url, { shouldValidate: true, shouldDirty: true });
+                }}
+              />
+              {profileForm.formState.errors.avatar_url && (
+                <p className="text-sm text-destructive mt-1">{profileForm.formState.errors.avatar_url.message}</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="first_name">Nome</Label>
