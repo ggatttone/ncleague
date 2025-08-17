@@ -1,62 +1,56 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { showError } from '@/utils/toast';
-import { useSupabaseQuery, useSupabaseMutation } from './use-supabase-query';
+import { useSupabaseQuery } from './use-supabase-query';
 
-export interface HomepageWidget {
+// Definiamo i tipi per la nostra nuova struttura a griglia
+export interface Widget {
   id: string;
   widget_type: string;
-  sort_order: number;
   settings: any;
-  created_at: string;
 }
 
-// Hook to get all homepage widgets
+export interface Column {
+  id: string;
+  width: number;
+  widgets: Widget[];
+}
+
+export interface Row {
+  id: string;
+  columns: Column[];
+}
+
+export interface LayoutData {
+  id: number;
+  layout_data: Row[];
+  updated_at: string;
+}
+
+// Hook per recuperare il layout della homepage
 export function useHomepageLayout() {
-  return useSupabaseQuery<HomepageWidget[]>(
+  return useSupabaseQuery<LayoutData>(
     ['homepage-layout'],
-    () => supabase.from('homepage_layout').select('*').order('sort_order')
+    () => supabase.from('homepage_layout').select('*').eq('id', 1).single()
   );
 }
 
-// Hook to add a new widget
-export function useAddHomepageWidget() {
-  return useSupabaseMutation<HomepageWidget, Partial<HomepageWidget>>(
-    ['homepage-layout'],
-    (widgetData) => supabase.from('homepage_layout').insert(widgetData).select().single()
-  );
-}
-
-// Hook to update a widget (e.g., settings)
-export function useUpdateHomepageWidget() {
-  return useSupabaseMutation<HomepageWidget, Partial<HomepageWidget> & { id: string }>(
-    ['homepage-layout'],
-    ({ id, ...updates }) => supabase.from('homepage_layout').update(updates).eq('id', id).select().single()
-  );
-}
-
-// Hook to delete a widget
-export function useDeleteHomepageWidget() {
-  return useSupabaseMutation<void, string>(
-    ['homepage-layout'],
-    (id) => supabase.from('homepage_layout').delete().eq('id', id)
-  );
-}
-
-// Custom hook for reordering widgets
-export function useReorderHomepageWidgets() {
+// Hook per salvare/aggiornare il layout della homepage
+export function useUpdateHomepageLayout() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async (widgets: HomepageWidget[]) => {
-      const { error } = await supabase.from('homepage_layout').upsert(widgets);
+    mutationFn: async (layout: Row[]) => {
+      const { error } = await supabase
+        .from('homepage_layout')
+        .update({ layout_data: layout, updated_at: new Date().toISOString() })
+        .eq('id', 1);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homepage-layout'] });
     },
     onError: (error) => {
-      showError(`Error reordering widgets: ${error.message}`);
+      showError(`Errore nel salvataggio del layout: ${error.message}`);
     },
   });
 }

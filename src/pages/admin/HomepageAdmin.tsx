@@ -1,149 +1,142 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useHomepageLayout, useAddHomepageWidget, useUpdateHomepageWidget, useDeleteHomepageWidget, useReorderHomepageWidgets, HomepageWidget } from '@/hooks/use-homepage-layout';
-import { Loader2, Plus, GripVertical, Trash2, Edit } from 'lucide-react';
-import { HeroWidgetForm } from '@/components/admin/HeroWidgetForm';
+import { useHomepageLayout, useUpdateHomepageLayout, Row, Column, Widget } from '@/hooks/use-homepage-layout';
+import { DndContext, closestCenter, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Loader2, Plus, Trash2, GripVertical } from 'lucide-react';
+import { WIDGET_CONFIG, WidgetRendererAdmin } from '@/components/admin/layout-builder/WidgetRendererAdmin';
 import { showSuccess } from '@/utils/toast';
+import { createPortal } from 'react-dom';
 
-const WIDGET_CONFIG = {
-  hero: { name: 'Hero Section', configurable: true },
-  countdown: { name: 'Countdown Evento', configurable: false },
-  media_carousel: { name: 'Carosello Media Recenti', configurable: false },
-  upcoming_matches: { name: 'Prossime Partite', configurable: false },
-  latest_news: { name: 'Ultime Notizie', configurable: false },
-  league_table: { name: 'Classifica Widget', configurable: false },
+// Componente per una singola riga sortable
+const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, onUpdateRow: (rowId: string, columns: Column[]) => void, onDeleteRow: (rowId: string) => void, children: React.ReactNode }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: row.id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
+
+  return (
+    <div ref={setNodeRef} style={style} className="p-4 border rounded-lg bg-muted/50 space-y-4">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <button {...attributes} {...listeners} className="cursor-grab"><GripVertical /></button>
+          <p className="text-sm font-medium">Riga</p>
+        </div>
+        <Button variant="destructive" size="sm" onClick={() => onDeleteRow(row.id)}><Trash2 className="h-4 w-4 mr-2" />Elimina Riga</Button>
+      </div>
+      <div>{children}</div>
+    </div>
+  );
 };
 
-type WidgetType = keyof typeof WIDGET_CONFIG;
-
 const HomepageAdmin = () => {
-  const { data: widgets, isLoading } = useHomepageLayout();
-  const addWidgetMutation = useAddHomepageWidget();
-  const updateWidgetMutation = useUpdateHomepageWidget();
-  const deleteWidgetMutation = useDeleteHomepageWidget();
-  const reorderWidgetsMutation = useReorderHomepageWidgets();
+  const { data: layoutData, isLoading } = useHomepageLayout();
+  const updateLayoutMutation = useUpdateHomepageLayout();
+  const [layout, setLayout] = useState<Row[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
-  const [editingWidget, setEditingWidget] = useState<HomepageWidget | null>(null);
+  useEffect(() => {
+    if (layoutData) {
+      setLayout(layoutData.layout_data);
+    }
+  }, [layoutData]);
 
-  const handleAddWidget = (widgetType: WidgetType) => {
-    const newOrder = widgets ? widgets.length : 0;
-    const defaultSettings = widgetType === 'hero' ? {
-      title: "Benvenuti su NC League",
-      subtitle: "La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!",
-      buttonText: "Scopri l'ultima giornata",
-      buttonLink: "/matches",
-    } : null;
+  const handleAddRow = () => {
+    const newRow: Row = {
+      id: `row_${Date.now()}`,
+      columns: [{ id: `col_${Date.now()}`, width: 100, widgets: [] }],
+    };
+    setLayout(prev => [...prev, newRow]);
+  };
 
-    addWidgetMutation.mutate({
-      widget_type: widgetType,
-      sort_order: newOrder,
-      settings: defaultSettings,
+  const handleDeleteRow = (rowId: string) => {
+    setLayout(prev => prev.filter(row => row.id !== rowId));
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setLayout((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleSaveLayout = () => {
+    updateLayoutMutation.mutate(layout, {
+      onSuccess: () => showSuccess("Layout salvato con successo!"),
     });
   };
 
-  const handleMove = (index: number, direction: 'up' | 'down') => {
-    if (!widgets) return;
-    const newWidgets = [...widgets];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= newWidgets.length) return;
-
-    [newWidgets[index], newWidgets[targetIndex]] = [newWidgets[targetIndex], newWidgets[index]];
-    
-    const reorderPayload = newWidgets.map((widget, idx) => ({
-      ...widget,
-      sort_order: idx,
-    }));
-    reorderWidgetsMutation.mutate(reorderPayload);
-  };
-
-  const handleSaveSettings = (settings: any) => {
-    if (!editingWidget) return;
-    updateWidgetMutation.mutate(
-      { id: editingWidget.id, settings },
-      {
-        onSuccess: () => {
-          showSuccess('Widget aggiornato!');
-          setEditingWidget(null);
-        },
-      }
-    );
-  };
-
-  const availableWidgets = Object.keys(WIDGET_CONFIG).filter(
-    type => !widgets?.some(w => w.widget_type === type)
-  );
+  const activeRow = activeId ? layout.find(r => r.id === activeId) : null;
 
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Gestione Homepage</h1>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button disabled={availableWidgets.length === 0}>
-              <Plus className="mr-2 h-4 w-4" /> Aggiungi Widget
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {availableWidgets.map(type => (
-              <DropdownMenuItem key={type} onSelect={() => handleAddWidget(type as WidgetType)}>
-                {WIDGET_CONFIG[type as WidgetType].name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-2">
+          <Button onClick={handleAddRow}><Plus className="mr-2 h-4 w-4" /> Aggiungi Riga</Button>
+          <Button onClick={handleSaveLayout} disabled={updateLayoutMutation.isPending}>
+            {updateLayoutMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Salva Layout
+          </Button>
+        </div>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Layout Corrente</CardTitle>
-          <CardDescription>Aggiungi, rimuovi e riordina i blocchi che compongono la tua homepage.</CardDescription>
+          <CardDescription>Trascina le righe per riordinarle. Clicca su una riga per aggiungere widget.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>
           ) : (
-            <div className="space-y-4">
-              {widgets?.map((widget, index) => (
-                <div key={widget.id} className="flex items-center gap-4 p-3 border rounded-lg bg-background">
-                  <GripVertical className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1 font-medium">
-                    {WIDGET_CONFIG[widget.widget_type as WidgetType]?.name || widget.widget_type}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {WIDGET_CONFIG[widget.widget_type as WidgetType]?.configurable && (
-                      <Button variant="outline" size="sm" onClick={() => setEditingWidget(widget)}>
-                        <Edit className="h-4 w-4 mr-2" /> Modifica
-                      </Button>
-                    )}
-                    <Button variant="ghost" size="icon" onClick={() => handleMove(index, 'up')} disabled={index === 0}>▲</Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleMove(index, 'down')} disabled={index === widgets.length - 1}>▼</Button>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => deleteWidgetMutation.mutate(widget.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
+              <SortableContext items={layout.map(r => r.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-4">
+                  {layout.map(row => (
+                    <SortableRow key={row.id} row={row} onDeleteRow={handleDeleteRow} onUpdateRow={() => {}}>
+                      <div className="p-4 bg-background rounded text-center text-muted-foreground">
+                        <p>Questa è una riga. La gestione dei widget e delle colonne verrà aggiunta nel prossimo step.</p>
+                      </div>
+                    </SortableRow>
+                  ))}
                 </div>
-              ))}
-              {widgets?.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>La tua homepage è vuota.</p>
-                  <p>Aggiungi un widget per iniziare.</p>
-                </div>
+              </SortableContext>
+              {createPortal(
+                <DragOverlay>
+                  {activeRow ? (
+                     <div className="p-4 border rounded-lg bg-muted/50 space-y-4 opacity-75">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <GripVertical />
+                            <p className="text-sm font-medium">Riga</p>
+                          </div>
+                        </div>
+                      </div>
+                  ) : null}
+                </DragOverlay>,
+                document.body
               )}
+            </DndContext>
+          )}
+          {layout.length === 0 && !isLoading && (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>La tua homepage è vuota. Aggiungi una riga per iniziare.</p>
             </div>
           )}
         </CardContent>
       </Card>
-
-      <HeroWidgetForm
-        widget={editingWidget}
-        open={!!editingWidget}
-        onOpenChange={() => setEditingWidget(null)}
-        onSave={handleSaveSettings}
-        isSaving={updateWidgetMutation.isPending}
-      />
     </AdminLayout>
   );
 };
