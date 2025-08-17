@@ -53,7 +53,7 @@ const HomepageAdmin = () => {
     [newWidgets[index], newWidgets[targetIndex]] = [newWidgets[targetIndex], newWidgets[index]];
     
     const reorderPayload = newWidgets.map((widget, idx) => ({
-      id: widget.id,
+      ...widget,
       sort_order: idx,
     }));
     reorderWidgetsMutation.mutate(reorderPayload);

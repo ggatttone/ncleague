@@ -48,7 +48,7 @@ export function useReorderHomepageWidgets() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (widgets: { id: string; sort_order: number }[]) => {
+    mutationFn: async (widgets: HomepageWidget[]) => {
       const { error } = await supabase.from('homepage_layout').upsert(widgets);
       if (error) throw error;
     },
