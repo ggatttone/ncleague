@@ -22,12 +22,15 @@ import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { showSuccess } from "@/utils/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const ArticlesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: articles, isLoading, error } = useArticles();
   const deleteArticleMutation = useDeleteArticle();
   const togglePinMutation = useTogglePinArticle();
+  const isMobile = useIsMobile();
 
   const handleTogglePin = async (id: string, isPinned: boolean) => {
     await togglePinMutation.mutateAsync({ id, is_pinned: !isPinned }, {
@@ -134,6 +137,53 @@ const ArticlesAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredArticles?.map(article => {
+        const actions = (
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleTogglePin(article.id, article.is_pinned)} disabled={togglePinMutation.isPending}>
+                  {article.is_pinned ? <PinOff className="h-4 w-4 text-primary" /> : <Pin className="h-4 w-4" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent><p>{article.is_pinned ? "Sblocca" : "Fissa"}</p></TooltipContent>
+            </Tooltip>
+            <Link to={`/admin/articles/${article.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina articolo</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{article.title}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDelete(article.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteArticleMutation.isPending}>
+                    {deleteArticleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        const author = `${article.profiles?.first_name || ''} ${article.profiles?.last_name || ''}`.trim() || 'N/A';
+        return (
+          <AdminMobileCard
+            key={article.id}
+            title={article.title}
+            subtitle={author}
+            actions={actions}
+          >
+            <div className="mt-2">
+              <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>
+                {article.status === 'published' ? 'Pubblicato' : 'Bozza'}
+              </Badge>
+            </div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -163,7 +213,7 @@ const ArticlesAdmin = () => {
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <Table columns={columns} data={data} />
+        isMobile ? renderMobileList() : <Table columns={columns} data={data} />
       )}
     </AdminLayout>
   );

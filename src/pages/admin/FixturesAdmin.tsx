@@ -34,11 +34,14 @@ import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { BulkEditDialog } from "@/components/admin/BulkEditDialog";
 import { showSuccess } from "@/utils/toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const FixturesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
   const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | 'referee' | null }>({ open: false, type: null });
+  const isMobile = useIsMobile();
 
   const { data: matches, isLoading, error } = useMatches();
   const { data: competitions } = useCompetitions();
@@ -171,6 +174,40 @@ const FixturesAdmin = () => {
 
   if (error) return <AdminLayout><div className="text-center py-12"><p className="text-red-600 mb-4">Errore nel caricamento delle partite</p><p className="text-muted-foreground">{error.message}</p></div></AdminLayout>;
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredMatches?.map(match => {
+        const actions = (
+          <>
+            <Link to={`/admin/fixtures/${match.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina partita</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{match.home_teams.name} vs {match.away_teams.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDeleteMatch(match.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteMatchMutation.isPending}>
+                    {deleteMatchMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        return (
+          <AdminMobileCard
+            key={match.id}
+            title={<Link to={`/admin/fixtures/${match.id}`} className="hover:underline">{match.home_teams.name} vs {match.away_teams.name}</Link>}
+            subtitle={format(new Date(match.match_date), "dd/MM/yyyy HH:mm", { locale: it })}
+            actions={actions}
+          >
+            <div className="mt-2">{getStatusBadge(match.status)}</div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <AlertDialog>
@@ -190,7 +227,7 @@ const FixturesAdmin = () => {
           </div>
         </div>
 
-        {selectedMatches.length > 0 && (
+        {selectedMatches.length > 0 && !isMobile && (
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg mb-6">
             <div className="text-sm font-medium">{selectedMatches.length} partit{selectedMatches.length === 1 ? 'a' : 'e'} selezionat{selectedMatches.length === 1 ? 'a' : 'e'}</div>
             <DropdownMenu>
@@ -208,7 +245,9 @@ const FixturesAdmin = () => {
           </div>
         )}
 
-        {isLoading ? <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : <Table columns={columns} data={data} />}
+        {isLoading ? <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
+          isMobile ? renderMobileList() : <Table columns={columns} data={data} />
+        )}
 
         <BulkEditDialog
           open={dialogState.open && !!currentDialog}

@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSupabaseQuery, useSupabaseMutation } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
-import { Loader2, Search, User as UserIcon, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Search, XCircle } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { showError } from "@/utils/toast";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 interface Profile {
   id: string;
@@ -22,14 +24,13 @@ interface Profile {
 const UsersAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { hasPermission, user: currentUser } = useAuth();
+  const isMobile = useIsMobile();
 
-  // Utilizza la nuova Edge Function per recuperare gli utenti in modo sicuro
   const { data: profiles, isLoading, error, refetch } = useSupabaseQuery<Profile[]>(
     ['admin-users'],
     async () => {
       const { data, error } = await supabase.functions.invoke('get-users');
       if (error) {
-        // Se l'errore è di autorizzazione, mostriamo un messaggio specifico
         if (error instanceof Error && error.message.includes('401')) {
           throw new Error("Non hai i permessi per visualizzare gli utenti.");
         }
@@ -39,7 +40,7 @@ const UsersAdmin = () => {
     },
     { 
       enabled: hasPermission(['admin']),
-      retry: false // Non ritentare in caso di errore di autorizzazione
+      retry: false
     }
   );
 
@@ -57,7 +58,7 @@ const UsersAdmin = () => {
     },
     {
       onSuccess: () => {
-        refetch(); // Ricarica la lista degli utenti per visualizzare le modifiche
+        refetch();
       },
       onError: (err) => {
         showError(`Errore nell'aggiornamento del ruolo: ${err.message}`);
@@ -151,6 +152,44 @@ const UsersAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredProfiles?.map(profile => {
+        const actions = (
+          <Select
+            value={profile.role}
+            onValueChange={(newRole: Profile['role']) => handleRoleChange(profile.id, newRole)}
+            disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
+          >
+            <SelectTrigger className="w-[120px] h-9">
+              <SelectValue placeholder="Ruolo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="editor">Editor</SelectItem>
+              <SelectItem value="captain">Capitano</SelectItem>
+              <SelectItem value="player">Giocatore</SelectItem>
+            </SelectContent>
+          </Select>
+        );
+        return (
+          <AdminMobileCard
+            key={profile.id}
+            title={`${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'N/A'}
+            subtitle={profile.email}
+            actions={actions}
+          >
+            <div className="mt-2">
+              <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
+                {profile.role}
+              </Badge>
+            </div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -175,7 +214,7 @@ const UsersAdmin = () => {
           {searchTerm && ` trovati per "${searchTerm}"`}
         </div>
       )}
-      <Table columns={columns} data={data} />
+      {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}
     </AdminLayout>
   );
 };

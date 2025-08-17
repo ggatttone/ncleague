@@ -17,11 +17,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const VenuesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: venues, isLoading, error } = useVenues();
   const deleteVenueMutation = useDeleteVenue();
+  const isMobile = useIsMobile();
 
   const filteredVenues = useMemo(() => {
     if (!venues || !searchTerm) return venues;
@@ -100,6 +103,40 @@ const VenuesAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredVenues?.map(venue => {
+        const actions = (
+          <>
+            <Link to={`/admin/venues/${venue.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina campo</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{venue.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDeleteVenue(venue.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteVenueMutation.isPending}>
+                    {deleteVenueMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        return (
+          <AdminMobileCard
+            key={venue.id}
+            title={venue.name}
+            subtitle={venue.city || "Città non specificata"}
+            actions={actions}
+          >
+            <div className="mt-2 text-sm text-muted-foreground">{venue.address}</div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -129,7 +166,7 @@ const VenuesAdmin = () => {
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <Table columns={columns} data={data} />
+        isMobile ? renderMobileList() : <Table columns={columns} data={data} />
       )}
     </AdminLayout>
   );
