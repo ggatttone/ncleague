@@ -5,13 +5,14 @@ import { Match, Team, Goal, Player } from "@/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Whistle } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
   away_teams: Team;
+  referee_teams: Team | null;
 };
 
 type GoalWithPlayer = Goal & {
@@ -28,6 +29,7 @@ const MatchDetails = () => {
       .select(`
         *,
         venues(name),
+        referee_teams:teams!matches_referee_team_id_fkey(name),
         home_teams:teams!matches_home_team_id_fkey (
           id,
           name,
@@ -208,6 +210,12 @@ const MatchDetails = () => {
             <div className="flex items-center gap-2 text-muted-foreground mt-4 justify-center sm:justify-start">
               <MapPin className="h-4 w-4" />
               <span>{match.venues.name}</span>
+            </div>
+          )}
+          {match.referee_teams?.name && (
+            <div className="flex items-center gap-2 text-muted-foreground mt-2 justify-center sm:justify-start">
+              <Whistle className="h-4 w-4" />
+              <span>Arbitro: {match.referee_teams.name}</span>
             </div>
           )}
         </CardHeader>

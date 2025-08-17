@@ -5,11 +5,13 @@ import { Match, Team } from '@/types/database';
 export type MatchWithTeams = Match & {
   home_teams: Team;
   away_teams: Team;
+  referee_teams: Team | null;
 };
 
 export interface UpsertMatchData {
   home_team_id: string;
   away_team_id: string;
+  referee_team_id?: string;
   match_date: string;
   status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
   venue_id?: string;
@@ -37,7 +39,8 @@ export function useMatches() {
         *,
         venues(name),
         home_teams:teams!matches_home_team_id_fkey(*),
-        away_teams:teams!matches_away_team_id_fkey(*)
+        away_teams:teams!matches_away_team_id_fkey(*),
+        referee_teams:teams!matches_referee_team_id_fkey(*)
       `)
       .order('match_date', { ascending: false })
   );
@@ -46,7 +49,7 @@ export function useMatches() {
 export function useMatch(id: string | undefined) {
     return useSupabaseQuery<Match>(
         ['match', id],
-        async () => supabase.from('matches').select('*, venues(name)').eq('id', id).single(),
+        async () => supabase.from('matches').select('*, venues(name), referee_teams:teams!matches_referee_team_id_fkey(*)').eq('id', id).single(),
         { enabled: !!id }
     );
 }
@@ -62,7 +65,8 @@ export function useTeamMatches(teamId?: string) {
           *,
           venues(name),
           home_teams:teams!matches_home_team_id_fkey(*),
-          away_teams:teams!matches_away_team_id_fkey(*)
+          away_teams:teams!matches_away_team_id_fkey(*),
+          referee_teams:teams!matches_referee_team_id_fkey(*)
         `)
         .or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`)
         .order('match_date', { ascending: false });

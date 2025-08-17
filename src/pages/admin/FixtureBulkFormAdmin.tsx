@@ -23,9 +23,13 @@ const fixtureSchema = z.object({
   venue_id: z.string().optional().nullable(),
   competition_id: z.string().optional().nullable(),
   season_id: z.string().optional().nullable(),
+  referee_team_id: z.string().optional().nullable(),
 }).refine(data => data.home_team_id !== data.away_team_id, {
   message: "Le squadre devono essere diverse",
   path: ["away_team_id"],
+}).refine(data => !data.referee_team_id || (data.referee_team_id !== data.home_team_id && data.referee_team_id !== data.away_team_id), {
+  message: "L'arbitro non può essere una delle due squadre",
+  path: ["referee_team_id"],
 });
 
 const bulkFixturesSchema = z.object({
@@ -46,6 +50,7 @@ const FixtureBulkFormAdmin = () => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<BulkFixturesFormData>({
     resolver: zodResolver(bulkFixturesSchema),
     defaultValues: {
@@ -65,6 +70,7 @@ const FixtureBulkFormAdmin = () => {
       venue_id: fixture.venue_id || undefined,
       competition_id: fixture.competition_id || undefined,
       season_id: fixture.season_id || undefined,
+      referee_team_id: fixture.referee_team_id || undefined,
     }));
     
     await createMultipleMatchesMutation.mutateAsync(submissionData);
@@ -91,7 +97,10 @@ const FixtureBulkFormAdmin = () => {
         </div>
 
         <div className="space-y-4">
-          {fields.map((field, index) => (
+          {fields.map((field, index) => {
+            const homeTeamId = watch(`fixtures.${index}.home_team_id`);
+            const awayTeamId = watch(`fixtures.${index}.away_team_id`);
+            return (
             <Card key={field.id}>
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
@@ -120,6 +129,16 @@ const FixtureBulkFormAdmin = () => {
                         )}
                       />
                       {errors.fixtures?.[index]?.away_team_id && <p className="text-sm text-destructive">{errors.fixtures[index]?.away_team_id?.message}</p>}
+                      <Controller
+                        name={`fixtures.${index}.referee_team_id`}
+                        control={control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={teamsLoading}>
+                            <SelectTrigger><SelectValue placeholder="Arbitro (opzionale)" /></SelectTrigger>
+                            <SelectContent>{teams?.filter(t => t.id !== homeTeamId && t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
+                          </Select>
+                        )}
+                      />
                     </div>
                     {/* Date and Venue */}
                     <div className="space-y-2">
@@ -173,7 +192,7 @@ const FixtureBulkFormAdmin = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )})}
         </div>
 
         <Button
