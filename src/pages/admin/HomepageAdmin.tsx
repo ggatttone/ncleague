@@ -13,6 +13,7 @@ import { WIDGET_CONFIG } from '@/components/admin/layout-builder/WidgetRendererA
 import { showSuccess } from '@/utils/toast';
 import { createPortal } from 'react-dom';
 import { HeroWidgetForm } from '@/components/admin/HeroWidgetForm';
+import { PinnedArticleWidgetForm } from '@/components/admin/PinnedArticleWidgetForm';
 
 type WidgetType = keyof typeof WIDGET_CONFIG;
 
@@ -296,8 +297,17 @@ const HomepageAdmin = () => {
           document.body
         )}
       </DndContext>
-      {editingWidget && WIDGET_CONFIG[editingWidget.widget_type as WidgetType]?.configurable && (
+      {editingWidget && editingWidget.widget_type === 'hero' && (
         <HeroWidgetForm
+          widget={editingWidget}
+          open={!!editingWidget}
+          onOpenChange={() => setEditingWidget(null)}
+          onSave={handleSaveSettings}
+          isSaving={false}
+        />
+      )}
+      {editingWidget && editingWidget.widget_type === 'pinned_article' && (
+        <PinnedArticleWidgetForm
           widget={editingWidget}
           open={!!editingWidget}
           onOpenChange={() => setEditingWidget(null)}

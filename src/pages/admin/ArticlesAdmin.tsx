@@ -2,10 +2,10 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Table } from "@/components/Table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useArticles, useDeleteArticle } from "@/hooks/use-articles";
+import { useArticles, useDeleteArticle, useTogglePinArticle } from "@/hooks/use-articles";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
-import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Loader2, Plus, Edit, Trash2, Pin, PinOff } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,11 +20,22 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { showSuccess } from "@/utils/toast";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ArticlesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: articles, isLoading, error } = useArticles();
   const deleteArticleMutation = useDeleteArticle();
+  const togglePinMutation = useTogglePinArticle();
+
+  const handleTogglePin = async (id: string, isPinned: boolean) => {
+    await togglePinMutation.mutateAsync({ id, is_pinned: !isPinned }, {
+      onSuccess: () => {
+        showSuccess(`Articolo ${!isPinned ? 'fissato' : 'sbloccato'} con successo.`);
+      }
+    });
+  };
 
   const filteredArticles = useMemo(() => {
     if (!articles || !searchTerm) return articles;
@@ -39,6 +50,7 @@ const ArticlesAdmin = () => {
   };
 
   const columns = [
+    { key: "pin", label: "" },
     { key: "title", label: "Titolo" },
     { key: "status", label: "Stato" },
     { key: "author", label: "Autore" },
@@ -47,6 +59,24 @@ const ArticlesAdmin = () => {
   ];
 
   const data = filteredArticles?.map(article => ({
+    pin: (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => handleTogglePin(article.id, article.is_pinned)}
+            disabled={togglePinMutation.isPending}
+          >
+            {article.is_pinned ? <PinOff className="h-4 w-4 text-primary" /> : <Pin className="h-4 w-4" />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{article.is_pinned ? "Sblocca articolo" : "Fissa articolo in cima"}</p>
+        </TooltipContent>
+      </Tooltip>
+    ),
     title: article.title,
     status: (
       <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>

@@ -5,6 +5,7 @@ import { UpcomingMatches } from "@/components/UpcomingMatches";
 import Countdown from "@/components/Countdown";
 import { MediaCarousel } from "@/components/MediaCarousel";
 import { Widget } from "@/hooks/use-homepage-layout";
+import { PinnedArticleWidget } from "./PinnedArticleWidget";
 
 interface WidgetRendererProps {
   widget: Widget;
@@ -24,6 +25,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       return <LatestNews />;
     case 'league_table':
       return <LeagueTableWidget />;
+    case 'pinned_article':
+      return <PinnedArticleWidget {...widget} />;
     default:
       return null;
   }

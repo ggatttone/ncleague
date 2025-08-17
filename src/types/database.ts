@@ -126,6 +126,7 @@ export interface Article {
   published_at?: string;
   created_at: string;
   updated_at: string;
+  is_pinned: boolean;
 }
 
 export interface Like {

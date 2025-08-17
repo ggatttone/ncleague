@@ -1,4 +1,4 @@
-import { usePublishedArticles } from "@/hooks/use-articles";
+import { useLatestArticles } from "@/hooks/use-articles";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { ArticlePostCard } from "@/components/ArticlePostCard";
 
 export const LatestNews = () => {
-  const { data: articles, isLoading } = usePublishedArticles();
+  const { data: articles, isLoading } = useLatestArticles();
 
   return (
     <Card>

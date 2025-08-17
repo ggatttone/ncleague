@@ -15,6 +15,7 @@ export const WIDGET_CONFIG: WidgetConfig = {
   upcoming_matches: { name: 'Prossime Partite' },
   latest_news: { name: 'Ultime Notizie' },
   league_table: { name: 'Classifica' },
+  pinned_article: { name: 'Articolo in Evidenza', configurable: true },
 };
 
 interface WidgetRendererAdminProps {

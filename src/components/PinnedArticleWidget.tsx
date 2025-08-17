@@ -1,0 +1,36 @@
+import { useArticle } from "@/hooks/use-articles";
+import { ArticlePostCard } from "@/components/ArticlePostCard";
+import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface PinnedArticleWidgetProps {
+  settings: {
+    articleId?: string;
+  };
+}
+
+export const PinnedArticleWidget = ({ settings }: PinnedArticleWidgetProps) => {
+  const { articleId } = settings;
+  const { data: article, isLoading } = useArticle(articleId);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>In Evidenza</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        {isLoading && (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        )}
+        {!isLoading && !article && (
+          <div className="text-center text-muted-foreground py-8 px-6">
+            <p>Nessun articolo in evidenza selezionato. Configuralo dal pannello admin.</p>
+          </div>
+        )}
+        {article && <ArticlePostCard article={article} />}
+      </CardContent>
+    </Card>
+  );
+};
