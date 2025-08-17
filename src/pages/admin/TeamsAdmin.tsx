@@ -17,11 +17,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const TeamsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: teams, isLoading, error } = useTeams();
   const deleteTeamMutation = useDeleteTeam();
+  const isMobile = useIsMobile();
 
   const filteredTeams = useMemo(() => {
     if (!teams || !searchTerm) return teams;
@@ -33,12 +36,8 @@ const TeamsAdmin = () => {
     );
   }, [teams, searchTerm]);
 
-  const handleDeleteTeam = async (teamId: string, teamName: string) => {
-    try {
-      await deleteTeamMutation.mutateAsync(teamId);
-    } catch (error) {
-      console.error("Error deleting team:", error);
-    }
+  const handleDeleteTeam = async (teamId: string) => {
+    await deleteTeamMutation.mutateAsync(teamId);
   };
 
   const columns = [
@@ -82,7 +81,7 @@ const TeamsAdmin = () => {
             <AlertDialogFooter>
               <AlertDialogCancel>Annulla</AlertDialogCancel>
               <AlertDialogAction
-                onClick={() => handleDeleteTeam(team.id, team.name)}
+                onClick={() => handleDeleteTeam(team.id)}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 disabled={deleteTeamMutation.isPending}
               >
@@ -107,6 +106,49 @@ const TeamsAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredTeams?.map(team => {
+        const actions = (
+          <>
+            <Link to={`/admin/teams/${team.id}/edit`}>
+              <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
+            </Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina squadra</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare la squadra "{team.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDeleteTeam(team.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteTeamMutation.isPending}>
+                    {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        return (
+          <AdminMobileCard
+            key={team.id}
+            title={<Link to={`/admin/teams/${team.id}`} className="hover:underline">{team.name}</Link>}
+            subtitle={team.parish || "Nessuna parrocchia"}
+            actions={actions}
+          >
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+              <div className="font-semibold text-muted-foreground">Campo:</div>
+              <div>{team.venues?.name || "-"}</div>
+              <div className="font-semibold text-muted-foreground">Colori:</div>
+              <div>{team.colors || "-"}</div>
+            </div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -119,7 +161,6 @@ const TeamsAdmin = () => {
         </Link>
       </div>
 
-      {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -141,10 +182,10 @@ const TeamsAdmin = () => {
           {filteredTeams && filteredTeams.length > 0 && (
             <div className="mb-4 text-sm text-muted-foreground">
               {filteredTeams.length} squadr{filteredTeams.length === 1 ? 'a' : 'e'} 
-              {searchTerm && ` trovate per "${searchTerm}"`}
+              {searchTerm && ` trovat${filteredTeams.length === 1 ? 'a' : 'e'} per "${searchTerm}"`}
             </div>
           )}
-          <Table columns={columns} data={data} />
+          {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}
         </>
       )}
     </AdminLayout>

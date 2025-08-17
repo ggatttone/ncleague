@@ -118,14 +118,23 @@ const PlayerFormAdmin = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? "Modifica giocatore" : "Nuovo giocatore"}
-        </h1>
-        <form
-          className="space-y-6"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-2xl font-bold">
+            {isEdit ? "Modifica giocatore" : "Nuovo giocatore"}
+          </h1>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")} disabled={isMutating} className="w-full">
+              Annulla
+            </Button>
+            <Button type="submit" disabled={isMutating} className="w-full">
+              {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEdit ? "Salva modifiche" : "Crea giocatore"}
+            </Button>
+          </div>
+        </div>
+
+        <div className="max-w-xl mx-auto space-y-6">
           <ImageUploader
             bucketName="player-photos"
             currentImageUrl={photoUrlValue}
@@ -133,7 +142,6 @@ const PlayerFormAdmin = () => {
             label="Foto del giocatore"
           />
           {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
-
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -237,18 +245,8 @@ const PlayerFormAdmin = () => {
             <Label htmlFor="document_id">Documento (opzionale)</Label>
             <Input id="document_id" {...register("document_id")} placeholder="ID documento" />
           </div>
-
-          <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")} disabled={isMutating}>
-              Annulla
-            </Button>
-            <Button type="submit" disabled={isMutating}>
-              {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? "Salva modifiche" : "Crea giocatore"}
-            </Button>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </AdminLayout>
   );
 };

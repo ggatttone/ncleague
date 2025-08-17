@@ -17,11 +17,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 
 const PlayersAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: players, isLoading, error } = usePlayers();
   const deletePlayerMutation = useDeletePlayer();
+  const isMobile = useIsMobile();
 
   const filteredPlayers = useMemo(() => {
     if (!players || !searchTerm) return players;
@@ -33,11 +36,7 @@ const PlayersAdmin = () => {
   }, [players, searchTerm]);
 
   const handleDeletePlayer = async (playerId: string) => {
-    try {
-      await deletePlayerMutation.mutateAsync(playerId);
-    } catch (error) {
-      console.error(`Error deleting player:`, error);
-    }
+    await deletePlayerMutation.mutateAsync(playerId);
   };
 
   const columns = [
@@ -108,6 +107,46 @@ const PlayersAdmin = () => {
     );
   }
 
+  const renderMobileList = () => (
+    <div className="space-y-4">
+      {filteredPlayers?.map(player => {
+        const actions = (
+          <>
+            <Link to={`/admin/players/${player.id}/edit`}>
+              <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
+            </Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Elimina giocatore</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{player.first_name} {player.last_name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDeletePlayer(player.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deletePlayerMutation.isPending}>
+                    {deletePlayerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+        return (
+          <AdminMobileCard
+            key={player.id}
+            title={<Link to={`/admin/players/${player.id}`} className="hover:underline">{player.first_name} {player.last_name}</Link>}
+            subtitle={player.teams?.name || "Nessuna squadra"}
+            actions={actions}
+          >
+            <div className="mt-2 text-sm">
+              <span className="font-semibold text-muted-foreground">Ruolo:</span> {player.role || "-"}
+            </div>
+          </AdminMobileCard>
+        );
+      })}
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -141,10 +180,10 @@ const PlayersAdmin = () => {
           {filteredPlayers && filteredPlayers.length > 0 && (
             <div className="mb-4 text-sm text-muted-foreground">
               {filteredPlayers.length} giocator{filteredPlayers.length === 1 ? 'e' : 'i'} 
-              {searchTerm && ` trovati per "${searchTerm}"`}
+              {searchTerm && ` trovat${filteredPlayers.length === 1 ? 'o' : 'i'} per "${searchTerm}"`}
             </div>
           )}
-          <Table columns={columns} data={data} />
+          {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}
         </>
       )}
     </AdminLayout>
