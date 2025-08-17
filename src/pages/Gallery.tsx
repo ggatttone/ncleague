@@ -18,6 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
 import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { MediaViewer } from "@/components/MediaViewer";
+import { GalleryItem } from "@/types/database";
 
 const uploadSchema = z.object({
   album_id: z.string().optional().nullable(),
@@ -34,6 +36,7 @@ const GalleryPage = () => {
   const { data: allItems, isLoading: itemsLoading, error: itemsError } = useGalleryItems();
   const updateAlbumMutation = useUpdateAlbum();
   const [isUploadOpen, setUploadOpen] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, control } = useForm<UploadFormData>({
@@ -213,11 +216,15 @@ const GalleryPage = () => {
               {allItems?.map(item => {
                 const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
                 return (
-                  <Card key={item.id} className="overflow-hidden group">
+                  <Card
+                    key={item.id}
+                    className="overflow-hidden group cursor-pointer"
+                    onClick={() => setSelectedMedia(item)}
+                  >
                     <CardContent className="p-0">
                       <div className="aspect-square bg-muted flex items-center justify-center">
                         {item.mime_type?.startsWith('video/') ? (
-                          <video src={publicURL} className="w-full h-full object-contain" controls playsInline />
+                          <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                         ) : (
                           <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
                         )}
@@ -230,6 +237,11 @@ const GalleryPage = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <MediaViewer
+        item={selectedMedia}
+        open={!!selectedMedia}
+        onOpenChange={() => setSelectedMedia(null)}
+      />
     </MainLayout>
   );
 };
