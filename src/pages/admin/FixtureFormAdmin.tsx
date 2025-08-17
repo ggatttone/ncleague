@@ -75,14 +75,16 @@ const FixtureFormAdmin = () => {
   useEffect(() => {
     if (match && isEdit) {
       reset({
-        ...match,
         home_team_id: match.home_teams.id,
         away_team_id: match.away_teams.id,
+        referee_team_id: match.referee_teams?.id || null,
         match_date: match.match_date ? new Date(match.match_date).toISOString().substring(0, 16) : '',
+        status: match.status,
         venue_id: match.venue_id || null,
         competition_id: match.competition_id || null,
         season_id: match.season_id || null,
-        referee_team_id: match.referee_team_id || null,
+        home_score: match.home_score,
+        away_score: match.away_score,
       });
     }
   }, [match, isEdit, reset]);
