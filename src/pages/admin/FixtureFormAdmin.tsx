@@ -197,10 +197,14 @@ const FixtureFormAdmin = () => {
               name="referee_team_id"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value || ""} disabled={teamsLoading}>
+                <Select
+                  onValueChange={(value) => field.onChange(value === "no-referee" ? null : value)}
+                  value={field.value || "no-referee"}
+                  disabled={teamsLoading}
+                >
                   <SelectTrigger><SelectValue placeholder="Seleziona squadra arbitro" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nessun arbitro</SelectItem>
+                    <SelectItem value="no-referee">Nessun arbitro</SelectItem>
                     {teams?.filter(t => t.id !== homeTeamId && t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
