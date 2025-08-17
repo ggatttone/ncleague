@@ -28,15 +28,9 @@ const Index = () => {
             {layout.map(row => (
               <div key={row.id} className="flex flex-col lg:flex-row gap-8">
                 {row.columns.map(column => (
-                  <div key={column.id} className="space-y-8" style={{ flexBasis: `${column.width}%` }}>
+                  <div key={column.id} className="space-y-8 w-full" style={{ flexBasis: `${column.width}%` }}>
                     {column.widgets.map(widget => (
-                      <WidgetRenderer key={widget.id} widget={{
-                        id: widget.id,
-                        widget_type: widget.widget_type,
-                        settings: widget.settings,
-                        sort_order: 0, // sort_order non è più usato qui
-                        created_at: ''
-                      }} />
+                      <WidgetRenderer key={widget.id} widget={widget} />
                     ))}
                   </div>
                 ))}

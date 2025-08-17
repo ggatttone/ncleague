@@ -4,10 +4,10 @@ import { LeagueTableWidget } from "@/components/LeagueTableWidget";
 import { UpcomingMatches } from "@/components/UpcomingMatches";
 import Countdown from "@/components/Countdown";
 import { MediaCarousel } from "@/components/MediaCarousel";
-import { HomepageWidget } from "@/hooks/use-homepage-layout";
+import { Widget } from "@/hooks/use-homepage-layout";
 
 interface WidgetRendererProps {
-  widget: HomepageWidget;
+  widget: Widget;
 }
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
