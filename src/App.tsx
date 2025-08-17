@@ -54,6 +54,7 @@ import SponsorsAdmin from "./pages/admin/SponsorsAdmin";
 import SponsorFormAdmin from "./pages/admin/SponsorFormAdmin";
 import HonorsAdmin from "./pages/admin/HonorsAdmin";
 import HonorFormAdmin from "./pages/admin/HonorFormAdmin";
+import HomepageAdmin from "./pages/admin/HomepageAdmin";
 import NotFoundAdmin from "./pages/admin/NotFoundAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -137,6 +138,7 @@ const App = () => (
                       <Route path="honors/new" element={<HonorFormAdmin />} />
                       <Route path="honors/:id/edit" element={<HonorFormAdmin />} />
                       <Route path="event" element={<EventAdmin />} />
+                      <Route path="homepage" element={<HomepageAdmin />} />
                       <Route path="theme" element={<ThemeAdmin />} />
                       <Route path="*" element={<NotFoundAdmin />} />
                     </Routes>
