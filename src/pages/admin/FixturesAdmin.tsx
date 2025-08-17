@@ -5,6 +5,7 @@ import { useMatches, useDeleteMatch, useUpdateMultipleMatches, useDeleteMultiple
 import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { useVenues } from "@/hooks/use-venues";
+import { useTeams } from "@/hooks/use-teams";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,12 +38,13 @@ import { showSuccess } from "@/utils/toast";
 const FixturesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
-  const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | null }>({ open: false, type: null });
+  const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | 'referee' | null }>({ open: false, type: null });
 
   const { data: matches, isLoading, error } = useMatches();
   const { data: competitions } = useCompetitions();
   const { data: seasons } = useSeasons();
   const { data: venues } = useVenues();
+  const { data: teams } = useTeams();
 
   const deleteMatchMutation = useDeleteMatch();
   const updateMultipleMutation = useUpdateMultipleMatches();
@@ -156,12 +158,14 @@ const FixturesAdmin = () => {
   const competitionOptions = competitions?.map(c => ({ value: c.id, label: c.name })) || [];
   const seasonOptions = seasons?.map(s => ({ value: s.id, label: s.name })) || [];
   const venueOptions = venues?.map(v => ({ value: v.id, label: v.name })) || [];
+  const refereeOptions = teams?.map(t => ({ value: t.id, label: t.name })) || [];
 
   const dialogConfig = {
     status: { title: 'Modifica Stato', description: `Seleziona il nuovo stato per le ${selectedMatches.length} partite selezionate.`, label: 'Nuovo Stato', options: statusOptions },
     competition: { title: 'Assegna Competizione', description: `Seleziona la competizione per le ${selectedMatches.length} partite selezionate.`, label: 'Competizione', options: competitionOptions },
     season: { title: 'Assegna Stagione', description: `Seleziona la stagione per le ${selectedMatches.length} partite selezionate.`, label: 'Stagione', options: seasonOptions },
     venue: { title: 'Assegna Campo', description: `Seleziona il campo per le ${selectedMatches.length} partite selezionate.`, label: 'Campo', options: venueOptions },
+    referee: { title: 'Assegna Arbitro', description: `Seleziona la squadra arbitro per le ${selectedMatches.length} partite selezionate.`, label: 'Arbitro', options: refereeOptions },
   };
   const currentDialog = dialogState.type ? dialogConfig[dialogState.type] : null;
 
@@ -196,6 +200,7 @@ const FixturesAdmin = () => {
                 <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'competition' })}>Assegna Competizione</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'season' })}>Assegna Stagione</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'venue' })}>Assegna Campo</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'referee' })}>Assegna Arbitro</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <AlertDialogTrigger asChild><DropdownMenuItem className="text-destructive focus:text-destructive">Elimina Selezionate</DropdownMenuItem></AlertDialogTrigger>
               </DropdownMenuContent>

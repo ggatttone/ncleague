@@ -18,6 +18,7 @@ import { useMatch, useCreateMatch, useUpdateMatch } from "@/hooks/use-matches";
 const matchSchema = z.object({
   home_team_id: z.string().min(1, "Squadra casa obbligatoria"),
   away_team_id: z.string().min(1, "Squadra ospite obbligatoria"),
+  referee_team_id: z.string().optional().nullable(),
   match_date: z.string().min(1, "Data e ora obbligatorie"),
   status: z.enum(['scheduled', 'ongoing', 'completed', 'postponed', 'cancelled']),
   venue_id: z.string().optional().nullable(),
@@ -28,6 +29,9 @@ const matchSchema = z.object({
 }).refine(data => data.home_team_id !== data.away_team_id, {
   message: "Le squadre devono essere diverse",
   path: ["away_team_id"],
+}).refine(data => !data.referee_team_id || (data.referee_team_id !== data.home_team_id && data.referee_team_id !== data.away_team_id), {
+  message: "L'arbitro non può essere una delle due squadre",
+  path: ["referee_team_id"],
 });
 
 type MatchFormData = z.infer<typeof matchSchema>;
@@ -51,7 +55,8 @@ const FixtureFormAdmin = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    control
+    control,
+    watch
   } = useForm<MatchFormData>({
     resolver: zodResolver(matchSchema),
     defaultValues: {
@@ -61,8 +66,11 @@ const FixtureFormAdmin = () => {
       venue_id: null,
       competition_id: null,
       season_id: null,
+      referee_team_id: null,
     }
   });
+
+  const [homeTeamId, awayTeamId] = watch(['home_team_id', 'away_team_id']);
 
   useEffect(() => {
     if (match && isEdit) {
@@ -72,6 +80,7 @@ const FixtureFormAdmin = () => {
         venue_id: match.venue_id || null,
         competition_id: match.competition_id || null,
         season_id: match.season_id || null,
+        referee_team_id: match.referee_team_id || null,
       });
     }
   }, [match, isEdit, reset]);
@@ -82,6 +91,7 @@ const FixtureFormAdmin = () => {
       venue_id: data.venue_id || undefined,
       competition_id: data.competition_id || undefined,
       season_id: data.season_id || undefined,
+      referee_team_id: data.referee_team_id || undefined,
       home_score: data.status === 'completed' ? data.home_score : 0,
       away_score: data.status === 'completed' ? data.away_score : 0,
     };
@@ -177,6 +187,24 @@ const FixtureFormAdmin = () => {
             </div>
           </div>
           
+          <div>
+            <Label htmlFor="referee_team_id">Arbitro (Opzionale)</Label>
+            <Controller
+              name="referee_team_id"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value || ""} disabled={teamsLoading}>
+                  <SelectTrigger><SelectValue placeholder="Seleziona squadra arbitro" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Nessun arbitro</SelectItem>
+                    {teams?.filter(t => t.id !== homeTeamId && t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.referee_team_id && <p className="text-sm text-destructive mt-1">{errors.referee_team_id.message}</p>}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="match_date">Data e Ora *</Label>

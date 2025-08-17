@@ -27,6 +27,7 @@ const REQUIRED_FIELDS = [
   { id: 'home_team_name', label: 'Squadra Casa' },
   { id: 'away_team_name', label: 'Squadra Ospite' },
   { id: 'match_date', label: 'Data e Ora Partita' },
+  { id: 'referee_team_name', label: 'Nome Squadra Arbitro (Opzionale)' },
   { id: 'competition_name', label: 'Nome Competizione (Opzionale)' },
   { id: 'season_name', label: 'Nome Stagione (Opzionale)' },
   { id: 'home_score', label: 'Punteggio Casa (se completata)' },
@@ -44,6 +45,7 @@ type PreviewRow = {
     match_date: string;
     home_score: number;
     away_score: number;
+    referee_team_id?: string;
     venue_id?: string;
     competition_id?: string;
     season_id?: string;
@@ -170,8 +172,21 @@ const FixtureImportAdmin = () => {
         }
       }
 
-      let venueId, competitionId, seasonId;
+      let venueId, competitionId, seasonId, refereeTeamId;
       
+      const refereeNameRaw = row[mapping.referee_team_name];
+      if (refereeNameRaw) {
+        const refereeName = refereeNameRaw.toString().trim().toLowerCase();
+        refereeTeamId = teamsMap.get(refereeName);
+        if (!refereeTeamId) {
+          previewRow.isValid = false;
+          previewRow.errors.push(`Squadra arbitro non trovata: "${row[mapping.referee_team_name]}"`);
+        } else if (refereeTeamId === homeTeamId || refereeTeamId === awayTeamId) {
+          previewRow.isValid = false;
+          previewRow.errors.push("L'arbitro non può essere una delle due squadre.");
+        }
+      }
+
       const venueNameRaw = row[mapping.venue_name];
       if (venueNameRaw) {
         const venueName = venueNameRaw.toString().trim().toLowerCase();
@@ -212,6 +227,7 @@ const FixtureImportAdmin = () => {
           venue_id: venueId,
           competition_id: competitionId,
           season_id: seasonId,
+          referee_team_id: refereeTeamId,
           status: status,
         };
       }
@@ -316,6 +332,7 @@ const FixtureImportAdmin = () => {
                       <TableCell>{row.original[mapping.home_team_name]}</TableCell>
                       <TableCell>{row.original[mapping.away_team_name]}</TableCell>
                       <TableCell>{row.data?.match_date ? new Date(row.data.match_date).toLocaleString('it-IT') : 'Data invalida'}</TableCell>
+                      <TableCell>{row.original[mapping.referee_team_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.competition_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.season_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.home_score]}</TableCell>

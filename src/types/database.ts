@@ -82,6 +82,7 @@ export interface Match {
   venue_id?: string;
   home_team_id: string;
   away_team_id: string;
+  referee_team_id?: string | null;
   match_date: string;
   home_score: number;
   away_score: number;

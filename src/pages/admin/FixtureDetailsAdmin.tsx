@@ -32,6 +32,7 @@ import { useQueryClient } from "@tanstack/react-query";
 type MatchWithTeams = Match & {
   home_teams: Team;
   away_teams: Team;
+  referee_teams: Team | null;
 };
 
 const FixtureDetailsAdmin = () => {
@@ -44,7 +45,7 @@ const FixtureDetailsAdmin = () => {
     ['match-admin', id],
     async () => supabase
       .from('matches')
-      .select('*, venues(name), home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*)')
+      .select('*, venues(name), home_teams:teams!matches_home_team_id_fkey(*), away_teams:teams!matches_away_team_id_fkey(*), referee_teams:teams!matches_referee_team_id_fkey(*)')
       .eq('id', id)
       .single(),
     { enabled: !!id }
@@ -105,6 +106,10 @@ const FixtureDetailsAdmin = () => {
             <div>
               <div className="font-semibold">Stato</div>
               <div className="capitalize">{match.status}</div>
+            </div>
+            <div>
+              <div className="font-semibold">Arbitro</div>
+              <div>{match.referee_teams?.name || '-'}</div>
             </div>
           </div>
         </div>
