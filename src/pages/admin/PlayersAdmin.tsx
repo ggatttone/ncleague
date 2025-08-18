@@ -5,7 +5,7 @@ import { usePlayers, useDeletePlayer } from "@/hooks/use-players";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Loader2, Plus, Edit, Trash2, Upload } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -151,12 +151,20 @@ const PlayersAdmin = () => {
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Giocatori</h1>
-        <Link to="/admin/players/new">
-          <Button className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            Nuovo giocatore
-          </Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Link to="/admin/players/import" className="w-full">
+            <Button variant="outline" className="w-full">
+              <Upload className="mr-2 h-4 w-4" />
+              Importa
+            </Button>
+          </Link>
+          <Link to="/admin/players/new" className="w-full">
+            <Button className="w-full">
+              <Plus className="mr-2 h-4 w-4" />
+              Nuovo giocatore
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6">

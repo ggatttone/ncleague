@@ -41,6 +41,14 @@ export function useCreatePlayer() {
   );
 }
 
+export function useCreateMultiplePlayers() {
+  return useSupabaseMutation<Player[], CreatePlayerData[]>(
+      ['players'],
+      async (data: CreatePlayerData[]) =>
+          supabase.from('players').insert(data).select()
+  );
+}
+
 export function useUpdatePlayer() {
   return useSupabaseMutation<Player>(
     ['players'],
