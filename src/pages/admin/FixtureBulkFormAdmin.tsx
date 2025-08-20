@@ -15,6 +15,7 @@ import { useSeasons } from "@/hooks/use-seasons";
 import { useCreateMultipleMatches } from "@/hooks/use-matches";
 import { Card, CardContent } from "@/components/ui/card";
 import { showSuccess } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
 
 const fixtureSchema = z.object({
   home_team_id: z.string().min(1, "Obbligatorio"),
@@ -40,6 +41,7 @@ type BulkFixturesFormData = z.infer<typeof bulkFixturesSchema>;
 
 const FixtureBulkFormAdmin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { data: teams, isLoading: teamsLoading } = useTeams();
   const { data: venues, isLoading: venuesLoading } = useVenues();
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
@@ -84,14 +86,14 @@ const FixtureBulkFormAdmin = () => {
     <AdminLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Inserimento Multiplo Partite</h1>
+          <h1 className="text-2xl font-bold">{t('pages.admin.fixtureBulkForm.title')}</h1>
           <div className="flex gap-2">
             <Button type="button" variant="secondary" onClick={() => navigate("/admin/fixtures")} disabled={isSubmitting}>
               Annulla
             </Button>
             <Button type="submit" disabled={isSubmitting || isLoading}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Salva Tutte le Partite
+              {t('pages.admin.fixtureBulkForm.saveAllButton')}
             </Button>
           </div>
         </div>
@@ -107,13 +109,13 @@ const FixtureBulkFormAdmin = () => {
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Teams */}
                     <div className="space-y-2">
-                      <Label>Squadre *</Label>
+                      <Label>{t('pages.admin.fixtureBulkForm.teamsLabel')}</Label>
                       <Controller
                         name={`fixtures.${index}.home_team_id`}
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                            <SelectTrigger><SelectValue placeholder="Squadra Casa" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.homeTeamPlaceholder')} /></SelectTrigger>
                             <SelectContent>{teams?.filter(t => t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -123,7 +125,7 @@ const FixtureBulkFormAdmin = () => {
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                            <SelectTrigger><SelectValue placeholder="Squadra Ospite" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.awayTeamPlaceholder')} /></SelectTrigger>
                             <SelectContent>{teams?.filter(t => t.id !== homeTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -134,7 +136,7 @@ const FixtureBulkFormAdmin = () => {
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value || ""} disabled={teamsLoading}>
-                            <SelectTrigger><SelectValue placeholder="Arbitro (opzionale)" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.refereePlaceholder')} /></SelectTrigger>
                             <SelectContent>{teams?.filter(t => t.id !== homeTeamId && t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -142,7 +144,7 @@ const FixtureBulkFormAdmin = () => {
                     </div>
                     {/* Date and Venue */}
                     <div className="space-y-2">
-                      <Label>Data e Campo *</Label>
+                      <Label>{t('pages.admin.fixtureBulkForm.dateAndVenueLabel')}</Label>
                       <Controller
                         name={`fixtures.${index}.match_date`}
                         control={control}
@@ -153,7 +155,7 @@ const FixtureBulkFormAdmin = () => {
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value || ""} disabled={venuesLoading}>
-                            <SelectTrigger><SelectValue placeholder="Campo (opzionale)" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.venuePlaceholder')} /></SelectTrigger>
                             <SelectContent>{venues?.map(v => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -161,13 +163,13 @@ const FixtureBulkFormAdmin = () => {
                     </div>
                     {/* Competition and Season */}
                     <div className="space-y-2">
-                      <Label>Competizione e Stagione</Label>
+                      <Label>{t('pages.admin.fixtureBulkForm.competitionAndSeasonLabel')}</Label>
                       <Controller
                         name={`fixtures.${index}.competition_id`}
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value || ""} disabled={competitionsLoading}>
-                            <SelectTrigger><SelectValue placeholder="Competizione (opzionale)" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.competitionPlaceholder')} /></SelectTrigger>
                             <SelectContent>{competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -177,7 +179,7 @@ const FixtureBulkFormAdmin = () => {
                         control={control}
                         render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value || ""} disabled={seasonsLoading}>
-                            <SelectTrigger><SelectValue placeholder="Stagione (opzionale)" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureBulkForm.seasonPlaceholder')} /></SelectTrigger>
                             <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                           </Select>
                         )}
@@ -185,7 +187,7 @@ const FixtureBulkFormAdmin = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1}>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1} aria-label={t('pages.admin.fixtureBulkForm.deleteRowButton')}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
@@ -202,7 +204,7 @@ const FixtureBulkFormAdmin = () => {
           className="mt-4"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Aggiungi Partita
+          {t('pages.admin.fixtureBulkForm.addMatchButton')}
         </Button>
       </form>
     </AdminLayout>

@@ -28,6 +28,7 @@ import {
 import { GoalForm } from "@/components/admin/GoalForm";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -40,6 +41,7 @@ const FixtureDetailsAdmin = () => {
   const { id } = useParams<{ id: string }>();
   const [isGoalFormOpen, setIsGoalFormOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match-admin', id],
@@ -75,9 +77,9 @@ const FixtureDetailsAdmin = () => {
     <AdminLayout>
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Dettaglio Partita</h1>
+          <h1 className="text-2xl font-bold">{t('pages.admin.fixtureDetails.title')}</h1>
           <Button onClick={() => navigate(`/admin/fixtures/${id}/edit`)} className="w-full sm:w-auto">
-            Modifica
+            {t('pages.admin.fixtureDetails.editButton')}
           </Button>
         </div>
         
@@ -85,37 +87,37 @@ const FixtureDetailsAdmin = () => {
           <div className="flex justify-between items-center mb-4">
             <div className="text-center">
               <div className="text-xl font-bold">{match.home_teams.name}</div>
-              <div className="text-muted-foreground">Casa</div>
+              <div className="text-muted-foreground">{t('pages.admin.fixtureDetails.homeLabel')}</div>
             </div>
             <div className="text-3xl font-bold">{match.home_score} - {match.away_score}</div>
             <div className="text-center">
               <div className="text-xl font-bold">{match.away_teams.name}</div>
-              <div className="text-muted-foreground">Ospite</div>
+              <div className="text-muted-foreground">{t('pages.admin.fixtureDetails.awayLabel')}</div>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <div className="font-semibold">Data e ora</div>
+              <div className="font-semibold">{t('pages.admin.fixtureDetails.dateLabel')}</div>
               <div>{new Date(match.match_date).toLocaleString('it-IT')}</div>
             </div>
             <div>
-              <div className="font-semibold">Campo</div>
+              <div className="font-semibold">{t('pages.admin.fixtureDetails.venueLabel')}</div>
               <div>{match.venues?.name || '-'}</div>
             </div>
             <div>
-              <div className="font-semibold">Stato</div>
+              <div className="font-semibold">{t('pages.admin.fixtureDetails.statusLabel')}</div>
               <div className="capitalize">{match.status}</div>
             </div>
             <div>
-              <div className="font-semibold">Arbitro</div>
+              <div className="font-semibold">{t('pages.admin.fixtureDetails.refereeLabel')}</div>
               <div>{match.referee_teams?.name || '-'}</div>
             </div>
           </div>
         </div>
         
         <div className="bg-card rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Marcatori</h2>
+          <h2 className="text-xl font-bold mb-4">{t('pages.admin.fixtureDetails.scorersTitle')}</h2>
           {goalsLoading ? (
             <div className="flex justify-center items-center h-24"><Loader2 className="h-6 w-6 animate-spin" /></div>
           ) : (
@@ -131,9 +133,9 @@ const FixtureDetailsAdmin = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Elimina marcatore</AlertDialogTitle>
+                        <AlertDialogTitle>{t('pages.admin.fixtureDetails.deleteScorerDialogTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Sei sicuro di voler eliminare questo goal? L'azione non può essere annullata.
+                          {t('pages.admin.fixtureDetails.deleteScorerDialogDescription')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -151,21 +153,21 @@ const FixtureDetailsAdmin = () => {
                   </AlertDialog>
                 </div>
               ))}
-              {goals?.length === 0 && <p className="text-muted-foreground text-sm">Nessun marcatore registrato.</p>}
+              {goals?.length === 0 && <p className="text-muted-foreground text-sm">{t('pages.admin.fixtureDetails.noScorers')}</p>}
             </div>
           )}
           
           <Dialog open={isGoalFormOpen} onOpenChange={setIsGoalFormOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="mt-4">
-                + Aggiungi marcatore
+                + {t('pages.admin.fixtureDetails.addScorerButton')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Aggiungi Marcatore</DialogTitle>
+                <DialogTitle>{t('pages.admin.fixtureDetails.addScorerDialogTitle')}</DialogTitle>
                 <DialogDescription>
-                  Seleziona la squadra, il giocatore e il minuto del goal.
+                  {t('pages.admin.fixtureDetails.addScorerDialogDescription')}
                 </DialogDescription>
               </DialogHeader>
               <GoalForm 

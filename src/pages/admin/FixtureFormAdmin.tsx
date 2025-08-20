@@ -14,6 +14,7 @@ import { useVenues } from "@/hooks/use-venues";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { useMatch, useCreateMatch, useUpdateMatch } from "@/hooks/use-matches";
+import { useTranslation } from "react-i18next";
 
 const matchSchema = z.object({
   home_team_id: z.string().min(1, "Squadra casa obbligatoria"),
@@ -40,6 +41,7 @@ const FixtureFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: match, isLoading: matchLoading } = useMatch(id);
   const { data: teams, isLoading: teamsLoading } = useTeams();
@@ -119,19 +121,19 @@ const FixtureFormAdmin = () => {
     <AdminLayout>
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? "Modifica partita" : "Nuova partita"}
+          {isEdit ? t('pages.admin.fixtureForm.editTitle') : t('pages.admin.fixtureForm.newTitle')}
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="competition_id">Competizione</Label>
+              <Label htmlFor="competition_id">{t('pages.admin.fixtureForm.competitionLabel')}</Label>
               <Controller
                 name="competition_id"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value || ""} disabled={competitionsLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona competizione" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.competitionPlaceholder')} /></SelectTrigger>
                     <SelectContent>
                       {competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                     </SelectContent>
@@ -140,13 +142,13 @@ const FixtureFormAdmin = () => {
               />
             </div>
             <div>
-              <Label htmlFor="season_id">Stagione</Label>
+              <Label htmlFor="season_id">{t('pages.admin.fixtureForm.seasonLabel')}</Label>
               <Controller
                 name="season_id"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value || ""} disabled={seasonsLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona stagione" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.seasonPlaceholder')} /></SelectTrigger>
                     <SelectContent>
                       {seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                     </SelectContent>
@@ -158,13 +160,13 @@ const FixtureFormAdmin = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="home_team_id">Squadra Casa *</Label>
+              <Label htmlFor="home_team_id">{t('pages.admin.fixtureForm.homeTeamLabel')}</Label>
               <Controller
                 name="home_team_id"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona squadra" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.homeTeamPlaceholder')} /></SelectTrigger>
                     <SelectContent>
                       {teams?.filter(t => t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                     </SelectContent>
@@ -174,13 +176,13 @@ const FixtureFormAdmin = () => {
               {errors.home_team_id && <p className="text-sm text-destructive mt-1">{errors.home_team_id.message}</p>}
             </div>
             <div>
-              <Label htmlFor="away_team_id">Squadra Ospite *</Label>
+              <Label htmlFor="away_team_id">{t('pages.admin.fixtureForm.awayTeamLabel')}</Label>
               <Controller
                 name="away_team_id"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona squadra" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.awayTeamPlaceholder')} /></SelectTrigger>
                     <SelectContent>
                       {teams?.filter(t => t.id !== homeTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                     </SelectContent>
@@ -192,7 +194,7 @@ const FixtureFormAdmin = () => {
           </div>
           
           <div>
-            <Label htmlFor="referee_team_id">Arbitro (Opzionale)</Label>
+            <Label htmlFor="referee_team_id">{t('pages.admin.fixtureForm.refereeLabel')}</Label>
             <Controller
               name="referee_team_id"
               control={control}
@@ -202,9 +204,9 @@ const FixtureFormAdmin = () => {
                   value={field.value || "no-referee"}
                   disabled={teamsLoading}
                 >
-                  <SelectTrigger><SelectValue placeholder="Seleziona squadra arbitro" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.refereePlaceholder')} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="no-referee">Nessun arbitro</SelectItem>
+                    <SelectItem value="no-referee">{t('pages.admin.fixtureForm.noReferee')}</SelectItem>
                     {teams?.filter(t => t.id !== homeTeamId && t.id !== awayTeamId).map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -215,18 +217,18 @@ const FixtureFormAdmin = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="match_date">Data e Ora *</Label>
+              <Label htmlFor="match_date">{t('pages.admin.fixtureForm.dateLabel')}</Label>
               <Input id="match-date" type="datetime-local" {...register("match_date")} />
               {errors.match_date && <p className="text-sm text-destructive mt-1">{errors.match_date.message}</p>}
             </div>
             <div>
-              <Label htmlFor="venue_id">Campo</Label>
+              <Label htmlFor="venue_id">{t('pages.admin.fixtureForm.venueLabel')}</Label>
               <Controller
                 name="venue_id"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value || ""} disabled={venuesLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona campo" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.venuePlaceholder')} /></SelectTrigger>
                     <SelectContent>
                       {venues?.map(v => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}
                     </SelectContent>
@@ -238,30 +240,30 @@ const FixtureFormAdmin = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="status">Stato *</Label>
+              <Label htmlFor="status">{t('pages.admin.fixtureForm.statusLabel')}</Label>
               <Controller
                 name="status"
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona stato" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.fixtureForm.statusPlaceholder')} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="scheduled">Programmata</SelectItem>
-                      <SelectItem value="ongoing">In corso</SelectItem>
-                      <SelectItem value="completed">Completata</SelectItem>
-                      <SelectItem value="postponed">Rinviata</SelectItem>
-                      <SelectItem value="cancelled">Cancellata</SelectItem>
+                      <SelectItem value="scheduled">{t('matchStatus.scheduled')}</SelectItem>
+                      <SelectItem value="ongoing">{t('matchStatus.ongoing')}</SelectItem>
+                      <SelectItem value="completed">{t('matchStatus.completed')}</SelectItem>
+                      <SelectItem value="postponed">{t('matchStatus.postponed')}</SelectItem>
+                      <SelectItem value="cancelled">{t('matchStatus.cancelled')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
             <div>
-              <Label htmlFor="home_score">Punteggio Casa</Label>
+              <Label htmlFor="home_score">{t('pages.admin.fixtureForm.homeScoreLabel')}</Label>
               <Input id="home_score" type="number" {...register("home_score")} />
             </div>
             <div>
-              <Label htmlFor="away_score">Punteggio Ospite</Label>
+              <Label htmlFor="away_score">{t('pages.admin.fixtureForm.awayScoreLabel')}</Label>
               <Input id="away_score" type="number" {...register("away_score")} />
             </div>
           </div>

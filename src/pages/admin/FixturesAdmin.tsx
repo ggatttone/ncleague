@@ -36,12 +36,14 @@ import { BulkEditDialog } from "@/components/admin/BulkEditDialog";
 import { showSuccess } from "@/utils/toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const FixturesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
   const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | 'referee' | null }>({ open: false, type: null });
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const { data: matches, isLoading, error } = useMatches();
   const { data: competitions } = useCompetitions();
@@ -110,13 +112,15 @@ const FixturesAdmin = () => {
   };
 
   const getStatusBadge = (status: string) => {
+    const statusKey = `matchStatus.${status}`;
+    const statusText = t(statusKey, { defaultValue: status });
     switch (status) {
-      case 'scheduled': return <Badge variant="outline">Programmata</Badge>;
-      case 'ongoing': return <Badge variant="default" className="bg-green-600">In corso</Badge>;
-      case 'completed': return <Badge variant="secondary">Completata</Badge>;
-      case 'postponed': return <Badge variant="destructive">Rinviata</Badge>;
-      case 'cancelled': return <Badge variant="destructive">Cancellata</Badge>;
-      default: return <Badge variant="outline">{status}</Badge>;
+      case 'scheduled': return <Badge variant="outline">{statusText}</Badge>;
+      case 'ongoing': return <Badge variant="default" className="bg-green-600">{statusText}</Badge>;
+      case 'completed': return <Badge variant="secondary">{statusText}</Badge>;
+      case 'postponed': return <Badge variant="destructive">{statusText}</Badge>;
+      case 'cancelled': return <Badge variant="destructive">{statusText}</Badge>;
+      default: return <Badge variant="outline">{statusText}</Badge>;
     }
   };
 
@@ -125,10 +129,10 @@ const FixturesAdmin = () => {
       key: "select", 
       label: <Checkbox checked={isAllSelected} onCheckedChange={(checked) => handleSelectAll(checked as boolean)} aria-label="Select all" />
     },
-    { key: "match", label: "Partita" },
-    { key: "date", label: "Data" },
-    { key: "status", label: "Stato" },
-    { key: "actions", label: "Azioni" },
+    { key: "match", label: t('pages.admin.fixtures.table.match') },
+    { key: "date", label: t('pages.admin.fixtures.table.date') },
+    { key: "status", label: t('pages.admin.fixtures.table.status') },
+    { key: "actions", label: t('pages.admin.fixtures.table.actions') },
   ];
 
   const data = filteredMatches?.map(match => ({
@@ -142,7 +146,7 @@ const FixturesAdmin = () => {
         <AlertDialog>
           <AlertDialogTrigger asChild><Button variant="ghost" size="sm" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
           <AlertDialogContent>
-            <AlertDialogHeader><AlertDialogTitle>Elimina partita</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare la partita "{match.home_teams.name} vs {match.away_teams.name}"? Questa azione non può essere annullata.</AlertDialogDescription></AlertDialogHeader>
+            <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.fixtures.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.fixtures.deleteDialogDescription', { matchName: `${match.home_teams.name} vs ${match.away_teams.name}` })}</AlertDialogDescription></AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annulla</AlertDialogCancel>
               <AlertDialogAction onClick={() => handleDeleteMatch(match.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteMatchMutation.isPending}>
@@ -156,7 +160,7 @@ const FixturesAdmin = () => {
   })) || [];
 
   const statusOptions = [
-    { value: 'scheduled', label: 'Programmata' }, { value: 'ongoing', label: 'In corso' }, { value: 'completed', label: 'Completata' }, { value: 'postponed', label: 'Rinviata' }, { value: 'cancelled', label: 'Cancellata' },
+    { value: 'scheduled', label: t('matchStatus.scheduled') }, { value: 'ongoing', label: t('matchStatus.ongoing') }, { value: 'completed', label: t('matchStatus.completed') }, { value: 'postponed', label: t('matchStatus.postponed') }, { value: 'cancelled', label: t('matchStatus.cancelled') },
   ];
   const competitionOptions = competitions?.map(c => ({ value: c.id, label: c.name })) || [];
   const seasonOptions = seasons?.map(s => ({ value: s.id, label: s.name })) || [];
@@ -164,11 +168,11 @@ const FixturesAdmin = () => {
   const refereeOptions = teams?.map(t => ({ value: t.id, label: t.name })) || [];
 
   const dialogConfig = {
-    status: { title: 'Modifica Stato', description: `Seleziona il nuovo stato per le ${selectedMatches.length} partite selezionate.`, label: 'Nuovo Stato', options: statusOptions },
-    competition: { title: 'Assegna Competizione', description: `Seleziona la competizione per le ${selectedMatches.length} partite selezionate.`, label: 'Competizione', options: competitionOptions },
-    season: { title: 'Assegna Stagione', description: `Seleziona la stagione per le ${selectedMatches.length} partite selezionate.`, label: 'Stagione', options: seasonOptions },
-    venue: { title: 'Assegna Campo', description: `Seleziona il campo per le ${selectedMatches.length} partite selezionate.`, label: 'Campo', options: venueOptions },
-    referee: { title: 'Assegna Arbitro', description: `Seleziona la squadra arbitro per le ${selectedMatches.length} partite selezionate.`, label: 'Arbitro', options: refereeOptions },
+    status: { title: t('pages.admin.fixtures.bulkEdit.statusTitle'), description: t('pages.admin.fixtures.bulkEdit.statusDescription', { count: selectedMatches.length }), label: t('pages.admin.fixtures.bulkEdit.statusLabel'), options: statusOptions },
+    competition: { title: t('pages.admin.fixtures.bulkEdit.competitionTitle'), description: t('pages.admin.fixtures.bulkEdit.competitionDescription', { count: selectedMatches.length }), label: t('pages.admin.fixtures.bulkEdit.competitionLabel'), options: competitionOptions },
+    season: { title: t('pages.admin.fixtures.bulkEdit.seasonTitle'), description: t('pages.admin.fixtures.bulkEdit.seasonDescription', { count: selectedMatches.length }), label: t('pages.admin.fixtures.bulkEdit.seasonLabel'), options: seasonOptions },
+    venue: { title: t('pages.admin.fixtures.bulkEdit.venueTitle'), description: t('pages.admin.fixtures.bulkEdit.venueDescription', { count: selectedMatches.length }), label: t('pages.admin.fixtures.bulkEdit.venueLabel'), options: venueOptions },
+    referee: { title: t('pages.admin.fixtures.bulkEdit.refereeTitle'), description: t('pages.admin.fixtures.bulkEdit.refereeDescription', { count: selectedMatches.length }), label: t('pages.admin.fixtures.bulkEdit.refereeLabel'), options: refereeOptions },
   };
   const currentDialog = dialogState.type ? dialogConfig[dialogState.type] : null;
 
@@ -183,7 +187,7 @@ const FixturesAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina partita</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{match.home_teams.name} vs {match.away_teams.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.fixtures.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.fixtures.deleteDialogDescription', { matchName: `${match.home_teams.name} vs ${match.away_teams.name}` })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDeleteMatch(match.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteMatchMutation.isPending}>
@@ -212,34 +216,34 @@ const FixturesAdmin = () => {
     <AdminLayout>
       <AlertDialog>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Calendario Partite</h1>
+          <h1 className="text-2xl font-bold">{t('pages.admin.fixtures.title')}</h1>
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-            <Link to="/admin/fixtures/import" className="w-full"><Button variant="outline" className="w-full"><Upload className="mr-2 h-4 w-4" />Importa</Button></Link>
-            <Link to="/admin/fixtures/new/bulk" className="w-full"><Button variant="outline" className="w-full"><Plus className="mr-2 h-4 w-4" />Multiplo</Button></Link>
-            <Link to="/admin/fixtures/new" className="w-full"><Button className="w-full"><Plus className="mr-2 h-4 w-4" />Nuova partita</Button></Link>
+            <Link to="/admin/fixtures/import" className="w-full"><Button variant="outline" className="w-full"><Upload className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.importButton')}</Button></Link>
+            <Link to="/admin/fixtures/new/bulk" className="w-full"><Button variant="outline" className="w-full"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.newBulkButton')}</Button></Link>
+            <Link to="/admin/fixtures/new" className="w-full"><Button className="w-full"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.newMatchButton')}</Button></Link>
           </div>
         </div>
 
         <div className="mb-6">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input placeholder="Cerca partite..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
+            <Input placeholder={t('pages.admin.fixtures.searchPlaceholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
           </div>
         </div>
 
         {selectedMatches.length > 0 && !isMobile && (
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg mb-6">
-            <div className="text-sm font-medium">{selectedMatches.length} partit{selectedMatches.length === 1 ? 'a' : 'e'} selezionat{selectedMatches.length === 1 ? 'a' : 'e'}</div>
+            <div className="text-sm font-medium">{t('pages.admin.fixtures.matchesFound', { count: selectedMatches.length })}</div>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild><Button variant="outline" size="sm">Azioni di gruppo <ChevronDown className="ml-2 h-4 w-4" /></Button></DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild><Button variant="outline" size="sm">{t('pages.admin.fixtures.bulkActions')} <ChevronDown className="ml-2 h-4 w-4" /></Button></DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'status' })}>Modifica Stato</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'competition' })}>Assegna Competizione</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'season' })}>Assegna Stagione</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'venue' })}>Assegna Campo</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'referee' })}>Assegna Arbitro</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'status' })}>{t('pages.admin.fixtures.editStatus')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'competition' })}>{t('pages.admin.fixtures.assignCompetition')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'season' })}>{t('pages.admin.fixtures.assignSeason')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'venue' })}>{t('pages.admin.fixtures.assignVenue')}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogState({ open: true, type: 'referee' })}>{t('pages.admin.fixtures.assignReferee')}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <AlertDialogTrigger asChild><DropdownMenuItem className="text-destructive focus:text-destructive">Elimina Selezionate</DropdownMenuItem></AlertDialogTrigger>
+                <AlertDialogTrigger asChild><DropdownMenuItem className="text-destructive focus:text-destructive">{t('pages.admin.fixtures.deleteSelected')}</DropdownMenuItem></AlertDialogTrigger>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -260,7 +264,7 @@ const FixturesAdmin = () => {
           onConfirm={handleBulkUpdate}
         />
         <AlertDialogContent>
-          <AlertDialogHeader><AlertDialogTitle>Elimina partite selezionate</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare {selectedMatches.length} partit{selectedMatches.length === 1 ? 'a' : 'e'}? Questa azione non può essere annullata.</AlertDialogDescription></AlertDialogHeader>
+          <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.fixtures.deleteSelectedDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.fixtures.deleteSelectedDialogDescription', { count: selectedMatches.length })}</AlertDialogDescription></AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annulla</AlertDialogCancel>
             <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteMultipleMutation.isPending}>
