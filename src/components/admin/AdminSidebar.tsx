@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
+export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const location = useLocation();
   const { hasPermission } = useAuth();
   const { t } = useTranslation();
