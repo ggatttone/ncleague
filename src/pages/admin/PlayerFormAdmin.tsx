@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { usePlayer, useCreatePlayer, useUpdatePlayer } from "@/hooks/use-players";
 import { useTeams } from "@/hooks/use-teams";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { useTranslation } from "react-i18next";
 
 // Schema for form validation
 const playerSchema = z.object({
@@ -37,6 +38,7 @@ const PlayerFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   // Fetch data
   const { data: player, isLoading: playerLoading } = usePlayer(id);
@@ -121,15 +123,15 @@ const PlayerFormAdmin = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">
-            {isEdit ? "Modifica giocatore" : "Nuovo giocatore"}
+            {isEdit ? t('pages.admin.playerForm.editTitle') : t('pages.admin.playerForm.newTitle')}
           </h1>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")} disabled={isMutating} className="w-full">
-              Annulla
+              {t('pages.admin.playerForm.cancelButton')}
             </Button>
             <Button type="submit" disabled={isMutating} className="w-full">
               {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? "Salva modifiche" : "Crea giocatore"}
+              {isEdit ? t('pages.admin.playerForm.saveButton') : t('pages.admin.playerForm.createButton')}
             </Button>
           </div>
         </div>
@@ -139,25 +141,25 @@ const PlayerFormAdmin = () => {
             bucketName="player-photos"
             currentImageUrl={photoUrlValue}
             onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
-            label="Foto del giocatore"
+            label={t('pages.admin.playerForm.photoLabel')}
           />
           {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="first_name">Nome *</Label>
-              <Input id="first_name" {...register("first_name")} placeholder="Nome" autoFocus />
+              <Label htmlFor="first_name">{t('pages.admin.playerForm.firstNameLabel')}</Label>
+              <Input id="first_name" {...register("first_name")} placeholder={t('pages.admin.playerForm.firstNamePlaceholder')} autoFocus />
               {errors.first_name && <p className="text-sm text-destructive mt-1">{errors.first_name.message}</p>}
             </div>
             <div>
-              <Label htmlFor="last_name">Cognome *</Label>
-              <Input id="last_name" {...register("last_name")} placeholder="Cognome" />
+              <Label htmlFor="last_name">{t('pages.admin.playerForm.lastNameLabel')}</Label>
+              <Input id="last_name" {...register("last_name")} placeholder={t('pages.admin.playerForm.lastNamePlaceholder')} />
               {errors.last_name && <p className="text-sm text-destructive mt-1">{errors.last_name.message}</p>}
             </div>
           </div>
 
           <div>
-            <Label htmlFor="team_id">Squadra</Label>
+            <Label htmlFor="team_id">{t('pages.admin.playerForm.teamLabel')}</Label>
             <Controller
               name="team_id"
               control={control}
@@ -168,10 +170,10 @@ const PlayerFormAdmin = () => {
                   disabled={teamsLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleziona una squadra" />
+                    <SelectValue placeholder={t('pages.admin.playerForm.teamPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="no-team">Nessuna squadra</SelectItem>
+                    <SelectItem value="no-team">{t('pages.admin.playerForm.noTeam')}</SelectItem>
                     {teams?.map((team) => (
                       <SelectItem key={team.id} value={team.id}>
                         {team.name}
@@ -185,11 +187,11 @@ const PlayerFormAdmin = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="date_of_birth">Data di nascita</Label>
+              <Label htmlFor="date_of_birth">{t('pages.admin.playerForm.dobLabel')}</Label>
               <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
             </div>
             <div>
-              <Label htmlFor="nationality">Nazionalità</Label>
+              <Label htmlFor="nationality">{t('pages.admin.playerForm.nationalityLabel')}</Label>
               <Controller
                 name="nationality"
                 control={control}
@@ -199,7 +201,7 @@ const PlayerFormAdmin = () => {
                     value={field.value || ""}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona nazionalità" />
+                      <SelectValue placeholder={t('pages.admin.playerForm.nationalityPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {nationalities.map(nat => (
@@ -214,7 +216,7 @@ const PlayerFormAdmin = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="role">Ruolo</Label>
+              <Label htmlFor="role">{t('pages.admin.playerForm.roleLabel')}</Label>
               <Controller
                 name="role"
                 control={control}
@@ -224,7 +226,7 @@ const PlayerFormAdmin = () => {
                     value={field.value || ""}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona un ruolo" />
+                      <SelectValue placeholder={t('pages.admin.playerForm.rolePlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {playerRoles.map(role => (
@@ -236,14 +238,14 @@ const PlayerFormAdmin = () => {
               />
             </div>
             <div>
-              <Label htmlFor="jersey_number">Numero maglia</Label>
+              <Label htmlFor="jersey_number">{t('pages.admin.playerForm.jerseyNumberLabel')}</Label>
               <Input id="jersey_number" type="number" min={1} max={99} {...register("jersey_number")} />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="document_id">Documento (opzionale)</Label>
-            <Input id="document_id" {...register("document_id")} placeholder="ID documento" />
+            <Label htmlFor="document_id">{t('pages.admin.playerForm.documentIdLabel')}</Label>
+            <Input id="document_id" {...register("document_id")} placeholder={t('pages.admin.playerForm.documentIdPlaceholder')} />
           </div>
         </div>
       </form>

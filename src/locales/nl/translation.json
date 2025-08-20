@@ -216,6 +216,89 @@
         "newPlayer": "Nieuwe Speler",
         "newMatch": "Nieuwe Wedstrijd",
         "newArticle": "Nieuw Artikel"
+      },
+      "teams": {
+        "title": "Teams",
+        "newTeam": "Nieuw team",
+        "searchPlaceholder": "Zoek teams...",
+        "teamsFound_one": "{{count}} team gevonden",
+        "teamsFound_other": "{{count}} teams gevonden",
+        "deleteDialogTitle": "Verwijder team",
+        "deleteDialogDescription": "Weet u zeker dat u het team \"{{teamName}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt en zal ook alle bijbehorende spelers verwijderen.",
+        "deleteButton": "Verwijder",
+        "cancelButton": "Annuleer",
+        "errorLoading": "Fout bij het laden van teams",
+        "table": {
+          "name": "Naam",
+          "parish": "Parochie",
+          "venue": "Locatie",
+          "colors": "Kleuren",
+          "actions": "Acties"
+        }
+      },
+      "teamForm": {
+        "editTitle": "Bewerk team",
+        "newTitle": "Nieuw team",
+        "cancelButton": "Annuleer",
+        "saveButton": "Wijzigingen opslaan",
+        "createButton": "Creëer team",
+        "basicInfo": "Basis informatie",
+        "teamNameLabel": "Teamnaam *",
+        "teamNamePlaceholder": "Teamnaam",
+        "parishLabel": "Parochie",
+        "parishPlaceholder": "Parochie",
+        "colorsLabel": "Teamkleuren",
+        "colorsPlaceholder": "Selecteer maximaal twee kleuren",
+        "venueLabel": "Locatie",
+        "venuePlaceholder": "Selecteer een locatie",
+        "noVenue": "Geen locatie",
+        "images": "Afbeeldingen",
+        "logoLabel": "Teamlogo",
+        "squadPhotoLabel": "Teamfoto"
+      },
+      "players": {
+        "title": "Spelers",
+        "importButton": "Importeer",
+        "newPlayerButton": "Nieuwe speler",
+        "searchPlaceholder": "Zoek spelers...",
+        "playersFound_one": "{{count}} speler gevonden",
+        "playersFound_other": "{{count}} spelers gevonden",
+        "deleteDialogTitle": "Verwijder speler",
+        "deleteDialogDescription": "Weet u zeker dat u de speler \"{{playerName}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "errorLoading": "Fout bij het laden van spelers",
+        "table": {
+          "name": "Naam",
+          "team": "Team",
+          "role": "Rol",
+          "actions": "Acties"
+        },
+        "mobile": {
+          "noTeam": "Geen team",
+          "roleLabel": "Rol"
+        }
+      },
+      "playerForm": {
+        "editTitle": "Bewerk speler",
+        "newTitle": "Nieuwe speler",
+        "cancelButton": "Annuleer",
+        "saveButton": "Wijzigingen opslaan",
+        "createButton": "Creëer speler",
+        "photoLabel": "Spelerfoto",
+        "firstNameLabel": "Voornaam *",
+        "firstNamePlaceholder": "Voornaam",
+        "lastNameLabel": "Achternaam *",
+        "lastNamePlaceholder": "Achternaam",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Selecteer een team",
+        "noTeam": "Geen team",
+        "dobLabel": "Geboortedatum",
+        "nationalityLabel": "Nationaliteit",
+        "nationalityPlaceholder": "Selecteer nationaliteit",
+        "roleLabel": "Rol",
+        "rolePlaceholder": "Selecteer een rol",
+        "jerseyNumberLabel": "Rugnummer",
+        "documentIdLabel": "Document (optioneel)",
+        "documentIdPlaceholder": "Document ID"
       }
     },
     "notFound": {
