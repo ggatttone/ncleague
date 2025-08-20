@@ -17,6 +17,13 @@ import { useTranslation } from 'react-i18next';
 
 type WidgetType = 'hero' | 'countdown' | 'media_carousel' | 'upcoming_matches' | 'latest_news' | 'league_table' | 'pinned_article';
 
+type WidgetConfig = {
+  [key in WidgetType]: {
+    name: string;
+    configurable?: boolean;
+  };
+};
+
 const COLUMN_LAYOUTS = {
   '100%': [100],
   '50% / 50%': [50, 50],
@@ -108,7 +115,7 @@ const HomepageAdmin = () => {
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
-  const WIDGET_CONFIG = useMemo(() => ({
+  const WIDGET_CONFIG: WidgetConfig = useMemo(() => ({
     hero: { name: t('widgets.hero'), configurable: true },
     countdown: { name: t('widgets.countdown') },
     media_carousel: { name: t('widgets.media_carousel') },
