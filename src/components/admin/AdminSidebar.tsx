@@ -13,38 +13,38 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
 
   const adminMenuConfig = useMemo(() => [
     {
-      category: t('admin.sidebar.leagueManagement'),
+      category: t('pages.admin.sidebar.leagueManagement'),
       links: [
-        { to: "/admin", label: t('admin.sidebar.dashboard'), roles: ['admin', 'editor', 'captain'], exact: true },
-        { to: "/admin/teams", label: t('admin.sidebar.teams'), roles: ['admin', 'editor', 'captain'] },
-        { to: "/admin/players", label: t('admin.sidebar.players'), roles: ['admin', 'editor', 'captain'] },
-        { to: "/admin/fixtures", label: t('admin.sidebar.fixtures'), roles: ['admin', 'editor'] },
-        { to: "/admin/competitions", label: t('admin.sidebar.competitions'), roles: ['admin', 'editor'] },
-        { to: "/admin/seasons", label: t('admin.sidebar.seasons'), roles: ['admin', 'editor'] },
-        { to: "/admin/venues", label: t('admin.sidebar.venues'), roles: ['admin', 'editor'] },
-        { to: "/admin/sponsors", label: t('admin.sidebar.sponsors'), roles: ['admin', 'editor'] },
-        { to: "/admin/honors", label: t('admin.sidebar.honors'), roles: ['admin', 'editor'] },
+        { to: "/admin", label: t('pages.admin.sidebar.dashboard'), roles: ['admin', 'editor', 'captain'], exact: true },
+        { to: "/admin/teams", label: t('pages.admin.sidebar.teams'), roles: ['admin', 'editor', 'captain'] },
+        { to: "/admin/players", label: t('pages.admin.sidebar.players'), roles: ['admin', 'editor', 'captain'] },
+        { to: "/admin/fixtures", label: t('pages.admin.sidebar.fixtures'), roles: ['admin', 'editor'] },
+        { to: "/admin/competitions", label: t('pages.admin.sidebar.competitions'), roles: ['admin', 'editor'] },
+        { to: "/admin/seasons", label: t('pages.admin.sidebar.seasons'), roles: ['admin', 'editor'] },
+        { to: "/admin/venues", label: t('pages.admin.sidebar.venues'), roles: ['admin', 'editor'] },
+        { to: "/admin/sponsors", label: t('pages.admin.sidebar.sponsors'), roles: ['admin', 'editor'] },
+        { to: "/admin/honors", label: t('pages.admin.sidebar.honors'), roles: ['admin', 'editor'] },
       ]
     },
     {
-      category: t('admin.sidebar.contentManagement'),
+      category: t('pages.admin.sidebar.contentManagement'),
       links: [
-        { to: "/admin/articles", label: t('admin.sidebar.articles'), roles: ['admin', 'editor'] },
-        { to: "/admin/albums", label: t('admin.sidebar.gallery'), roles: ['admin', 'editor'] },
+        { to: "/admin/articles", label: t('pages.admin.sidebar.articles'), roles: ['admin', 'editor'] },
+        { to: "/admin/albums", label: t('pages.admin.sidebar.gallery'), roles: ['admin', 'editor'] },
       ]
     },
     {
-      category: t('admin.sidebar.siteConfig'),
+      category: t('pages.admin.sidebar.siteConfig'),
       links: [
-        { to: "/admin/homepage", label: t('admin.sidebar.homepageLayout'), roles: ['admin', 'editor'] },
-        { to: "/admin/theme", label: t('admin.sidebar.appearance'), roles: ['admin'] },
-        { to: "/admin/event", label: t('admin.sidebar.countdownEvent'), roles: ['admin'] },
+        { to: "/admin/homepage", label: t('pages.admin.sidebar.homepageLayout'), roles: ['admin', 'editor'] },
+        { to: "/admin/theme", label: t('pages.admin.sidebar.appearance'), roles: ['admin'] },
+        { to: "/admin/event", label: t('pages.admin.sidebar.countdownEvent'), roles: ['admin'] },
       ]
     },
     {
-      category: t('admin.sidebar.administration'),
+      category: t('pages.admin.sidebar.administration'),
       links: [
-        { to: "/admin/users", label: t('admin.sidebar.userManagement'), roles: ['admin'] },
+        { to: "/admin/users", label: t('pages.admin.sidebar.userManagement'), roles: ['admin'] },
       ]
     }
   ], [t]);
