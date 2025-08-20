@@ -9,9 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, ArrowLeft, Loader2, Trophy, Calendar, Star } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 const TeamDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
 
   const { data: team, isLoading: teamLoading } = useTeam(id);
   const { data: sponsors, isLoading: sponsorsLoading } = useSponsors(id);
@@ -31,8 +33,8 @@ const TeamDetails = () => {
   if (!team) {
     return (
       <div className="container mx-auto py-8 px-4 text-center">
-        <h1 className="text-2xl font-bold mb-4">Squadra non trovata</h1>
-        <Link to="/teams"><Button variant="outline"><ArrowLeft className="mr-2 h-4 w-4" />Torna alle squadre</Button></Link>
+        <h1 className="text-2xl font-bold mb-4">{t('pages.teamDetails.teamNotFound')}</h1>
+        <Link to="/teams"><Button variant="outline"><ArrowLeft className="mr-2 h-4 w-4" />{t('pages.teamDetails.backToTeams')}</Button></Link>
       </div>
     );
   }
@@ -56,7 +58,7 @@ const TeamDetails = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
-        <Link to="/teams"><Button variant="outline" size="sm"><ArrowLeft className="mr-2 h-4 w-4" />Torna alle squadre</Button></Link>
+        <Link to="/teams"><Button variant="outline" size="sm"><ArrowLeft className="mr-2 h-4 w-4" />{t('pages.teamDetails.backToTeams')}</Button></Link>
       </div>
 
       {team.squad_photo_url && (
@@ -85,12 +87,12 @@ const TeamDetails = () => {
         <div className="lg:col-span-2 space-y-8">
           <Tabs defaultValue="results">
             <TabsList>
-              <TabsTrigger value="results">Risultati</TabsTrigger>
-              <TabsTrigger value="stats">Statistiche</TabsTrigger>
+              <TabsTrigger value="results">{t('pages.teamDetails.results')}</TabsTrigger>
+              <TabsTrigger value="stats">{t('pages.teamDetails.stats')}</TabsTrigger>
             </TabsList>
             <TabsContent value="results" className="mt-4">
               <Card>
-                <CardHeader><CardTitle>Ultime Partite</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('pages.teamDetails.latestMatches')}</CardTitle></CardHeader>
                 <CardContent>
                   {matches && matches.length > 0 ? (
                     <div className="space-y-4">
@@ -114,14 +116,14 @@ const TeamDetails = () => {
             </TabsContent>
             <TabsContent value="stats" className="mt-4">
               <Card>
-                <CardHeader><CardTitle>Statistiche Stagionali</CardTitle></CardHeader>
+                <CardHeader><CardTitle>{t('pages.teamDetails.seasonalStats')}</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.played}</div><div className="text-sm text-muted-foreground">Giocate</div></div>
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.wins}</div><div className="text-sm text-muted-foreground">Vittorie</div></div>
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.draws}</div><div className="text-sm text-muted-foreground">Pareggi</div></div>
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.losses}</div><div className="text-sm text-muted-foreground">Sconfitte</div></div>
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.gf}</div><div className="text-sm text-muted-foreground">Gol Fatti</div></div>
-                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.ga}</div><div className="text-sm text-muted-foreground">Gol Subiti</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.played}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.played')}</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.wins}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.wins')}</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.draws}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.draws')}</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.losses}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.losses')}</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.gf}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.goalsFor')}</div></div>
+                  <div className="p-4 bg-muted/50 rounded-lg text-center"><div className="text-2xl font-bold">{stats?.ga}</div><div className="text-sm text-muted-foreground">{t('pages.teamDetails.goalsAgainst')}</div></div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -129,7 +131,7 @@ const TeamDetails = () => {
         </div>
         <div className="space-y-8">
           <Card>
-            <CardHeader><CardTitle>Albo d'Oro</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('pages.teamDetails.hallOfFame')}</CardTitle></CardHeader>
             <CardContent>
               {honors && honors.length > 0 ? (
                 <ul className="space-y-3">
@@ -143,11 +145,11 @@ const TeamDetails = () => {
                     </li>
                   ))}
                 </ul>
-              ) : <p className="text-muted-foreground">Nessun trofeo registrato.</p>}
+              ) : <p className="text-muted-foreground">{t('pages.teamDetails.noTrophies')}</p>}
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle>Sponsor</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('pages.teamDetails.sponsors')}</CardTitle></CardHeader>
             <CardContent>
               {sponsors && sponsors.length > 0 ? (
                 <div className="flex flex-wrap gap-4 items-center">
@@ -161,7 +163,7 @@ const TeamDetails = () => {
                     </a>
                   ))}
                 </div>
-              ) : <p className="text-muted-foreground">Nessuno sponsor registrato.</p>}
+              ) : <p className="text-muted-foreground">{t('pages.teamDetails.noSponsors')}</p>}
             </CardContent>
           </Card>
         </div>
