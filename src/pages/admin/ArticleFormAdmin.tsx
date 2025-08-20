@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 const articleSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
@@ -41,6 +42,7 @@ const ArticleFormAdmin = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: article, isLoading: articleLoading } = useArticle(id);
   const createMutation = useCreateArticle();
@@ -111,7 +113,7 @@ const ArticleFormAdmin = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">
-            {isEdit ? "Modifica articolo" : "Nuovo articolo"}
+            {isEdit ? t('pages.admin.articleForm.editTitle') : t('pages.admin.articleForm.newTitle')}
           </h1>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button type="button" variant="secondary" onClick={() => navigate("/admin/articles")} disabled={isSubmitting} className="w-full">
@@ -129,24 +131,24 @@ const ArticleFormAdmin = () => {
           <div className="md:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Contenuto Principale</CardTitle>
+                <CardTitle>{t('pages.admin.articleForm.mainContent')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Titolo *</Label>
-                  <Input id="title" {...register("title")} placeholder="Titolo dell'articolo" autoFocus />
+                  <Label htmlFor="title">{t('pages.admin.articleForm.titleLabel')}</Label>
+                  <Input id="title" {...register("title")} placeholder={t('pages.admin.articleForm.titlePlaceholder')} autoFocus />
                   {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
                 </div>
 
                 <div>
-                  <Label htmlFor="slug">Slug *</Label>
-                  <Input id="slug" {...register("slug")} placeholder="verra-generato-automaticamente" readOnly className="bg-muted/50" />
+                  <Label htmlFor="slug">{t('pages.admin.articleForm.slugLabel')}</Label>
+                  <Input id="slug" {...register("slug")} placeholder={t('pages.admin.articleForm.slugPlaceholder')} readOnly className="bg-muted/50" />
                   {errors.slug && <p className="text-sm text-destructive mt-1">{errors.slug.message}</p>}
                 </div>
 
                 <div>
-                  <Label htmlFor="content">Contenuto</Label>
-                  <Textarea id="content" {...register("content")} placeholder="Scrivi il tuo articolo qui..." rows={15} />
+                  <Label htmlFor="content">{t('pages.admin.articleForm.contentLabel')}</Label>
+                  <Textarea id="content" {...register("content")} placeholder={t('pages.admin.articleForm.contentPlaceholder')} rows={15} />
                 </div>
               </CardContent>
             </Card>
@@ -156,21 +158,21 @@ const ArticleFormAdmin = () => {
           <div className="md:col-span-1 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Pubblicazione</CardTitle>
+                <CardTitle>{t('pages.admin.articleForm.publication')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <Label htmlFor="status">Stato</Label>
+                <Label htmlFor="status">{t('pages.admin.articleForm.statusLabel')}</Label>
                 <Controller
                   name="status"
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Seleziona stato" />
+                        <SelectValue placeholder={t('pages.admin.articleForm.statusPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="draft">Bozza</SelectItem>
-                        <SelectItem value="published">Pubblicato</SelectItem>
+                        <SelectItem value="draft">{t('pages.admin.articles.status.draft')}</SelectItem>
+                        <SelectItem value="published">{t('pages.admin.articles.status.published')}</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -180,7 +182,7 @@ const ArticleFormAdmin = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Immagine di Copertina</CardTitle>
+                <CardTitle>{t('pages.admin.articleForm.coverImage')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ImageUploader

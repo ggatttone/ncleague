@@ -579,6 +579,62 @@
         "seasonPlaceholder": "Seleziona stagione",
         "achievementLabel": "Risultato *",
         "achievementPlaceholder": "Es: Campione, Vincitore Coppa..."
+      },
+      "articles": {
+        "title": "Articoli",
+        "newArticle": "Nuovo articolo",
+        "searchPlaceholder": "Cerca articoli...",
+        "errorLoading": "Errore nel caricamento degli articoli",
+        "deleteDialogTitle": "Elimina articolo",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare l'articolo \"{{name}}\"? Questa azione non può essere annullata.",
+        "pinTooltip": "Fissa articolo in cima",
+        "unpinTooltip": "Sblocca articolo",
+        "table": {
+          "pin": "",
+          "title": "Titolo",
+          "status": "Stato",
+          "author": "Autore",
+          "publishedAt": "Pubblicato il",
+          "actions": "Azioni"
+        },
+        "status": {
+          "published": "Pubblicato",
+          "draft": "Bozza"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Modifica articolo",
+        "newTitle": "Nuovo articolo",
+        "mainContent": "Contenuto Principale",
+        "titleLabel": "Titolo *",
+        "titlePlaceholder": "Titolo dell'articolo",
+        "slugLabel": "Slug *",
+        "slugPlaceholder": "verra-generato-automaticamente",
+        "contentLabel": "Contenuto",
+        "contentPlaceholder": "Scrivi il tuo articolo qui...",
+        "publication": "Pubblicazione",
+        "statusLabel": "Stato",
+        "statusPlaceholder": "Seleziona stato",
+        "coverImage": "Immagine di Copertina"
+      },
+      "albums": {
+        "title": "Album Galleria",
+        "newAlbum": "Nuovo Album",
+        "errorLoading": "Errore nel caricamento degli album",
+        "deleteDialogTitle": "Elimina album",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare l'album \"{{name}}\"? Le immagini al suo interno non verranno eliminate ma non saranno più associate a questo album.",
+        "table": {
+          "name": "Nome",
+          "itemCount": "N. Elementi",
+          "createdAt": "Creato il",
+          "actions": "Azioni"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Modifica album",
+        "newTitle": "Nuovo album",
+        "nameLabel": "Nome *",
+        "descriptionLabel": "Descrizione"
       }
     },
     "notFound": {

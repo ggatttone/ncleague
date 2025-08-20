@@ -579,6 +579,62 @@
         "seasonPlaceholder": "Select season",
         "achievementLabel": "Achievement *",
         "achievementPlaceholder": "E.g.: Champion, Cup Winner..."
+      },
+      "articles": {
+        "title": "Articles",
+        "newArticle": "New article",
+        "searchPlaceholder": "Search articles...",
+        "errorLoading": "Error loading articles",
+        "deleteDialogTitle": "Delete article",
+        "deleteDialogDescription": "Are you sure you want to delete the article \"{{name}}\"? This action cannot be undone.",
+        "pinTooltip": "Pin article to top",
+        "unpinTooltip": "Unpin article",
+        "table": {
+          "pin": "",
+          "title": "Title",
+          "status": "Status",
+          "author": "Author",
+          "publishedAt": "Published on",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Edit article",
+        "newTitle": "New article",
+        "mainContent": "Main Content",
+        "titleLabel": "Title *",
+        "titlePlaceholder": "Title of the article",
+        "slugLabel": "Slug *",
+        "slugPlaceholder": "will-be-generated-automatically",
+        "contentLabel": "Content",
+        "contentPlaceholder": "Write your article here...",
+        "publication": "Publication",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Select status",
+        "coverImage": "Cover Image"
+      },
+      "albums": {
+        "title": "Gallery Albums",
+        "newAlbum": "New Album",
+        "errorLoading": "Error loading albums",
+        "deleteDialogTitle": "Delete album",
+        "deleteDialogDescription": "Are you sure you want to delete the album \"{{name}}\"? The images inside will not be deleted but will no longer be associated with this album.",
+        "table": {
+          "name": "Name",
+          "itemCount": "No. of Items",
+          "createdAt": "Created on",
+          "actions": "Actions"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Edit album",
+        "newTitle": "New album",
+        "nameLabel": "Name *",
+        "descriptionLabel": "Description"
       }
     },
     "notFound": {
