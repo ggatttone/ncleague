@@ -12,6 +12,7 @@ import { Player, Team } from "@/types/database";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 const goalSchema = z.object({
   team_id: z.string().min(1, "Seleziona una squadra"),
@@ -32,6 +33,7 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
   const queryClient = useQueryClient();
   const [selectedTeamId, setSelectedTeamId] = useState<string | undefined>();
   const createGoalMutation = useCreateGoal();
+  const { t } = useTranslation();
 
   const { data: players, isLoading: playersLoading } = useSupabaseQuery<Player[]>(
     ['players-for-team', selectedTeamId],
@@ -71,14 +73,14 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <Label htmlFor="team_id">Squadra</Label>
+        <Label htmlFor="team_id">{t('pages.admin.fixtureDetails.goalForm.teamLabel')}</Label>
         <Controller
           name="team_id"
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger>
-                <SelectValue placeholder="Seleziona squadra" />
+                <SelectValue placeholder={t('pages.admin.fixtureDetails.goalForm.teamPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={homeTeam.id}>{homeTeam.name}</SelectItem>
@@ -91,14 +93,14 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
       </div>
 
       <div>
-        <Label htmlFor="player_id">Giocatore</Label>
+        <Label htmlFor="player_id">{t('pages.admin.fixtureDetails.goalForm.playerLabel')}</Label>
         <Controller
           name="player_id"
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value} disabled={!selectedTeamId || playersLoading}>
               <SelectTrigger>
-                <SelectValue placeholder={playersLoading ? "Caricamento..." : "Seleziona giocatore"} />
+                <SelectValue placeholder={playersLoading ? t('pages.admin.fixtureDetails.goalForm.playerLoading') : t('pages.admin.fixtureDetails.goalForm.playerPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {players?.map(player => (
@@ -114,7 +116,7 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
       </div>
 
       <div>
-        <Label htmlFor="minute">Minuto</Label>
+        <Label htmlFor="minute">{t('pages.admin.fixtureDetails.goalForm.minuteLabel')}</Label>
         <Input id="minute" type="number" {...control.register("minute")} />
         {errors.minute && <p className="text-sm text-destructive mt-1">{errors.minute.message}</p>}
       </div>
@@ -122,7 +124,7 @@ export const GoalForm = ({ matchId, homeTeam, awayTeam, onSuccess }: GoalFormPro
       <div className="flex justify-end gap-2 pt-2">
         <Button type="submit" disabled={isSubmitting || createGoalMutation.isPending}>
           {(isSubmitting || createGoalMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Aggiungi Goal
+          {t('pages.admin.fixtureDetails.goalForm.addButton')}
         </Button>
       </div>
     </form>
