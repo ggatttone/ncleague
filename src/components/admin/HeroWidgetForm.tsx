@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Widget } from '@/hooks/use-homepage-layout';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const heroSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
@@ -28,6 +29,7 @@ interface HeroWidgetFormProps {
 }
 
 export const HeroWidgetForm = ({ widget, open, onOpenChange, onSave, isSaving }: HeroWidgetFormProps) => {
+  const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors }, reset } = useForm<HeroFormData>({
     resolver: zodResolver(heroSchema),
   });
@@ -53,25 +55,25 @@ export const HeroWidgetForm = ({ widget, open, onOpenChange, onSave, isSaving }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Modifica Widget Hero</DialogTitle>
-          <DialogDescription>Personalizza i testi e il pulsante della sezione principale.</DialogDescription>
+          <DialogTitle>{t('pages.admin.homepage.heroWidgetForm.title')}</DialogTitle>
+          <DialogDescription>{t('pages.admin.homepage.heroWidgetForm.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div>
-            <Label htmlFor="title">Titolo Principale</Label>
+            <Label htmlFor="title">{t('pages.admin.homepage.heroWidgetForm.mainTitleLabel')}</Label>
             <Input id="title" {...register("title")} />
             {errors.title && <p className="text-sm text-destructive mt-1">{errors.title.message}</p>}
           </div>
           <div>
-            <Label htmlFor="subtitle">Sottotitolo</Label>
+            <Label htmlFor="subtitle">{t('pages.admin.homepage.heroWidgetForm.subtitleLabel')}</Label>
             <Textarea id="subtitle" {...register("subtitle")} />
           </div>
           <div>
-            <Label htmlFor="buttonText">Testo Pulsante</Label>
+            <Label htmlFor="buttonText">{t('pages.admin.homepage.heroWidgetForm.buttonTextLabel')}</Label>
             <Input id="buttonText" {...register("buttonText")} />
           </div>
            <div>
-            <Label htmlFor="buttonLink">Link Pulsante</Label>
+            <Label htmlFor="buttonLink">{t('pages.admin.homepage.heroWidgetForm.buttonLinkLabel')}</Label>
             <Input id="buttonLink" {...register("buttonLink")} placeholder="/matches" />
           </div>
         </form>

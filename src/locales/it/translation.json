@@ -635,6 +635,77 @@
         "newTitle": "Nuovo album",
         "nameLabel": "Nome *",
         "descriptionLabel": "Descrizione"
+      },
+      "homepage": {
+        "title": "Gestione Homepage",
+        "saveButton": "Salva",
+        "addRowButton": "Riga",
+        "layoutCardTitle": "Layout",
+        "layoutCardDescription": "Trascina le righe per riordinarle e i widget per spostarli.",
+        "widgetPaletteTitle": "Widget Disponibili",
+        "row": "Riga",
+        "layout": "Layout",
+        "deleteRow": "Elimina Riga",
+        "startBuilding": "Aggiungi una riga per iniziare.",
+        "heroWidgetForm": {
+          "title": "Modifica Widget Hero",
+          "description": "Personalizza i testi e il pulsante della sezione principale.",
+          "mainTitleLabel": "Titolo Principale",
+          "subtitleLabel": "Sottotitolo",
+          "buttonTextLabel": "Testo Pulsante",
+          "buttonLinkLabel": "Link Pulsante"
+        },
+        "pinnedArticleWidgetForm": {
+          "title": "Modifica Widget Articolo in Evidenza",
+          "description": "Seleziona quale articolo fissato mostrare in questo widget.",
+          "pinnedArticleLabel": "Articolo Fissato",
+          "selectPlaceholder": "Seleziona un articolo",
+          "loadingPlaceholder": "Caricamento...",
+          "noPinnedArticles": "Nessun articolo fissato trovato."
+        }
+      },
+      "theme": {
+        "title": "Aspetto del Sito",
+        "saveButton": "Salva Modifiche",
+        "colorsCardTitle": "Colori Principali",
+        "colorsCardDescription": "Questi colori verranno usati in sezioni chiave come l'header della home page.",
+        "primaryColorLabel": "Colore Primario",
+        "secondaryColorLabel": "Colore Secondario",
+        "typographyCardTitle": "Tipografia",
+        "typographyCardDescription": "Scegli il font per i testi del sito.",
+        "fontFamilyLabel": "Font Famiglia",
+        "fontPlaceholder": "Seleziona un font",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Carica il logo che apparirà nella barra di navigazione.",
+        "logoFileLabel": "File del logo"
+      },
+      "event": {
+        "title": "Gestione Evento Countdown",
+        "saveButton": "Salva Modifiche",
+        "settingsCardTitle": "Impostazioni Countdown",
+        "settingsCardDescription": "Configura il countdown che apparirà sulla homepage. Attivalo per renderlo visibile a tutti.",
+        "switchLabel": "Attiva Countdown",
+        "switchDescription": "Mostra o nascondi il countdown sulla homepage.",
+        "titleLabel": "Titolo / Messaggio",
+        "titlePlaceholder": "Es: Il prossimo torneo inizia tra...",
+        "dateLabel": "Data e Ora dell'Evento"
+      },
+      "users": {
+        "title": "Gestione Utenti",
+        "searchPlaceholder": "Cerca utenti per nome, email o ruolo...",
+        "usersFound_one": "{{count}} utente trovato",
+        "usersFound_other": "{{count}} utenti trovati",
+        "accessDeniedTitle": "Accesso Negato",
+        "accessDeniedDescription": "Non hai i permessi necessari per accedere a questa pagina.",
+        "errorLoading": "Errore nel caricamento degli utenti",
+        "demoteError": "Non puoi declassare il tuo stesso account da amministratore.",
+        "table": {
+          "name": "Nome",
+          "email": "Email",
+          "role": "Ruolo",
+          "actions": "Azioni"
+        },
+        "rolePlaceholder": "Seleziona ruolo"
       }
     },
     "notFound": {
@@ -696,5 +767,20 @@
     "loadingNews": "Errore nel caricamento delle notizie.",
     "passwordMinLength": "La password deve essere di almeno 6 caratteri",
     "requiredField": "Questo campo è obbligatorio"
+  },
+  "widgets": {
+    "hero": "Sezione Hero",
+    "countdown": "Countdown Evento",
+    "media_carousel": "Carosello Media",
+    "upcoming_matches": "Prossime Partite",
+    "latest_news": "Ultime Notizie",
+    "league_table": "Classifica",
+    "pinned_article": "Articolo in Evidenza"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "captain": "Capitano",
+    "player": "Giocatore"
   }
 }

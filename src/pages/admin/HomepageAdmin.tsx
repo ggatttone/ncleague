@@ -9,13 +9,13 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-ki
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Loader2, Plus, Trash2, GripVertical, Edit, Layout } from 'lucide-react';
-import { WIDGET_CONFIG } from '@/components/admin/layout-builder/WidgetRendererAdmin';
 import { showSuccess } from '@/utils/toast';
 import { createPortal } from 'react-dom';
 import { HeroWidgetForm } from '@/components/admin/HeroWidgetForm';
 import { PinnedArticleWidgetForm } from '@/components/admin/PinnedArticleWidgetForm';
+import { useTranslation } from 'react-i18next';
 
-type WidgetType = keyof typeof WIDGET_CONFIG;
+type WidgetType = 'hero' | 'countdown' | 'media_carousel' | 'upcoming_matches' | 'latest_news' | 'league_table' | 'pinned_article';
 
 const COLUMN_LAYOUTS = {
   '100%': [100],
@@ -26,10 +26,10 @@ const COLUMN_LAYOUTS = {
 };
 
 // Componente per un singolo Widget nella colonna
-const SortableWidget = ({ widget, onEdit, onDelete }: { widget: Widget, onEdit: () => void, onDelete: () => void }) => {
+const SortableWidget = ({ widget, onEdit, onDelete, widgetConfig }: { widget: Widget, onEdit: () => void, onDelete: () => void, widgetConfig: any }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: widget.id, data: { type: 'Widget' } });
   const style = { transform: CSS.Transform.toString(transform), transition };
-  const config = WIDGET_CONFIG[widget.widget_type as WidgetType];
+  const config = widgetConfig[widget.widget_type as WidgetType];
 
   return (
     <div ref={setNodeRef} style={style} className="p-3 border rounded bg-background flex items-center justify-between">
@@ -59,6 +59,7 @@ const ColumnDropzone = ({ column, children }: { column: Column, children: React.
 const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, onUpdateRow: (rowId: string, newLayout: number[]) => void, onDeleteRow: (rowId: string) => void, children: React.ReactNode }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: row.id, data: { type: 'Row' } });
   const style = { transform: CSS.Transform.toString(transform), transition };
+  const { t } = useTranslation();
 
   return (
     <div ref={setNodeRef} style={style} className="p-4 border rounded-lg bg-background space-y-4">
@@ -66,7 +67,7 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
         <div className="flex items-center gap-2">
           <button {...attributes} {...listeners} className="cursor-grab touch-none"><GripVertical /></button>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild><Button variant="outline" size="sm"><Layout className="h-4 w-4 mr-2" /> Layout</Button></DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild><Button variant="outline" size="sm"><Layout className="h-4 w-4 mr-2" /> {t('pages.admin.homepage.layout')}</Button></DropdownMenuTrigger>
             <DropdownMenuContent>
               {Object.entries(COLUMN_LAYOUTS).map(([key, value]) => (
                 <DropdownMenuItem key={key} onSelect={() => onUpdateRow(row.id, value)}>{key}</DropdownMenuItem>
@@ -74,7 +75,7 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDeleteRow(row.id)}><Trash2 className="h-4 w-4 mr-2" />Elimina Riga</Button>
+        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDeleteRow(row.id)}><Trash2 className="h-4 w-4 mr-2" />{t('pages.admin.homepage.deleteRow')}</Button>
       </div>
       <div className="flex flex-col md:flex-row gap-4">{children}</div>
     </div>
@@ -82,14 +83,15 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
 };
 
 // Componente per la Palette dei Widget
-const WidgetPalette = ({ onAddWidget }: { onAddWidget: (type: string) => void }) => {
+const WidgetPalette = ({ onAddWidget, widgetConfig }: { onAddWidget: (type: string) => void, widgetConfig: any }) => {
+  const { t } = useTranslation();
   return (
     <Card className="w-full lg:w-64">
-      <CardHeader><CardTitle className="text-base">Widget Disponibili</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-base">{t('pages.admin.homepage.widgetPaletteTitle')}</CardTitle></CardHeader>
       <CardContent className="space-y-2">
-        {Object.entries(WIDGET_CONFIG).map(([type, { name }]) => (
+        {Object.entries(widgetConfig).map(([type, config]: [string, any]) => (
           <Button key={type} variant="outline" className="w-full justify-start" onClick={() => onAddWidget(type)}>
-            <Plus className="h-4 w-4 mr-2" /> {name}
+            <Plus className="h-4 w-4 mr-2" /> {config.name}
           </Button>
         ))}
       </CardContent>
@@ -98,12 +100,23 @@ const WidgetPalette = ({ onAddWidget }: { onAddWidget: (type: string) => void })
 };
 
 const HomepageAdmin = () => {
+  const { t } = useTranslation();
   const { data: layoutData, isLoading } = useHomepageLayout();
   const updateLayoutMutation = useUpdateHomepageLayout();
   const [layout, setLayout] = useState<Row[]>([]);
   const [activeItem, setActiveItem] = useState<any>(null);
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
+  const WIDGET_CONFIG = useMemo(() => ({
+    hero: { name: t('widgets.hero'), configurable: true },
+    countdown: { name: t('widgets.countdown') },
+    media_carousel: { name: t('widgets.media_carousel') },
+    upcoming_matches: { name: t('widgets.upcoming_matches') },
+    latest_news: { name: t('widgets.latest_news') },
+    league_table: { name: t('widgets.league_table') },
+    pinned_article: { name: t('widgets.pinned_article'), configurable: true },
+  }), [t]);
 
   useEffect(() => {
     if (layoutData) setLayout(layoutData.layout_data);
@@ -125,7 +138,6 @@ const HomepageAdmin = () => {
     const overId = over.id.toString();
     const activeType = active.data.current?.type;
 
-    // --- 1. Handle Row Reordering ---
     if (activeType === 'Row' && over.data.current?.type === 'Row' && activeId !== overId) {
       setLayout(items => {
         const oldIndex = items.findIndex(i => i.id === activeId);
@@ -135,13 +147,11 @@ const HomepageAdmin = () => {
       return;
     }
 
-    // --- 2. Handle Widget Dragging ---
     if (activeType === 'Widget') {
       setLayout(prevLayout => {
         let sourceColumn: Column | undefined, overColumn: Column | undefined;
         let sourceWidgetIndex = -1, overWidgetIndex = -1;
 
-        // Find source and destination columns and indices
         for (const row of prevLayout) {
           for (const col of row.columns) {
             const sIndex = col.widgets.findIndex(w => w.id === activeId);
@@ -170,10 +180,8 @@ const HomepageAdmin = () => {
         const [draggedWidget] = realSourceColumn.widgets.splice(sourceWidgetIndex, 1);
 
         if (realSourceColumn.id === realOverColumn.id) {
-          // Reordering in the same column
           realOverColumn.widgets.splice(overWidgetIndex, 0, draggedWidget);
         } else {
-          // Moving to a different column
           const finalOverIndex = overWidgetIndex === -1 ? realOverColumn.widgets.length : overWidgetIndex;
           realOverColumn.widgets.splice(finalOverIndex, 0, draggedWidget);
         }
@@ -253,16 +261,16 @@ const HomepageAdmin = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold">Gestione Homepage</h1>
+              <h1 className="text-2xl font-bold">{t('pages.admin.homepage.title')}</h1>
               <div className="flex gap-2">
-                <Button onClick={handleAddRow}><Plus className="mr-2 h-4 w-4" /> Riga</Button>
+                <Button onClick={handleAddRow}><Plus className="mr-2 h-4 w-4" /> {t('pages.admin.homepage.addRowButton')}</Button>
                 <Button onClick={handleSaveLayout} disabled={updateLayoutMutation.isPending}>
-                  {updateLayoutMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Salva
+                  {updateLayoutMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('pages.admin.homepage.saveButton')}
                 </Button>
               </div>
             </div>
             <Card>
-              <CardHeader><CardTitle>Layout</CardTitle><CardDescription>Trascina le righe per riordinarle e i widget per spostarli.</CardDescription></CardHeader>
+              <CardHeader><CardTitle>{t('pages.admin.homepage.layoutCardTitle')}</CardTitle><CardDescription>{t('pages.admin.homepage.layoutCardDescription')}</CardDescription></CardHeader>
               <CardContent>
                 {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
                   <SortableContext items={layout.map(r => r.id)} strategy={verticalListSortingStrategy}>
@@ -273,7 +281,7 @@ const HomepageAdmin = () => {
                             {row.columns.map(column => (
                               <ColumnDropzone key={column.id} column={column}>
                                 {column.widgets.map(widget => (
-                                  <SortableWidget key={widget.id} widget={widget} onDelete={() => handleDeleteWidget(widget.id)} onEdit={() => handleEditWidget(widget)} />
+                                  <SortableWidget key={widget.id} widget={widget} onDelete={() => handleDeleteWidget(widget.id)} onEdit={() => handleEditWidget(widget)} widgetConfig={WIDGET_CONFIG} />
                                 ))}
                               </ColumnDropzone>
                             ))}
@@ -283,15 +291,15 @@ const HomepageAdmin = () => {
                     </div>
                   </SortableContext>
                 )}
-                {layout.length === 0 && !isLoading && <div className="text-center py-12 text-muted-foreground"><p>Aggiungi una riga per iniziare.</p></div>}
+                {layout.length === 0 && !isLoading && <div className="text-center py-12 text-muted-foreground"><p>{t('pages.admin.homepage.startBuilding')}</p></div>}
               </CardContent>
             </Card>
           </div>
-          <WidgetPalette onAddWidget={handleAddWidget} />
+          <WidgetPalette onAddWidget={handleAddWidget} widgetConfig={WIDGET_CONFIG} />
         </div>
         {createPortal(
           <DragOverlay>
-            {activeItem?.type === 'Row' && <div className="p-4 border rounded-lg bg-muted/80 h-[150px]"><p className="font-bold">Riga</p></div>}
+            {activeItem?.type === 'Row' && <div className="p-4 border rounded-lg bg-muted/80 h-[150px]"><p className="font-bold">{t('pages.admin.homepage.row')}</p></div>}
             {activeItem?.type === 'Widget' && <div className="p-3 border rounded bg-background opacity-90"><span className="font-medium">{WIDGET_CONFIG[activeItem.widget_type as WidgetType]?.name}</span></div>}
           </DragOverlay>,
           document.body

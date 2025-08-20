@@ -635,6 +635,77 @@
         "newTitle": "New album",
         "nameLabel": "Name *",
         "descriptionLabel": "Description"
+      },
+      "homepage": {
+        "title": "Homepage Management",
+        "saveButton": "Save",
+        "addRowButton": "Row",
+        "layoutCardTitle": "Layout",
+        "layoutCardDescription": "Drag rows to reorder them and widgets to move them.",
+        "widgetPaletteTitle": "Available Widgets",
+        "row": "Row",
+        "layout": "Layout",
+        "deleteRow": "Delete Row",
+        "startBuilding": "Add a row to get started.",
+        "heroWidgetForm": {
+          "title": "Edit Hero Widget",
+          "description": "Customize the texts and button of the main section.",
+          "mainTitleLabel": "Main Title",
+          "subtitleLabel": "Subtitle",
+          "buttonTextLabel": "Button Text",
+          "buttonLinkLabel": "Button Link"
+        },
+        "pinnedArticleWidgetForm": {
+          "title": "Edit Pinned Article Widget",
+          "description": "Select which pinned article to display in this widget.",
+          "pinnedArticleLabel": "Pinned Article",
+          "selectPlaceholder": "Select an article",
+          "loadingPlaceholder": "Loading...",
+          "noPinnedArticles": "No pinned articles found."
+        }
+      },
+      "theme": {
+        "title": "Site Appearance",
+        "saveButton": "Save Changes",
+        "colorsCardTitle": "Main Colors",
+        "colorsCardDescription": "These colors will be used in key sections like the homepage header.",
+        "primaryColorLabel": "Primary Color",
+        "secondaryColorLabel": "Secondary Color",
+        "typographyCardTitle": "Typography",
+        "typographyCardDescription": "Choose the font for the site's texts.",
+        "fontFamilyLabel": "Font Family",
+        "fontPlaceholder": "Select a font",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Upload the logo that will appear in the navigation bar.",
+        "logoFileLabel": "Logo file"
+      },
+      "event": {
+        "title": "Countdown Event Management",
+        "saveButton": "Save Changes",
+        "settingsCardTitle": "Countdown Settings",
+        "settingsCardDescription": "Configure the countdown that will appear on the homepage. Activate it to make it visible to everyone.",
+        "switchLabel": "Activate Countdown",
+        "switchDescription": "Show or hide the countdown on the homepage.",
+        "titleLabel": "Title / Message",
+        "titlePlaceholder": "E.g.: The next tournament starts in...",
+        "dateLabel": "Event Date and Time"
+      },
+      "users": {
+        "title": "User Management",
+        "searchPlaceholder": "Search users by name, email, or role...",
+        "usersFound_one": "{{count}} user found",
+        "usersFound_other": "{{count}} users found",
+        "accessDeniedTitle": "Access Denied",
+        "accessDeniedDescription": "You do not have the necessary permissions to access this page.",
+        "errorLoading": "Error loading users",
+        "demoteError": "You cannot demote your own account from administrator.",
+        "table": {
+          "name": "Name",
+          "email": "Email",
+          "role": "Role",
+          "actions": "Actions"
+        },
+        "rolePlaceholder": "Select role"
       }
     },
     "notFound": {
@@ -696,5 +767,20 @@
     "loadingNews": "Error loading news.",
     "passwordMinLength": "Password must be at least 6 characters",
     "requiredField": "This field is required"
+  },
+  "widgets": {
+    "hero": "Hero Section",
+    "countdown": "Event Countdown",
+    "media_carousel": "Media Carousel",
+    "upcoming_matches": "Upcoming Matches",
+    "latest_news": "Latest News",
+    "league_table": "League Table",
+    "pinned_article": "Pinned Article"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "captain": "Captain",
+    "player": "Player"
   }
 }
