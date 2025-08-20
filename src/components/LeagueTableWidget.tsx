@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTranslation } from "react-i18next";
 
 export const LeagueTableWidget = () => {
+  const { t } = useTranslation();
   // Fetch the main competition (assuming level 1 is the main one)
   const { data: competition, isLoading: competitionLoading } = useSupabaseQuery<Competition>(
     ['main-competition'],
@@ -29,7 +31,7 @@ export const LeagueTableWidget = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Classifica</CardTitle>
+        <CardTitle>{t('components.leagueTableWidget.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -38,15 +40,15 @@ export const LeagueTableWidget = () => {
           </div>
         ) : !tableData || tableData.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            <p>Classifica non ancora disponibile.</p>
+            <p>{t('components.leagueTableWidget.noData')}</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-8">Pos</TableHead>
-                <TableHead>Squadra</TableHead>
-                <TableHead className="text-right">PT</TableHead>
+                <TableHead className="w-8">{t('pages.tables.pos')}</TableHead>
+                <TableHead>{t('pages.tables.team')}</TableHead>
+                <TableHead className="text-right">{t('pages.tables.pts')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -70,7 +72,7 @@ export const LeagueTableWidget = () => {
         )}
         <div className="mt-6 text-center">
           <Button asChild variant="outline" size="sm">
-            <Link to="/tables">Vedi classifica completa</Link>
+            <Link to="/tables">{t('components.leagueTableWidget.viewFull')}</Link>
           </Button>
         </div>
       </CardContent>

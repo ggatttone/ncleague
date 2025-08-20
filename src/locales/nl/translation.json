@@ -19,5 +19,233 @@
     "light": "Licht",
     "dark": "Donker",
     "system": "Systeem"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fout",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "create": "Aanmaken",
+    "new": "Nieuw",
+    "actions": "Acties",
+    "searchPlaceholder": "Zoeken...",
+    "noData": "Geen gegevens beschikbaar.",
+    "confirm": "Bevestigen",
+    "optional": "Optioneel",
+    "required": "Verplicht",
+    "back": "Terug",
+    "success": "Succes",
+    "all": "Alle",
+    "selectPlaceholder": "Selecteer een optie...",
+    "players_one": "{{count}} speler",
+    "players_other": "{{count}} spelers",
+    "teams_one": "{{count}} team",
+    "teams_other": "{{count}} teams",
+    "matches_one": "{{count}} wedstrijd",
+    "matches_other": "{{count}} wedstrijden",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "comments_one": "{{count}} reactie",
+    "comments_other": "{{count}} reacties",
+    "found_one": "{{count}} resultaat gevonden voor",
+    "found_other": "{{count}} resultaten gevonden voor"
+  },
+  "pages": {
+    "home": {
+      "buildingTitle": "Homepage in aanbouw",
+      "buildingSubtitle": "Er zijn nog geen widgets geconfigureerd. Kom later terug!"
+    },
+    "matches": {
+      "title": "Wedstrijden",
+      "upcoming": "Aankomend",
+      "completed": "Voltooid",
+      "noUpcoming": "Geen geplande wedstrijden",
+      "noCompleted": "Geen voltooide wedstrijden",
+      "addFirstMatch": "Eerste wedstrijd toevoegen"
+    },
+    "matchDetails": {
+      "notFound": "Wedstrijd niet gevonden",
+      "backToMatches": "Terug naar wedstrijden",
+      "scorers": "Doelpuntenmakers",
+      "noScorers": "Geen doelpuntenmakers geregistreerd"
+    },
+    "tables": {
+      "title": "Klassementen",
+      "selectCompetition": "Selecteer Competitie",
+      "selectSeason": "Selecteer Seizoen",
+      "pos": "Pos",
+      "team": "Team",
+      "p": "G",
+      "w": "W",
+      "d": "G",
+      "l": "V",
+      "gf": "DV",
+      "ga": "DT",
+      "gd": "DS",
+      "pts": "Ptn"
+    },
+    "statistics": {
+      "title": "Statistieken",
+      "competition": "Competitie",
+      "season": "Seizoen",
+      "topScorers": "Topscorers",
+      "player": "Speler",
+      "team": "Team",
+      "goals": "Doelpunten"
+    },
+    "news": {
+      "title": "Feed",
+      "noNews": "Geen nieuws op dit moment.",
+      "noNewsDesc": "Kom later terug voor de laatste updates.",
+      "newPost": "Nieuw Bericht"
+    },
+    "newsDetails": {
+      "notFound": "Artikel niet gevonden",
+      "notFoundDesc": "Het artikel dat je zoekt bestaat niet of is niet langer beschikbaar.",
+      "backToNews": "Al het nieuws",
+      "comments": "Reacties"
+    },
+    "players": {
+      "title": "Spelers",
+      "searchPlaceholder": "Zoek spelers, teams of rollen...",
+      "noPlayersFound": "Geen spelers gevonden",
+      "noPlayersRegistered": "Geen spelers geregistreerd",
+      "addFirstPlayer": "Eerste speler toevoegen",
+      "manage": "Beheren",
+      "newPlayer": "Nieuwe speler"
+    },
+    "playerDetails": {
+      "notFound": "Speler niet gevonden",
+      "backToPlayers": "Terug naar spelers",
+      "goalsScored": "Gespeelde doelpunten",
+      "matchesPlayed": "Gespeelde wedstrijden",
+      "avgGoals": "Gemiddeld aantal doelpunten",
+      "goalsHistory": "Doelpuntengeschiedenis",
+      "noGoals": "Geen doelpunten geregistreerd",
+      "yearsOld": "{{age}} jaar oud"
+    },
+    "teams": {
+      "title": "Clubs",
+      "noTeamsFound": "Geen teams gevonden",
+      "addFirstTeam": "Eerste team toevoegen",
+      "newTeam": "Nieuw team"
+    },
+    "teamDetails": {
+      "notFound": "Team niet gevonden",
+      "backToTeams": "Terug naar teams",
+      "results": "Resultaten",
+      "stats": "Statistieken",
+      "honors": "Erelijst",
+      "sponsors": "Sponsoren",
+      "latestMatches": "Laatste Wedstrijden",
+      "noMatches": "Geen wedstrijden gevonden.",
+      "seasonalStats": "Seizoensstatistieken",
+      "played": "Gespeeld",
+      "wins": "Gewonnen",
+      "draws": "Gelijk",
+      "losses": "Verloren",
+      "goalsFor": "Doelpunten Voor",
+      "goalsAgainst": "Doelpunten Tegen",
+      "noHonors": "Geen prijzen geregistreerd.",
+      "noSponsors": "Geen sponsoren geregistreerd."
+    },
+    "gallery": {
+      "title": "Galerij",
+      "uploadMedia": "Media Uploaden",
+      "albums": "Albums",
+      "allMedia": "Alle Media",
+      "noAlbums": "Geen albums aangemaakt.",
+      "noAlbumsDesc": "Maak het eerste album om de galerij te organiseren.",
+      "noMedia": "Geen media geüpload.",
+      "noMediaDesc": "Upload je eerste afbeelding of video."
+    },
+    "albumDetails": {
+      "notFound": "Album niet gevonden",
+      "backToGallery": "Alle albums",
+      "empty": "Dit album is leeg.",
+      "emptyDesc": "Er zijn nog geen items toegevoegd."
+    },
+    "login": {
+      "title": "Admin Login",
+      "subtitle": "Log in om het platform te beheren"
+    },
+    "profile": {
+      "title": "Mijn Profiel",
+      "personalInfo": "Persoonlijke Informatie",
+      "personalInfoDesc": "Werk je voornaam, achternaam en profielfoto bij.",
+      "changePassword": "Wachtwoord Wijzigen",
+      "changePasswordDesc": "Kies een nieuw, veilig wachtwoord. Je wordt na de wijziging uitgelogd."
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "leagueManagement": "Competitiebeheer",
+      "dashboard": "Dashboard",
+      "teams": "Teams",
+      "players": "Spelers",
+      "fixtures": "Wedstrijden & Uitslagen",
+      "competitions": "Competities",
+      "seasons": "Seizoenen",
+      "venues": "Locaties",
+      "sponsors": "Sponsoren",
+      "honors": "Erelijst",
+      "contentManagement": "Contentbeheer",
+      "articles": "Artikelen",
+      "gallery": "Galerij",
+      "siteConfig": "Site Configuratie",
+      "homepageLayout": "Homepage Layout",
+      "appearance": "Uiterlijk",
+      "countdownEvent": "Aftel-evenement",
+      "administration": "Administratie",
+      "userManagement": "Gebruikersbeheer"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "teamsCount": "Teams",
+      "playersCount": "Spelers",
+      "scheduledMatches": "Geplande Wedstrijden",
+      "registeredUsers": "Geregistreerde Gebruikers",
+      "quickActions": "Snelle Acties"
+    }
+  },
+  "components": {
+    "countdown": {
+      "title": "Volgende evenement komt eraan!",
+      "days": "dagen",
+      "hours": "uren",
+      "minutes": "minuten",
+      "seconds": "seconden",
+      "started": "Evenement Gestart!"
+    },
+    "hero": {
+      "title": "Welkom bij NC League",
+      "subtitle": "Het platform voor jouw 5-tegen-5 competitie: uitslagen, klassementen, statistieken en nieuws!",
+      "button": "Ontdek de laatste speeldag"
+    },
+    "latestNews": {
+      "title": "Laatste Nieuws",
+      "readAll": "Lees al het nieuws"
+    },
+    "leagueTableWidget": {
+      "title": "Klassement",
+      "noData": "Klassement nog niet beschikbaar.",
+      "viewFull": "Bekijk volledig klassement"
+    },
+    "upcomingMatches": {
+      "title": "Aankomende Wedstrijden",
+      "noMatches": "Geen geplande wedstrijden.",
+      "viewFull": "Bekijk volledige kalender"
+    },
+    "pinnedArticle": {
+      "title": "Uitgelicht",
+      "noArticle": "Geen uitgelicht artikel geselecteerd. Configureer dit in het admin paneel."
+    },
+    "comments": {
+      "writeComment": "Schrijf een reactie...",
+      "submit": "Reageer",
+      "noComments": "Nog geen reacties. Wees de eerste die reageert!"
+    }
   }
 }

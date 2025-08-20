@@ -19,5 +19,233 @@
     "light": "Chiaro",
     "dark": "Scuro",
     "system": "Sistema"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "create": "Crea",
+    "new": "Nuovo",
+    "actions": "Azioni",
+    "searchPlaceholder": "Cerca...",
+    "noData": "Nessun dato disponibile.",
+    "confirm": "Conferma",
+    "optional": "Opzionale",
+    "required": "Obbligatorio",
+    "back": "Indietro",
+    "success": "Successo",
+    "all": "Tutti",
+    "selectPlaceholder": "Seleziona un'opzione...",
+    "players_one": "{{count}} giocatore",
+    "players_other": "{{count}} giocatori",
+    "teams_one": "{{count}} squadra",
+    "teams_other": "{{count}} squadre",
+    "matches_one": "{{count}} partita",
+    "matches_other": "{{count}} partite",
+    "items_one": "{{count}} elemento",
+    "items_other": "{{count}} elementi",
+    "comments_one": "{{count}} commento",
+    "comments_other": "{{count}} commenti",
+    "found_one": "Trovato {{count}} risultato per",
+    "found_other": "Trovati {{count}} risultati per"
+  },
+  "pages": {
+    "home": {
+      "buildingTitle": "Homepage in costruzione",
+      "buildingSubtitle": "Nessun widget è stato configurato. Torna più tardi!"
+    },
+    "matches": {
+      "title": "Partite",
+      "upcoming": "Prossime",
+      "completed": "Completate",
+      "noUpcoming": "Nessuna partita in programma",
+      "noCompleted": "Nessuna partita completata",
+      "addFirstMatch": "Aggiungi prima partita"
+    },
+    "matchDetails": {
+      "notFound": "Partita non trovata",
+      "backToMatches": "Torna alle partite",
+      "scorers": "Marcatori",
+      "noScorers": "Nessun marcatore registrato"
+    },
+    "tables": {
+      "title": "Classifiche",
+      "selectCompetition": "Seleziona Competizione",
+      "selectSeason": "Seleziona Stagione",
+      "pos": "Pos",
+      "team": "Squadra",
+      "p": "G",
+      "w": "V",
+      "d": "N",
+      "l": "P",
+      "gf": "GF",
+      "ga": "GS",
+      "gd": "DR",
+      "pts": "PT"
+    },
+    "statistics": {
+      "title": "Statistiche",
+      "competition": "Competizione",
+      "season": "Stagione",
+      "topScorers": "Classifica Marcatori",
+      "player": "Giocatore",
+      "team": "Squadra",
+      "goals": "Goal"
+    },
+    "news": {
+      "title": "Feed",
+      "noNews": "Nessuna notizia al momento.",
+      "noNewsDesc": "Torna più tardi per gli ultimi aggiornamenti.",
+      "newPost": "Nuovo Post"
+    },
+    "newsDetails": {
+      "notFound": "Articolo non trovato",
+      "notFoundDesc": "L'articolo che stai cercando non esiste o non è più disponibile.",
+      "backToNews": "Tutte le news",
+      "comments": "Commenti"
+    },
+    "players": {
+      "title": "Giocatori",
+      "searchPlaceholder": "Cerca giocatori, squadre o ruoli...",
+      "noPlayersFound": "Nessun giocatore trovato",
+      "noPlayersRegistered": "Nessun giocatore registrato",
+      "addFirstPlayer": "Aggiungi primo giocatore",
+      "manage": "Gestisci",
+      "newPlayer": "Nuovo giocatore"
+    },
+    "playerDetails": {
+      "notFound": "Giocatore non trovato",
+      "backToPlayers": "Torna ai giocatori",
+      "goalsScored": "Goal Segnati",
+      "matchesPlayed": "Partite Giocate",
+      "avgGoals": "Media Goal",
+      "goalsHistory": "Cronologia Goal",
+      "noGoals": "Nessun goal registrato",
+      "yearsOld": "{{age}} anni"
+    },
+    "teams": {
+      "title": "Club",
+      "noTeamsFound": "Nessuna squadra trovata",
+      "addFirstTeam": "Aggiungi prima squadra",
+      "newTeam": "Nuova squadra"
+    },
+    "teamDetails": {
+      "notFound": "Squadra non trovata",
+      "backToTeams": "Torna alle squadre",
+      "results": "Risultati",
+      "stats": "Statistiche",
+      "honors": "Albo d'Oro",
+      "sponsors": "Sponsor",
+      "latestMatches": "Ultime Partite",
+      "noMatches": "Nessuna partita trovata.",
+      "seasonalStats": "Statistiche Stagionali",
+      "played": "Giocate",
+      "wins": "Vittorie",
+      "draws": "Pareggi",
+      "losses": "Sconfitte",
+      "goalsFor": "Gol Fatti",
+      "goalsAgainst": "Gol Subiti",
+      "noHonors": "Nessun trofeo registrato.",
+      "noSponsors": "Nessuno sponsor registrato."
+    },
+    "gallery": {
+      "title": "Galleria",
+      "uploadMedia": "Carica Media",
+      "albums": "Album",
+      "allMedia": "Tutti i Media",
+      "noAlbums": "Nessun album creato.",
+      "noAlbumsDesc": "Crea il primo album per iniziare a organizzare la galleria.",
+      "noMedia": "Nessun media caricato.",
+      "noMediaDesc": "Carica la tua prima immagine o video."
+    },
+    "albumDetails": {
+      "notFound": "Album non trovato",
+      "backToGallery": "Tutti gli album",
+      "empty": "Questo album è vuoto.",
+      "emptyDesc": "Nessun elemento è stato ancora aggiunto."
+    },
+    "login": {
+      "title": "Admin Login",
+      "subtitle": "Accedi per gestire la piattaforma"
+    },
+    "profile": {
+      "title": "Il mio profilo",
+      "personalInfo": "Informazioni personali",
+      "personalInfoDesc": "Aggiorna il tuo nome, cognome e foto profilo.",
+      "changePassword": "Cambia password",
+      "changePasswordDesc": "Scegli una nuova password sicura. Verrai disconnesso dopo la modifica."
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "leagueManagement": "Gestione Lega",
+      "dashboard": "Dashboard",
+      "teams": "Squadre",
+      "players": "Giocatori",
+      "fixtures": "Calendario e Risultati",
+      "competitions": "Competizioni",
+      "seasons": "Stagioni",
+      "venues": "Campi da Gioco",
+      "sponsors": "Sponsor",
+      "honors": "Albo d'Oro",
+      "contentManagement": "Gestione Contenuti",
+      "articles": "Articoli",
+      "gallery": "Galleria",
+      "siteConfig": "Configurazione Sito",
+      "homepageLayout": "Layout Homepage",
+      "appearance": "Aspetto",
+      "countdownEvent": "Evento Countdown",
+      "administration": "Amministrazione",
+      "userManagement": "Gestione Utenti"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "teamsCount": "Squadre",
+      "playersCount": "Giocatori",
+      "scheduledMatches": "Partite Programmate",
+      "registeredUsers": "Utenti Registrati",
+      "quickActions": "Azioni Rapide"
+    }
+  },
+  "components": {
+    "countdown": {
+      "title": "Prossimo evento in arrivo!",
+      "days": "giorni",
+      "hours": "ore",
+      "minutes": "minuti",
+      "seconds": "secondi",
+      "started": "Evento Iniziato!"
+    },
+    "hero": {
+      "title": "Benvenuti su NC League",
+      "subtitle": "La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!",
+      "button": "Scopri l'ultima giornata"
+    },
+    "latestNews": {
+      "title": "Ultime Notizie",
+      "readAll": "Leggi tutte le notizie"
+    },
+    "leagueTableWidget": {
+      "title": "Classifica",
+      "noData": "Classifica non ancora disponibile.",
+      "viewFull": "Vedi classifica completa"
+    },
+    "upcomingMatches": {
+      "title": "Prossime Partite",
+      "noMatches": "Nessuna partita in programma.",
+      "viewFull": "Vedi calendario completo"
+    },
+    "pinnedArticle": {
+      "title": "In Evidenza",
+      "noArticle": "Nessun articolo in evidenza selezionato. Configuralo dal pannello admin."
+    },
+    "comments": {
+      "writeComment": "Scrivi un commento...",
+      "submit": "Commenta",
+      "noComments": "Nessun commento. Sii il primo a commentare!"
+    }
   }
 }

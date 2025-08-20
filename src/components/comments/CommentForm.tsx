@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getInitials } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export const CommentForm = ({ articleId }: { articleId: string }) => {
   const { user, profile } = useAuth();
   const [content, setContent] = useState('');
   const addCommentMutation = useAddComment();
+  const { t } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ export const CommentForm = ({ articleId }: { articleId: string }) => {
       </Avatar>
       <div className="flex-1">
         <Textarea
-          placeholder="Scrivi un commento..."
+          placeholder={t('components.comments.writeComment')}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={3}
@@ -47,7 +49,7 @@ export const CommentForm = ({ articleId }: { articleId: string }) => {
         <div className="flex justify-end">
           <Button type="submit" disabled={!content.trim() || addCommentMutation.isPending}>
             {addCommentMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Commenta
+            {t('components.comments.submit')}
           </Button>
         </div>
       </div>

@@ -2,9 +2,11 @@ import { useHomepageLayout } from "@/hooks/use-homepage-layout";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { WidgetRenderer } from "@/components/WidgetRenderer";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { data: layoutData, isLoading } = useHomepageLayout();
+  const { t } = useTranslation();
   const layout = layoutData?.layout_data || [];
 
   if (isLoading) {
@@ -20,8 +22,8 @@ const Index = () => {
       <main className="container mx-auto py-8 px-4">
         {layout.length === 0 && !isLoading ? (
           <div className="text-center py-20 bg-card rounded-lg">
-            <h1 className="text-3xl font-bold">Homepage in costruzione</h1>
-            <p className="text-muted-foreground mt-4">Nessun widget è stato configurato. Torna più tardi!</p>
+            <h1 className="text-3xl font-bold">{t('pages.home.buildingTitle')}</h1>
+            <p className="text-muted-foreground mt-4">{t('pages.home.buildingSubtitle')}</p>
           </div>
         ) : (
           <div className="space-y-8">
