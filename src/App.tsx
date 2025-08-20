@@ -7,6 +7,7 @@ import { AuthProvider } from "@/lib/supabase/auth-context";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ModeProvider } from "@/components/theme/ModeProvider";
 import { DynamicFavicon } from "@/components/theme/DynamicFavicon";
+import { DynamicTitle } from "@/components/theme/DynamicTitle";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Navbar } from "@/components/Navbar";
 import Login from "./pages/auth/Login";
@@ -68,6 +69,7 @@ const App = () => (
         <ModeProvider>
           <TooltipProvider>
             <DynamicFavicon />
+            <DynamicTitle />
             <Toaster />
             <Sonner />
             <BrowserRouter>
