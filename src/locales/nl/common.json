@@ -1,0 +1,17 @@
+{
+  "save": "Opslaan",
+  "saveChanges": "Wijzigingen Opslaan",
+  "cancel": "Annuleren",
+  "edit": "Bewerken",
+  "delete": "Verwijderen",
+  "new": "Nieuw",
+  "loading": "Laden...",
+  "error": "Fout",
+  "noData": "Geen gegevens beschikbaar.",
+  "actions": "Acties",
+  "status": "Status",
+  "name": "Naam",
+  "description": "Beschrijving",
+  "na": "N.v.t.",
+  "confirm": "Bevestigen"
+}

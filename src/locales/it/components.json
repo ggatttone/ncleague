@@ -1,0 +1,128 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Partite",
+    "tables": "Classifiche",
+    "statistics": "Statistiche",
+    "news": "News",
+    "players": "Giocatori",
+    "teams": "Squadre",
+    "gallery": "Galleria"
+  },
+  "userMenu": {
+    "profile": "Profilo",
+    "admin": "Pannello Admin",
+    "logout": "Esci",
+    "login": "Accedi"
+  },
+  "themeToggle": {
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "hero": {
+    "title": "Benvenuti su NC League",
+    "subtitle": "La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!",
+    "button": "Scopri l'ultima giornata"
+  },
+  "comments": {
+    "writeComment": "Scrivi un commento...",
+    "submit": "Invia",
+    "noComments": "Nessun commento. Sii il primo a commentare!"
+  },
+  "countdown": {
+    "defaultTitle": "Prossimo evento in arrivo!",
+    "eventStarted": "Evento Iniziato!",
+    "days": "giorni",
+    "hours": "ore",
+    "minutes": "minuti",
+    "seconds": "secondi"
+  },
+  "latestNews": {
+    "title": "Ultime Notizie",
+    "readAll": "Leggi tutte le news"
+  },
+  "leagueTableWidget": {
+    "title": "Classifica",
+    "noData": "Nessun dato di classifica disponibile.",
+    "viewFull": "Vedi classifica completa"
+  },
+  "pinnedArticle": {
+    "title": "In Evidenza",
+    "noArticle": "Nessun articolo in evidenza selezionato."
+  },
+  "upcomingMatches": {
+    "title": "Prossime Partite",
+    "noMatches": "Nessuna partita in programma.",
+    "viewFull": "Vedi tutte le partite",
+    "venueTBD": "Campo da definire"
+  },
+  "admin": {
+    "goalForm": {
+      "team": "Squadra",
+      "selectTeam": "Seleziona squadra",
+      "player": "Giocatore",
+      "selectPlayer": "Seleziona giocatore",
+      "loadingPlayers": "Caricamento...",
+      "minute": "Minuto",
+      "addGoal": "Aggiungi Goal"
+    },
+    "googleMapEmbed": {
+      "prompt": "Inserisci latitudine e longitudine per visualizzare la mappa."
+    },
+    "heroWidgetForm": {
+      "title": "Modifica Widget Hero",
+      "description": "Personalizza i testi e il pulsante della sezione principale.",
+      "mainTitle": "Titolo Principale",
+      "subtitle": "Sottotitolo",
+      "buttonText": "Testo Pulsante",
+      "buttonLink": "Link Pulsante"
+    },
+    "imageUploader": {
+      "uploading": "Caricamento...",
+      "selectFile": "Devi selezionare un file da caricare.",
+      "notAuthenticated": "Utente non autenticato."
+    },
+    "widgetRenderer": {
+      "hero": "Hero Section",
+      "countdown": "Countdown Evento",
+      "media_carousel": "Carosello Media",
+      "upcoming_matches": "Prossime Partite",
+      "latest_news": "Ultime Notizie",
+      "league_table": "Classifica",
+      "pinned_article": "Articolo in Evidenza"
+    },
+    "pinnedArticleWidgetForm": {
+      "title": "Modifica Widget Articolo in Evidenza",
+      "description": "Seleziona quale articolo fissato mostrare in questo widget.",
+      "pinnedArticle": "Articolo Fissato",
+      "selectArticle": "Seleziona un articolo",
+      "loading": "Caricamento...",
+      "noPinnedArticles": "Nessun articolo fissato trovato."
+    }
+  },
+  "articlePostCard": {
+    "pinned": "In evidenza",
+    "unknownAuthor": "Autore Sconosciuto"
+  },
+  "avatarUploader": {
+    "changePhoto": "Cambia foto",
+    "remove": "Rimuovi",
+    "uploading": "Caricamento..."
+  },
+  "mediaCarousel": {
+    "latestMedia": "Ultimi Media Caricati"
+  },
+  "mediaViewer": {
+    "alt": "Media visualizzato"
+  },
+  "newsItem": {
+    "author": "Autore"
+  },
+  "table": {
+    "noData": "Nessun dato disponibile."
+  },
+  "dynamicTitle": {
+    "appName": "NCL App"
+  }
+}

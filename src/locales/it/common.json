@@ -1,0 +1,17 @@
+{
+  "save": "Salva",
+  "saveChanges": "Salva modifiche",
+  "cancel": "Annulla",
+  "edit": "Modifica",
+  "delete": "Elimina",
+  "new": "Nuovo",
+  "loading": "Caricamento...",
+  "error": "Errore",
+  "noData": "Nessun dato disponibile.",
+  "actions": "Azioni",
+  "status": "Stato",
+  "name": "Nome",
+  "description": "Descrizione",
+  "na": "N/A",
+  "confirm": "Conferma"
+}

@@ -1,0 +1,18 @@
+{
+  "required": "This field is required",
+  "min_one": "This field is required",
+  "invalidUrl": "Invalid URL",
+  "passwordMin": "Password must be at least 6 characters",
+  "maxTwoColors": "You can select a maximum of two colors",
+  "teamsMustBeDifferent": "Teams must be different",
+  "refereeCannotBePlayer": "The referee cannot be one of the two teams",
+  "atLeastOneFile": "At least one file is required.",
+  "maxTenFiles": "You can upload a maximum of 10 files at a time.",
+  "invalidDate": "Invalid date: \"{{date}}\"",
+  "requiredScores": "Scores are required and must be numeric for completed matches.",
+  "teamNotFound": "Team not found: \"{{name}}\"",
+  "refereeNotFound": "Referee team not found: \"{{name}}\"",
+  "venueNotFound": "Venue not found: \"{{name}}\"",
+  "competitionNotFound": "Competition not found: \"{{name}}\"",
+  "seasonNotFound": "Season not found: \"{{name}}\""
+}

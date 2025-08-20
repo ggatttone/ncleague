@@ -1,0 +1,17 @@
+{
+  "save": "Save",
+  "saveChanges": "Save Changes",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "delete": "Delete",
+  "new": "New",
+  "loading": "Loading...",
+  "error": "Error",
+  "noData": "No data available.",
+  "actions": "Actions",
+  "status": "Status",
+  "name": "Name",
+  "description": "Description",
+  "na": "N/A",
+  "confirm": "Confirm"
+}
