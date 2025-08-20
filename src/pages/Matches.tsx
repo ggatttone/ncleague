@@ -15,6 +15,7 @@ import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -23,6 +24,7 @@ type MatchWithTeams = Match & {
 
 const Matches = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [selectedCompetition, setSelectedCompetition] = useState<string | undefined>();
   const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
 
@@ -76,19 +78,21 @@ const Matches = () => {
   ) || [];
 
   const getStatusBadge = (status: string) => {
+    const statusKey = `matchStatus.${status}`;
+    const statusText = t(statusKey, { defaultValue: status });
     switch (status) {
       case 'scheduled':
-        return <Badge variant="outline">Programmata</Badge>;
+        return <Badge variant="outline">{statusText}</Badge>;
       case 'ongoing':
-        return <Badge variant="default" className="bg-green-600">In corso</Badge>;
+        return <Badge variant="default" className="bg-green-600">{statusText}</Badge>;
       case 'completed':
-        return <Badge variant="secondary">Completata</Badge>;
+        return <Badge variant="secondary">{statusText}</Badge>;
       case 'postponed':
-        return <Badge variant="destructive">Rinviata</Badge>;
+        return <Badge variant="destructive">{statusText}</Badge>;
       case 'cancelled':
-        return <Badge variant="destructive">Cancellata</Badge>;
+        return <Badge variant="destructive">{statusText}</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline">{statusText}</Badge>;
     }
   };
 
@@ -211,7 +215,7 @@ const Matches = () => {
     if (error) {
       return (
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento delle partite</p>
+          <p className="text-red-600 mb-4">{t('errors.loadingMatches')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       );
@@ -220,7 +224,7 @@ const Matches = () => {
     if (!selectedCompetition || !selectedSeason) {
       return (
         <div className="text-center py-12 bg-muted/50 rounded-lg">
-          <p className="text-muted-foreground">Seleziona una competizione e una stagione per visualizzare le partite.</p>
+          <p className="text-muted-foreground">{t('pages.matches.selectCompetitionAndSeason')}</p>
         </div>
       );
     }
@@ -229,10 +233,10 @@ const Matches = () => {
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upcoming">
-            Prossime ({upcomingMatches.length})
+            {t('pages.matches.upcoming')} ({upcomingMatches.length})
           </TabsTrigger>
           <TabsTrigger value="completed">
-            Completate ({completedMatches.length})
+            {t('pages.matches.completed')} ({completedMatches.length})
           </TabsTrigger>
         </TabsList>
 
@@ -240,13 +244,13 @@ const Matches = () => {
           {upcomingMatches.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground mb-2">Nessuna partita in programma</p>
-              <p className="text-muted-foreground mb-4">Le prossime partite verranno visualizzate qui.</p>
+              <p className="text-xl text-muted-foreground mb-2">{t('pages.matches.noUpcoming')}</p>
+              <p className="text-muted-foreground mb-4">{t('pages.matches.noUpcomingSubtitle')}</p>
               {user && (
                 <Link to="/admin/fixtures/new">
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
-                    Aggiungi prima partita
+                    {t('pages.matches.addFirstMatch')}
                   </Button>
                 </Link>
               )}
@@ -264,8 +268,8 @@ const Matches = () => {
           {completedMatches.length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground mb-2">Nessuna partita completata</p>
-              <p className="text-muted-foreground">I risultati delle partite verranno visualizzati qui.</p>
+              <p className="text-xl text-muted-foreground mb-2">{t('pages.matches.noCompleted')}</p>
+              <p className="text-muted-foreground">{t('pages.matches.noCompletedSubtitle')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -282,7 +286,7 @@ const Matches = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Matches</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">{t('pages.matches.title')}</h1>
         {user && (
           <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/fixtures/new">
