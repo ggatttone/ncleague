@@ -145,6 +145,79 @@
       "newPassword": "Nuova password",
       "updatePassword": "Aggiorna password"
     },
+    "gallery": {
+      "title": "Galleria",
+      "uploadMedia": "Carica Media",
+      "uploadDialogTitle": "Carica nuovi media",
+      "uploadDialogDescription": "Puoi selezionare fino a 10 file (immagini o video) alla volta.",
+      "fileLabel": "File *",
+      "fileError": "È richiesto almeno un file.",
+      "fileLimitError": "Puoi caricare un massimo di 10 file alla volta.",
+      "albumLabel": "Album (opzionale)",
+      "noAlbum": "Nessun album",
+      "uploadButton": "Carica",
+      "tabs": {
+        "albums": "Album",
+        "allMedia": "Tutti i Media"
+      },
+      "noAlbumsTitle": "Nessun album creato.",
+      "noAlbumsSubtitle": "Crea il primo album per iniziare a organizzare la galleria.",
+      "noMediaTitle": "Nessun media caricato.",
+      "noMediaSubtitle": "Carica la tua prima immagine o video.",
+      "itemCount_one": "{{count}} elemento",
+      "itemCount_other": "{{count}} elementi"
+    },
+    "albumDetails": {
+      "backToGallery": "Tutti gli album",
+      "notFoundTitle": "Album non trovato",
+      "emptyAlbumTitle": "Questo album è vuoto.",
+      "emptyAlbumSubtitle": "Nessun elemento è stato ancora aggiunto."
+    },
+    "seasonArchive": {
+      "title": "Archivio Stagione",
+      "season": "Stagione",
+      "competition": "Competizione",
+      "division": "Divisione"
+    },
+    "admin": {
+      "sidebar": {
+        "leagueManagement": "Gestione Lega",
+        "dashboard": "Dashboard",
+        "teams": "Squadre",
+        "players": "Giocatori",
+        "fixtures": "Calendario",
+        "competitions": "Competizioni",
+        "seasons": "Stagioni",
+        "venues": "Campi",
+        "sponsors": "Sponsor",
+        "honors": "Albo d'Oro",
+        "contentManagement": "Gestione Contenuti",
+        "articles": "Articoli",
+        "gallery": "Galleria",
+        "siteConfig": "Configurazione Sito",
+        "homepageLayout": "Layout Homepage",
+        "appearance": "Aspetto",
+        "countdownEvent": "Evento Countdown",
+        "administration": "Amministrazione",
+        "userManagement": "Gestione Utenti"
+      },
+      "index": {
+        "title": "Admin Dashboard",
+        "teams": "Squadre",
+        "manageTeams": "Gestisci squadre",
+        "players": "Giocatori",
+        "managePlayers": "Gestisci giocatori",
+        "scheduledMatches": "Partite Programmate",
+        "manageFixtures": "Gestisci calendario",
+        "registeredUsers": "Utenti Registrati",
+        "manageUsers": "Gestisci utenti",
+        "quickActions": "Azioni Rapide",
+        "newTeam": "Nuova Squadra",
+        "newPlayer": "Nuovo Giocatore",
+        "newMatch": "Nuova Partita",
+        "newArticle": "Nuovo Articolo"
+      }
+    },
     "notFound": {
       "title": "Pagina non trovata",
       "subtitle": "La pagina che stai cercando non esiste.",

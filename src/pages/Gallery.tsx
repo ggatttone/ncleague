@@ -20,24 +20,28 @@ import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast
 import { useQueryClient } from "@tanstack/react-query";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
+import { useTranslation } from "react-i18next";
 
-const uploadSchema = z.object({
+const getUploadSchema = (t: (key: string) => string) => z.object({
   album_id: z.string().optional().nullable(),
   file: z.instanceof(FileList)
-    .refine(files => files.length > 0, "È richiesto almeno un file.")
-    .refine(files => files.length <= 10, "Puoi caricare un massimo di 10 file alla volta."),
+    .refine(files => files.length > 0, t('pages.gallery.fileError'))
+    .refine(files => files.length <= 10, t('pages.gallery.fileLimitError')),
 });
 
-type UploadFormData = z.infer<typeof uploadSchema>;
+type UploadFormData = z.infer<ReturnType<typeof getUploadSchema>>;
 
 const GalleryPage = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { data: albums, isLoading: albumsLoading, error: albumsError } = useAlbums();
   const { data: allItems, isLoading: itemsLoading, error: itemsError } = useGalleryItems();
   const updateAlbumMutation = useUpdateAlbum();
   const [isUploadOpen, setUploadOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
   const queryClient = useQueryClient();
+
+  const uploadSchema = getUploadSchema(t);
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, control } = useForm<UploadFormData>({
     resolver: zodResolver(uploadSchema),
@@ -107,29 +111,29 @@ const GalleryPage = () => {
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Galleria</h1>
+          <h1 className="text-3xl font-bold">{t('pages.gallery.title')}</h1>
           {user && (
             <>
               <Button onClick={() => setUploadOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Carica Media
+                {t('pages.gallery.uploadMedia')}
               </Button>
               <Dialog open={isUploadOpen} onOpenChange={setUploadOpen}>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Carica nuovi media</DialogTitle>
+                    <DialogTitle>{t('pages.gallery.uploadDialogTitle')}</DialogTitle>
                     <DialogDescription>
-                      Puoi selezionare fino a 10 file (immagini o video) alla volta.
+                      {t('pages.gallery.uploadDialogDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
-                      <Label htmlFor="file">File *</Label>
+                      <Label htmlFor="file">{t('pages.gallery.fileLabel')}</Label>
                       <Input id="file" type="file" {...register("file")} accept="image/jpeg, image/png, image/webp, image/gif, video/*" multiple />
                       {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
                     </div>
                     <div>
-                      <Label htmlFor="album_id">Album (opzionale)</Label>
+                      <Label htmlFor="album_id">{t('pages.gallery.albumLabel')}</Label>
                       <Controller
                         name="album_id"
                         control={control}
@@ -138,9 +142,9 @@ const GalleryPage = () => {
                             onValueChange={(value) => field.onChange(value === "no-album" ? null : value)}
                             value={field.value || "no-album"}
                           >
-                            <SelectTrigger><SelectValue placeholder="Nessun album" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('pages.gallery.noAlbum')} /></SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="no-album">Nessun album</SelectItem>
+                              <SelectItem value="no-album">{t('pages.gallery.noAlbum')}</SelectItem>
                               {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
                             </SelectContent>
                           </Select>
@@ -150,7 +154,7 @@ const GalleryPage = () => {
                     <div className="flex justify-end">
                       <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Carica
+                        {t('pages.gallery.uploadButton')}
                       </Button>
                     </div>
                   </form>
@@ -162,8 +166,8 @@ const GalleryPage = () => {
 
         <Tabs defaultValue="albums" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="albums">Album</TabsTrigger>
-            <TabsTrigger value="all-media">Tutti i Media</TabsTrigger>
+            <TabsTrigger value="albums">{t('pages.gallery.tabs.albums')}</TabsTrigger>
+            <TabsTrigger value="all-media">{t('pages.gallery.tabs.allMedia')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="albums" className="mt-6">
@@ -172,8 +176,8 @@ const GalleryPage = () => {
             {!albumsLoading && albums && albums.length === 0 && (
               <div className="text-center py-20">
                 <Folder className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold">Nessun album creato.</h2>
-                <p className="text-muted-foreground mt-2">Crea il primo album per iniziare a organizzare la galleria.</p>
+                <h2 className="text-xl font-semibold">{t('pages.gallery.noAlbumsTitle')}</h2>
+                <p className="text-muted-foreground mt-2">{t('pages.gallery.noAlbumsSubtitle')}</p>
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -193,7 +197,7 @@ const GalleryPage = () => {
                       </CardHeader>
                       <CardContent className="p-4">
                         <CardTitle className="text-base font-semibold truncate">{album.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{album.item_count} elementi</p>
+                        <p className="text-sm text-muted-foreground">{t('pages.gallery.itemCount', { count: album.item_count })}</p>
                       </CardContent>
                     </Card>
                   </Link>
@@ -208,8 +212,8 @@ const GalleryPage = () => {
             {!itemsLoading && allItems && allItems.length === 0 && (
               <div className="text-center py-20">
                 <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold">Nessun media caricato.</h2>
-                <p className="text-muted-foreground mt-2">Carica la tua prima immagine o video.</p>
+                <h2 className="text-xl font-semibold">{t('pages.gallery.noMediaTitle')}</h2>
+                <p className="text-muted-foreground mt-2">{t('pages.gallery.noMediaSubtitle')}</p>
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

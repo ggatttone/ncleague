@@ -9,9 +9,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
+import { useTranslation } from "react-i18next";
 
 const AlbumDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const { data: album, isLoading: albumLoading } = useAlbum(id);
   const { data: items, isLoading: itemsLoading } = useGalleryItemsByAlbum(id);
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
@@ -32,11 +34,11 @@ const AlbumDetails = () => {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Album non trovato</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('pages.albumDetails.notFoundTitle')}</h1>
           <Link to="/gallery">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Torna alla galleria
+              {t('pages.albumDetails.backToGallery')}
             </Button>
           </Link>
         </div>
@@ -50,7 +52,7 @@ const AlbumDetails = () => {
         <Link to="/gallery" className="mb-6 inline-block">
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Tutti gli album
+            {t('pages.albumDetails.backToGallery')}
           </Button>
         </Link>
         <div className="mb-8">
@@ -84,8 +86,8 @@ const AlbumDetails = () => {
         ) : (
           <div className="text-center py-20">
             <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold">Questo album è vuoto.</h2>
-            <p className="text-muted-foreground mt-2">Nessun elemento è stato ancora aggiunto.</p>
+            <h2 className="text-xl font-semibold">{t('pages.albumDetails.emptyAlbumTitle')}</h2>
+            <p className="text-muted-foreground mt-2">{t('pages.albumDetails.emptyAlbumSubtitle')}</p>
           </div>
         )}
       </div>

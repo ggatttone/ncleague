@@ -145,6 +145,79 @@
       "newPassword": "New password",
       "updatePassword": "Update password"
     },
+    "gallery": {
+      "title": "Gallery",
+      "uploadMedia": "Upload Media",
+      "uploadDialogTitle": "Upload new media",
+      "uploadDialogDescription": "You can select up to 10 files (images or videos) at a time.",
+      "fileLabel": "File *",
+      "fileError": "At least one file is required.",
+      "fileLimitError": "You can upload a maximum of 10 files at a time.",
+      "albumLabel": "Album (optional)",
+      "noAlbum": "No album",
+      "uploadButton": "Upload",
+      "tabs": {
+        "albums": "Albums",
+        "allMedia": "All Media"
+      },
+      "noAlbumsTitle": "No albums created.",
+      "noAlbumsSubtitle": "Create the first album to start organizing the gallery.",
+      "noMediaTitle": "No media uploaded.",
+      "noMediaSubtitle": "Upload your first image or video.",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items"
+    },
+    "albumDetails": {
+      "backToGallery": "All albums",
+      "notFoundTitle": "Album not found",
+      "emptyAlbumTitle": "This album is empty.",
+      "emptyAlbumSubtitle": "No items have been added yet."
+    },
+    "seasonArchive": {
+      "title": "Season Archive",
+      "season": "Season",
+      "competition": "Competition",
+      "division": "Division"
+    },
+    "admin": {
+      "sidebar": {
+        "leagueManagement": "League Management",
+        "dashboard": "Dashboard",
+        "teams": "Teams",
+        "players": "Players",
+        "fixtures": "Fixtures",
+        "competitions": "Competitions",
+        "seasons": "Seasons",
+        "venues": "Venues",
+        "sponsors": "Sponsors",
+        "honors": "Honors",
+        "contentManagement": "Content Management",
+        "articles": "Articles",
+        "gallery": "Gallery",
+        "siteConfig": "Site Configuration",
+        "homepageLayout": "Homepage Layout",
+        "appearance": "Appearance",
+        "countdownEvent": "Countdown Event",
+        "administration": "Administration",
+        "userManagement": "User Management"
+      },
+      "index": {
+        "title": "Admin Dashboard",
+        "teams": "Teams",
+        "manageTeams": "Manage teams",
+        "players": "Players",
+        "managePlayers": "Manage players",
+        "scheduledMatches": "Scheduled Matches",
+        "manageFixtures": "Manage fixtures",
+        "registeredUsers": "Registered Users",
+        "manageUsers": "Manage users",
+        "quickActions": "Quick Actions",
+        "newTeam": "New Team",
+        "newPlayer": "New Player",
+        "newMatch": "New Match",
+        "newArticle": "New Article"
+      }
+    },
     "notFound": {
       "title": "Page Not Found",
       "subtitle": "The page you are looking for does not exist.",
