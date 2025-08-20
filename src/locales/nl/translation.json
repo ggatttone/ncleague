@@ -579,6 +579,62 @@
         "seasonPlaceholder": "Selecteer seizoen",
         "achievementLabel": "Prestatie *",
         "achievementPlaceholder": "Bijv.: Kampioen, Bekerwinnaar..."
+      },
+      "articles": {
+        "title": "Artikelen",
+        "newArticle": "Nieuw artikel",
+        "searchPlaceholder": "Zoek artikelen...",
+        "errorLoading": "Fout bij het laden van artikelen",
+        "deleteDialogTitle": "Verwijder artikel",
+        "deleteDialogDescription": "Weet u zeker dat u het artikel \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "pinTooltip": "Artikel bovenaan vastzetten",
+        "unpinTooltip": "Artikel losmaken",
+        "table": {
+          "pin": "",
+          "title": "Titel",
+          "status": "Status",
+          "author": "Auteur",
+          "publishedAt": "Gepubliceerd op",
+          "actions": "Acties"
+        },
+        "status": {
+          "published": "Gepubliceerd",
+          "draft": "Concept"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Bewerk artikel",
+        "newTitle": "Nieuw artikel",
+        "mainContent": "Hoofdinhoud",
+        "titleLabel": "Titel *",
+        "titlePlaceholder": "Titel van het artikel",
+        "slugLabel": "Slug *",
+        "slugPlaceholder": "wordt-automatisch-gegenereerd",
+        "contentLabel": "Inhoud",
+        "contentPlaceholder": "Schrijf hier uw artikel...",
+        "publication": "Publicatie",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Selecteer status",
+        "coverImage": "Omslagafbeelding"
+      },
+      "albums": {
+        "title": "Galerij Albums",
+        "newAlbum": "Nieuw Album",
+        "errorLoading": "Fout bij het laden van albums",
+        "deleteDialogTitle": "Verwijder album",
+        "deleteDialogDescription": "Weet u zeker dat u het album \"{{name}}\" wilt verwijderen? De afbeeldingen erin worden niet verwijderd, maar zijn niet langer aan dit album gekoppeld.",
+        "table": {
+          "name": "Naam",
+          "itemCount": "Aantal items",
+          "createdAt": "Gemaakt op",
+          "actions": "Acties"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Bewerk album",
+        "newTitle": "Nieuw album",
+        "nameLabel": "Naam *",
+        "descriptionLabel": "Beschrijving"
       }
     },
     "notFound": {

@@ -17,21 +17,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const AlbumsAdmin = () => {
   const { data: albums, isLoading, error } = useAlbums();
   const deleteAlbumMutation = useDeleteAlbum();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const handleDelete = async (id: string) => {
     await deleteAlbumMutation.mutateAsync(id);
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "item_count", label: "N. Elementi" },
-    { key: "created_at", label: "Creato il" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.albums.table.name') },
+    { key: "item_count", label: t('pages.admin.albums.table.itemCount') },
+    { key: "created_at", label: t('pages.admin.albums.table.createdAt') },
+    { key: "actions", label: t('pages.admin.albums.table.actions') },
   ];
 
   const data = albums?.map(album => ({
@@ -53,10 +55,9 @@ const AlbumsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina album</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.albums.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare l'album "{album.name}"? 
-                Le immagini al suo interno non verranno eliminate ma non saranno più associate a questo album.
+                {t('pages.admin.albums.deleteDialogDescription', { name: album.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -80,7 +81,7 @@ const AlbumsAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento degli album</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.albums.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -96,7 +97,7 @@ const AlbumsAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina album</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{album.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.albums.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.albums.deleteDialogDescription', { name: album.name })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(album.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteAlbumMutation.isPending}>
@@ -122,11 +123,11 @@ const AlbumsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Album Galleria</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.albums.title')}</h1>
         <Link to="/admin/albums/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Nuovo Album
+            {t('pages.admin.albums.newAlbum')}
           </Button>
         </Link>
       </div>

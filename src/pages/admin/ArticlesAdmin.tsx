@@ -24,6 +24,7 @@ import { showSuccess } from "@/utils/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const ArticlesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,6 +32,7 @@ const ArticlesAdmin = () => {
   const deleteArticleMutation = useDeleteArticle();
   const togglePinMutation = useTogglePinArticle();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const handleTogglePin = async (id: string, isPinned: boolean) => {
     await togglePinMutation.mutateAsync({ id, is_pinned: !isPinned }, {
@@ -53,12 +55,12 @@ const ArticlesAdmin = () => {
   };
 
   const columns = [
-    { key: "pin", label: "" },
-    { key: "title", label: "Titolo" },
-    { key: "status", label: "Stato" },
-    { key: "author", label: "Autore" },
-    { key: "published_at", label: "Pubblicato il" },
-    { key: "actions", label: "Azioni" },
+    { key: "pin", label: t('pages.admin.articles.table.pin') },
+    { key: "title", label: t('pages.admin.articles.table.title') },
+    { key: "status", label: t('pages.admin.articles.table.status') },
+    { key: "author", label: t('pages.admin.articles.table.author') },
+    { key: "published_at", label: t('pages.admin.articles.table.publishedAt') },
+    { key: "actions", label: t('pages.admin.articles.table.actions') },
   ];
 
   const data = filteredArticles?.map(article => ({
@@ -76,14 +78,14 @@ const ArticlesAdmin = () => {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{article.is_pinned ? "Sblocca articolo" : "Fissa articolo in cima"}</p>
+          <p>{article.is_pinned ? t('pages.admin.articles.unpinTooltip') : t('pages.admin.articles.pinTooltip')}</p>
         </TooltipContent>
       </Tooltip>
     ),
     title: article.title,
     status: (
       <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>
-        {article.status === 'published' ? 'Pubblicato' : 'Bozza'}
+        {t(`pages.admin.articles.status.${article.status}`)}
       </Badge>
     ),
     author: `${article.profiles?.first_name || ''} ${article.profiles?.last_name || ''}`.trim() || 'N/A',
@@ -103,10 +105,9 @@ const ArticlesAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina articolo</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.articles.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare l'articolo "{article.title}"? 
-                Questa azione non può essere annullata.
+                {t('pages.admin.articles.deleteDialogDescription', { name: article.title })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -130,7 +131,7 @@ const ArticlesAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento degli articoli</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.articles.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -148,13 +149,13 @@ const ArticlesAdmin = () => {
                   {article.is_pinned ? <PinOff className="h-4 w-4 text-primary" /> : <Pin className="h-4 w-4" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><p>{article.is_pinned ? "Sblocca" : "Fissa"}</p></TooltipContent>
+              <TooltipContent><p>{article.is_pinned ? t('pages.admin.articles.unpinTooltip') : t('pages.admin.articles.pinTooltip')}</p></TooltipContent>
             </Tooltip>
             <Link to={`/admin/articles/${article.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina articolo</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{article.title}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.articles.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.articles.deleteDialogDescription', { name: article.title })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(article.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteArticleMutation.isPending}>
@@ -175,7 +176,7 @@ const ArticlesAdmin = () => {
           >
             <div className="mt-2">
               <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>
-                {article.status === 'published' ? 'Pubblicato' : 'Bozza'}
+                {t(`pages.admin.articles.status.${article.status}`)}
               </Badge>
             </div>
           </AdminMobileCard>
@@ -187,11 +188,11 @@ const ArticlesAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Articoli</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.articles.title')}</h1>
         <Link to="/admin/articles/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Nuovo articolo
+            {t('pages.admin.articles.newArticle')}
           </Button>
         </Link>
       </div>
@@ -200,7 +201,7 @@ const ArticlesAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca articoli..."
+            placeholder={t('pages.admin.articles.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
