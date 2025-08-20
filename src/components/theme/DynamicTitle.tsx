@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import { useThemeContext } from './ThemeProvider';
+import { useTranslation } from 'react-i18next';
 
 export const DynamicTitle = () => {
   const { theme } = useThemeContext();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    // TODO: Il nome dell'app potrebbe essere aggiunto all'oggetto del tema in futuro.
-    const appName = "NCL App"; // Nome predefinito dell'app
+    const appName = t('components.dynamicTitle.appName');
     
     if (appName) {
       document.title = appName;
     }
-  }, [theme]); // Si aggiorna se il tema cambia
+  }, [theme, t]);
 
   return null;
 };
