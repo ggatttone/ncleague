@@ -19,23 +19,26 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/matches", label: "Matches" },
-  { to: "/tables", label: "Table" },
-  { to: "/statistics", label: "Statistics" },
-  { to: "/news", label: "News" },
-  { to: "/players", label: "Players" },
-  { to: "/teams", label: "Clubs" },
-  { to: "/gallery", label: "Gallery" },
-];
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export const Navbar = () => {
   const location = useLocation();
   const { user, signOut, hasPermission, profile } = useAuth();
   const { theme } = useThemeContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const navLinks = [
+    { to: "/", label: t('navbar.home') },
+    { to: "/matches", label: t('navbar.matches') },
+    { to: "/tables", label: t('navbar.tables') },
+    { to: "/statistics", label: t('navbar.statistics') },
+    { to: "/news", label: t('navbar.news') },
+    { to: "/players", label: t('navbar.players') },
+    { to: "/teams", label: t('navbar.teams') },
+    { to: "/gallery", label: t('navbar.gallery') },
+  ];
 
   const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']);
 
@@ -71,21 +74,21 @@ export const Navbar = () => {
         <DropdownMenuItem asChild>
           <Link to="/profile">
             <User className="mr-2 h-4 w-4" />
-            <span>Profilo</span>
+            <span>{t('userMenu.profile')}</span>
           </Link>
         </DropdownMenuItem>
         {isAdminOrEditor && (
           <DropdownMenuItem asChild>
             <Link to="/admin">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              <span>Admin</span>
+              <span>{t('userMenu.admin')}</span>
             </Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Logout</span>
+          <span>{t('userMenu.logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -124,11 +127,12 @@ export const Navbar = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-2">
+            <LanguageSwitcher />
             <ThemeToggle />
             {user ? userMenu : (
               <Link to="/login">
                 <Button variant="outline" size="sm">
-                  Login
+                  {t('userMenu.login')}
                 </Button>
               </Link>
             )}
@@ -165,20 +169,21 @@ export const Navbar = () => {
               ))}
             </ul>
             <div className="mt-4 pt-4 border-t border-border">
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end mb-4 gap-2">
+                <LanguageSwitcher />
                 <ThemeToggle />
               </div>
               {user ? (
                 <div className="space-y-2">
                   <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="outline" size="sm" className="w-full justify-start">
-                      <User className="mr-2 h-4 w-4" /> Profilo
+                      <User className="mr-2 h-4 w-4" /> {t('userMenu.profile')}
                     </Button>
                   </Link>
                   {isAdminOrEditor && (
                     <Link to="/admin" onClick={() => setIsMobileMenuOpen(false)}>
                       <Button variant="outline" size="sm" className="w-full justify-start">
-                        <LayoutDashboard className="mr-2 h-4 w-4" /> Admin
+                        <LayoutDashboard className="mr-2 h-4 w-4" /> {t('userMenu.admin')}
                       </Button>
                     </Link>
                   )}
@@ -186,13 +191,13 @@ export const Navbar = () => {
                     signOut();
                     setIsMobileMenuOpen(false);
                   }}>
-                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                    <LogOut className="mr-2 h-4 w-4" /> {t('userMenu.logout')}
                   </Button>
                 </div>
               ) : (
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full">
-                    Login
+                    {t('userMenu.login')}
                   </Button>
                 </Link>
               )}

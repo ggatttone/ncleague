@@ -1,0 +1,23 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Partite",
+    "tables": "Classifiche",
+    "statistics": "Statistiche",
+    "news": "News",
+    "players": "Giocatori",
+    "teams": "Club",
+    "gallery": "Galleria"
+  },
+  "userMenu": {
+    "login": "Login",
+    "profile": "Profilo",
+    "admin": "Admin",
+    "logout": "Logout"
+  },
+  "themeToggle": {
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  }
+}
