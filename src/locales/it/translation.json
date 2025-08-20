@@ -66,6 +66,85 @@
       "pts": "PT",
       "selectToView": "Seleziona una competizione e una stagione per visualizzare la classifica."
     },
+    "statistics": {
+      "title": "Statistiche",
+      "competition": "Competizione",
+      "season": "Stagione",
+      "selectCompetition": "Seleziona una competizione",
+      "selectSeason": "Seleziona una stagione",
+      "topScorers": "Classifica Marcatori",
+      "errorLoading": "Errore nel caricamento dei dati.",
+      "pos": "Pos.",
+      "player": "Giocatore",
+      "team": "Squadra",
+      "goals": "Goal",
+      "noData": "Nessun dato disponibile per la selezione corrente."
+    },
+    "players": {
+      "title": "Giocatori",
+      "newPlayer": "Nuovo giocatore",
+      "manage": "Gestisci",
+      "searchPlaceholder": "Cerca giocatori, squadre o ruoli...",
+      "noPlayersFound": "Nessun giocatore trovato",
+      "noPlayersRegistered": "Nessun giocatore registrato",
+      "noPlayersFoundSubtitle": "Prova a modificare i termini di ricerca.",
+      "addFirstPlayer": "Aggiungi primo giocatore",
+      "playersFound_one": "{{count}} giocatore trovato",
+      "playersFound_other": "{{count}} giocatori trovati",
+      "yearsOld": "anni"
+    },
+    "playerDetails": {
+      "backToPlayers": "Torna ai giocatori",
+      "playerNotFound": "Giocatore non trovato",
+      "team": "Squadra",
+      "yearsOld": "anni",
+      "goalsScored": "Goal Segnati",
+      "matchesPlayed": "Partite Giocate",
+      "avgGoals": "Media Goal",
+      "dataUnavailable": "Dato non disponibile",
+      "goalsHistory": "Cronologia Goal",
+      "noGoals": "Nessun goal registrato"
+    },
+    "teams": {
+      "title": "Squadre",
+      "newTeam": "Nuova squadra",
+      "manage": "Gestisci",
+      "noTeamsFound": "Nessuna squadra trovata",
+      "noTeamsFoundSubtitle": "Le squadre verranno visualizzate qui una volta aggiunte.",
+      "addFirstTeam": "Aggiungi prima squadra"
+    },
+    "teamDetails": {
+      "backToTeams": "Torna alle squadre",
+      "teamNotFound": "Squadra non trovata",
+      "results": "Risultati",
+      "stats": "Statistiche",
+      "latestMatches": "Ultime Partite",
+      "seasonalStats": "Statistiche Stagionali",
+      "played": "Giocate",
+      "wins": "Vittorie",
+      "draws": "Pareggi",
+      "losses": "Sconfitte",
+      "goalsFor": "Gol Fatti",
+      "goalsAgainst": "Gol Subiti",
+      "hallOfFame": "Albo d'Oro",
+      "noTrophies": "Nessun trofeo registrato.",
+      "sponsors": "Sponsor",
+      "noSponsors": "Nessuno sponsor registrato."
+    },
+    "profile": {
+      "title": "Il mio profilo",
+      "personalInfo": "Informazioni personali",
+      "personalInfoSubtitle": "Aggiorna il tuo nome, cognome e foto profilo.",
+      "profilePicture": "Foto Profilo",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Email",
+      "saveChanges": "Salva modifiche",
+      "changePassword": "Cambia password",
+      "changePasswordSubtitle": "Scegli una nuova password sicura. Verrai disconnesso dopo la modifica.",
+      "newPassword": "Nuova password",
+      "updatePassword": "Aggiorna password"
+    },
     "notFound": {
       "title": "Pagina non trovata",
       "subtitle": "La pagina che stai cercando non esiste.",
@@ -122,6 +201,8 @@
   "errors": {
     "loadingMatches": "Errore nel caricamento delle partite",
     "loadingTables": "Errore nel caricamento della classifica.",
-    "loadingNews": "Errore nel caricamento delle notizie."
+    "loadingNews": "Errore nel caricamento delle notizie.",
+    "passwordMinLength": "La password deve essere di almeno 6 caratteri",
+    "requiredField": "Questo campo è obbligatorio"
   }
 }

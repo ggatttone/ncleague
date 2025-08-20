@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Users, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { useTranslation } from "react-i18next";
 
 const Teams = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { data: teams, isLoading, error } = useSupabaseQuery<Team[]>(
     ['teams'],
     async () => supabase.from('teams').select('*, venues(name)').order('name')
@@ -19,19 +21,19 @@ const Teams = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('pages.teams.title')}</h1>
           {user && (
             <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/teams/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
-                  Nuova squadra
+                  {t('pages.teams.newTeam')}
                 </Button>
               </Link>
               <Link to="/admin/teams">
                 <Button variant="outline" size="sm">
                   <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
+                  {t('pages.teams.manage')}
                 </Button>
               </Link>
             </div>
@@ -59,19 +61,19 @@ const Teams = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('pages.teams.title')}</h1>
           {user && (
             <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/teams/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
-                  Nuova squadra
+                  {t('pages.teams.newTeam')}
                 </Button>
               </Link>
               <Link to="/admin/teams">
                 <Button variant="outline" size="sm">
                   <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
+                  {t('pages.teams.manage')}
                 </Button>
               </Link>
             </div>
@@ -88,19 +90,19 @@ const Teams = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Clubs</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">{t('pages.teams.title')}</h1>
         {user && (
           <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/teams/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nuova squadra
+                {t('pages.teams.newTeam')}
               </Button>
             </Link>
             <Link to="/admin/teams">
               <Button variant="outline" size="sm">
                 <Settings className="mr-2 h-4 w-4" />
-                Gestisci
+                {t('pages.teams.manage')}
                 </Button>
             </Link>
           </div>
@@ -110,13 +112,13 @@ const Teams = () => {
       {!teams || teams.length === 0 ? (
         <div className="text-center py-12">
           <Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-xl text-muted-foreground mb-2">Nessuna squadra trovata</p>
-          <p className="text-muted-foreground mb-4">Le squadre verranno visualizzate qui una volta aggiunte.</p>
+          <p className="text-xl text-muted-foreground mb-2">{t('pages.teams.noTeamsFound')}</p>
+          <p className="text-muted-foreground mb-4">{t('pages.teams.noTeamsFoundSubtitle')}</p>
           {user && (
             <Link to="/admin/teams/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Aggiungi prima squadra
+                {t('pages.teams.addFirstTeam')}
               </Button>
             </Link>
           )}

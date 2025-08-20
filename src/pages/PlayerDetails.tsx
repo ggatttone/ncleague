@@ -7,9 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useTranslation } from "react-i18next";
 
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
 
   const { data: playerData, isLoading: playerLoading } = useSupabaseQuery<Player & { teams: Team | null }>(
     ['player', id],
@@ -68,11 +70,11 @@ const PlayerDetails = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold mb-4">Giocatore non trovato</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('pages.playerDetails.playerNotFound')}</h1>
           <Link to="/players">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Torna ai giocatori
+              {t('pages.playerDetails.backToPlayers')}
             </Button>
           </Link>
         </div>
@@ -90,7 +92,7 @@ const PlayerDetails = () => {
         <Link to="/players">
           <Button variant="outline" size="sm" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Torna ai giocatori
+            {t('pages.playerDetails.backToPlayers')}
           </Button>
         </Link>
       </div>
@@ -126,7 +128,7 @@ const PlayerDetails = () => {
                 {age && (
                   <div className="flex items-center gap-2 justify-center sm:justify-start">
                     <Calendar className="h-4 w-4" />
-                    <span>{age} anni</span>
+                    <span>{age} {t('pages.playerDetails.yearsOld')}</span>
                   </div>
                 )}
               </div>
@@ -151,7 +153,7 @@ const PlayerDetails = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Goal Segnati</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages.playerDetails.goalsScored')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{goals?.length || 0}</div>
@@ -160,21 +162,21 @@ const PlayerDetails = () => {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Partite Giocate</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages.playerDetails.matchesPlayed')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
-            <p className="text-xs text-muted-foreground">Dato non disponibile</p>
+            <p className="text-xs text-muted-foreground">{t('pages.playerDetails.dataUnavailable')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Media Goal</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages.playerDetails.avgGoals')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
-            <p className="text-xs text-muted-foreground">Dato non disponibile</p>
+            <p className="text-xs text-muted-foreground">{t('pages.playerDetails.dataUnavailable')}</p>
           </CardContent>
         </Card>
       </div>
@@ -184,7 +186,7 @@ const PlayerDetails = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Cronologia Goal ({goals?.length || 0})
+            {t('pages.playerDetails.goalsHistory')} ({goals?.length || 0})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -203,7 +205,7 @@ const PlayerDetails = () => {
           ) : !goals || goals.length === 0 ? (
             <div className="text-center py-8">
               <Target className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Nessun goal registrato</p>
+              <p className="text-muted-foreground">{t('pages.playerDetails.noGoals')}</p>
             </div>
           ) : (
             <div className="space-y-3">

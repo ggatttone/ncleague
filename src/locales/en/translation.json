@@ -66,6 +66,85 @@
       "pts": "PTS",
       "selectToView": "Select a competition and a season to view the table."
     },
+    "statistics": {
+      "title": "Statistics",
+      "competition": "Competition",
+      "season": "Season",
+      "selectCompetition": "Select a competition",
+      "selectSeason": "Select a season",
+      "topScorers": "Top Scorers",
+      "errorLoading": "Error loading data.",
+      "pos": "Pos.",
+      "player": "Player",
+      "team": "Team",
+      "goals": "Goals",
+      "noData": "No data available for the current selection."
+    },
+    "players": {
+      "title": "Players",
+      "newPlayer": "New player",
+      "manage": "Manage",
+      "searchPlaceholder": "Search players, teams, or roles...",
+      "noPlayersFound": "No players found",
+      "noPlayersRegistered": "No players registered",
+      "noPlayersFoundSubtitle": "Try changing your search terms.",
+      "addFirstPlayer": "Add first player",
+      "playersFound_one": "{{count}} player found",
+      "playersFound_other": "{{count}} players found",
+      "yearsOld": "years old"
+    },
+    "playerDetails": {
+      "backToPlayers": "Back to players",
+      "playerNotFound": "Player not found",
+      "team": "Team",
+      "yearsOld": "years old",
+      "goalsScored": "Goals Scored",
+      "matchesPlayed": "Matches Played",
+      "avgGoals": "Goals Average",
+      "dataUnavailable": "Data not available",
+      "goalsHistory": "Goals History",
+      "noGoals": "No goals recorded"
+    },
+    "teams": {
+      "title": "Teams",
+      "newTeam": "New team",
+      "manage": "Manage",
+      "noTeamsFound": "No teams found",
+      "noTeamsFoundSubtitle": "Teams will be displayed here once added.",
+      "addFirstTeam": "Add first team"
+    },
+    "teamDetails": {
+      "backToTeams": "Back to teams",
+      "teamNotFound": "Team not found",
+      "results": "Results",
+      "stats": "Stats",
+      "latestMatches": "Latest Matches",
+      "seasonalStats": "Seasonal Stats",
+      "played": "Played",
+      "wins": "Wins",
+      "draws": "Draws",
+      "losses": "Losses",
+      "goalsFor": "Goals For",
+      "goalsAgainst": "Goals Against",
+      "hallOfFame": "Hall of Fame",
+      "noTrophies": "No trophies recorded.",
+      "sponsors": "Sponsors",
+      "noSponsors": "No sponsors recorded."
+    },
+    "profile": {
+      "title": "My profile",
+      "personalInfo": "Personal information",
+      "personalInfoSubtitle": "Update your first name, last name, and profile picture.",
+      "profilePicture": "Profile Picture",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "saveChanges": "Save changes",
+      "changePassword": "Change password",
+      "changePasswordSubtitle": "Choose a new secure password. You will be logged out after the change.",
+      "newPassword": "New password",
+      "updatePassword": "Update password"
+    },
     "notFound": {
       "title": "Page Not Found",
       "subtitle": "The page you are looking for does not exist.",
@@ -122,6 +201,8 @@
   "errors": {
     "loadingMatches": "Error loading matches",
     "loadingTables": "Error loading the table.",
-    "loadingNews": "Error loading news."
+    "loadingNews": "Error loading news.",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "requiredField": "This field is required"
   }
 }

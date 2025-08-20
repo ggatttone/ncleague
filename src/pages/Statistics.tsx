@@ -6,10 +6,12 @@ import { useTopScorers } from "@/hooks/use-statistics";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Statistics = () => {
   const [selectedCompetition, setSelectedCompetition] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const { t } = useTranslation();
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
@@ -18,12 +20,12 @@ const Statistics = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Statistiche</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('pages.statistics.title')}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 p-4 border rounded-lg bg-card">
           <div>
             <label htmlFor="competition-select" className="block text-sm font-medium text-muted-foreground mb-1">
-              Competizione
+              {t('pages.statistics.competition')}
             </label>
             <Select
               value={selectedCompetition}
@@ -31,7 +33,7 @@ const Statistics = () => {
               disabled={competitionsLoading}
             >
               <SelectTrigger id="competition-select">
-                <SelectValue placeholder="Seleziona una competizione" />
+                <SelectValue placeholder={t('pages.statistics.selectCompetition')} />
               </SelectTrigger>
               <SelectContent>
                 {competitions?.map((c) => (
@@ -44,7 +46,7 @@ const Statistics = () => {
           </div>
           <div>
             <label htmlFor="season-select" className="block text-sm font-medium text-muted-foreground mb-1">
-              Stagione
+              {t('pages.statistics.season')}
             </label>
             <Select
               value={selectedSeason}
@@ -52,7 +54,7 @@ const Statistics = () => {
               disabled={seasonsLoading}
             >
               <SelectTrigger id="season-select">
-                <SelectValue placeholder="Seleziona una stagione" />
+                <SelectValue placeholder={t('pages.statistics.selectSeason')} />
               </SelectTrigger>
               <SelectContent>
                 {seasons?.map((s) => (
@@ -73,18 +75,18 @@ const Statistics = () => {
 
         {!topScorersLoading && selectedCompetition && selectedSeason && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Classifica Marcatori</h2>
+            <h2 className="text-2xl font-semibold mb-4">{t('pages.statistics.topScorers')}</h2>
             {isError ? (
-              <p className="text-center text-destructive">Errore nel caricamento dei dati.</p>
+              <p className="text-center text-destructive">{t('pages.statistics.errorLoading')}</p>
             ) : topScorers && topScorers.length > 0 ? (
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-16 text-center">Pos.</TableHead>
-                      <TableHead>Giocatore</TableHead>
-                      <TableHead>Squadra</TableHead>
-                      <TableHead className="w-24 text-center">Goal</TableHead>
+                      <TableHead className="w-16 text-center">{t('pages.statistics.pos')}</TableHead>
+                      <TableHead>{t('pages.statistics.player')}</TableHead>
+                      <TableHead>{t('pages.statistics.team')}</TableHead>
+                      <TableHead className="w-24 text-center">{t('pages.statistics.goals')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -100,7 +102,7 @@ const Statistics = () => {
                 </Table>
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-8">Nessun dato disponibile per la selezione corrente.</p>
+              <p className="text-center text-muted-foreground py-8">{t('pages.statistics.noData')}</p>
             )}
           </div>
         )}

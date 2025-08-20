@@ -66,6 +66,85 @@
       "pts": "PNT",
       "selectToView": "Selecteer een competitie en een seizoen om de stand te bekijken."
     },
+    "statistics": {
+      "title": "Statistieken",
+      "competition": "Competitie",
+      "season": "Seizoen",
+      "selectCompetition": "Selecteer een competitie",
+      "selectSeason": "Selecteer een seizoen",
+      "topScorers": "Topscorers",
+      "errorLoading": "Fout bij het laden van gegevens.",
+      "pos": "Pos.",
+      "player": "Speler",
+      "team": "Team",
+      "goals": "Doelpunten",
+      "noData": "Geen gegevens beschikbaar voor de huidige selectie."
+    },
+    "players": {
+      "title": "Spelers",
+      "newPlayer": "Nieuwe speler",
+      "manage": "Beheren",
+      "searchPlaceholder": "Zoek spelers, teams of rollen...",
+      "noPlayersFound": "Geen spelers gevonden",
+      "noPlayersRegistered": "Geen spelers geregistreerd",
+      "noPlayersFoundSubtitle": "Probeer uw zoektermen te wijzigen.",
+      "addFirstPlayer": "Voeg eerste speler toe",
+      "playersFound_one": "{{count}} speler gevonden",
+      "playersFound_other": "{{count}} spelers gevonden",
+      "yearsOld": "jaar oud"
+    },
+    "playerDetails": {
+      "backToPlayers": "Terug naar spelers",
+      "playerNotFound": "Speler niet gevonden",
+      "team": "Team",
+      "yearsOld": "jaar oud",
+      "goalsScored": "Ges scoorde doelpunten",
+      "matchesPlayed": "Gespeelde wedstrijden",
+      "avgGoals": "Doelpuntengemiddelde",
+      "dataUnavailable": "Gegevens niet beschikbaar",
+      "goalsHistory": "Doelpuntengeschiedenis",
+      "noGoals": "Geen doelpunten geregistreerd"
+    },
+    "teams": {
+      "title": "Teams",
+      "newTeam": "Nieuw team",
+      "manage": "Beheren",
+      "noTeamsFound": "Geen teams gevonden",
+      "noTeamsFoundSubtitle": "Teams worden hier weergegeven zodra ze zijn toegevoegd.",
+      "addFirstTeam": "Voeg eerste team toe"
+    },
+    "teamDetails": {
+      "backToTeams": "Terug naar teams",
+      "teamNotFound": "Team niet gevonden",
+      "results": "Resultaten",
+      "stats": "Statistieken",
+      "latestMatches": "Laatste Wedstrijden",
+      "seasonalStats": "Seizoensstatistieken",
+      "played": "Gespeeld",
+      "wins": "Gewonnen",
+      "draws": "Gelijk",
+      "losses": "Verloren",
+      "goalsFor": "Doelpunten Voor",
+      "goalsAgainst": "Doelpunten Tegen",
+      "hallOfFame": "Erelijst",
+      "noTrophies": "Geen trofeeën geregistreerd.",
+      "sponsors": "Sponsoren",
+      "noSponsors": "Geen sponsoren geregistreerd."
+    },
+    "profile": {
+      "title": "Mijn profiel",
+      "personalInfo": "Persoonlijke informatie",
+      "personalInfoSubtitle": "Werk uw voornaam, achternaam en profielfoto bij.",
+      "profilePicture": "Profielfoto",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "saveChanges": "Wijzigingen opslaan",
+      "changePassword": "Wachtwoord wijzigen",
+      "changePasswordSubtitle": "Kies een nieuw, veilig wachtwoord. U wordt na de wijziging uitgelogd.",
+      "newPassword": "Nieuw wachtwoord",
+      "updatePassword": "Wachtwoord bijwerken"
+    },
     "notFound": {
       "title": "Pagina niet gevonden",
       "subtitle": "De pagina die u zoekt bestaat niet.",
@@ -122,6 +201,8 @@
   "errors": {
     "loadingMatches": "Fout bij het laden van wedstrijden",
     "loadingTables": "Fout bij het laden van de stand.",
-    "loadingNews": "Fout bij het laden van nieuws."
+    "loadingNews": "Fout bij het laden van nieuws.",
+    "passwordMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
+    "requiredField": "Dit veld is verplicht"
   }
 }

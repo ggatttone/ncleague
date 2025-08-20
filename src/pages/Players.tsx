@@ -10,10 +10,12 @@ import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useTranslation } from "react-i18next";
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const { data: playersData, isLoading, error } = useSupabaseQuery<(Player & { teams: Team | null })[]>(
     ['players-with-teams'],
@@ -46,19 +48,19 @@ const Players = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('pages.players.title')}</h1>
           {user && (
             <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/players/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
-                  Nuovo giocatore
+                  {t('pages.players.newPlayer')}
                 </Button>
               </Link>
               <Link to="/admin/players">
                 <Button variant="outline" size="sm">
                   <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
+                  {t('pages.players.manage')}
                 </Button>
               </Link>
             </div>
@@ -89,19 +91,19 @@ const Players = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('pages.players.title')}</h1>
           {user && (
             <div className="flex flex-col sm:flex-row gap-2">
               <Link to="/admin/players/new">
                 <Button size="sm">
                   <Plus className="mr-2 h-4 w-4" />
-                  Nuovo giocatore
+                  {t('pages.players.newPlayer')}
                 </Button>
               </Link>
               <Link to="/admin/players">
                 <Button variant="outline" size="sm">
                   <Settings className="mr-2 h-4 w-4" />
-                  Gestisci
+                  {t('pages.players.manage')}
                 </Button>
               </Link>
             </div>
@@ -118,19 +120,19 @@ const Players = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Players</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">{t('pages.players.title')}</h1>
         {user && (
           <div className="flex flex-col sm:flex-row gap-2">
             <Link to="/admin/players/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nuovo giocatore
+                {t('pages.players.newPlayer')}
               </Button>
             </Link>
             <Link to="/admin/players">
               <Button variant="outline" size="sm">
                 <Settings className="mr-2 h-4 w-4" />
-                Gestisci
+                {t('pages.players.manage')}
               </Button>
             </Link>
           </div>
@@ -142,7 +144,7 @@ const Players = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca giocatori, squadre o ruoli..."
+            placeholder={t('pages.players.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -154,16 +156,16 @@ const Players = () => {
         <div className="text-center py-12">
           <User className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <p className="text-xl text-muted-foreground mb-2">
-            {searchTerm ? "Nessun giocatore trovato" : "Nessun giocatore registrato"}
+            {searchTerm ? t('pages.players.noPlayersFound') : t('pages.players.noPlayersRegistered')}
           </p>
           <p className="text-muted-foreground mb-4">
-            {searchTerm ? "Prova a modificare i termini di ricerca." : "I giocatori verranno visualizzati qui una volta aggiunti."}
+            {searchTerm ? t('pages.players.noPlayersFoundSubtitle') : "I giocatori verranno visualizzati qui una volta aggiunti."}
           </p>
           {user && !searchTerm && (
             <Link to="/admin/players/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Aggiungi primo giocatore
+                {t('pages.players.addFirstPlayer')}
               </Button>
             </Link>
           )}
@@ -171,8 +173,8 @@ const Players = () => {
       ) : (
         <>
           <div className="mb-4 text-sm text-muted-foreground">
-            {filteredPlayers.length} giocator{filteredPlayers.length === 1 ? 'e' : 'i'} 
-            {searchTerm && ` trovato per "${searchTerm}"`}
+            {t('pages.players.playersFound', { count: filteredPlayers.length })}
+            {searchTerm && ` per "${searchTerm}"`}
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -211,7 +213,7 @@ const Players = () => {
                         )}
                         {player.date_of_birth && (
                           <div className="text-sm text-muted-foreground">
-                            {new Date().getFullYear() - new Date(player.date_of_birth).getFullYear()} anni
+                            {new Date().getFullYear() - new Date(player.date_of_birth).getFullYear()} {t('pages.players.yearsOld')}
                           </div>
                         )}
                       </div>
