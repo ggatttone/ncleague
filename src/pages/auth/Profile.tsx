@@ -11,6 +11,7 @@ import { showSuccess, showError } from "@/utils/toast";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { AvatarUploader } from "@/components/auth/AvatarUploader";
+import { useTranslation } from "react-i18next";
 
 const profileSchema = z.object({
   first_name: z.string().min(1, "Il nome è obbligatorio"),
@@ -27,6 +28,7 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 const ProfilePage = () => {
   const { user, profile, loading, signOut } = useAuth();
+  const { t } = useTranslation(['pages', 'toasts']);
 
   const profileForm = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -66,7 +68,7 @@ const ProfilePage = () => {
     if (error) {
       showError(error.message);
     } else {
-      showSuccess("Profilo aggiornato con successo!");
+      showSuccess("toasts:success.profileUpdated");
     }
   };
 
@@ -75,7 +77,7 @@ const ProfilePage = () => {
     if (error) {
       showError(error.message);
     } else {
-      showSuccess("Password aggiornata con successo! Sarai disconnesso per sicurezza.");
+      showSuccess("toasts:success.passwordUpdated");
       passwordForm.reset();
       setTimeout(() => {
         signOut();
@@ -93,18 +95,18 @@ const ProfilePage = () => {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6">Il mio profilo</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('pages:profile.title')}</h1>
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Informazioni personali</CardTitle>
-          <CardDescription>Aggiorna il tuo nome, cognome e foto profilo.</CardDescription>
+          <CardTitle>{t('pages:profile.personalInfo')}</CardTitle>
+          <CardDescription>{t('pages:profile.personalInfoSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-6">
             
             <div>
-              <Label>Foto Profilo</Label>
+              <Label>{t('pages:profile.profilePicture')}</Label>
               <AvatarUploader 
                 onUpload={(url) => {
                   profileForm.setValue('avatar_url', url, { shouldValidate: true, shouldDirty: true });
@@ -117,14 +119,14 @@ const ProfilePage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="first_name">Nome</Label>
+                <Label htmlFor="first_name">{t('pages:profile.firstName')}</Label>
                 <Input id="first_name" {...profileForm.register("first_name")} />
                 {profileForm.formState.errors.first_name && (
                   <p className="text-sm text-destructive mt-1">{profileForm.formState.errors.first_name.message}</p>
                 )}
               </div>
               <div>
-                <Label htmlFor="last_name">Cognome</Label>
+                <Label htmlFor="last_name">{t('pages:profile.lastName')}</Label>
                 <Input id="last_name" {...profileForm.register("last_name")} />
                 {profileForm.formState.errors.last_name && (
                   <p className="text-sm text-destructive mt-1">{profileForm.formState.errors.last_name.message}</p>
@@ -132,12 +134,12 @@ const ProfilePage = () => {
               </div>
             </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('pages:profile.email')}</Label>
               <Input id="email" value={user?.email || ""} disabled />
             </div>
             <Button type="submit" disabled={profileForm.formState.isSubmitting}>
               {profileForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Salva modifiche
+              {t('pages:profile.saveChanges')}
             </Button>
           </form>
         </CardContent>
@@ -145,13 +147,13 @@ const ProfilePage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Cambia password</CardTitle>
-          <CardDescription>Scegli una nuova password sicura. Verrai disconnesso dopo la modifica.</CardDescription>
+          <CardTitle>{t('pages:profile.changePassword')}</CardTitle>
+          <CardDescription>{t('pages:profile.changePasswordSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={passwordForm.handleSubmit(handlePasswordUpdate)} className="space-y-4">
             <div>
-              <Label htmlFor="password">Nuova password</Label>
+              <Label htmlFor="password">{t('pages:profile.newPassword')}</Label>
               <Input id="password" type="password" {...passwordForm.register("password")} />
               {passwordForm.formState.errors.password && (
                 <p className="text-sm text-destructive mt-1">{passwordForm.formState.errors.password.message}</p>
@@ -159,7 +161,7 @@ const ProfilePage = () => {
             </div>
             <Button type="submit" disabled={passwordForm.formState.isSubmitting}>
               {passwordForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Aggiorna password
+              {t('pages:profile.updatePassword')}
             </Button>
           </form>
         </CardContent>

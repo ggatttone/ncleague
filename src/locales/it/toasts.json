@@ -18,7 +18,9 @@
     "articlePinned": "Articolo fissato con successo.",
     "articleUnpinned": "Articolo sbloccato con successo.",
     "matchesUpdated": "Partite aggiornate con successo!",
-    "matchesDeleted": "Partite eliminate con successo!"
+    "matchesDeleted": "Partite eliminate con successo!",
+    "imageUploaded": "Immagine caricata con successo!",
+    "themeUpdated": "Tema aggiornato con successo!"
   },
   "error": {
     "generic": "Si è verificato un errore: {{message}}",
@@ -28,6 +30,11 @@
     "noValidItems": "Nessun {{item}} valido da importare.",
     "removeAvatar": "Errore nella rimozione: {{message}}",
     "updateRole": "Errore nell'aggiornamento del ruolo: {{message}}",
-    "demoteSelf": "Non puoi declassare il tuo stesso account da amministratore."
+    "demoteSelf": "Non puoi declassare il tuo stesso account da amministratore.",
+    "layoutSave": "Errore nel salvataggio del layout: {{message}}"
+  },
+  "loading": {
+    "uploadingFile": "Caricamento di {{fileName}}...",
+    "uploadingFiles": "Caricamento di {{count}} file..."
   }
 }

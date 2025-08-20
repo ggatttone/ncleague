@@ -18,7 +18,9 @@
     "articlePinned": "Article pinned successfully.",
     "articleUnpinned": "Article unpinned successfully.",
     "matchesUpdated": "Matches updated successfully!",
-    "matchesDeleted": "Matches deleted successfully!"
+    "matchesDeleted": "Matches deleted successfully!",
+    "imageUploaded": "Image uploaded successfully!",
+    "themeUpdated": "Theme updated successfully!"
   },
   "error": {
     "generic": "An error occurred: {{message}}",
@@ -28,6 +30,11 @@
     "noValidItems": "No valid {{item}} to import.",
     "removeAvatar": "Error removing avatar: {{message}}",
     "updateRole": "Error updating role: {{message}}",
-    "demoteSelf": "You cannot demote your own account from administrator."
+    "demoteSelf": "You cannot demote your own account from administrator.",
+    "layoutSave": "Error saving layout: {{message}}"
+  },
+  "loading": {
+    "uploadingFile": "Uploading {{fileName}}...",
+    "uploadingFiles": "Uploading {{count}} files..."
   }
 }

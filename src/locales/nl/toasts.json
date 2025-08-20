@@ -18,7 +18,9 @@
     "articlePinned": "Artikel succesvol vastgezet.",
     "articleUnpinned": "Artikel succesvol losgemaakt.",
     "matchesUpdated": "Wedstrijden succesvol bijgewerkt!",
-    "matchesDeleted": "Wedstrijden succesvol verwijderd!"
+    "matchesDeleted": "Wedstrijden succesvol verwijderd!",
+    "imageUploaded": "Afbeelding succesvol geüpload!",
+    "themeUpdated": "Thema succesvol bijgewerkt!"
   },
   "error": {
     "generic": "Er is een fout opgetreden: {{message}}",
@@ -28,6 +30,11 @@
     "noValidItems": "Geen geldige {{item}} om te importeren.",
     "removeAvatar": "Fout bij het verwijderen van avatar: {{message}}",
     "updateRole": "Fout bij het bijwerken van de rol: {{message}}",
-    "demoteSelf": "U kunt uw eigen account niet degraderen van beheerder."
+    "demoteSelf": "U kunt uw eigen account niet degraderen van beheerder.",
+    "layoutSave": "Fout bij het opslaan van de layout: {{message}}"
+  },
+  "loading": {
+    "uploadingFile": "Bezig met uploaden van {{fileName}}...",
+    "uploadingFiles": "Bezig met uploaden van {{count}} bestanden..."
   }
 }

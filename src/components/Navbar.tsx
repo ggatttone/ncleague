@@ -27,7 +27,7 @@ export const Navbar = () => {
   const { user, signOut, hasPermission, profile } = useAuth();
   const { theme } = useThemeContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('components');
 
   const navLinks = [
     { to: "/", label: t('navbar.home') },

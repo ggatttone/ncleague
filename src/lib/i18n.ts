@@ -55,6 +55,7 @@ i18n
     fallbackLng: 'it',
     ns: ['common', 'components', 'pages', 'toasts', 'validation'],
     defaultNS: 'common',
+    fallbackNS: ['components', 'pages', 'toasts', 'validation'],
     interpolation: {
       escapeValue: false,
     },
