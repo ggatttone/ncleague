@@ -1,0 +1,33 @@
+{
+  "success": {
+    "profileUpdated": "Profilo aggiornato con successo!",
+    "passwordUpdated": "Password aggiornata con successo! Sarai disconnesso per sicurezza.",
+    "itemCreated": "{{item}} creato con successo!",
+    "itemUpdated": "{{item}} aggiornato con successo!",
+    "itemDeleted": "{{item}} eliminato con successo!",
+    "layoutSaved": "Layout salvato!",
+    "eventUpdated": "Evento aggiornato con successo!",
+    "filesUploaded_one": "{{count}} file caricato con successo!",
+    "filesUploaded_other": "{{count}} file caricati con successo!",
+    "matchesImported_one": "{{count}} partita importata con successo!",
+    "matchesImported_other": "{{count}} partite importate con successo!",
+    "playersImported_one": "{{count}} giocatore importato con successo!",
+    "playersImported_other": "{{count}} giocatori importati con successo!",
+    "avatarUpdated": "Avatar aggiornato con successo!",
+    "avatarRemoved": "Avatar rimosso.",
+    "articlePinned": "Articolo fissato con successo.",
+    "articleUnpinned": "Articolo sbloccato con successo.",
+    "matchesUpdated": "Partite aggiornate con successo!",
+    "matchesDeleted": "Partite eliminate con successo!"
+  },
+  "error": {
+    "generic": "Si è verificato un errore: {{message}}",
+    "upload": "Errore durante il caricamento: {{message}}",
+    "fileRead": "Errore nella lettura del file. Assicurati che sia un formato valido (.xlsx, .csv).",
+    "emptyFile": "Il file è vuoto o non contiene dati validi.",
+    "noValidItems": "Nessun {{item}} valido da importare.",
+    "removeAvatar": "Errore nella rimozione: {{message}}",
+    "updateRole": "Errore nell'aggiornamento del ruolo: {{message}}",
+    "demoteSelf": "Non puoi declassare il tuo stesso account da amministratore."
+  }
+}

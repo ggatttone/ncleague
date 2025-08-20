@@ -1,0 +1,128 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Wedstrijden",
+    "tables": "Standen",
+    "statistics": "Statistieken",
+    "news": "Nieuws",
+    "players": "Spelers",
+    "teams": "Teams",
+    "gallery": "Galerij"
+  },
+  "userMenu": {
+    "profile": "Profiel",
+    "admin": "Beheerderspaneel",
+    "logout": "Uitloggen",
+    "login": "Inloggen"
+  },
+  "themeToggle": {
+    "light": "Licht",
+    "dark": "Donker",
+    "system": "Systeem"
+  },
+  "hero": {
+    "title": "Welkom bij NC League",
+    "subtitle": "Het platform voor uw voetbalcompetitie: uitslagen, standen, statistieken en nieuws!",
+    "button": "Ontdek de laatste speeldag"
+  },
+  "comments": {
+    "writeComment": "Schrijf een reactie...",
+    "submit": "Verzenden",
+    "noComments": "Nog geen reacties. Wees de eerste die reageert!"
+  },
+  "countdown": {
+    "defaultTitle": "Volgend evenement komt eraan!",
+    "eventStarted": "Evenement Gestart!",
+    "days": "dagen",
+    "hours": "uren",
+    "minutes": "minuten",
+    "seconds": "seconden"
+  },
+  "latestNews": {
+    "title": "Laatste Nieuws",
+    "readAll": "Lees al het nieuws"
+  },
+  "leagueTableWidget": {
+    "title": "Stand",
+    "noData": "Geen standgegevens beschikbaar.",
+    "viewFull": "Bekijk volledige stand"
+  },
+  "pinnedArticle": {
+    "title": "Uitgelicht",
+    "noArticle": "Geen uitgelicht artikel geselecteerd."
+  },
+  "upcomingMatches": {
+    "title": "Aankomende Wedstrijden",
+    "noMatches": "Geen aankomende wedstrijden gepland.",
+    "viewFull": "Bekijk alle wedstrijden",
+    "venueTBD": "Locatie n.t.b."
+  },
+  "admin": {
+    "goalForm": {
+      "team": "Team",
+      "selectTeam": "Selecteer team",
+      "player": "Speler",
+      "selectPlayer": "Selecteer speler",
+      "loadingPlayers": "Laden...",
+      "minute": "Minuut",
+      "addGoal": "Doelpunt Toevoegen"
+    },
+    "googleMapEmbed": {
+      "prompt": "Voer breedte- en lengtegraad in om de kaart weer te geven."
+    },
+    "heroWidgetForm": {
+      "title": "Hero Widget Bewerken",
+      "description": "Pas de teksten en de knop van de hoofdsectie aan.",
+      "mainTitle": "Hoofdtitel",
+      "subtitle": "Ondertitel",
+      "buttonText": "Knoptekst",
+      "buttonLink": "Knoplink"
+    },
+    "imageUploader": {
+      "uploading": "Uploaden...",
+      "selectFile": "U moet een bestand selecteren om te uploaden.",
+      "notAuthenticated": "Gebruiker niet geverifieerd."
+    },
+    "widgetRenderer": {
+      "hero": "Hero Sectie",
+      "countdown": "Aftel-evenement",
+      "media_carousel": "Media Carrousel",
+      "upcoming_matches": "Aankomende Wedstrijden",
+      "latest_news": "Laatste Nieuws",
+      "league_table": "Stand",
+      "pinned_article": "Vastgezet Artikel"
+    },
+    "pinnedArticleWidgetForm": {
+      "title": "Vastgezet Artikel Widget Bewerken",
+      "description": "Selecteer welk vastgezet artikel in deze widget moet worden weergegeven.",
+      "pinnedArticle": "Vastgezet Artikel",
+      "selectArticle": "Selecteer een artikel",
+      "loading": "Laden...",
+      "noPinnedArticles": "Geen vastgezette artikelen gevonden."
+    }
+  },
+  "articlePostCard": {
+    "pinned": "Vastgezet",
+    "unknownAuthor": "Onbekende Auteur"
+  },
+  "avatarUploader": {
+    "changePhoto": "Foto wijzigen",
+    "remove": "Verwijderen",
+    "uploading": "Uploaden..."
+  },
+  "mediaCarousel": {
+    "latestMedia": "Laatste Media Uploads"
+  },
+  "mediaViewer": {
+    "alt": "Media viewer"
+  },
+  "newsItem": {
+    "author": "Auteur"
+  },
+  "table": {
+    "noData": "Geen gegevens beschikbaar."
+  },
+  "dynamicTitle": {
+    "appName": "NCL App"
+  }
+}

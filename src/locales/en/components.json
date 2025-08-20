@@ -1,0 +1,128 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Matches",
+    "tables": "Tables",
+    "statistics": "Statistics",
+    "news": "News",
+    "players": "Players",
+    "teams": "Teams",
+    "gallery": "Gallery"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "admin": "Admin Panel",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "themeToggle": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "hero": {
+    "title": "Welcome to NC League",
+    "subtitle": "The platform for your soccer league: results, tables, statistics, and news!",
+    "button": "Discover the latest matchday"
+  },
+  "comments": {
+    "writeComment": "Write a comment...",
+    "submit": "Submit",
+    "noComments": "No comments yet. Be the first to comment!"
+  },
+  "countdown": {
+    "defaultTitle": "Next event is coming soon!",
+    "eventStarted": "Event Started!",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "seconds": "seconds"
+  },
+  "latestNews": {
+    "title": "Latest News",
+    "readAll": "Read all news"
+  },
+  "leagueTableWidget": {
+    "title": "League Table",
+    "noData": "No table data available.",
+    "viewFull": "View full table"
+  },
+  "pinnedArticle": {
+    "title": "Featured",
+    "noArticle": "No featured article selected."
+  },
+  "upcomingMatches": {
+    "title": "Upcoming Matches",
+    "noMatches": "No upcoming matches scheduled.",
+    "viewFull": "View all matches",
+    "venueTBD": "Venue to be defined"
+  },
+  "admin": {
+    "goalForm": {
+      "team": "Team",
+      "selectTeam": "Select team",
+      "player": "Player",
+      "selectPlayer": "Select player",
+      "loadingPlayers": "Loading...",
+      "minute": "Minute",
+      "addGoal": "Add Goal"
+    },
+    "googleMapEmbed": {
+      "prompt": "Enter latitude and longitude to display the map."
+    },
+    "heroWidgetForm": {
+      "title": "Edit Hero Widget",
+      "description": "Customize the texts and button of the main section.",
+      "mainTitle": "Main Title",
+      "subtitle": "Subtitle",
+      "buttonText": "Button Text",
+      "buttonLink": "Button Link"
+    },
+    "imageUploader": {
+      "uploading": "Uploading...",
+      "selectFile": "You must select a file to upload.",
+      "notAuthenticated": "User not authenticated."
+    },
+    "widgetRenderer": {
+      "hero": "Hero Section",
+      "countdown": "Event Countdown",
+      "media_carousel": "Media Carousel",
+      "upcoming_matches": "Upcoming Matches",
+      "latest_news": "Latest News",
+      "league_table": "League Table",
+      "pinned_article": "Pinned Article"
+    },
+    "pinnedArticleWidgetForm": {
+      "title": "Edit Pinned Article Widget",
+      "description": "Select which pinned article to display in this widget.",
+      "pinnedArticle": "Pinned Article",
+      "selectArticle": "Select an article",
+      "loading": "Loading...",
+      "noPinnedArticles": "No pinned articles found."
+    }
+  },
+  "articlePostCard": {
+    "pinned": "Pinned",
+    "unknownAuthor": "Unknown Author"
+  },
+  "avatarUploader": {
+    "changePhoto": "Change photo",
+    "remove": "Remove",
+    "uploading": "Uploading..."
+  },
+  "mediaCarousel": {
+    "latestMedia": "Latest Media Uploads"
+  },
+  "mediaViewer": {
+    "alt": "Media viewer"
+  },
+  "newsItem": {
+    "author": "Author"
+  },
+  "table": {
+    "noData": "No data available."
+  },
+  "dynamicTitle": {
+    "appName": "NCL App"
+  }
+}
