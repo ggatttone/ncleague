@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { showSuccess } from '@/utils/toast';
+import { useTranslation } from 'react-i18next';
 
 const themeSchema = z.object({
   primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Formato colore non valido (es. #RRGGBB)"),
@@ -29,6 +30,7 @@ const availableFonts = [
 const ThemeAdmin = () => {
   const { data: theme, isLoading: themeLoading } = useTheme();
   const updateThemeMutation = useUpdateTheme();
+  const { t } = useTranslation();
 
   const {
     handleSubmit,
@@ -76,10 +78,10 @@ const ThemeAdmin = () => {
     <AdminLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Aspetto del Sito</h1>
+          <h1 className="text-2xl font-bold">{t('pages.admin.theme.title')}</h1>
           <Button type="submit" disabled={isSubmitting || updateThemeMutation.isPending}>
             {(isSubmitting || updateThemeMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Salva Modifiche
+            {t('pages.admin.theme.saveButton')}
           </Button>
         </div>
 
@@ -87,14 +89,14 @@ const ThemeAdmin = () => {
           <div className="md:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Colori Principali</CardTitle>
+                <CardTitle>{t('pages.admin.theme.colorsCardTitle')}</CardTitle>
                 <CardDescription>
-                  Questi colori verranno usati in sezioni chiave come l'header della home page.
+                  {t('pages.admin.theme.colorsCardDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="primary_color">Colore Primario</Label>
+                  <Label htmlFor="primary_color">{t('pages.admin.theme.primaryColorLabel')}</Label>
                   <Controller
                     name="primary_color"
                     control={control}
@@ -117,7 +119,7 @@ const ThemeAdmin = () => {
                   {errors.primary_color && <p className="text-sm text-destructive mt-1">{errors.primary_color.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="secondary_color">Colore Secondario</Label>
+                  <Label htmlFor="secondary_color">{t('pages.admin.theme.secondaryColorLabel')}</Label>
                   <Controller
                     name="secondary_color"
                     control={control}
@@ -144,20 +146,20 @@ const ThemeAdmin = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Tipografia</CardTitle>
+                <CardTitle>{t('pages.admin.theme.typographyCardTitle')}</CardTitle>
                 <CardDescription>
-                  Scegli il font per i testi del sito.
+                  {t('pages.admin.theme.typographyCardDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Label htmlFor="font_family">Font Famiglia</Label>
+                <Label htmlFor="font_family">{t('pages.admin.theme.fontFamilyLabel')}</Label>
                 <Controller
                   name="font_family"
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Seleziona un font" />
+                        <SelectValue placeholder={t('pages.admin.theme.fontPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {availableFonts.map(font => (
@@ -174,9 +176,9 @@ const ThemeAdmin = () => {
           <div className="md:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle>Logo</CardTitle>
+                <CardTitle>{t('pages.admin.theme.logoCardTitle')}</CardTitle>
                 <CardDescription>
-                  Carica il logo che apparirà nella barra di navigazione.
+                  {t('pages.admin.theme.logoCardDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -184,7 +186,7 @@ const ThemeAdmin = () => {
                   bucketName="logos"
                   currentImageUrl={logoUrlValue}
                   onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true, shouldDirty: true })}
-                  label="File del logo"
+                  label={t('pages.admin.theme.logoFileLabel')}
                 />
                 {errors.logo_url && <p className="text-sm text-destructive mt-1">{errors.logo_url.message}</p>}
               </CardContent>

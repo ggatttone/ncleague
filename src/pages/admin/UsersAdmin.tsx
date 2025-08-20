@@ -12,6 +12,7 @@ import { showError } from "@/utils/toast";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 interface Profile {
   id: string;
@@ -25,6 +26,7 @@ const UsersAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { hasPermission, user: currentUser } = useAuth();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const { data: profiles, isLoading, error, refetch } = useSupabaseQuery<Profile[]>(
     ['admin-users'],
@@ -79,17 +81,17 @@ const UsersAdmin = () => {
 
   const handleRoleChange = async (profileId: string, newRole: Profile['role']) => {
     if (!currentUser || currentUser.id === profileId && newRole !== 'admin') {
-      showError("Non puoi declassare il tuo stesso account da amministratore.");
+      showError(t('pages.admin.users.demoteError'));
       return;
     }
     await updateRoleMutation.mutateAsync({ id: profileId, role: newRole });
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "email", label: "Email" },
-    { key: "role", label: "Ruolo" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.users.table.name') },
+    { key: "email", label: t('pages.admin.users.table.email') },
+    { key: "role", label: t('pages.admin.users.table.role') },
+    { key: "actions", label: t('pages.admin.users.table.actions') },
   ];
 
   const data = filteredProfiles?.map(profile => ({
@@ -97,7 +99,7 @@ const UsersAdmin = () => {
     email: profile.email,
     role: (
       <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
-        {profile.role}
+        {t(`roles.${profile.role}`)}
       </Badge>
     ),
     actions: (
@@ -107,13 +109,13 @@ const UsersAdmin = () => {
         disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
       >
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Seleziona ruolo" />
+          <SelectValue placeholder={t('pages.admin.users.rolePlaceholder')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="admin">Admin</SelectItem>
-          <SelectItem value="editor">Editor</SelectItem>
-          <SelectItem value="captain">Capitano</SelectItem>
-          <SelectItem value="player">Giocatore</SelectItem>
+          <SelectItem value="admin">{t('roles.admin')}</SelectItem>
+          <SelectItem value="editor">{t('roles.editor')}</SelectItem>
+          <SelectItem value="captain">{t('roles.captain')}</SelectItem>
+          <SelectItem value="player">{t('roles.player')}</SelectItem>
         </SelectContent>
       </Select>
     ),
@@ -124,8 +126,8 @@ const UsersAdmin = () => {
       <AdminLayout>
         <div className="text-center py-12">
           <XCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold mb-4">Accesso Negato</h1>
-          <p className="text-muted-foreground">Non hai i permessi necessari per accedere a questa pagina.</p>
+          <h1 className="text-2xl font-bold mb-4">{t('pages.admin.users.accessDeniedTitle')}</h1>
+          <p className="text-muted-foreground">{t('pages.admin.users.accessDeniedDescription')}</p>
         </div>
       </AdminLayout>
     );
@@ -145,7 +147,7 @@ const UsersAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento degli utenti</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.users.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -162,13 +164,13 @@ const UsersAdmin = () => {
             disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
           >
             <SelectTrigger className="w-[120px] h-9">
-              <SelectValue placeholder="Ruolo" />
+              <SelectValue placeholder={t('pages.admin.users.rolePlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="editor">Editor</SelectItem>
-              <SelectItem value="captain">Capitano</SelectItem>
-              <SelectItem value="player">Giocatore</SelectItem>
+              <SelectItem value="admin">{t('roles.admin')}</SelectItem>
+              <SelectItem value="editor">{t('roles.editor')}</SelectItem>
+              <SelectItem value="captain">{t('roles.captain')}</SelectItem>
+              <SelectItem value="player">{t('roles.player')}</SelectItem>
             </SelectContent>
           </Select>
         );
@@ -181,7 +183,7 @@ const UsersAdmin = () => {
           >
             <div className="mt-2">
               <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
-                {profile.role}
+                {t(`roles.${profile.role}`)}
               </Badge>
             </div>
           </AdminMobileCard>
@@ -193,14 +195,14 @@ const UsersAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Gestione Utenti</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.users.title')}</h1>
       </div>
 
       <div className="mb-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca utenti per nome, email o ruolo..."
+            placeholder={t('pages.admin.users.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -210,8 +212,8 @@ const UsersAdmin = () => {
 
       {filteredProfiles && (
         <div className="mb-4 text-sm text-muted-foreground">
-          {filteredProfiles.length} utent{filteredProfiles.length === 1 ? 'e' : 'i'} 
-          {searchTerm && ` trovati per "${searchTerm}"`}
+          {t('pages.admin.users.usersFound', { count: filteredProfiles.length })}
+          {searchTerm && ` per "${searchTerm}"`}
         </div>
       )}
       {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}

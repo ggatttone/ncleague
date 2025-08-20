@@ -9,6 +9,7 @@ import { Widget } from '@/hooks/use-homepage-layout';
 import { usePinnedArticles } from '@/hooks/use-articles';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const pinnedArticleSchema = z.object({
   articleId: z.string().min(1, "È obbligatorio selezionare un articolo"),
@@ -25,6 +26,7 @@ interface PinnedArticleWidgetFormProps {
 }
 
 export const PinnedArticleWidgetForm = ({ widget, open, onOpenChange, onSave, isSaving }: PinnedArticleWidgetFormProps) => {
+  const { t } = useTranslation();
   const { data: pinnedArticles, isLoading: articlesLoading } = usePinnedArticles();
   const { control, handleSubmit, formState: { errors }, reset } = useForm<PinnedArticleFormData>({
     resolver: zodResolver(pinnedArticleSchema),
@@ -46,19 +48,19 @@ export const PinnedArticleWidgetForm = ({ widget, open, onOpenChange, onSave, is
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Modifica Widget Articolo in Evidenza</DialogTitle>
-          <DialogDescription>Seleziona quale articolo fissato mostrare in questo widget.</DialogDescription>
+          <DialogTitle>{t('pages.admin.homepage.pinnedArticleWidgetForm.title')}</DialogTitle>
+          <DialogDescription>{t('pages.admin.homepage.pinnedArticleWidgetForm.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div>
-            <Label htmlFor="articleId">Articolo Fissato</Label>
+            <Label htmlFor="articleId">{t('pages.admin.homepage.pinnedArticleWidgetForm.pinnedArticleLabel')}</Label>
             <Controller
               name="articleId"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={articlesLoading}>
                   <SelectTrigger>
-                    <SelectValue placeholder={articlesLoading ? "Caricamento..." : "Seleziona un articolo"} />
+                    <SelectValue placeholder={articlesLoading ? t('pages.admin.homepage.pinnedArticleWidgetForm.loadingPlaceholder') : t('pages.admin.homepage.pinnedArticleWidgetForm.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {pinnedArticles && pinnedArticles.length > 0 ? (
@@ -66,7 +68,7 @@ export const PinnedArticleWidgetForm = ({ widget, open, onOpenChange, onSave, is
                         <SelectItem key={article.id} value={article.id}>{article.title}</SelectItem>
                       ))
                     ) : (
-                      <div className="p-4 text-sm text-muted-foreground">Nessun articolo fissato trovato.</div>
+                      <div className="p-4 text-sm text-muted-foreground">{t('pages.admin.homepage.pinnedArticleWidgetForm.noPinnedArticles')}</div>
                     )}
                   </SelectContent>
                 </Select>

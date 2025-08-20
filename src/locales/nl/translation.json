@@ -635,6 +635,77 @@
         "newTitle": "Nieuw album",
         "nameLabel": "Naam *",
         "descriptionLabel": "Beschrijving"
+      },
+      "homepage": {
+        "title": "Homepage Beheer",
+        "saveButton": "Opslaan",
+        "addRowButton": "Rij",
+        "layoutCardTitle": "Indeling",
+        "layoutCardDescription": "Sleep rijen om ze opnieuw te ordenen en widgets om ze te verplaatsen.",
+        "widgetPaletteTitle": "Beschikbare Widgets",
+        "row": "Rij",
+        "layout": "Indeling",
+        "deleteRow": "Rij Verwijderen",
+        "startBuilding": "Voeg een rij toe om te beginnen.",
+        "heroWidgetForm": {
+          "title": "Bewerk Hero Widget",
+          "description": "Pas de teksten en de knop van de hoofdsectie aan.",
+          "mainTitleLabel": "Hoofdtitel",
+          "subtitleLabel": "Ondertitel",
+          "buttonTextLabel": "Knoptekst",
+          "buttonLinkLabel": "Knoplink"
+        },
+        "pinnedArticleWidgetForm": {
+          "title": "Bewerk Vastgezet Artikel Widget",
+          "description": "Selecteer welk vastgezet artikel in deze widget moet worden weergegeven.",
+          "pinnedArticleLabel": "Vastgezet Artikel",
+          "selectPlaceholder": "Selecteer een artikel",
+          "loadingPlaceholder": "Laden...",
+          "noPinnedArticles": "Geen vastgezette artikelen gevonden."
+        }
+      },
+      "theme": {
+        "title": "Site Uiterlijk",
+        "saveButton": "Wijzigingen Opslaan",
+        "colorsCardTitle": "Hoofdkleuren",
+        "colorsCardDescription": "Deze kleuren worden gebruikt in belangrijke secties zoals de header van de startpagina.",
+        "primaryColorLabel": "Primaire Kleur",
+        "secondaryColorLabel": "Secundaire Kleur",
+        "typographyCardTitle": "Typografie",
+        "typographyCardDescription": "Kies het lettertype voor de teksten van de site.",
+        "fontFamilyLabel": "Lettertypefamilie",
+        "fontPlaceholder": "Selecteer een lettertype",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Upload het logo dat in de navigatiebalk verschijnt.",
+        "logoFileLabel": "Logobestand"
+      },
+      "event": {
+        "title": "Aftel-evenement Beheer",
+        "saveButton": "Wijzigingen Opslaan",
+        "settingsCardTitle": "Aftel-instellingen",
+        "settingsCardDescription": "Configureer de aftelling die op de startpagina verschijnt. Activeer het om het voor iedereen zichtbaar te maken.",
+        "switchLabel": "Aftelling Activeren",
+        "switchDescription": "Toon of verberg de aftelling op de startpagina.",
+        "titleLabel": "Titel / Bericht",
+        "titlePlaceholder": "Bijv.: Het volgende toernooi begint over...",
+        "dateLabel": "Datum en Tijd van het Evenement"
+      },
+      "users": {
+        "title": "Gebruikersbeheer",
+        "searchPlaceholder": "Zoek gebruikers op naam, e-mail of rol...",
+        "usersFound_one": "{{count}} gebruiker gevonden",
+        "usersFound_other": "{{count}} gebruikers gevonden",
+        "accessDeniedTitle": "Toegang Geweigerd",
+        "accessDeniedDescription": "U heeft niet de benodigde rechten om deze pagina te openen.",
+        "errorLoading": "Fout bij het laden van gebruikers",
+        "demoteError": "U kunt uw eigen account niet degraderen van beheerder.",
+        "table": {
+          "name": "Naam",
+          "email": "E-mail",
+          "role": "Rol",
+          "actions": "Acties"
+        },
+        "rolePlaceholder": "Selecteer rol"
       }
     },
     "notFound": {
@@ -696,5 +767,20 @@
     "loadingNews": "Fout bij het laden van nieuws.",
     "passwordMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
     "requiredField": "Dit veld is verplicht"
+  },
+  "widgets": {
+    "hero": "Hero Sectie",
+    "countdown": "Aftel-evenement",
+    "media_carousel": "Media Carrousel",
+    "upcoming_matches": "Aankomende Wedstrijden",
+    "latest_news": "Laatste Nieuws",
+    "league_table": "Stand",
+    "pinned_article": "Vastgezet Artikel"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "captain": "Aanvoerder",
+    "player": "Speler"
   }
 }
