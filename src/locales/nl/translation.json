@@ -1,0 +1,23 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Wedstrijden",
+    "tables": "Klassement",
+    "statistics": "Statistieken",
+    "news": "Nieuws",
+    "players": "Spelers",
+    "teams": "Clubs",
+    "gallery": "Galerij"
+  },
+  "userMenu": {
+    "login": "Inloggen",
+    "profile": "Profiel",
+    "admin": "Admin",
+    "logout": "Uitloggen"
+  },
+  "themeToggle": {
+    "light": "Licht",
+    "dark": "Donker",
+    "system": "Systeem"
+  }
+}

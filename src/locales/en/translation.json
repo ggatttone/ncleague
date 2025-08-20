@@ -1,0 +1,23 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Matches",
+    "tables": "Tables",
+    "statistics": "Statistics",
+    "news": "News",
+    "players": "Players",
+    "teams": "Clubs",
+    "gallery": "Gallery"
+  },
+  "userMenu": {
+    "login": "Login",
+    "profile": "Profile",
+    "admin": "Admin",
+    "logout": "Logout"
+  },
+  "themeToggle": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}
