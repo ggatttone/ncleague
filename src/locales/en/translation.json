@@ -37,12 +37,43 @@
       "selectCompetitionAndSeason": "Select a competition and a season to view matches."
     },
     "news": {
+      "title": "Feed",
+      "newPost": "New Post",
+      "noNewsTitle": "No news at the moment",
+      "noNewsSubtitle": "Check back later for the latest updates.",
       "noNews": "No news found."
     },
+    "newsDetails": {
+      "allNews": "All news",
+      "notFoundTitle": "Article not found",
+      "notFoundSubtitle": "The article you are looking for does not exist or is no longer available.",
+      "backToNews": "Back to news",
+      "comments": "Comments"
+    },
     "tables": {
+      "title": "Tables",
+      "selectCompetition": "Select Competition",
+      "selectSeason": "Select Season",
       "pos": "Pos",
       "team": "Team",
-      "pts": "PTS"
+      "mp": "P",
+      "w": "W",
+      "d": "D",
+      "l": "L",
+      "gf": "GF",
+      "ga": "GA",
+      "gd": "GD",
+      "pts": "PTS",
+      "selectToView": "Select a competition and a season to view the table."
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "subtitle": "The page you are looking for does not exist.",
+      "button": "Go back home"
+    },
+    "notFoundAdmin": {
+      "title": "Page Not Found",
+      "subtitle": "The requested page does not exist in the admin area."
     }
   },
   "matchStatus": {
@@ -87,5 +118,10 @@
     "table": {
       "noData": "No data available."
     }
+  },
+  "errors": {
+    "loadingMatches": "Error loading matches",
+    "loadingTables": "Error loading the table.",
+    "loadingNews": "Error loading news."
   }
 }

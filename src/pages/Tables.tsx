@@ -8,8 +8,10 @@ import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Tables = () => {
+  const { t } = useTranslation();
   const [selectedCompetition, setSelectedCompetition] = useState<string | undefined>();
   const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
 
@@ -18,29 +20,25 @@ const Tables = () => {
   const { data: tableData, isLoading: tableLoading, error: tableError } = useLeagueTable(selectedCompetition, selectedSeason);
 
   useEffect(() => {
-    // Auto-select competition if there's only one and none is selected yet
     if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
       setSelectedCompetition(competitions[0].id);
     }
-
-    // Auto-select the most recent season if none is selected yet
-    // The useSeasons hook already sorts them by date descending
     if (!seasonsLoading && seasons?.length > 0 && !selectedSeason) {
       setSelectedSeason(seasons[0].id);
     }
   }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
 
   const columns = [
-    { key: "position", label: "Pos" },
-    { key: "team", label: "Squadra" },
-    { key: "mp", label: "G" },
-    { key: "w", label: "V" },
-    { key: "d", label: "N" },
-    { key: "l", label: "P" },
-    { key: "gf", label: "GF" },
-    { key: "ga", label: "GS" },
-    { key: "gd", label: "DR" },
-    { key: "pts", label: "PT" },
+    { key: "position", label: t('pages.tables.pos') },
+    { key: "team", label: t('pages.tables.team') },
+    { key: "mp", label: t('pages.tables.mp') },
+    { key: "w", label: t('pages.tables.w') },
+    { key: "d", label: t('pages.tables.d') },
+    { key: "l", label: t('pages.tables.l') },
+    { key: "gf", label: t('pages.tables.gf') },
+    { key: "ga", label: t('pages.tables.ga') },
+    { key: "gd", label: t('pages.tables.gd') },
+    { key: "pts", label: t('pages.tables.pts') },
   ];
 
   const data = tableData?.map((row, index) => ({
@@ -67,12 +65,12 @@ const Tables = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Classifiche</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('pages.tables.title')}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-lg">
           <Select onValueChange={setSelectedCompetition} value={selectedCompetition} disabled={competitionsLoading}>
             <SelectTrigger>
-              <SelectValue placeholder="Seleziona Competizione" />
+              <SelectValue placeholder={t('pages.tables.selectCompetition')} />
             </SelectTrigger>
             <SelectContent>
               {competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
@@ -80,7 +78,7 @@ const Tables = () => {
           </Select>
           <Select onValueChange={setSelectedSeason} value={selectedSeason} disabled={seasonsLoading}>
             <SelectTrigger>
-              <SelectValue placeholder="Seleziona Stagione" />
+              <SelectValue placeholder={t('pages.tables.selectSeason')} />
             </SelectTrigger>
             <SelectContent>
               {seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
@@ -96,7 +94,7 @@ const Tables = () => {
 
         {tableError && (
           <div className="text-center py-12 bg-destructive/10 text-destructive rounded-lg">
-            <p className="font-semibold mb-2">Errore nel caricamento della classifica.</p>
+            <p className="font-semibold mb-2">{t('errors.loadingTables')}</p>
             <p className="text-sm">{tableError.message}</p>
           </div>
         )}
@@ -108,14 +106,14 @@ const Tables = () => {
             </div>
           ) : (
             <div className="text-center py-12 bg-muted/50 rounded-lg">
-              <p className="text-muted-foreground">Nessun dato disponibile per la selezione corrente.</p>
+              <p className="text-muted-foreground">{t('components.leagueTableWidget.noData')}</p>
             </div>
           )
         )}
 
         {!selectedCompetition || !selectedSeason && !tableLoading && (
            <div className="text-center py-12 bg-muted/50 rounded-lg">
-            <p className="text-muted-foreground">Seleziona una competizione e una stagione per visualizzare la classifica.</p>
+            <p className="text-muted-foreground">{t('pages.tables.selectToView')}</p>
           </div>
         )}
       </div>

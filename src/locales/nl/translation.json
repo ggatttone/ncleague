@@ -37,12 +37,43 @@
       "selectCompetitionAndSeason": "Selecteer een competitie en een seizoen om wedstrijden te bekijken."
     },
     "news": {
+      "title": "Feed",
+      "newPost": "Nieuw Bericht",
+      "noNewsTitle": "Geen nieuws op dit moment",
+      "noNewsSubtitle": "Kom later terug voor de laatste updates.",
       "noNews": "Geen nieuws gevonden."
     },
+    "newsDetails": {
+      "allNews": "Al het nieuws",
+      "notFoundTitle": "Artikel niet gevonden",
+      "notFoundSubtitle": "Het artikel dat u zoekt bestaat niet of is niet langer beschikbaar.",
+      "backToNews": "Terug naar nieuws",
+      "comments": "Reacties"
+    },
     "tables": {
+      "title": "Standen",
+      "selectCompetition": "Selecteer Competitie",
+      "selectSeason": "Selecteer Seizoen",
       "pos": "Pos",
       "team": "Team",
-      "pts": "PNT"
+      "mp": "G",
+      "w": "W",
+      "d": "G",
+      "l": "V",
+      "gf": "DV",
+      "ga": "DT",
+      "gd": "DS",
+      "pts": "PNT",
+      "selectToView": "Selecteer een competitie en een seizoen om de stand te bekijken."
+    },
+    "notFound": {
+      "title": "Pagina niet gevonden",
+      "subtitle": "De pagina die u zoekt bestaat niet.",
+      "button": "Ga terug naar home"
+    },
+    "notFoundAdmin": {
+      "title": "Pagina niet gevonden",
+      "subtitle": "De gevraagde pagina bestaat niet in het admin-gedeelte."
     }
   },
   "matchStatus": {
@@ -87,5 +118,10 @@
     "table": {
       "noData": "Geen gegevens beschikbaar."
     }
+  },
+  "errors": {
+    "loadingMatches": "Fout bij het laden van wedstrijden",
+    "loadingTables": "Fout bij het laden van de stand.",
+    "loadingNews": "Fout bij het laden van nieuws."
   }
 }
