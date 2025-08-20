@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const competitionSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -22,6 +23,7 @@ const CompetitionFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: competition, isLoading: competitionLoading } = useCompetition(id);
   const createMutation = useCreateCompetition();
@@ -65,16 +67,16 @@ const CompetitionFormAdmin = () => {
     <AdminLayout>
       <div className="max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? "Modifica competizione" : "Nuova competizione"}
+          {isEdit ? t('pages.admin.competitionForm.editTitle') : t('pages.admin.competitionForm.newTitle')}
         </h1>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <Label htmlFor="name">Nome *</Label>
+            <Label htmlFor="name">{t('pages.admin.competitionForm.nameLabel')}</Label>
             <Input
               id="name"
               {...register("name")}
-              placeholder="Es: Serie A"
+              placeholder={t('pages.admin.competitionForm.namePlaceholder')}
               autoFocus
             />
             {errors.name && (
@@ -83,21 +85,21 @@ const CompetitionFormAdmin = () => {
           </div>
 
           <div>
-            <Label htmlFor="slug">Slug</Label>
+            <Label htmlFor="slug">{t('pages.admin.competitionForm.slugLabel')}</Label>
             <Input
               id="slug"
               {...register("slug")}
-              placeholder="Es: serie-a (generato se vuoto)"
+              placeholder={t('pages.admin.competitionForm.slugPlaceholder')}
             />
           </div>
 
           <div>
-            <Label htmlFor="level">Livello</Label>
+            <Label htmlFor="level">{t('pages.admin.competitionForm.levelLabel')}</Label>
             <Input
               id="level"
               type="number"
               {...register("level")}
-              placeholder="Es: 1 (per ordinamento)"
+              placeholder={t('pages.admin.competitionForm.levelPlaceholder')}
             />
           </div>
 

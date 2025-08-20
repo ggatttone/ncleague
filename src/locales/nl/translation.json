@@ -448,6 +448,137 @@
           "minuteLabel": "Minuut",
           "addButton": "Doelpunt Toevoegen"
         }
+      },
+      "competitions": {
+        "title": "Competities",
+        "newCompetition": "Nieuwe competitie",
+        "searchPlaceholder": "Zoek competities...",
+        "errorLoading": "Fout bij het laden van competities",
+        "deleteDialogTitle": "Verwijder competitie",
+        "deleteDialogDescription": "Weet u zeker dat u de competitie \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "name": "Naam",
+          "slug": "Slug",
+          "level": "Niveau",
+          "actions": "Acties"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Bewerk competitie",
+        "newTitle": "Nieuwe competitie",
+        "nameLabel": "Naam *",
+        "namePlaceholder": "Bijv.: Serie A",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "Bijv.: serie-a (wordt gegenereerd indien leeg)",
+        "levelLabel": "Niveau",
+        "levelPlaceholder": "Bijv.: 1 (voor sortering)"
+      },
+      "seasons": {
+        "title": "Seizoenen",
+        "newSeason": "Nieuw seizoen",
+        "searchPlaceholder": "Zoek seizoenen...",
+        "errorLoading": "Fout bij het laden van seizoenen",
+        "deleteDialogTitle": "Verwijder seizoen",
+        "deleteDialogDescription": "Weet u zeker dat u het seizoen \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "name": "Naam",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "actions": "Acties"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Bewerk seizoen",
+        "newTitle": "Nieuw seizoen",
+        "nameLabel": "Naam *",
+        "namePlaceholder": "Bijv.: 2023/2024",
+        "startDateLabel": "Startdatum",
+        "endDateLabel": "Einddatum"
+      },
+      "venues": {
+        "title": "Locaties",
+        "newVenue": "Nieuwe locatie",
+        "searchPlaceholder": "Zoek locaties...",
+        "errorLoading": "Fout bij het laden van locaties",
+        "deleteDialogTitle": "Verwijder locatie",
+        "deleteDialogDescription": "Weet u zeker dat u de locatie \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "name": "Naam",
+          "structure": "Structuur",
+          "address": "Adres",
+          "city": "Stad",
+          "actions": "Acties"
+        }
+      },
+      "venueForm": {
+        "editTitle": "Bewerk locatie",
+        "newTitle": "Nieuwe locatie",
+        "mainInfo": "Hoofdinformatie",
+        "nameLabel": "Naam locatie *",
+        "namePlaceholder": "Naam van de locatie",
+        "structureLabel": "Structuur",
+        "structurePlaceholder": "Bijv.: Sportcentrum, Arena...",
+        "addressLabel": "Adres",
+        "addressPlaceholder": "Straat, nummer",
+        "cityLabel": "Stad",
+        "cityPlaceholder": "Stad",
+        "geoPosition": "Geografische Positie",
+        "latitudeLabel": "Breedtegraad",
+        "latitudePlaceholder": "Bijv.: 45.4642",
+        "longitudeLabel": "Lengtegraad",
+        "longitudePlaceholder": "Bijv.: 9.1900",
+        "mapPreview": "Voer breedte- en lengtegraad in om de kaart weer te geven.",
+        "image": "Afbeelding",
+        "imageLabel": "Foto van de structuur"
+      },
+      "sponsors": {
+        "title": "Sponsoren",
+        "newSponsor": "Nieuwe Sponsor",
+        "errorLoading": "Fout bij het laden van sponsoren",
+        "deleteDialogTitle": "Verwijder sponsor",
+        "deleteDialogDescription": "Weet u zeker dat u de sponsor \"{{name}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "name": "Naam",
+          "team": "Team",
+          "website": "Website",
+          "actions": "Acties"
+        }
+      },
+      "sponsorForm": {
+        "editTitle": "Bewerk Sponsor",
+        "newTitle": "Nieuwe Sponsor",
+        "logoLabel": "Sponsor Logo",
+        "nameLabel": "Naam *",
+        "teamLabel": "Team *",
+        "teamPlaceholder": "Selecteer een team",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://..."
+      },
+      "honors": {
+        "title": "Erelijst",
+        "newHonor": "Trofee Toevoegen",
+        "errorLoading": "Fout bij het laden van de erelijst",
+        "deleteDialogTitle": "Verwijder trofee",
+        "deleteDialogDescription": "Weet u zeker dat u deze prestatie wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "team": "Team",
+          "achievement": "Prestatie",
+          "competition": "Competitie",
+          "season": "Seizoen",
+          "actions": "Acties"
+        }
+      },
+      "honorForm": {
+        "editTitle": "Bewerk Trofee",
+        "newTitle": "Nieuwe Trofee",
+        "teamLabel": "Team *",
+        "teamPlaceholder": "Selecteer team",
+        "competitionLabel": "Competitie *",
+        "competitionPlaceholder": "Selecteer competitie",
+        "seasonLabel": "Seizoen *",
+        "seasonPlaceholder": "Selecteer seizoen",
+        "achievementLabel": "Prestatie *",
+        "achievementPlaceholder": "Bijv.: Kampioen, Bekerwinnaar..."
       }
     },
     "notFound": {

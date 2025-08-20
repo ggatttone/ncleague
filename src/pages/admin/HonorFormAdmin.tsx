@@ -13,6 +13,7 @@ import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 const honorSchema = z.object({
   team_id: z.string().min(1, "Squadra obbligatoria"),
@@ -27,6 +28,7 @@ const HonorFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: honor, isLoading: honorLoading } = useHonor(id);
   const { data: teams, isLoading: teamsLoading } = useTeams();
@@ -61,42 +63,42 @@ const HonorFormAdmin = () => {
   return (
     <AdminLayout>
       <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">{isEdit ? "Modifica Trofeo" : "Nuovo Trofeo"}</h1>
+        <h1 className="text-2xl font-bold mb-6">{isEdit ? t('pages.admin.honorForm.editTitle') : t('pages.admin.honorForm.newTitle')}</h1>
         {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <Label htmlFor="team_id">Squadra *</Label>
+              <Label htmlFor="team_id">{t('pages.admin.honorForm.teamLabel')}</Label>
               <Controller name="team_id" control={control} render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona squadra" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('pages.admin.honorForm.teamPlaceholder')} /></SelectTrigger>
                   <SelectContent>{teams?.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
                 </Select>
               )} />
               {errors.team_id && <p className="text-sm text-destructive mt-1">{errors.team_id.message}</p>}
             </div>
             <div>
-              <Label htmlFor="competition_id">Competizione *</Label>
+              <Label htmlFor="competition_id">{t('pages.admin.honorForm.competitionLabel')}</Label>
               <Controller name="competition_id" control={control} render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={competitionsLoading}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona competizione" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('pages.admin.honorForm.competitionPlaceholder')} /></SelectTrigger>
                   <SelectContent>{competitions?.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               )} />
               {errors.competition_id && <p className="text-sm text-destructive mt-1">{errors.competition_id.message}</p>}
             </div>
             <div>
-              <Label htmlFor="season_id">Stagione *</Label>
+              <Label htmlFor="season_id">{t('pages.admin.honorForm.seasonLabel')}</Label>
               <Controller name="season_id" control={control} render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={seasonsLoading}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona stagione" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('pages.admin.honorForm.seasonPlaceholder')} /></SelectTrigger>
                   <SelectContent>{seasons?.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                 </Select>
               )} />
               {errors.season_id && <p className="text-sm text-destructive mt-1">{errors.season_id.message}</p>}
             </div>
             <div>
-              <Label htmlFor="achievement">Risultato *</Label>
-              <Input id="achievement" {...register("achievement")} placeholder="Es: Campione, Vincitore Coppa..." />
+              <Label htmlFor="achievement">{t('pages.admin.honorForm.achievementLabel')}</Label>
+              <Input id="achievement" {...register("achievement")} placeholder={t('pages.admin.honorForm.achievementPlaceholder')} />
               {errors.achievement && <p className="text-sm text-destructive mt-1">{errors.achievement.message}</p>}
             </div>
             <div className="flex gap-2 justify-end pt-4">

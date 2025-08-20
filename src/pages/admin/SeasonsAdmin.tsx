@@ -19,12 +19,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const SeasonsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: seasons, isLoading, error } = useSeasons();
   const deleteSeasonMutation = useDeleteSeason();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const filteredSeasons = useMemo(() => {
     if (!seasons || !searchTerm) return seasons;
@@ -39,10 +41,10 @@ const SeasonsAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "start_date", label: "Data Inizio" },
-    { key: "end_date", label: "Data Fine" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.seasons.table.name') },
+    { key: "start_date", label: t('pages.admin.seasons.table.startDate') },
+    { key: "end_date", label: t('pages.admin.seasons.table.endDate') },
+    { key: "actions", label: t('pages.admin.seasons.table.actions') },
   ];
 
   const data = filteredSeasons?.map(season => ({
@@ -64,10 +66,9 @@ const SeasonsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina stagione</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.seasons.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare la stagione "{season.name}"? 
-                Questa azione non può essere annullata.
+                {t('pages.admin.seasons.deleteDialogDescription', { name: season.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -91,7 +92,7 @@ const SeasonsAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento delle stagioni</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.seasons.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -107,7 +108,7 @@ const SeasonsAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina stagione</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{season.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.seasons.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.seasons.deleteDialogDescription', { name: season.name })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(season.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteSeasonMutation.isPending}>
@@ -136,11 +137,11 @@ const SeasonsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Stagioni</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.seasons.title')}</h1>
         <Link to="/admin/seasons/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Nuova stagione
+            {t('pages.admin.seasons.newSeason')}
           </Button>
         </Link>
       </div>
@@ -149,7 +150,7 @@ const SeasonsAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca stagioni..."
+            placeholder={t('pages.admin.seasons.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"

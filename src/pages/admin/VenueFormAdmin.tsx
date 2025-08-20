@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { GoogleMapEmbed } from "@/components/admin/GoogleMapEmbed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 const venueSchema = z.object({
   name: z.string().min(1, "Il nome del campo è obbligatorio"),
@@ -29,6 +30,7 @@ const VenueFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: venue, isLoading: venueLoading } = useVenue(id);
   const createVenueMutation = useCreateVenue();
@@ -94,7 +96,7 @@ const VenueFormAdmin = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">
-            {isEdit ? "Modifica campo" : "Nuovo campo"}
+            {isEdit ? t('pages.admin.venueForm.editTitle') : t('pages.admin.venueForm.newTitle')}
           </h1>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button type="button" variant="secondary" onClick={() => navigate("/admin/venues")} disabled={isSubmitting} className="w-full">
@@ -110,38 +112,38 @@ const VenueFormAdmin = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-6">
             <Card>
-              <CardHeader><CardTitle>Informazioni Principali</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t('pages.admin.venueForm.mainInfo')}</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Nome campo *</Label>
-                  <Input id="name" {...register("name")} placeholder="Nome del campo" autoFocus />
+                  <Label htmlFor="name">{t('pages.admin.venueForm.nameLabel')}</Label>
+                  <Input id="name" {...register("name")} placeholder={t('pages.admin.venueForm.namePlaceholder')} autoFocus />
                   {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="struttura">Struttura</Label>
-                  <Input id="struttura" {...register("struttura")} placeholder="Es: Centro Sportivo, Palazzetto..." />
+                  <Label htmlFor="struttura">{t('pages.admin.venueForm.structureLabel')}</Label>
+                  <Input id="struttura" {...register("struttura")} placeholder={t('pages.admin.venueForm.structurePlaceholder')} />
                 </div>
                 <div>
-                  <Label htmlFor="address">Indirizzo</Label>
-                  <Input id="address" {...register("address")} placeholder="Via, numero civico" />
+                  <Label htmlFor="address">{t('pages.admin.venueForm.addressLabel')}</Label>
+                  <Input id="address" {...register("address")} placeholder={t('pages.admin.venueForm.addressPlaceholder')} />
                 </div>
                 <div>
-                  <Label htmlFor="city">Città</Label>
-                  <Input id="city" {...register("city")} placeholder="Città" />
+                  <Label htmlFor="city">{t('pages.admin.venueForm.cityLabel')}</Label>
+                  <Input id="city" {...register("city")} placeholder={t('pages.admin.venueForm.cityPlaceholder')} />
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Posizione Geografica</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t('pages.admin.venueForm.geoPosition')}</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="lat">Latitudine</Label>
-                    <Input id="lat" type="number" step="any" {...register("lat")} placeholder="Es: 45.4642" />
+                    <Label htmlFor="lat">{t('pages.admin.venueForm.latitudeLabel')}</Label>
+                    <Input id="lat" type="number" step="any" {...register("lat")} placeholder={t('pages.admin.venueForm.latitudePlaceholder')} />
                   </div>
                   <div>
-                    <Label htmlFor="lon">Longitudine</Label>
-                    <Input id="lon" type="number" step="any" {...register("lon")} placeholder="Es: 9.1900" />
+                    <Label htmlFor="lon">{t('pages.admin.venueForm.longitudeLabel')}</Label>
+                    <Input id="lon" type="number" step="any" {...register("lon")} placeholder={t('pages.admin.venueForm.longitudePlaceholder')} />
                   </div>
                 </div>
                 <GoogleMapEmbed lat={latValue} lon={lonValue} />
@@ -150,13 +152,13 @@ const VenueFormAdmin = () => {
           </div>
           <div className="md:col-span-1">
             <Card>
-              <CardHeader><CardTitle>Immagine</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t('pages.admin.venueForm.image')}</CardTitle></CardHeader>
               <CardContent>
                 <ImageUploader
                   bucketName="venue-photos"
                   currentImageUrl={photoUrlValue}
                   onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
-                  label="Foto della struttura"
+                  label={t('pages.admin.venueForm.imageLabel')}
                 />
                 {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
               </CardContent>

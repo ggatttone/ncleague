@@ -19,12 +19,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const CompetitionsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: competitions, isLoading, error } = useCompetitions();
   const deleteCompetitionMutation = useDeleteCompetition();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const filteredCompetitions = useMemo(() => {
     if (!competitions || !searchTerm) return competitions;
@@ -39,10 +41,10 @@ const CompetitionsAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "slug", label: "Slug" },
-    { key: "level", label: "Livello" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.competitions.table.name') },
+    { key: "slug", label: t('pages.admin.competitions.table.slug') },
+    { key: "level", label: t('pages.admin.competitions.table.level') },
+    { key: "actions", label: t('pages.admin.competitions.table.actions') },
   ];
 
   const data = filteredCompetitions?.map(comp => ({
@@ -64,10 +66,9 @@ const CompetitionsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina competizione</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.competitions.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare la competizione "{comp.name}"? 
-                Questa azione non può essere annullata.
+                {t('pages.admin.competitions.deleteDialogDescription', { name: comp.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -91,7 +92,7 @@ const CompetitionsAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento delle competizioni</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.competitions.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -107,7 +108,7 @@ const CompetitionsAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina competizione</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{comp.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.competitions.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.competitions.deleteDialogDescription', { name: comp.name })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(comp.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteCompetitionMutation.isPending}>
@@ -133,11 +134,11 @@ const CompetitionsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Competizioni</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.competitions.title')}</h1>
         <Link to="/admin/competitions/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Nuova competizione
+            {t('pages.admin.competitions.newCompetition')}
           </Button>
         </Link>
       </div>
@@ -146,7 +147,7 @@ const CompetitionsAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca competizioni..."
+            placeholder={t('pages.admin.competitions.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
