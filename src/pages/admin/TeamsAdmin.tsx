@@ -19,11 +19,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
-import { useTranslation } from "react-i18next";
 
 const TeamsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { t } = useTranslation(['pages', 'common']);
   const { data: teams, isLoading, error } = useTeams();
   const deleteTeamMutation = useDeleteTeam();
   const isMobile = useIsMobile();
@@ -43,11 +41,11 @@ const TeamsAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: t('common:name') },
-    { key: "parish", label: t('pages:teamsAdmin.parish') },
-    { key: "venue", label: t('common:venue') },
-    { key: "colors", label: t('pages:teamsAdmin.colors') },
-    { key: "actions", label: t('common:actions') },
+    { key: "name", label: "Nome" },
+    { key: "parish", label: "Parrocchia" },
+    { key: "venue", label: "Campo" },
+    { key: "colors", label: "Colori" },
+    { key: "actions", label: "Azioni" },
   ];
 
   const data = filteredTeams?.map(team => ({
@@ -74,20 +72,21 @@ const TeamsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('pages:teamsAdmin.deleteTitle')}</AlertDialogTitle>
+              <AlertDialogTitle>Elimina squadra</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('pages:teamsAdmin.deleteDescription', { teamName: team.name })}
+                Sei sicuro di voler eliminare la squadra "{team.name}"? 
+                Questa azione non può essere annullata e rimuoverà anche tutti i giocatori associati.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>{t('common:cancel')}</AlertDialogCancel>
+              <AlertDialogCancel>Annulla</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => handleDeleteTeam(team.id)}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 disabled={deleteTeamMutation.isPending}
               >
                 {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('common:delete')}
+                Elimina
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -100,7 +99,7 @@ const TeamsAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">{t('pages:teamsAdmin.errorLoading')}</p>
+          <p className="text-red-600 mb-4">Errore nel caricamento delle squadre</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -120,11 +119,11 @@ const TeamsAdmin = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>{t('pages:teamsAdmin.deleteTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages:teamsAdmin.deleteDescription', { teamName: team.name })}</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>Elimina squadra</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare la squadra "{team.name}"?</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t('common:cancel')}</AlertDialogCancel>
+                  <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDeleteTeam(team.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteTeamMutation.isPending}>
-                    {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('common:delete')}
+                    {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -135,13 +134,13 @@ const TeamsAdmin = () => {
           <AdminMobileCard
             key={team.id}
             title={<Link to={`/admin/teams/${team.id}`} className="hover:underline">{team.name}</Link>}
-            subtitle={team.parish || t('pages:teamsAdmin.noParish')}
+            subtitle={team.parish || "Nessuna parrocchia"}
             actions={actions}
           >
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
-              <div className="font-semibold text-muted-foreground">{t('common:venue')}:</div>
+              <div className="font-semibold text-muted-foreground">Campo:</div>
               <div>{team.venues?.name || "-"}</div>
-              <div className="font-semibold text-muted-foreground">{t('pages:teamsAdmin.colors')}:</div>
+              <div className="font-semibold text-muted-foreground">Colori:</div>
               <div>{team.colors || "-"}</div>
             </div>
           </AdminMobileCard>
@@ -153,11 +152,11 @@ const TeamsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">{t('pages:teamsAdmin.title')}</h1>
+        <h1 className="text-2xl font-bold">Squadre</h1>
         <Link to="/admin/teams/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            {t('pages:teamsAdmin.newButton')}
+            Nuova squadra
           </Button>
         </Link>
       </div>
@@ -166,7 +165,7 @@ const TeamsAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder={t('pages:teamsAdmin.searchPlaceholder')}
+            placeholder="Cerca squadre..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -182,8 +181,8 @@ const TeamsAdmin = () => {
         <>
           {filteredTeams && filteredTeams.length > 0 && (
             <div className="mb-4 text-sm text-muted-foreground">
-              {t('pages:teamsAdmin.count', { count: filteredTeams.length })}
-              {searchTerm && ` ${t('pages:teamsAdmin.foundFor', { term: searchTerm })}`}
+              {filteredTeams.length} squadr{filteredTeams.length === 1 ? 'a' : 'e'} 
+              {searchTerm && ` trovat${filteredTeams.length === 1 ? 'a' : 'e'} per "${searchTerm}"`}
             </div>
           )}
           {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}
