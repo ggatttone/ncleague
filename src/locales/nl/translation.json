@@ -145,6 +145,79 @@
       "newPassword": "Nieuw wachtwoord",
       "updatePassword": "Wachtwoord bijwerken"
     },
+    "gallery": {
+      "title": "Galerij",
+      "uploadMedia": "Media uploaden",
+      "uploadDialogTitle": "Nieuwe media uploaden",
+      "uploadDialogDescription": "U kunt maximaal 10 bestanden (afbeeldingen of video's) tegelijk selecteren.",
+      "fileLabel": "Bestand *",
+      "fileError": "Minstens één bestand is vereist.",
+      "fileLimitError": "U kunt maximaal 10 bestanden tegelijk uploaden.",
+      "albumLabel": "Album (optioneel)",
+      "noAlbum": "Geen album",
+      "uploadButton": "Uploaden",
+      "tabs": {
+        "albums": "Albums",
+        "allMedia": "Alle Media"
+      },
+      "noAlbumsTitle": "Geen albums gemaakt.",
+      "noAlbumsSubtitle": "Maak het eerste album om de galerij te organiseren.",
+      "noMediaTitle": "Geen media geüpload.",
+      "noMediaSubtitle": "Upload uw eerste afbeelding of video.",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items"
+    },
+    "albumDetails": {
+      "backToGallery": "Alle albums",
+      "notFoundTitle": "Album niet gevonden",
+      "emptyAlbumTitle": "Dit album is leeg.",
+      "emptyAlbumSubtitle": "Er zijn nog geen items toegevoegd."
+    },
+    "seasonArchive": {
+      "title": "Seizoenarchief",
+      "season": "Seizoen",
+      "competition": "Competitie",
+      "division": "Divisie"
+    },
+    "admin": {
+      "sidebar": {
+        "leagueManagement": "Competitiebeheer",
+        "dashboard": "Dashboard",
+        "teams": "Teams",
+        "players": "Spelers",
+        "fixtures": "Wedstrijdschema",
+        "competitions": "Competities",
+        "seasons": "Seizoenen",
+        "venues": "Locaties",
+        "sponsors": "Sponsoren",
+        "honors": "Erelijst",
+        "contentManagement": "Contentbeheer",
+        "articles": "Artikelen",
+        "gallery": "Galerij",
+        "siteConfig": "Siteconfiguratie",
+        "homepageLayout": "Homepage Indeling",
+        "appearance": "Uiterlijk",
+        "countdownEvent": "Aftel-evenement",
+        "administration": "Administratie",
+        "userManagement": "Gebruikersbeheer"
+      },
+      "index": {
+        "title": "Admin Dashboard",
+        "teams": "Teams",
+        "manageTeams": "Beheer teams",
+        "players": "Spelers",
+        "managePlayers": "Beheer spelers",
+        "scheduledMatches": "Geplande Wedstrijden",
+        "manageFixtures": "Beheer wedstrijdschema",
+        "registeredUsers": "Geregistreerde Gebruikers",
+        "manageUsers": "Beheer gebruikers",
+        "quickActions": "Snelle Acties",
+        "newTeam": "Nieuw Team",
+        "newPlayer": "Nieuwe Speler",
+        "newMatch": "Nieuwe Wedstrijd",
+        "newArticle": "Nieuw Artikel"
+      }
+    },
     "notFound": {
       "title": "Pagina niet gevonden",
       "subtitle": "De pagina die u zoekt bestaat niet.",

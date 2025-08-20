@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import { Link } from "react-router-dom";
 import { Loader2, Users, Shield, Calendar, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface DashboardStats {
   teamsCount: number | null;
@@ -14,6 +15,7 @@ interface DashboardStats {
 }
 
 const AdminIndex = () => {
+  const { t } = useTranslation();
   const { data, isLoading } = useSupabaseQuery<DashboardStats>(
     ['admin-dashboard-stats'],
     async () => {
@@ -40,38 +42,38 @@ const AdminIndex = () => {
 
   const stats = [
     {
-      title: "Squadre",
+      title: t('pages.admin.index.teams'),
       count: data?.teamsCount,
       icon: <Shield className="h-6 w-6 text-muted-foreground" />,
       link: "/admin/teams",
-      linkText: "Gestisci squadre"
+      linkText: t('pages.admin.index.manageTeams')
     },
     {
-      title: "Giocatori",
+      title: t('pages.admin.index.players'),
       count: data?.playersCount,
       icon: <Users className="h-6 w-6 text-muted-foreground" />,
       link: "/admin/players",
-      linkText: "Gestisci giocatori"
+      linkText: t('pages.admin.index.managePlayers')
     },
     {
-      title: "Partite Programmate",
+      title: t('pages.admin.index.scheduledMatches'),
       count: data?.matchesCount,
       icon: <Calendar className="h-6 w-6 text-muted-foreground" />,
       link: "/admin/fixtures",
-      linkText: "Gestisci calendario"
+      linkText: t('pages.admin.index.manageFixtures')
     },
     {
-      title: "Utenti Registrati",
+      title: t('pages.admin.index.registeredUsers'),
       count: data?.usersCount,
       icon: <UserCog className="h-6 w-6 text-muted-foreground" />,
       link: "/admin/users",
-      linkText: "Gestisci utenti"
+      linkText: t('pages.admin.index.manageUsers')
     }
   ];
 
   return (
     <AdminLayout>
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('pages.admin.index.title')}</h1>
       
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
@@ -98,21 +100,21 @@ const AdminIndex = () => {
 
           <Card className="mt-8">
             <CardHeader>
-              <CardTitle>Azioni Rapide</CardTitle>
+              <CardTitle>{t('pages.admin.index.quickActions')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Link to="/admin/teams/new">
-                  <Button className="w-full">Nuova Squadra</Button>
+                  <Button className="w-full">{t('pages.admin.index.newTeam')}</Button>
                 </Link>
                 <Link to="/admin/players/new">
-                  <Button className="w-full">Nuovo Giocatore</Button>
+                  <Button className="w-full">{t('pages.admin.index.newPlayer')}</Button>
                 </Link>
                 <Link to="/admin/fixtures/new">
-                  <Button className="w-full">Nuova Partita</Button>
+                  <Button className="w-full">{t('pages.admin.index.newMatch')}</Button>
                 </Link>
                 <Link to="/admin/articles/new">
-                  <Button className="w-full">Nuovo Articolo</Button>
+                  <Button className="w-full">{t('pages.admin.index.newArticle')}</Button>
                 </Link>
               </div>
             </CardContent>
