@@ -4,48 +4,50 @@ import { Shield } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
-const adminMenuConfig = [
-  {
-    category: "Gestione Lega",
-    links: [
-      { to: "/admin", label: "Dashboard", roles: ['admin', 'editor', 'captain'], exact: true },
-      { to: "/admin/teams", label: "Squadre", roles: ['admin', 'editor', 'captain'] },
-      { to: "/admin/players", label: "Giocatori", roles: ['admin', 'editor', 'captain'] },
-      { to: "/admin/fixtures", label: "Calendario e Risultati", roles: ['admin', 'editor'] },
-      { to: "/admin/competitions", label: "Competizioni", roles: ['admin', 'editor'] },
-      { to: "/admin/seasons", label: "Stagioni", roles: ['admin', 'editor'] },
-      { to: "/admin/venues", label: "Campi da Gioco", roles: ['admin', 'editor'] },
-      { to: "/admin/sponsors", label: "Sponsor", roles: ['admin', 'editor'] },
-      { to: "/admin/honors", label: "Albo d'Oro", roles: ['admin', 'editor'] },
-    ]
-  },
-  {
-    category: "Gestione Contenuti",
-    links: [
-      { to: "/admin/articles", label: "Articoli", roles: ['admin', 'editor'] },
-      { to: "/admin/albums", label: "Galleria", roles: ['admin', 'editor'] },
-    ]
-  },
-  {
-    category: "Configurazione Sito",
-    links: [
-      { to: "/admin/homepage", label: "Layout Homepage", roles: ['admin', 'editor'] },
-      { to: "/admin/theme", label: "Aspetto", roles: ['admin'] },
-      { to: "/admin/event", label: "Evento Countdown", roles: ['admin'] },
-    ]
-  },
-  {
-    category: "Amministrazione",
-    links: [
-      { to: "/admin/users", label: "Gestione Utenti", roles: ['admin'] },
-    ]
-  }
-];
-
-export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
+const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const location = useLocation();
   const { hasPermission } = useAuth();
+  const { t } = useTranslation();
+
+  const adminMenuConfig = useMemo(() => [
+    {
+      category: t('admin.sidebar.leagueManagement'),
+      links: [
+        { to: "/admin", label: t('admin.sidebar.dashboard'), roles: ['admin', 'editor', 'captain'], exact: true },
+        { to: "/admin/teams", label: t('admin.sidebar.teams'), roles: ['admin', 'editor', 'captain'] },
+        { to: "/admin/players", label: t('admin.sidebar.players'), roles: ['admin', 'editor', 'captain'] },
+        { to: "/admin/fixtures", label: t('admin.sidebar.fixtures'), roles: ['admin', 'editor'] },
+        { to: "/admin/competitions", label: t('admin.sidebar.competitions'), roles: ['admin', 'editor'] },
+        { to: "/admin/seasons", label: t('admin.sidebar.seasons'), roles: ['admin', 'editor'] },
+        { to: "/admin/venues", label: t('admin.sidebar.venues'), roles: ['admin', 'editor'] },
+        { to: "/admin/sponsors", label: t('admin.sidebar.sponsors'), roles: ['admin', 'editor'] },
+        { to: "/admin/honors", label: t('admin.sidebar.honors'), roles: ['admin', 'editor'] },
+      ]
+    },
+    {
+      category: t('admin.sidebar.contentManagement'),
+      links: [
+        { to: "/admin/articles", label: t('admin.sidebar.articles'), roles: ['admin', 'editor'] },
+        { to: "/admin/albums", label: t('admin.sidebar.gallery'), roles: ['admin', 'editor'] },
+      ]
+    },
+    {
+      category: t('admin.sidebar.siteConfig'),
+      links: [
+        { to: "/admin/homepage", label: t('admin.sidebar.homepageLayout'), roles: ['admin', 'editor'] },
+        { to: "/admin/theme", label: t('admin.sidebar.appearance'), roles: ['admin'] },
+        { to: "/admin/event", label: t('admin.sidebar.countdownEvent'), roles: ['admin'] },
+      ]
+    },
+    {
+      category: t('admin.sidebar.administration'),
+      links: [
+        { to: "/admin/users", label: t('admin.sidebar.userManagement'), roles: ['admin'] },
+      ]
+    }
+  ], [t]);
 
   const activeCategory = useMemo(() => {
     let bestMatch: string | undefined = undefined;
@@ -62,7 +64,7 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       }
     }
     return bestMatch;
-  }, [location.pathname]);
+  }, [location.pathname, adminMenuConfig]);
 
   return (
     <div className="flex flex-col h-full">

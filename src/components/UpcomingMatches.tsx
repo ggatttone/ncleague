@@ -7,6 +7,7 @@ import { Calendar, Loader2, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -49,6 +50,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
 );
 
 export const UpcomingMatches = () => {
+  const { t } = useTranslation();
   const { data: matches, isLoading } = useSupabaseQuery<MatchWithTeams[]>(
     ['upcoming-matches'],
     async () => supabase
@@ -67,7 +69,7 @@ export const UpcomingMatches = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Prossime Partite</CardTitle>
+        <CardTitle>{t('components.upcomingMatches.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -76,7 +78,7 @@ export const UpcomingMatches = () => {
           </div>
         ) : !matches || matches.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            <p>Nessuna partita in programma.</p>
+            <p>{t('components.upcomingMatches.noMatches')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -87,7 +89,7 @@ export const UpcomingMatches = () => {
         )}
         <div className="mt-6 text-center">
           <Button asChild variant="outline" size="sm">
-            <Link to="/matches">Vedi calendario completo</Link>
+            <Link to="/matches">{t('components.upcomingMatches.viewFull')}</Link>
           </Button>
         </div>
       </CardContent>

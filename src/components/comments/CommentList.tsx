@@ -4,6 +4,7 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { formatDateRelative, getInitials } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const CommentItem = ({ comment }: { comment: CommentWithAuthor }) => {
   const { user, hasPermission } = useAuth();
@@ -41,6 +42,7 @@ const CommentItem = ({ comment }: { comment: CommentWithAuthor }) => {
 
 export const CommentList = ({ articleId }: { articleId: string }) => {
   const { data: comments, isLoading } = useArticleComments(articleId);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>;
@@ -51,7 +53,7 @@ export const CommentList = ({ articleId }: { articleId: string }) => {
       {comments && comments.length > 0 ? (
         comments.map(comment => <CommentItem key={comment.id} comment={comment} />)
       ) : (
-        <p className="text-center text-muted-foreground py-8">Nessun commento. Sii il primo a commentare!</p>
+        <p className="text-center text-muted-foreground py-8">{t('components.comments.noComments')}</p>
       )}
     </div>
   );
