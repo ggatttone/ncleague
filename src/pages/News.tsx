@@ -5,10 +5,12 @@ import { Loader2, MessageSquare, Plus } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const News = () => {
   const { data: articles, isLoading, error } = usePublishedArticles();
   const { hasPermission } = useAuth();
+  const { t } = useTranslation();
   const canCreate = hasPermission(['admin', 'editor']);
 
   const renderContent = () => {
@@ -23,7 +25,7 @@ const News = () => {
     if (error) {
       return (
         <div className="text-center py-20">
-          <p className="text-destructive">Errore nel caricamento delle notizie.</p>
+          <p className="text-destructive">{t('errors.loadingNews')}</p>
         </div>
       );
     }
@@ -32,8 +34,8 @@ const News = () => {
       return (
         <div className="text-center py-20">
           <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold">Nessuna notizia al momento.</h2>
-          <p className="text-muted-foreground mt-2">Torna più tardi per gli ultimi aggiornamenti.</p>
+          <h2 className="text-xl font-semibold">{t('pages.news.noNewsTitle')}</h2>
+          <p className="text-muted-foreground mt-2">{t('pages.news.noNewsSubtitle')}</p>
         </div>
       );
     }
@@ -51,12 +53,12 @@ const News = () => {
     <MainLayout>
       <div className="container mx-auto px-0 sm:px-4 py-8 max-w-2xl">
         <div className="px-4 sm:px-0 flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Feed</h1>
+          <h1 className="text-3xl font-bold">{t('pages.news.title')}</h1>
           {canCreate && (
             <Link to="/admin/articles/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Nuovo Post
+                {t('pages.news.newPost')}
               </Button>
             </Link>
           )}

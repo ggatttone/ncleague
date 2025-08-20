@@ -9,10 +9,12 @@ import { Separator } from "@/components/ui/separator";
 import { LikeButton } from "@/components/LikeButton";
 import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
+import { useTranslation } from "react-i18next";
 
 const NewsDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: article, isLoading, error } = usePublishedArticleBySlug(slug);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -37,12 +39,12 @@ const NewsDetails = () => {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Articolo non trovato</h1>
-          <p className="text-muted-foreground mb-6">L'articolo che stai cercando non esiste o non è più disponibile.</p>
+          <h1 className="text-2xl font-bold mb-4">{t('pages.newsDetails.notFoundTitle')}</h1>
+          <p className="text-muted-foreground mb-6">{t('pages.newsDetails.notFoundSubtitle')}</p>
           <Link to="/news">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Torna alle news
+              {t('pages.newsDetails.backToNews')}
             </Button>
           </Link>
         </div>
@@ -56,7 +58,7 @@ const NewsDetails = () => {
         <Link to="/news" className="mb-8 inline-block">
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Tutte le news
+            {t('pages.newsDetails.allNews')}
           </Button>
         </Link>
 
@@ -98,7 +100,7 @@ const NewsDetails = () => {
         </div>
 
         <div id="comments" className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Commenti</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('pages.newsDetails.comments')}</h2>
           <CommentForm articleId={article.id} />
           <CommentList articleId={article.id} />
         </div>

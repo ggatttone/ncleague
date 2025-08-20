@@ -37,12 +37,43 @@
       "selectCompetitionAndSeason": "Seleziona una competizione e una stagione per visualizzare le partite."
     },
     "news": {
+      "title": "Feed",
+      "newPost": "Nuovo Post",
+      "noNewsTitle": "Nessuna notizia al momento",
+      "noNewsSubtitle": "Torna più tardi per gli ultimi aggiornamenti.",
       "noNews": "Nessuna notizia trovata."
     },
+    "newsDetails": {
+      "allNews": "Tutte le news",
+      "notFoundTitle": "Articolo non trovato",
+      "notFoundSubtitle": "L'articolo che stai cercando non esiste o non è più disponibile.",
+      "backToNews": "Torna alle news",
+      "comments": "Commenti"
+    },
     "tables": {
+      "title": "Classifiche",
+      "selectCompetition": "Seleziona Competizione",
+      "selectSeason": "Seleziona Stagione",
       "pos": "Pos",
       "team": "Squadra",
-      "pts": "PT"
+      "mp": "G",
+      "w": "V",
+      "d": "N",
+      "l": "P",
+      "gf": "GF",
+      "ga": "GS",
+      "gd": "DR",
+      "pts": "PT",
+      "selectToView": "Seleziona una competizione e una stagione per visualizzare la classifica."
+    },
+    "notFound": {
+      "title": "Pagina non trovata",
+      "subtitle": "La pagina che stai cercando non esiste.",
+      "button": "Torna alla home"
+    },
+    "notFoundAdmin": {
+      "title": "Pagina non trovata",
+      "subtitle": "La pagina richiesta non esiste nell'area admin."
     }
   },
   "matchStatus": {
@@ -89,6 +120,8 @@
     }
   },
   "errors": {
-    "loadingMatches": "Errore nel caricamento delle partite"
+    "loadingMatches": "Errore nel caricamento delle partite",
+    "loadingTables": "Errore nel caricamento della classifica.",
+    "loadingNews": "Errore nel caricamento delle notizie."
   }
 }
