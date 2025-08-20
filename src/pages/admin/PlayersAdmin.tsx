@@ -19,12 +19,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const PlayersAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: players, isLoading, error } = usePlayers();
   const deletePlayerMutation = useDeletePlayer();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const filteredPlayers = useMemo(() => {
     if (!players || !searchTerm) return players;
@@ -40,10 +42,10 @@ const PlayersAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "team", label: "Squadra" },
-    { key: "role", label: "Ruolo" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.players.table.name') },
+    { key: "team", label: t('pages.admin.players.table.team') },
+    { key: "role", label: t('pages.admin.players.table.role') },
+    { key: "actions", label: t('pages.admin.players.table.actions') },
   ];
 
   const data = filteredPlayers?.map(player => ({
@@ -73,10 +75,9 @@ const PlayersAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina giocatore</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.players.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare il giocatore "{player.first_name} {player.last_name}"? 
-                Questa azione non può essere annullata.
+                {t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -100,7 +101,7 @@ const PlayersAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento dei giocatori</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.players.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -120,7 +121,10 @@ const PlayersAdmin = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina giocatore</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{player.first_name} {player.last_name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('pages.admin.players.deleteDialogTitle')}</AlertDialogTitle>
+                  <AlertDialogDescription>{t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}</AlertDialogDescription>
+                </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDeletePlayer(player.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deletePlayerMutation.isPending}>
@@ -135,11 +139,11 @@ const PlayersAdmin = () => {
           <AdminMobileCard
             key={player.id}
             title={<Link to={`/admin/players/${player.id}`} className="hover:underline">{player.first_name} {player.last_name}</Link>}
-            subtitle={player.teams?.name || "Nessuna squadra"}
+            subtitle={player.teams?.name || t('pages.admin.players.mobile.noTeam')}
             actions={actions}
           >
             <div className="mt-2 text-sm">
-              <span className="font-semibold text-muted-foreground">Ruolo:</span> {player.role || "-"}
+              <span className="font-semibold text-muted-foreground">{t('pages.admin.players.mobile.roleLabel')}:</span> {player.role || "-"}
             </div>
           </AdminMobileCard>
         );
@@ -150,18 +154,18 @@ const PlayersAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Giocatori</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.players.title')}</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <Link to="/admin/players/import" className="w-full">
             <Button variant="outline" className="w-full">
               <Upload className="mr-2 h-4 w-4" />
-              Importa
+              {t('pages.admin.players.importButton')}
             </Button>
           </Link>
           <Link to="/admin/players/new" className="w-full">
             <Button className="w-full">
               <Plus className="mr-2 h-4 w-4" />
-              Nuovo giocatore
+              {t('pages.admin.players.newPlayerButton')}
             </Button>
           </Link>
         </div>
@@ -171,7 +175,7 @@ const PlayersAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca giocatori..."
+            placeholder={t('pages.admin.players.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -187,8 +191,8 @@ const PlayersAdmin = () => {
         <>
           {filteredPlayers && filteredPlayers.length > 0 && (
             <div className="mb-4 text-sm text-muted-foreground">
-              {filteredPlayers.length} giocator{filteredPlayers.length === 1 ? 'e' : 'i'} 
-              {searchTerm && ` trovat${filteredPlayers.length === 1 ? 'o' : 'i'} per "${searchTerm}"`}
+              {t('pages.admin.players.playersFound', { count: filteredPlayers.length })}
+              {searchTerm && ` per "${searchTerm}"`}
             </div>
           )}
           {isMobile ? renderMobileList() : <Table columns={columns} data={data} />}

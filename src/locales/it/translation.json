@@ -216,6 +216,89 @@
         "newPlayer": "Nuovo Giocatore",
         "newMatch": "Nuova Partita",
         "newArticle": "Nuovo Articolo"
+      },
+      "teams": {
+        "title": "Squadre",
+        "newTeam": "Nuova squadra",
+        "searchPlaceholder": "Cerca squadre...",
+        "teamsFound_one": "{{count}} squadra trovata",
+        "teamsFound_other": "{{count}} squadre trovate",
+        "deleteDialogTitle": "Elimina squadra",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare la squadra \"{{teamName}}\"? Questa azione non può essere annullata e rimuoverà anche tutti i giocatori associati.",
+        "deleteButton": "Elimina",
+        "cancelButton": "Annulla",
+        "errorLoading": "Errore nel caricamento delle squadre",
+        "table": {
+          "name": "Nome",
+          "parish": "Parrocchia",
+          "venue": "Campo",
+          "colors": "Colori",
+          "actions": "Azioni"
+        }
+      },
+      "teamForm": {
+        "editTitle": "Modifica squadra",
+        "newTitle": "Nuova squadra",
+        "cancelButton": "Annulla",
+        "saveButton": "Salva modifiche",
+        "createButton": "Crea squadra",
+        "basicInfo": "Informazioni di Base",
+        "teamNameLabel": "Nome squadra *",
+        "teamNamePlaceholder": "Nome squadra",
+        "parishLabel": "Parrocchia",
+        "parishPlaceholder": "Parrocchia",
+        "colorsLabel": "Colori sociali",
+        "colorsPlaceholder": "Seleziona fino a due colori",
+        "venueLabel": "Campo",
+        "venuePlaceholder": "Seleziona un campo",
+        "noVenue": "Nessun campo",
+        "images": "Immagini",
+        "logoLabel": "Logo squadra",
+        "squadPhotoLabel": "Foto della rosa"
+      },
+      "players": {
+        "title": "Giocatori",
+        "importButton": "Importa",
+        "newPlayerButton": "Nuovo giocatore",
+        "searchPlaceholder": "Cerca giocatori...",
+        "playersFound_one": "{{count}} giocatore trovato",
+        "playersFound_other": "{{count}} giocatori trovati",
+        "deleteDialogTitle": "Elimina giocatore",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare il giocatore \"{{playerName}}\"? Questa azione non può essere annullata.",
+        "errorLoading": "Errore nel caricamento dei giocatori",
+        "table": {
+          "name": "Nome",
+          "team": "Squadra",
+          "role": "Ruolo",
+          "actions": "Azioni"
+        },
+        "mobile": {
+          "noTeam": "Nessuna squadra",
+          "roleLabel": "Ruolo"
+        }
+      },
+      "playerForm": {
+        "editTitle": "Modifica giocatore",
+        "newTitle": "Nuovo giocatore",
+        "cancelButton": "Annulla",
+        "saveButton": "Salva modifiche",
+        "createButton": "Crea giocatore",
+        "photoLabel": "Foto del giocatore",
+        "firstNameLabel": "Nome *",
+        "firstNamePlaceholder": "Nome",
+        "lastNameLabel": "Cognome *",
+        "lastNamePlaceholder": "Cognome",
+        "teamLabel": "Squadra",
+        "teamPlaceholder": "Seleziona una squadra",
+        "noTeam": "Nessuna squadra",
+        "dobLabel": "Data di nascita",
+        "nationalityLabel": "Nazionalità",
+        "nationalityPlaceholder": "Seleziona nazionalità",
+        "roleLabel": "Ruolo",
+        "rolePlaceholder": "Seleziona un ruolo",
+        "jerseyNumberLabel": "Numero maglia",
+        "documentIdLabel": "Documento (opzionale)",
+        "documentIdPlaceholder": "ID documento"
       }
     },
     "notFound": {

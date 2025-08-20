@@ -216,6 +216,89 @@
         "newPlayer": "New Player",
         "newMatch": "New Match",
         "newArticle": "New Article"
+      },
+      "teams": {
+        "title": "Teams",
+        "newTeam": "New team",
+        "searchPlaceholder": "Search teams...",
+        "teamsFound_one": "{{count}} team found",
+        "teamsFound_other": "{{count}} teams found",
+        "deleteDialogTitle": "Delete team",
+        "deleteDialogDescription": "Are you sure you want to delete the team \"{{teamName}}\"? This action cannot be undone and will also remove all associated players.",
+        "deleteButton": "Delete",
+        "cancelButton": "Cancel",
+        "errorLoading": "Error loading teams",
+        "table": {
+          "name": "Name",
+          "parish": "Parish",
+          "venue": "Venue",
+          "colors": "Colors",
+          "actions": "Actions"
+        }
+      },
+      "teamForm": {
+        "editTitle": "Edit team",
+        "newTitle": "New team",
+        "cancelButton": "Cancel",
+        "saveButton": "Save changes",
+        "createButton": "Create team",
+        "basicInfo": "Basic Information",
+        "teamNameLabel": "Team name *",
+        "teamNamePlaceholder": "Team name",
+        "parishLabel": "Parish",
+        "parishPlaceholder": "Parish",
+        "colorsLabel": "Team colors",
+        "colorsPlaceholder": "Select up to two colors",
+        "venueLabel": "Venue",
+        "venuePlaceholder": "Select a venue",
+        "noVenue": "No venue",
+        "images": "Images",
+        "logoLabel": "Team logo",
+        "squadPhotoLabel": "Squad photo"
+      },
+      "players": {
+        "title": "Players",
+        "importButton": "Import",
+        "newPlayerButton": "New player",
+        "searchPlaceholder": "Search players...",
+        "playersFound_one": "{{count}} player found",
+        "playersFound_other": "{{count}} players found",
+        "deleteDialogTitle": "Delete player",
+        "deleteDialogDescription": "Are you sure you want to delete the player \"{{playerName}}\"? This action cannot be undone.",
+        "errorLoading": "Error loading players",
+        "table": {
+          "name": "Name",
+          "team": "Team",
+          "role": "Role",
+          "actions": "Actions"
+        },
+        "mobile": {
+          "noTeam": "No team",
+          "roleLabel": "Role"
+        }
+      },
+      "playerForm": {
+        "editTitle": "Edit player",
+        "newTitle": "New player",
+        "cancelButton": "Cancel",
+        "saveButton": "Save changes",
+        "createButton": "Create player",
+        "photoLabel": "Player photo",
+        "firstNameLabel": "First name *",
+        "firstNamePlaceholder": "First name",
+        "lastNameLabel": "Last name *",
+        "lastNamePlaceholder": "Last name",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Select a team",
+        "noTeam": "No team",
+        "dobLabel": "Date of birth",
+        "nationalityLabel": "Nationality",
+        "nationalityPlaceholder": "Select nationality",
+        "roleLabel": "Role",
+        "rolePlaceholder": "Select a role",
+        "jerseyNumberLabel": "Jersey number",
+        "documentIdLabel": "Document (optional)",
+        "documentIdPlaceholder": "Document ID"
       }
     },
     "notFound": {
