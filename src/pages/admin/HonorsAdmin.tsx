@@ -17,22 +17,24 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const HonorsAdmin = () => {
   const { data: honors, isLoading, error } = useAllHonors();
   const deleteHonorMutation = useDeleteHonor();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const handleDelete = async (id: string) => {
     await deleteHonorMutation.mutateAsync(id);
   };
 
   const columns = [
-    { key: "team", label: "Squadra" },
-    { key: "achievement", label: "Risultato" },
-    { key: "competition", label: "Competizione" },
-    { key: "season", label: "Stagione" },
-    { key: "actions", label: "Azioni" },
+    { key: "team", label: t('pages.admin.honors.table.team') },
+    { key: "achievement", label: t('pages.admin.honors.table.achievement') },
+    { key: "competition", label: t('pages.admin.honors.table.competition') },
+    { key: "season", label: t('pages.admin.honors.table.season') },
+    { key: "actions", label: t('pages.admin.honors.table.actions') },
   ];
 
   const data = honors?.map(honor => ({
@@ -51,8 +53,8 @@ const HonorsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina trofeo</AlertDialogTitle>
-              <AlertDialogDescription>Sei sicuro di voler eliminare questo risultato? L'azione non può essere annullata.</AlertDialogDescription>
+              <AlertDialogTitle>{t('pages.admin.honors.deleteDialogTitle')}</AlertDialogTitle>
+              <AlertDialogDescription>{t('pages.admin.honors.deleteDialogDescription')}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annulla</AlertDialogCancel>
@@ -66,7 +68,7 @@ const HonorsAdmin = () => {
     ),
   })) || [];
 
-  if (error) return <AdminLayout><div className="text-center py-12"><p className="text-red-600">Errore: {error.message}</p></div></AdminLayout>;
+  if (error) return <AdminLayout><div className="text-center py-12"><p className="text-red-600">{t('pages.admin.honors.errorLoading')}: {error.message}</p></div></AdminLayout>;
 
   const renderMobileList = () => (
     <div className="space-y-4">
@@ -77,7 +79,7 @@ const HonorsAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina trofeo</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare questo risultato?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.honors.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.honors.deleteDialogDescription')}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(honor.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteHonorMutation.isPending}>
@@ -107,8 +109,8 @@ const HonorsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Albo d'Oro</h1>
-        <Link to="/admin/honors/new"><Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />Aggiungi Trofeo</Button></Link>
+        <h1 className="text-2xl font-bold">{t('pages.admin.honors.title')}</h1>
+        <Link to="/admin/honors/new"><Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.honors.newHonor')}</Button></Link>
       </div>
       {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
         isMobile ? renderMobileList() : <Table columns={columns} data={data} />

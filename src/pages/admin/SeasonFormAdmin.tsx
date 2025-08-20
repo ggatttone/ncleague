@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const seasonSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -22,6 +23,7 @@ const SeasonFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: season, isLoading: seasonLoading } = useSeason(id);
   const createMutation = useCreateSeason();
@@ -69,16 +71,16 @@ const SeasonFormAdmin = () => {
     <AdminLayout>
       <div className="max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
-          {isEdit ? "Modifica stagione" : "Nuova stagione"}
+          {isEdit ? t('pages.admin.seasonForm.editTitle') : t('pages.admin.seasonForm.newTitle')}
         </h1>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <Label htmlFor="name">Nome *</Label>
+            <Label htmlFor="name">{t('pages.admin.seasonForm.nameLabel')}</Label>
             <Input
               id="name"
               {...register("name")}
-              placeholder="Es: 2023/2024"
+              placeholder={t('pages.admin.seasonForm.namePlaceholder')}
               autoFocus
             />
             {errors.name && (
@@ -88,7 +90,7 @@ const SeasonFormAdmin = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="start_date">Data Inizio</Label>
+              <Label htmlFor="start_date">{t('pages.admin.seasonForm.startDateLabel')}</Label>
               <Input
                 id="start_date"
                 type="date"
@@ -96,7 +98,7 @@ const SeasonFormAdmin = () => {
               />
             </div>
             <div>
-              <Label htmlFor="end_date">Data Fine</Label>
+              <Label htmlFor="end_date">{t('pages.admin.seasonForm.endDateLabel')}</Label>
               <Input
                 id="end_date"
                 type="date"

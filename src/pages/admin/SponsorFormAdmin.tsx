@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 const sponsorSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -26,6 +27,7 @@ const SponsorFormAdmin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useTranslation();
 
   const { data: sponsor, isLoading: sponsorLoading } = useSponsor(id);
   const { data: teams, isLoading: teamsLoading } = useTeams();
@@ -62,22 +64,22 @@ const SponsorFormAdmin = () => {
   return (
     <AdminLayout>
       <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">{isEdit ? "Modifica Sponsor" : "Nuovo Sponsor"}</h1>
+        <h1 className="text-2xl font-bold mb-6">{isEdit ? t('pages.admin.sponsorForm.editTitle') : t('pages.admin.sponsorForm.newTitle')}</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <ImageUploader bucketName="sponsor-logos" currentImageUrl={logoUrlValue} onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true })} label="Logo Sponsor" />
+          <ImageUploader bucketName="sponsor-logos" currentImageUrl={logoUrlValue} onUploadSuccess={(url) => setValue('logo_url', url, { shouldValidate: true })} label={t('pages.admin.sponsorForm.logoLabel')} />
           <div>
-            <Label htmlFor="name">Nome *</Label>
+            <Label htmlFor="name">{t('pages.admin.sponsorForm.nameLabel')}</Label>
             <Input id="name" {...register("name")} autoFocus />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
           </div>
           <div>
-            <Label htmlFor="team_id">Squadra *</Label>
+            <Label htmlFor="team_id">{t('pages.admin.sponsorForm.teamLabel')}</Label>
             <Controller
               name="team_id"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona una squadra" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('pages.admin.sponsorForm.teamPlaceholder')} /></SelectTrigger>
                   <SelectContent>{teams?.map((team) => <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>)}</SelectContent>
                 </Select>
               )}
@@ -85,8 +87,8 @@ const SponsorFormAdmin = () => {
             {errors.team_id && <p className="text-sm text-destructive mt-1">{errors.team_id.message}</p>}
           </div>
           <div>
-            <Label htmlFor="website_url">Sito Web</Label>
-            <Input id="website_url" {...register("website_url")} placeholder="https://..." />
+            <Label htmlFor="website_url">{t('pages.admin.sponsorForm.websiteLabel')}</Label>
+            <Input id="website_url" {...register("website_url")} placeholder={t('pages.admin.sponsorForm.websitePlaceholder')} />
             {errors.website_url && <p className="text-sm text-destructive mt-1">{errors.website_url.message}</p>}
           </div>
           <div className="flex gap-2 justify-end pt-4">

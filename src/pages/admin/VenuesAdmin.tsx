@@ -19,12 +19,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const VenuesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: venues, isLoading, error } = useVenues();
   const deleteVenueMutation = useDeleteVenue();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const filteredVenues = useMemo(() => {
     if (!venues || !searchTerm) return venues;
@@ -42,11 +44,11 @@ const VenuesAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "struttura", label: "Struttura" },
-    { key: "address", label: "Indirizzo" },
-    { key: "city", label: "Città" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.venues.table.name') },
+    { key: "struttura", label: t('pages.admin.venues.table.structure') },
+    { key: "address", label: t('pages.admin.venues.table.address') },
+    { key: "city", label: t('pages.admin.venues.table.city') },
+    { key: "actions", label: t('pages.admin.venues.table.actions') },
   ];
 
   const data = filteredVenues?.map(venue => ({
@@ -69,10 +71,9 @@ const VenuesAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina campo</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.venues.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare il campo "{venue.name}"? 
-                Questa azione non può essere annullata.
+                {t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -96,7 +97,7 @@ const VenuesAdmin = () => {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento dei campi</p>
+          <p className="text-red-600 mb-4">{t('pages.admin.venues.errorLoading')}</p>
           <p className="text-muted-foreground">{error.message}</p>
         </div>
       </AdminLayout>
@@ -112,7 +113,7 @@ const VenuesAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina campo</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{venue.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.venues.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDeleteVenue(venue.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteVenueMutation.isPending}>
@@ -140,11 +141,11 @@ const VenuesAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Campi da Gioco</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.venues.title')}</h1>
         <Link to="/admin/venues/new">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Nuovo campo
+            {t('pages.admin.venues.newVenue')}
           </Button>
         </Link>
       </div>
@@ -153,7 +154,7 @@ const VenuesAdmin = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Cerca campi..."
+            placeholder={t('pages.admin.venues.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"

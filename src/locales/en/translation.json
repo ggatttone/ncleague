@@ -448,6 +448,137 @@
           "minuteLabel": "Minute",
           "addButton": "Add Goal"
         }
+      },
+      "competitions": {
+        "title": "Competitions",
+        "newCompetition": "New competition",
+        "searchPlaceholder": "Search competitions...",
+        "errorLoading": "Error loading competitions",
+        "deleteDialogTitle": "Delete competition",
+        "deleteDialogDescription": "Are you sure you want to delete the competition \"{{name}}\"? This action cannot be undone.",
+        "table": {
+          "name": "Name",
+          "slug": "Slug",
+          "level": "Level",
+          "actions": "Actions"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Edit competition",
+        "newTitle": "New competition",
+        "nameLabel": "Name *",
+        "namePlaceholder": "E.g.: Serie A",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "E.g.: serie-a (generated if empty)",
+        "levelLabel": "Level",
+        "levelPlaceholder": "E.g.: 1 (for sorting)"
+      },
+      "seasons": {
+        "title": "Seasons",
+        "newSeason": "New season",
+        "searchPlaceholder": "Search seasons...",
+        "errorLoading": "Error loading seasons",
+        "deleteDialogTitle": "Delete season",
+        "deleteDialogDescription": "Are you sure you want to delete the season \"{{name}}\"? This action cannot be undone.",
+        "table": {
+          "name": "Name",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "actions": "Actions"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Edit season",
+        "newTitle": "New season",
+        "nameLabel": "Name *",
+        "namePlaceholder": "E.g.: 2023/2024",
+        "startDateLabel": "Start Date",
+        "endDateLabel": "End Date"
+      },
+      "venues": {
+        "title": "Venues",
+        "newVenue": "New venue",
+        "searchPlaceholder": "Search venues...",
+        "errorLoading": "Error loading venues",
+        "deleteDialogTitle": "Delete venue",
+        "deleteDialogDescription": "Are you sure you want to delete the venue \"{{name}}\"? This action cannot be undone.",
+        "table": {
+          "name": "Name",
+          "structure": "Structure",
+          "address": "Address",
+          "city": "City",
+          "actions": "Actions"
+        }
+      },
+      "venueForm": {
+        "editTitle": "Edit venue",
+        "newTitle": "New venue",
+        "mainInfo": "Main Information",
+        "nameLabel": "Venue name *",
+        "namePlaceholder": "Name of the venue",
+        "structureLabel": "Structure",
+        "structurePlaceholder": "E.g.: Sports Center, Arena...",
+        "addressLabel": "Address",
+        "addressPlaceholder": "Street, number",
+        "cityLabel": "City",
+        "cityPlaceholder": "City",
+        "geoPosition": "Geographical Position",
+        "latitudeLabel": "Latitude",
+        "latitudePlaceholder": "E.g.: 45.4642",
+        "longitudeLabel": "Longitude",
+        "longitudePlaceholder": "E.g.: 9.1900",
+        "mapPreview": "Enter latitude and longitude to display the map.",
+        "image": "Image",
+        "imageLabel": "Photo of the structure"
+      },
+      "sponsors": {
+        "title": "Sponsors",
+        "newSponsor": "New Sponsor",
+        "errorLoading": "Error loading sponsors",
+        "deleteDialogTitle": "Delete sponsor",
+        "deleteDialogDescription": "Are you sure you want to delete the sponsor \"{{name}}\"? This action cannot be undone.",
+        "table": {
+          "name": "Name",
+          "team": "Team",
+          "website": "Website",
+          "actions": "Actions"
+        }
+      },
+      "sponsorForm": {
+        "editTitle": "Edit Sponsor",
+        "newTitle": "New Sponsor",
+        "logoLabel": "Sponsor Logo",
+        "nameLabel": "Name *",
+        "teamLabel": "Team *",
+        "teamPlaceholder": "Select a team",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://..."
+      },
+      "honors": {
+        "title": "Honors",
+        "newHonor": "Add Trophy",
+        "errorLoading": "Error loading honors",
+        "deleteDialogTitle": "Delete trophy",
+        "deleteDialogDescription": "Are you sure you want to delete this achievement? This action cannot be undone.",
+        "table": {
+          "team": "Team",
+          "achievement": "Achievement",
+          "competition": "Competition",
+          "season": "Season",
+          "actions": "Actions"
+        }
+      },
+      "honorForm": {
+        "editTitle": "Edit Trophy",
+        "newTitle": "New Trophy",
+        "teamLabel": "Team *",
+        "teamPlaceholder": "Select team",
+        "competitionLabel": "Competition *",
+        "competitionPlaceholder": "Select competition",
+        "seasonLabel": "Season *",
+        "seasonPlaceholder": "Select season",
+        "achievementLabel": "Achievement *",
+        "achievementPlaceholder": "E.g.: Champion, Cup Winner..."
       }
     },
     "notFound": {

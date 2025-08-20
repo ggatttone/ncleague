@@ -448,6 +448,137 @@
           "minuteLabel": "Minuto",
           "addButton": "Aggiungi Goal"
         }
+      },
+      "competitions": {
+        "title": "Competizioni",
+        "newCompetition": "Nuova competizione",
+        "searchPlaceholder": "Cerca competizioni...",
+        "errorLoading": "Errore nel caricamento delle competizioni",
+        "deleteDialogTitle": "Elimina competizione",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare la competizione \"{{name}}\"? Questa azione non può essere annullata.",
+        "table": {
+          "name": "Nome",
+          "slug": "Slug",
+          "level": "Livello",
+          "actions": "Azioni"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Modifica competizione",
+        "newTitle": "Nuova competizione",
+        "nameLabel": "Nome *",
+        "namePlaceholder": "Es: Serie A",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "Es: serie-a (generato se vuoto)",
+        "levelLabel": "Livello",
+        "levelPlaceholder": "Es: 1 (per ordinamento)"
+      },
+      "seasons": {
+        "title": "Stagioni",
+        "newSeason": "Nuova stagione",
+        "searchPlaceholder": "Cerca stagioni...",
+        "errorLoading": "Errore nel caricamento delle stagioni",
+        "deleteDialogTitle": "Elimina stagione",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare la stagione \"{{name}}\"? Questa azione non può essere annullata.",
+        "table": {
+          "name": "Nome",
+          "startDate": "Data Inizio",
+          "endDate": "Data Fine",
+          "actions": "Azioni"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Modifica stagione",
+        "newTitle": "Nuova stagione",
+        "nameLabel": "Nome *",
+        "namePlaceholder": "Es: 2023/2024",
+        "startDateLabel": "Data Inizio",
+        "endDateLabel": "Data Fine"
+      },
+      "venues": {
+        "title": "Campi da Gioco",
+        "newVenue": "Nuovo campo",
+        "searchPlaceholder": "Cerca campi...",
+        "errorLoading": "Errore nel caricamento dei campi",
+        "deleteDialogTitle": "Elimina campo",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare il campo \"{{name}}\"? Questa azione non può essere annullata.",
+        "table": {
+          "name": "Nome",
+          "structure": "Struttura",
+          "address": "Indirizzo",
+          "city": "Città",
+          "actions": "Azioni"
+        }
+      },
+      "venueForm": {
+        "editTitle": "Modifica campo",
+        "newTitle": "Nuovo campo",
+        "mainInfo": "Informazioni Principali",
+        "nameLabel": "Nome campo *",
+        "namePlaceholder": "Nome del campo",
+        "structureLabel": "Struttura",
+        "structurePlaceholder": "Es: Centro Sportivo, Palazzetto...",
+        "addressLabel": "Indirizzo",
+        "addressPlaceholder": "Via, numero civico",
+        "cityLabel": "Città",
+        "cityPlaceholder": "Città",
+        "geoPosition": "Posizione Geografica",
+        "latitudeLabel": "Latitudine",
+        "latitudePlaceholder": "Es: 45.4642",
+        "longitudeLabel": "Longitudine",
+        "longitudePlaceholder": "Es: 9.1900",
+        "mapPreview": "Inserisci latitudine e longitudine per visualizzare la mappa.",
+        "image": "Immagine",
+        "imageLabel": "Foto della struttura"
+      },
+      "sponsors": {
+        "title": "Sponsor",
+        "newSponsor": "Nuovo Sponsor",
+        "errorLoading": "Errore nel caricamento degli sponsor",
+        "deleteDialogTitle": "Elimina sponsor",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare lo sponsor \"{{name}}\"? Questa azione non può essere annullata.",
+        "table": {
+          "name": "Nome",
+          "team": "Squadra",
+          "website": "Sito Web",
+          "actions": "Azioni"
+        }
+      },
+      "sponsorForm": {
+        "editTitle": "Modifica Sponsor",
+        "newTitle": "Nuovo Sponsor",
+        "logoLabel": "Logo Sponsor",
+        "nameLabel": "Nome *",
+        "teamLabel": "Squadra *",
+        "teamPlaceholder": "Seleziona una squadra",
+        "websiteLabel": "Sito Web",
+        "websitePlaceholder": "https://..."
+      },
+      "honors": {
+        "title": "Albo d'Oro",
+        "newHonor": "Aggiungi Trofeo",
+        "errorLoading": "Errore nel caricamento dell'albo d'oro",
+        "deleteDialogTitle": "Elimina trofeo",
+        "deleteDialogDescription": "Sei sicuro di voler eliminare questo risultato? L'azione non può essere annullata.",
+        "table": {
+          "team": "Squadra",
+          "achievement": "Risultato",
+          "competition": "Competizione",
+          "season": "Stagione",
+          "actions": "Azioni"
+        }
+      },
+      "honorForm": {
+        "editTitle": "Modifica Trofeo",
+        "newTitle": "Nuovo Trofeo",
+        "teamLabel": "Squadra *",
+        "teamPlaceholder": "Seleziona squadra",
+        "competitionLabel": "Competizione *",
+        "competitionPlaceholder": "Seleziona competizione",
+        "seasonLabel": "Stagione *",
+        "seasonPlaceholder": "Seleziona stagione",
+        "achievementLabel": "Risultato *",
+        "achievementPlaceholder": "Es: Campione, Vincitore Coppa..."
       }
     },
     "notFound": {

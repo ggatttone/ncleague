@@ -17,21 +17,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { useTranslation } from "react-i18next";
 
 const SponsorsAdmin = () => {
   const { data: sponsors, isLoading, error } = useAllSponsors();
   const deleteSponsorMutation = useDeleteSponsor();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const handleDelete = async (id: string) => {
     await deleteSponsorMutation.mutateAsync(id);
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
-    { key: "team", label: "Squadra" },
-    { key: "website", label: "Sito Web" },
-    { key: "actions", label: "Azioni" },
+    { key: "name", label: t('pages.admin.sponsors.table.name') },
+    { key: "team", label: t('pages.admin.sponsors.table.team') },
+    { key: "website", label: t('pages.admin.sponsors.table.website') },
+    { key: "actions", label: t('pages.admin.sponsors.table.actions') },
   ];
 
   const data = sponsors?.map(sponsor => ({
@@ -49,9 +51,9 @@ const SponsorsAdmin = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Elimina sponsor</AlertDialogTitle>
+              <AlertDialogTitle>{t('pages.admin.sponsors.deleteDialogTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Sei sicuro di voler eliminare lo sponsor "{sponsor.name}"? Questa azione non può essere annullata.
+                {t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -66,7 +68,7 @@ const SponsorsAdmin = () => {
     ),
   })) || [];
 
-  if (error) return <AdminLayout><div className="text-center py-12"><p className="text-red-600">Errore: {error.message}</p></div></AdminLayout>;
+  if (error) return <AdminLayout><div className="text-center py-12"><p className="text-red-600">{t('pages.admin.sponsors.errorLoading')}: {error.message}</p></div></AdminLayout>;
 
   const renderMobileList = () => (
     <div className="space-y-4">
@@ -77,7 +79,7 @@ const SponsorsAdmin = () => {
             <AlertDialog>
               <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
               <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Elimina sponsor</AlertDialogTitle><AlertDialogDescription>Sei sicuro di voler eliminare "{sponsor.name}"?</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.sponsors.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleDelete(sponsor.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteSponsorMutation.isPending}>
@@ -103,8 +105,8 @@ const SponsorsAdmin = () => {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Sponsor</h1>
-        <Link to="/admin/sponsors/new"><Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />Nuovo Sponsor</Button></Link>
+        <h1 className="text-2xl font-bold">{t('pages.admin.sponsors.title')}</h1>
+        <Link to="/admin/sponsors/new"><Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.sponsors.newSponsor')}</Button></Link>
       </div>
       {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
         isMobile ? renderMobileList() : <Table columns={columns} data={data} />
