@@ -1,0 +1,55 @@
+{
+  "navbar": {
+    "home": "Home",
+    "matches": "Partite",
+    "tables": "Classifiche",
+    "statistics": "Statistiche",
+    "news": "News",
+    "players": "Giocatori",
+    "teams": "Squadre",
+    "gallery": "Galleria"
+  },
+  "userMenu": {
+    "profile": "Profilo",
+    "admin": "Admin",
+    "logout": "Esci",
+    "login": "Accedi"
+  },
+  "themeToggle": {
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "errors": {
+    "requiredField": "Questo campo è obbligatorio",
+    "passwordMinLength": "La password deve essere di almeno 6 caratteri",
+    "loadingMatches": "Errore nel caricamento delle partite",
+    "loadingTables": "Errore nel caricamento della classifica",
+    "loadingNews": "Errore nel caricamento delle notizie"
+  },
+  "matchStatus": {
+    "scheduled": "Programmata",
+    "ongoing": "In corso",
+    "completed": "Completata",
+    "postponed": "Rinviata",
+    "cancelled": "Cancellata"
+  },
+  "userStatus": {
+    "active": "Attivo",
+    "blocked": "Bloccato"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "captain": "Capitano",
+    "player": "Player"
+  },
+  "buttons": {
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "save": "Salva Modifiche",
+    "create": "Crea",
+    "back": "Indietro",
+    "preview": "Vai all'Anteprima"
+  }
+}
