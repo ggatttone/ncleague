@@ -9,7 +9,8 @@ import { useTeams } from "@/hooks/use-teams";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Plus, Edit, Trash2, Upload, ChevronDown } from "lucide-react";
+import { Search, Loader2, Plus, Edit, Trash2, Upload, ChevronDown, FileDown } from "lucide-react";
+import * as XLSX from "xlsx";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +34,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { BulkEditDialog } from "@/components/admin/BulkEditDialog";
-import { showSuccess } from "@/utils/toast";
+import { showSuccess, showError } from "@/utils/toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ const FixturesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
   const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | 'referee' | null }>({ open: false, type: null });
+  const [isExporting, setIsExporting] = useState(false);
   const isMobile = useIsMobile();
   const { t } = useTranslation();
 
@@ -109,6 +111,41 @@ const FixturesAdmin = () => {
             setSelectedMatches([]);
         }
     });
+  };
+
+  const handleExport = () => {
+    if (!filteredMatches || filteredMatches.length === 0) {
+      showError(t('pages.admin.fixtures.noMatchesToExport'));
+      return;
+    }
+    setIsExporting(true);
+    try {
+      const dataToExport = filteredMatches.map(match => ({
+        'Data Partita': format(new Date(match.match_date), "dd/MM/yyyy HH:mm", { locale: it }),
+        'Squadra Casa': match.home_teams.name,
+        'Squadra Ospite': match.away_teams.name,
+        'Punteggio Casa': match.status === 'completed' ? match.home_score : '',
+        'Punteggio Ospite': match.status === 'completed' ? match.away_score : '',
+        'Stato': t(`matchStatus.${match.status}`, { defaultValue: match.status }),
+        'Competizione': match.competitions?.name || 'N/D',
+        'Stagione': match.seasons?.name || 'N/D',
+        'Campo': match.venues?.name || 'N/D',
+        'Arbitro': match.referee_teams?.name || 'N/D',
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Partite");
+
+      const today = format(new Date(), 'yyyy-MM-dd');
+      XLSX.writeFile(workbook, `esportazione-partite-${today}.xlsx`);
+      showSuccess('Esportazione completata!');
+    } catch (e) {
+      console.error(e);
+      showError('Si è verificato un errore durante l\'esportazione.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -218,6 +255,10 @@ const FixturesAdmin = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">{t('pages.admin.fixtures.title')}</h1>
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <Button variant="outline" className="w-full" onClick={handleExport} disabled={isExporting}>
+              {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileDown className="mr-2 h-4 w-4" />}
+              {isExporting ? t('pages.admin.fixtures.exporting') : t('pages.admin.fixtures.exportButton')}
+            </Button>
             <Link to="/admin/fixtures/import" className="w-full"><Button variant="outline" className="w-full"><Upload className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.importButton')}</Button></Link>
             <Link to="/admin/fixtures/new/bulk" className="w-full"><Button variant="outline" className="w-full"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.newBulkButton')}</Button></Link>
             <Link to="/admin/fixtures/new" className="w-full"><Button className="w-full"><Plus className="mr-2 h-4 w-4" />{t('pages.admin.fixtures.newMatchButton')}</Button></Link>

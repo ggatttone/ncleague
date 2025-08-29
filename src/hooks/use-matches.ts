@@ -6,6 +6,8 @@ export type MatchWithTeams = Match & {
   home_teams: Team;
   away_teams: Team;
   referee_teams: Team | null;
+  competitions: { name: string } | null;
+  seasons: { name: string } | null;
 };
 
 export interface UpsertMatchData {
@@ -38,6 +40,8 @@ export function useMatches() {
       .select(`
         *,
         venues(name),
+        competitions(name),
+        seasons(name),
         home_teams:teams!matches_home_team_id_fkey(*),
         away_teams:teams!matches_away_team_id_fkey(*),
         referee_teams:teams!matches_referee_team_id_fkey(*)
@@ -54,6 +58,8 @@ export function useMatch(id: string | undefined) {
           .select(`
             *,
             venues(name),
+            competitions(name),
+            seasons(name),
             home_teams:teams!matches_home_team_id_fkey(*),
             away_teams:teams!matches_away_team_id_fkey(*),
             referee_teams:teams!matches_referee_team_id_fkey(*)
@@ -74,6 +80,8 @@ export function useTeamMatches(teamId?: string) {
         .select(`
           *,
           venues(name),
+          competitions(name),
+          seasons(name),
           home_teams:teams!matches_home_team_id_fkey(*),
           away_teams:teams!matches_away_team_id_fkey(*),
           referee_teams:teams!matches_referee_team_id_fkey(*)

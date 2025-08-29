@@ -11,7 +11,7 @@
   },
   "userMenu": {
     "profile": "Profiel",
-    "admin": "Admin",
+    "admin": "Beheerderspaneel",
     "logout": "Uitloggen",
     "login": "Inloggen"
   },
@@ -24,7 +24,7 @@
     "requiredField": "Dit veld is verplicht",
     "passwordMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
     "loadingMatches": "Fout bij het laden van wedstrijden",
-    "loadingTables": "Fout bij het laden van klassementen",
+    "loadingTables": "Fout bij het laden van klassement",
     "loadingNews": "Fout bij het laden van nieuws"
   },
   "matchStatus": {
@@ -34,31 +34,501 @@
     "postponed": "Uitgesteld",
     "cancelled": "Geannuleerd"
   },
+  "roles": {
+    "admin": "Beheerder",
+    "editor": "Redacteur",
+    "captain": "Aanvoerder",
+    "player": "Speler"
+  },
   "userStatus": {
     "active": "Actief",
     "blocked": "Geblokkeerd"
   },
-  "roles": {
-    "admin": "Admin",
-    "editor": "Editor",
-    "captain": "Kapitein",
-    "player": "Speler"
+  "components": {
+    "table": {
+      "noData": "Geen gegevens beschikbaar"
+    },
+    "dynamicTitle": {
+      "appName": "NC League"
+    },
+    "hero": {
+      "title": "Welkom bij NC League",
+      "subtitle": "Het platform voor jouw voetbalcompetitie: uitslagen, klassementen, statistieken en nieuws!",
+      "button": "Ontdek de laatste speeldag"
+    },
+    "latestNews": {
+      "title": "Laatste Nieuws",
+      "readAll": "Lees al het nieuws"
+    },
+    "leagueTableWidget": {
+      "title": "Klassement",
+      "noData": "Geen gegevens beschikbaar voor het klassement.",
+      "viewFull": "Bekijk volledig klassement"
+    },
+    "upcomingMatches": {
+      "title": "Aankomende Wedstrijden",
+      "noMatches": "Geen wedstrijden gepland.",
+      "viewFull": "Bekijk alle wedstrijden"
+    },
+    "pinnedArticle": {
+      "title": "Uitgelicht",
+      "noArticle": "Geen uitgelicht artikel geselecteerd."
+    },
+    "comments": {
+      "writeComment": "Schrijf een reactie...",
+      "submit": "Verstuur",
+      "noComments": "Nog geen reacties. Wees de eerste die reageert!"
+    }
   },
   "pages": {
+    "home": {
+      "buildingTitle": "We bouwen aan je homepage!",
+      "buildingSubtitle": "Kom snel terug om de inhoud te zien."
+    },
+    "matches": {
+      "title": "Wedstrijden",
+      "selectCompetitionAndSeason": "Selecteer een competitie en seizoen om wedstrijden te bekijken.",
+      "upcoming": "Aankomend",
+      "completed": "Voltooid",
+      "noUpcoming": "Geen aankomende wedstrijden",
+      "noUpcomingSubtitle": "Kom later terug voor updates van het schema.",
+      "addFirstMatch": "Voeg de eerste wedstrijd toe",
+      "noCompleted": "Geen voltooide wedstrijden",
+      "noCompletedSubtitle": "Resultaten verschijnen hier zodra de wedstrijden zijn afgelopen."
+    },
+    "news": {
+      "title": "Nieuws",
+      "newPost": "Nieuw Bericht",
+      "noNews": "Geen nieuws gevonden.",
+      "noNewsTitle": "Nog geen nieuws",
+      "noNewsSubtitle": "Kom later terug voor de laatste updates."
+    },
+    "newsDetails": {
+      "notFoundTitle": "Artikel Niet Gevonden",
+      "notFoundSubtitle": "Het artikel dat je zoekt bestaat niet of is verwijderd.",
+      "backToNews": "Terug naar nieuws",
+      "allNews": "Al het Nieuws",
+      "comments": "Reacties"
+    },
+    "notFound": {
+      "title": "404 - Pagina Niet Gevonden",
+      "subtitle": "De pagina die je zoekt bestaat niet.",
+      "button": "Terug naar Home"
+    },
+    "notFoundAdmin": {
+      "title": "404 - Pagina Niet Gevonden",
+      "subtitle": "De gevraagde pagina bestaat niet in het beheerdersgedeelte."
+    },
+    "players": {
+      "title": "Spelers",
+      "newPlayer": "Nieuwe Speler",
+      "manage": "Beheren",
+      "searchPlaceholder": "Zoek op naam, team, rol...",
+      "noPlayersFound": "Geen spelers gevonden",
+      "noPlayersRegistered": "Geen spelers geregistreerd",
+      "noPlayersFoundSubtitle": "Probeer je zoektermen aan te passen.",
+      "addFirstPlayer": "Voeg de eerste speler toe",
+      "playersFound_one": "{{count}} speler gevonden",
+      "playersFound_other": "{{count}} spelers gevonden",
+      "yearsOld": "jaar oud"
+    },
+    "playerDetails": {
+      "playerNotFound": "Speler niet gevonden",
+      "backToPlayers": "Terug naar spelers",
+      "yearsOld": "jaar oud",
+      "goalsScored": "Gescoord",
+      "matchesPlayed": "Gespeeld",
+      "dataUnavailable": "Gegevens niet beschikbaar",
+      "avgGoals": "Gem. Goals/Wedstrijd",
+      "goalsHistory": "Doelpunten Geschiedenis",
+      "noGoals": "Geen doelpunten geregistreerd voor deze speler."
+    },
+    "profile": {
+      "title": "Mijn Profiel",
+      "personalInfo": "Persoonlijke Informatie",
+      "personalInfoSubtitle": "Werk je persoonlijke gegevens bij.",
+      "profilePicture": "Profielfoto",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "saveChanges": "Wijzigingen Opslaan",
+      "changePassword": "Wachtwoord Wijzigen",
+      "changePasswordSubtitle": "Zorg voor een veilig wachtwoord.",
+      "newPassword": "Nieuw Wachtwoord",
+      "updatePassword": "Wachtwoord Bijwerken"
+    },
+    "seasonArchive": {
+      "title": "Seizoensarchief",
+      "season": "Seizoen",
+      "competition": "Competitie",
+      "division": "Divisie"
+    },
+    "statistics": {
+      "title": "Statistieken",
+      "competition": "Competitie",
+      "selectCompetition": "Selecteer Competitie",
+      "season": "Seizoen",
+      "selectSeason": "Selecteer Seizoen",
+      "topScorers": "Topscorers",
+      "errorLoading": "Fout bij het laden van gegevens.",
+      "pos": "Pos",
+      "player": "Speler",
+      "team": "Team",
+      "goals": "Goals",
+      "noData": "Geen gegevens beschikbaar voor de geselecteerde filters."
+    },
+    "tables": {
+      "title": "Klassement",
+      "selectCompetition": "Selecteer Competitie",
+      "selectSeason": "Selecteer Seizoen",
+      "selectToView": "Selecteer een competitie en seizoen om het klassement te bekijken.",
+      "pos": "#",
+      "team": "Team",
+      "mp": "G",
+      "w": "W",
+      "d": "G",
+      "l": "V",
+      "gf": "DV",
+      "ga": "DT",
+      "gd": "DS",
+      "pts": "Ptn"
+    },
+    "teams": {
+      "title": "Teams",
+      "newTeam": "Nieuw Team",
+      "manage": "Beheren",
+      "noTeamsFound": "Geen teams gevonden",
+      "noTeamsFoundSubtitle": "Teams worden hier weergegeven zodra ze zijn toegevoegd.",
+      "addFirstTeam": "Voeg het eerste team toe"
+    },
+    "teamDetails": {
+      "teamNotFound": "Team niet gevonden",
+      "backToTeams": "Terug naar teams",
+      "results": "Resultaten",
+      "stats": "Statistieken",
+      "latestMatches": "Laatste Wedstrijden",
+      "seasonalStats": "Seizoensstatistieken",
+      "played": "Gespeeld",
+      "wins": "Gewonnen",
+      "draws": "Gelijk",
+      "losses": "Verloren",
+      "goalsFor": "Doelpunten Voor",
+      "goalsAgainst": "Doelpunten Tegen",
+      "hallOfFame": "Erelijst",
+      "noTrophies": "Geen trofeeën in de prijzenkast.",
+      "sponsors": "Sponsors",
+      "noSponsors": "Geen sponsors voor dit team."
+    },
+    "gallery": {
+      "title": "Galerij",
+      "uploadMedia": "Media Uploaden",
+      "uploadDialogTitle": "Upload nieuwe mediabestanden",
+      "uploadDialogDescription": "Je kunt maximaal 10 bestanden tegelijk uploaden. Selecteer een album om ze te organiseren.",
+      "fileLabel": "Bestanden (afbeeldingen of video's)",
+      "fileError": "Je moet minstens één bestand selecteren.",
+      "fileLimitError": "Je kunt maximaal 10 bestanden tegelijk uploaden.",
+      "albumLabel": "Toevoegen aan album (optioneel)",
+      "noAlbum": "Geen album",
+      "uploadButton": "Uploaden",
+      "tabs": {
+        "albums": "Albums",
+        "allMedia": "Alle Media"
+      },
+      "noAlbumsTitle": "Geen albums aangemaakt",
+      "noAlbumsSubtitle": "Albums helpen je om je foto's en video's te organiseren.",
+      "noMediaTitle": "Geen media geüpload",
+      "noMediaSubtitle": "Begin met het uploaden van je eerste foto's of video's.",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items"
+    },
+    "albumDetails": {
+      "notFoundTitle": "Album niet gevonden",
+      "backToGallery": "Terug naar galerij",
+      "emptyAlbumTitle": "Dit album is leeg",
+      "emptyAlbumSubtitle": "Upload nieuwe media om ze aan dit album toe te voegen."
+    },
     "admin": {
+      "sidebar": {
+        "leagueManagement": "Competitiebeheer",
+        "dashboard": "Dashboard",
+        "teams": "Teams",
+        "players": "Spelers",
+        "fixtures": "Wedstrijden",
+        "competitions": "Competities",
+        "seasons": "Seizoenen",
+        "venues": "Locaties",
+        "sponsors": "Sponsors",
+        "honors": "Erelijst",
+        "contentManagement": "Contentbeheer",
+        "articles": "Artikelen",
+        "gallery": "Galerij",
+        "siteConfig": "Site Configuratie",
+        "homepageLayout": "Homepage Indeling",
+        "appearance": "Uiterlijk",
+        "countdownEvent": "Aftel-evenement",
+        "administration": "Administratie",
+        "userManagement": "Gebruikersbeheer"
+      },
+      "index": {
+        "title": "Beheerdersdashboard",
+        "teams": "Teams",
+        "manageTeams": "Beheer teams",
+        "players": "Spelers",
+        "managePlayers": "Beheer spelers",
+        "scheduledMatches": "Geplande Wedstrijden",
+        "manageFixtures": "Beheer wedstrijden",
+        "registeredUsers": "Geregistreerde Gebruikers",
+        "manageUsers": "Beheer gebruikers",
+        "quickActions": "Snelle Acties",
+        "newTeam": "Nieuw Team",
+        "newPlayer": "Nieuwe Speler",
+        "newMatch": "Nieuwe Wedstrijd",
+        "newArticle": "Nieuw Artikel"
+      },
+      "teams": {
+        "title": "Beheer Teams",
+        "newTeam": "Nieuw Team",
+        "searchPlaceholder": "Zoek op naam, parochie, locatie...",
+        "teamsFound_one": "{{count}} team gevonden",
+        "teamsFound_other": "{{count}} teams gevonden",
+        "errorLoading": "Fout bij het laden van teams",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie kan niet ongedaan worden gemaakt. Dit zal het team \"{{teamName}}\" en alle bijbehorende gegevens permanent verwijderen.",
+        "cancelButton": "Annuleren",
+        "deleteButton": "Verwijderen",
+        "table": {
+          "name": "Naam",
+          "parish": "Parochie",
+          "venue": "Locatie",
+          "colors": "Kleuren",
+          "actions": "Acties"
+        }
+      },
+      "teamForm": {
+        "editTitle": "Team Bewerken",
+        "newTitle": "Nieuw Team",
+        "cancelButton": "Annuleren",
+        "saveButton": "Wijzigingen Opslaan",
+        "createButton": "Team Aanmaken",
+        "basicInfo": "Basis Informatie",
+        "teamNameLabel": "Teamnaam",
+        "teamNamePlaceholder": "Bijv. Real F.C.",
+        "parishLabel": "Parochie",
+        "parishPlaceholder": "Bijv. St. Jan",
+        "colorsLabel": "Teamkleuren",
+        "colorsPlaceholder": "Selecteer maximaal 2 kleuren...",
+        "venueLabel": "Thuislocatie",
+        "venuePlaceholder": "Selecteer een locatie...",
+        "noVenue": "Geen locatie",
+        "images": "Afbeeldingen",
+        "logoLabel": "Teamlogo",
+        "squadPhotoLabel": "Teamfoto"
+      },
+      "players": {
+        "title": "Beheer Spelers",
+        "importButton": "Importeren",
+        "newPlayerButton": "Nieuwe Speler",
+        "searchPlaceholder": "Zoek op naam of team...",
+        "playersFound_one": "{{count}} speler gevonden",
+        "playersFound_other": "{{count}} spelers gevonden",
+        "errorLoading": "Fout bij het laden van spelers",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal de speler \"{{playerName}}\" permanent verwijderen.",
+        "table": {
+          "name": "Naam",
+          "team": "Team",
+          "role": "Rol",
+          "actions": "Acties"
+        },
+        "mobile": {
+          "noTeam": "Geen team",
+          "roleLabel": "Rol"
+        }
+      },
+      "playerForm": {
+        "editTitle": "Speler Bewerken",
+        "newTitle": "Nieuwe Speler",
+        "cancelButton": "Annuleren",
+        "saveButton": "Wijzigingen Opslaan",
+        "createButton": "Speler Aanmaken",
+        "photoLabel": "Spelerfoto",
+        "firstNameLabel": "Voornaam",
+        "firstNamePlaceholder": "Jan",
+        "lastNameLabel": "Achternaam",
+        "lastNamePlaceholder": "Jansen",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Selecteer een team...",
+        "noTeam": "Geen team",
+        "dobLabel": "Geboortedatum",
+        "nationalityLabel": "Nationaliteit",
+        "nationalityPlaceholder": "Selecteer nationaliteit...",
+        "roleLabel": "Rol",
+        "rolePlaceholder": "Selecteer een rol...",
+        "jerseyNumberLabel": "Rugnummer",
+        "documentIdLabel": "Document ID",
+        "documentIdPlaceholder": "Bijv. AA12345BB"
+      },
+      "fixtures": {
+        "title": "Beheer Wedstrijden",
+        "importButton": "Importeren",
+        "newBulkButton": "Bulk Aanmaken",
+        "newMatchButton": "Nieuwe Wedstrijd",
+        "exportButton": "Exporteer naar Excel",
+        "exporting": "Exporteren...",
+        "noMatchesToExport": "Geen wedstrijden om te exporteren.",
+        "searchPlaceholder": "Zoek op team of locatie...",
+        "matchesFound_one": "{{count}} wedstrijd geselecteerd",
+        "matchesFound_other": "{{count}} wedstrijden geselecteerd",
+        "bulkActions": "Bulkacties",
+        "editStatus": "Status bewerken",
+        "assignCompetition": "Competitie toewijzen",
+        "assignSeason": "Seizoen toewijzen",
+        "assignVenue": "Locatie toewijzen",
+        "assignReferee": "Scheidsrechter toewijzen",
+        "deleteSelected": "Geselecteerde verwijderen",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal de wedstrijd {{matchName}} permanent verwijderen.",
+        "deleteSelectedDialogTitle": "Geselecteerde wedstrijden verwijderen?",
+        "deleteSelectedDialogDescription": "Je staat op het punt om {{count}} wedstrijden permanent te verwijderen. Deze actie kan niet ongedaan worden gemaakt.",
+        "table": {
+          "match": "Wedstrijd",
+          "date": "Datum",
+          "status": "Status",
+          "actions": "Acties"
+        },
+        "bulkEdit": {
+          "statusTitle": "Wedstrijdstatus Bewerken",
+          "statusDescription": "Selecteer een nieuwe status voor de {{count}} geselecteerde wedstrijden.",
+          "statusLabel": "Nieuwe Status",
+          "competitionTitle": "Competitie Toewijzen",
+          "competitionDescription": "Selecteer een competitie voor de {{count}} geselecteerde wedstrijden.",
+          "competitionLabel": "Competitie",
+          "seasonTitle": "Seizoen Toewijzen",
+          "seasonDescription": "Selecteer een seizoen voor de {{count}} geselecteerde wedstrijden.",
+          "seasonLabel": "Seizoen",
+          "venueTitle": "Locatie Toewijzen",
+          "venueDescription": "Selecteer een locatie voor de {{count}} geselecteerde wedstrijden.",
+          "venueLabel": "Locatie",
+          "refereeTitle": "Scheidsrechter Toewijzen",
+          "refereeDescription": "Selecteer een scheidsrechter voor de {{count}} geselecteerde wedstrijden.",
+          "refereeLabel": "Scheidsrechter"
+        }
+      },
+      "fixtureForm": {
+        "editTitle": "Wedstrijd Bewerken",
+        "newTitle": "Nieuwe Wedstrijd",
+        "competitionLabel": "Competitie",
+        "competitionPlaceholder": "Selecteer competitie...",
+        "seasonLabel": "Seizoen",
+        "seasonPlaceholder": "Selecteer seizoen...",
+        "homeTeamLabel": "Thuisploeg",
+        "homeTeamPlaceholder": "Selecteer team...",
+        "awayTeamLabel": "Uitploeg",
+        "awayTeamPlaceholder": "Selecteer team...",
+        "refereeLabel": "Scheidsrechter (optioneel)",
+        "refereePlaceholder": "Selecteer scheidsrechter...",
+        "noReferee": "Geen scheidsrechter",
+        "dateLabel": "Datum en Tijd",
+        "venueLabel": "Locatie (optioneel)",
+        "venuePlaceholder": "Selecteer een locatie...",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Selecteer status...",
+        "homeScoreLabel": "Score Thuis",
+        "awayScoreLabel": "Score Uit"
+      },
+      "fixtureBulkForm": {
+        "title": "Bulk Wedstrijden Aanmaken",
+        "saveAllButton": "Alle Wedstrijden Opslaan",
+        "teamsLabel": "Teams & Scheidsrechter",
+        "homeTeamPlaceholder": "Thuisploeg",
+        "awayTeamPlaceholder": "Uitploeg",
+        "refereePlaceholder": "Scheidsrechter (optioneel)",
+        "dateAndVenueLabel": "Datum & Locatie",
+        "venuePlaceholder": "Locatie (optioneel)",
+        "competitionAndSeasonLabel": "Competitie & Seizoen",
+        "competitionPlaceholder": "Competitie (optioneel)",
+        "seasonPlaceholder": "Seizoen (optioneel)",
+        "deleteRowButton": "Rij verwijderen",
+        "addMatchButton": "Wedstrijd Toevoegen"
+      },
+      "fixtureImport": {
+        "title": "Importeer Wedstrijden uit Bestand",
+        "step1Title": "1. Upload je bestand",
+        "step1Description": "Selecteer een .xlsx of .csv bestand met wedstrijdgegevens.",
+        "uploadBoxClick": "Klik om te uploaden",
+        "uploadBoxDrag": "of sleep het bestand hierheen",
+        "step2Title": "2. Koppel kolommen",
+        "step2Description": "Koppel de kolommen uit je bestand aan de vereiste velden.",
+        "backButton": "Terug",
+        "previewButton": "Naar Voorbeeld",
+        "step3Title": "3. Voorbeeld en Bevestig",
+        "step3Description": "Controleer de gegevens. Rijen met fouten worden niet geïmporteerd.",
+        "tableStatus": "Status",
+        "tableErrors": "Fouten",
+        "importButton_one": "Importeer {{count}} Geldige Wedstrijd",
+        "importButton_other": "Importeer {{count}} Geldige Wedstrijden",
+        "mapping": {
+          "home_team_name": "Naam Thuisploeg",
+          "away_team_name": "Naam Uitploeg",
+          "match_date": "Wedstrijddatum (DD/MM/YYYY HH:mm)",
+          "referee_team_name": "Naam Scheidsrechter (Optioneel)",
+          "competition_name": "Naam Competitie (Optioneel)",
+          "season_name": "Naam Seizoen (Optioneel)",
+          "home_score": "Score Thuis (Optioneel)",
+          "away_score": "Score Uit (Optioneel)",
+          "venue_name": "Naam Locatie (Optioneel)"
+        },
+        "errors": {
+          "emptyFile": "Het bestand is leeg of bevat geen geldige gegevens.",
+          "readFileError": "Fout bij het lezen van het bestand. Zorg ervoor dat het een geldig formaat is (.xlsx, .csv).",
+          "homeTeamNotFound": "Thuisploeg niet gevonden: \"{{name}}\"",
+          "awayTeamNotFound": "Uitploeg niet gevonden: \"{{name}}\"",
+          "teamsSame": "Teams moeten verschillend zijn.",
+          "invalidDate": "Ongeldige datum: \"{{date}}\"",
+          "scoresRequired": "Scores zijn verplicht voor voltooide wedstrijden.",
+          "refereeNotFound": "Scheidsrechter niet gevonden: \"{{name}}\"",
+          "refereeSameAsTeam": "Scheidsrechter kan niet een van de teams zijn.",
+          "venueNotFound": "Locatie niet gevonden: \"{{name}}\"",
+          "competitionNotFound": "Competitie niet gevonden: \"{{name}}\"",
+          "seasonNotFound": "Seizoen niet gevonden: \"{{name}}\"",
+          "noValidMatches": "Geen geldige wedstrijden om te importeren."
+        }
+      },
+      "fixtureDetails": {
+        "title": "Wedstrijddetails",
+        "editButton": "Wedstrijd Bewerken",
+        "homeLabel": "Thuis",
+        "awayLabel": "Uit",
+        "dateLabel": "Datum",
+        "venueLabel": "Locatie",
+        "statusLabel": "Status",
+        "refereeLabel": "Scheidsrechter",
+        "scorersTitle": "Doelpuntenmakers",
+        "noScorers": "Geen doelpuntenmakers ingevoerd.",
+        "addScorerButton": "Doelpuntenmaker Toevoegen",
+        "addScorerDialogTitle": "Doelpuntenmaker Toevoegen",
+        "addScorerDialogDescription": "Selecteer de speler en de minuut van het doelpunt.",
+        "deleteScorerDialogTitle": "Doelpuntenmaker verwijderen?",
+        "deleteScorerDialogDescription": "Deze actie zal het doelpunt uit de wedstrijd verwijderen.",
+        "goalForm": {
+          "teamLabel": "Team",
+          "teamPlaceholder": "Selecteer een team",
+          "playerLabel": "Speler",
+          "playerLoading": "Spelers laden...",
+          "playerPlaceholder": "Selecteer een speler",
+          "minuteLabel": "Minuut",
+          "addButton": "Toevoegen"
+        }
+      },
       "users": {
         "title": "Gebruikersbeheer",
         "searchPlaceholder": "Zoek op naam, e-mail, rol...",
         "usersFound_one": "{{count}} gebruiker gevonden",
         "usersFound_other": "{{count}} gebruikers gevonden",
-        "errorLoading": "Fout bij het laden van gebruikers",
+        "errorLoading": "Fout bij het laden van gebruikers.",
         "accessDeniedTitle": "Toegang Geweigerd",
-        "accessDeniedDescription": "U heeft niet de benodigde rechten om deze pagina te bekijken.",
-        "demoteError": "U kunt de admin-rol niet van uzelf verwijderen.",
-        "actionsButton": "Acties",
-        "changeRoleLabel": "Rol Wijzigen",
-        "blockUser": "Blokkeer Gebruiker",
-        "unblockUser": "Deblokkeer Gebruiker",
+        "accessDeniedDescription": "Je hebt niet de benodigde rechten om deze pagina te bekijken.",
+        "demoteError": "Je kunt je eigen beheerdersaccount niet degraderen.",
         "table": {
           "name": "Naam",
           "email": "E-mail",
@@ -66,8 +536,260 @@
           "status": "Status",
           "actions": "Acties"
         },
-        "rolePlaceholder": "Rol wijzigen..."
+        "actionsButton": "Acties",
+        "changeRoleLabel": "Rol Wijzigen",
+        "blockUser": "Blokkeer Gebruiker",
+        "unblockUser": "Deblokkeer Gebruiker"
+      },
+      "venues": {
+        "title": "Beheer Locaties",
+        "newVenue": "Nieuwe Locatie",
+        "searchPlaceholder": "Zoek op naam, adres, stad...",
+        "errorLoading": "Fout bij het laden van locaties.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal de locatie \"{{name}}\" permanent verwijderen.",
+        "table": {
+          "name": "Naam",
+          "structure": "Structuur",
+          "address": "Adres",
+          "city": "Stad",
+          "actions": "Acties"
+        }
+      },
+      "venueForm": {
+        "editTitle": "Locatie Bewerken",
+        "newTitle": "Nieuwe Locatie",
+        "mainInfo": "Hoofdinformatie",
+        "nameLabel": "Naam Locatie",
+        "namePlaceholder": "Bijv. Gemeentelijk Sportveld",
+        "structureLabel": "Structuur",
+        "structurePlaceholder": "Bijv. Sporthal",
+        "addressLabel": "Adres",
+        "addressPlaceholder": "Hoofdstraat 123",
+        "cityLabel": "Stad",
+        "cityPlaceholder": "Amsterdam",
+        "geoPosition": "Geografische Positie",
+        "latitudeLabel": "Breedtegraad",
+        "latitudePlaceholder": "52.3676",
+        "longitudeLabel": "Lengtegraad",
+        "longitudePlaceholder": "4.9041",
+        "image": "Afbeelding",
+        "imageLabel": "Foto van de locatie"
+      },
+      "competitions": {
+        "title": "Beheer Competities",
+        "newCompetition": "Nieuwe Competitie",
+        "searchPlaceholder": "Zoek op naam...",
+        "errorLoading": "Fout bij het laden van competities.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal de competitie \"{{name}}\" permanent verwijderen.",
+        "table": {
+          "name": "Naam",
+          "slug": "Slug",
+          "level": "Niveau",
+          "actions": "Acties"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Competitie Bewerken",
+        "newTitle": "Nieuwe Competitie",
+        "nameLabel": "Naam",
+        "namePlaceholder": "Bijv. Kampioenschap",
+        "slugLabel": "Slug (voor URL)",
+        "slugPlaceholder": "kampioenschap",
+        "levelLabel": "Niveau (voor sortering)",
+        "levelPlaceholder": "1"
+      },
+      "seasons": {
+        "title": "Beheer Seizoenen",
+        "newSeason": "Nieuw Seizoen",
+        "searchPlaceholder": "Zoek op naam...",
+        "errorLoading": "Fout bij het laden van seizoenen.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal het seizoen \"{{name}}\" permanent verwijderen.",
+        "table": {
+          "name": "Naam",
+          "startDate": "Startdatum",
+          "endDate": "Einddatum",
+          "actions": "Acties"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Seizoen Bewerken",
+        "newTitle": "Nieuw Seizoen",
+        "nameLabel": "Naam",
+        "namePlaceholder": "Bijv. 2023/2024",
+        "startDateLabel": "Startdatum",
+        "endDateLabel": "Einddatum"
+      },
+      "sponsors": {
+        "title": "Beheer Sponsors",
+        "newSponsor": "Nieuwe Sponsor",
+        "errorLoading": "Fout bij het laden van sponsors.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal de sponsor \"{{name}}\" permanent verwijderen.",
+        "table": {
+          "name": "Naam",
+          "team": "Team",
+          "website": "Website",
+          "actions": "Acties"
+        }
+      },
+      "sponsorForm": {
+        "editTitle": "Sponsor Bewerken",
+        "newTitle": "Nieuwe Sponsor",
+        "logoLabel": "Logo",
+        "nameLabel": "Naam",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Selecteer een team...",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://www.voorbeeld.com"
+      },
+      "honors": {
+        "title": "Beheer Erelijst",
+        "newHonor": "Nieuwe Prijs",
+        "errorLoading": "Fout bij het laden van de erelijst.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal deze prijs permanent verwijderen.",
+        "table": {
+          "team": "Team",
+          "achievement": "Prestatie",
+          "competition": "Competitie",
+          "season": "Seizoen",
+          "actions": "Acties"
+        }
+      },
+      "honorForm": {
+        "editTitle": "Prijs Bewerken",
+        "newTitle": "Nieuwe Prijs",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Selecteer een team...",
+        "competitionLabel": "Competitie",
+        "competitionPlaceholder": "Selecteer een competitie...",
+        "seasonLabel": "Seizoen",
+        "seasonPlaceholder": "Selecteer een seizoen...",
+        "achievementLabel": "Prestatie",
+        "achievementPlaceholder": "Bijv. Winnaar"
+      },
+      "articles": {
+        "title": "Beheer Artikelen",
+        "newArticle": "Nieuw Artikel",
+        "searchPlaceholder": "Zoek op titel...",
+        "errorLoading": "Fout bij het laden van artikelen.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal het artikel \"{{name}}\" permanent verwijderen.",
+        "pinTooltip": "Vastpinnen",
+        "unpinTooltip": "Losmaken",
+        "table": {
+          "pin": "Pin",
+          "title": "Titel",
+          "status": "Status",
+          "author": "Auteur",
+          "publishedAt": "Gepubliceerd op",
+          "actions": "Acties"
+        },
+        "status": {
+          "draft": "Concept",
+          "published": "Gepubliceerd"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Artikel Bewerken",
+        "newTitle": "Nieuw Artikel",
+        "mainContent": "Hoofdinhoud",
+        "titleLabel": "Titel",
+        "titlePlaceholder": "Titel van je artikel",
+        "slugLabel": "Slug (automatisch gegenereerd)",
+        "slugPlaceholder": "titel-van-je-artikel",
+        "contentLabel": "Inhoud",
+        "contentPlaceholder": "Schrijf hier je artikel...",
+        "publication": "Publicatie",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Selecteer een status",
+        "coverImage": "Omslagafbeelding"
+      },
+      "albums": {
+        "title": "Beheer Albums",
+        "newAlbum": "Nieuw Album",
+        "errorLoading": "Fout bij het laden van albums.",
+        "deleteDialogTitle": "Weet je het zeker?",
+        "deleteDialogDescription": "Deze actie zal het album \"{{name}}\" permanent verwijderen en alle media uit het album verplaatsen.",
+        "table": {
+          "name": "Naam",
+          "itemCount": "Items",
+          "createdAt": "Aangemaakt op",
+          "actions": "Acties"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Album Bewerken",
+        "newTitle": "Nieuw Album",
+        "nameLabel": "Albumnaam",
+        "descriptionLabel": "Beschrijving (optioneel)"
+      },
+      "theme": {
+        "title": "Uiterlijk van de Site",
+        "saveButton": "Wijzigingen Opslaan",
+        "colorsCardTitle": "Kleuren",
+        "colorsCardDescription": "Pas de hoofdkleuren van de site aan.",
+        "primaryColorLabel": "Primaire Kleur",
+        "secondaryColorLabel": "Secundaire Kleur",
+        "typographyCardTitle": "Typografie",
+        "typographyCardDescription": "Kies het lettertype voor de site.",
+        "fontFamilyLabel": "Lettertypefamilie",
+        "fontPlaceholder": "Selecteer een lettertype",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Upload het logo van je toernooi.",
+        "logoFileLabel": "Logobestand"
+      },
+      "event": {
+        "title": "Aftellen Volgend Evenement",
+        "saveButton": "Wijzigingen Opslaan",
+        "settingsCardTitle": "Aftelinstellingen",
+        "settingsCardDescription": "Configureer de aftelwidget die op de homepage verschijnt.",
+        "switchLabel": "Aftellen Inschakelen",
+        "switchDescription": "Toon of verberg de widget op de homepage.",
+        "titleLabel": "Titel Evenement",
+        "titlePlaceholder": "Bijv. Start Play-offs",
+        "dateLabel": "Datum en Tijd Evenement"
+      },
+      "homepage": {
+        "title": "Homepage Indeling",
+        "addRowButton": "Rij Toevoegen",
+        "saveButton": "Indeling Opslaan",
+        "layoutCardTitle": "Pagina Structuur",
+        "layoutCardDescription": "Sleep widgets om ze opnieuw te ordenen. Voeg rijen en kolommen toe om de indeling aan te passen.",
+        "layout": "Indeling",
+        "deleteRow": "Rij Verwijderen",
+        "row": "Rij",
+        "startBuilding": "Begin met het bouwen van je homepage door een rij toe te voegen.",
+        "widgetPaletteTitle": "Beschikbare Widgets",
+        "heroWidgetForm": {
+          "title": "Configureer Hero Widget",
+          "description": "Pas de titel, ondertitel en knop van de hoofdsectie aan.",
+          "mainTitleLabel": "Hoofdtitel",
+          "subtitleLabel": "Ondertitel",
+          "buttonTextLabel": "Knoptekst",
+          "buttonLinkLabel": "Knoplink (bijv. /matches)"
+        },
+        "pinnedArticleWidgetForm": {
+          "title": "Configureer Uitgelicht Artikel Widget",
+          "description": "Kies welk artikel in deze sectie wordt weergegeven. Het artikel moet eerst 'vastgepind' zijn in het artikelbeheer.",
+          "pinnedArticleLabel": "Vastgepind Artikel",
+          "loadingPlaceholder": "Artikelen laden...",
+          "selectPlaceholder": "Selecteer een artikel",
+          "noPinnedArticles": "Geen vastgepinde artikelen gevonden. Ga naar 'Artikelen' en pin een artikel om het hier te tonen."
+        }
       }
     }
+  },
+  "widgets": {
+    "hero": "Hero Sectie",
+    "countdown": "Aftel-evenement",
+    "media_carousel": "Media Carrousel",
+    "upcoming_matches": "Aankomende Wedstrijden",
+    "latest_news": "Laatste Nieuws",
+    "league_table": "Klassement",
+    "pinned_article": "Uitgelicht Artikel"
   }
 }
