@@ -2,7 +2,6 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Table } from "@/components/Table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSupabaseQuery, useSupabaseMutation } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
 import { Loader2, Search, XCircle, ChevronDown, MoreVertical } from "lucide-react";
@@ -22,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FunctionError } from "@supabase/supabase-js";
 
 interface Profile {
   id: string;
@@ -39,18 +39,9 @@ const UsersAdmin = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const { data: profiles, isLoading, error, refetch } = useSupabaseQuery<Profile[]>(
+  const { data: profiles, isLoading, error } = useSupabaseQuery<Profile[], FunctionError>(
     ['admin-users'],
-    async () => {
-      const { data, error } = await supabase.functions.invoke('get-users');
-      if (error) {
-        if (error instanceof Error && error.message.includes('401')) {
-          throw new Error("Non hai i permessi per visualizzare gli utenti.");
-        }
-        throw error;
-      }
-      return data;
-    },
+    () => supabase.functions.invoke('get-users'),
     { 
       enabled: hasPermission(['admin']),
       retry: false
@@ -70,9 +61,6 @@ const UsersAdmin = () => {
       return data;
     },
     {
-      onSuccess: () => {
-        refetch();
-      },
       onError: (err) => {
         showError(`Errore nell'aggiornamento del ruolo: ${err.message}`);
       }
