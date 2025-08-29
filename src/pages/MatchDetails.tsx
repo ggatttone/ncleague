@@ -13,6 +13,8 @@ type MatchWithTeams = Match & {
   home_teams: Team;
   away_teams: Team;
   referee_teams: Team | null;
+  competitions: { name: string } | null;
+  seasons: { name: string } | null;
 };
 
 type GoalWithPlayer = Goal & {
@@ -29,6 +31,8 @@ const MatchDetails = () => {
       .select(`
         *,
         venues(name),
+        competitions(name),
+        seasons(name),
         referee_teams:teams!matches_referee_team_id_fkey(name),
         home_teams:teams!matches_home_team_id_fkey (
           id,
@@ -206,18 +210,26 @@ const MatchDetails = () => {
             </div>
           </div>
 
-          {match.venues?.name && (
-            <div className="flex items-center gap-2 text-muted-foreground mt-4 justify-center sm:justify-start">
-              <MapPin className="h-4 w-4" />
-              <span>{match.venues.name}</span>
-            </div>
-          )}
-          {match.referee_teams?.name && (
-            <div className="flex items-center gap-2 text-muted-foreground mt-2 justify-center sm:justify-start">
-              <Gavel className="h-4 w-4" />
-              <span>Arbitro: {match.referee_teams.name}</span>
-            </div>
-          )}
+          <div className="flex flex-col sm:flex-row items-center gap-x-4 gap-y-2 text-muted-foreground mt-4 justify-center sm:justify-start flex-wrap">
+            {match.venues?.name && (
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span>{match.venues.name}</span>
+              </div>
+            )}
+            {match.competitions?.name && (
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                <span>{match.competitions.name} {match.seasons?.name && `- ${match.seasons.name}`}</span>
+              </div>
+            )}
+            {match.referee_teams?.name && (
+              <div className="flex items-center gap-2">
+                <Gavel className="h-4 w-4" />
+                <span>Arbitro: {match.referee_teams.name}</span>
+              </div>
+            )}
+          </div>
         </CardHeader>
       </Card>
 

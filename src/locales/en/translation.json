@@ -11,7 +11,7 @@
   },
   "userMenu": {
     "profile": "Profile",
-    "admin": "Admin",
+    "admin": "Admin Panel",
     "logout": "Logout",
     "login": "Login"
   },
@@ -34,31 +34,501 @@
     "postponed": "Postponed",
     "cancelled": "Cancelled"
   },
-  "userStatus": {
-    "active": "Active",
-    "blocked": "Blocked"
-  },
   "roles": {
-    "admin": "Admin",
+    "admin": "Administrator",
     "editor": "Editor",
     "captain": "Captain",
     "player": "Player"
   },
+  "userStatus": {
+    "active": "Active",
+    "blocked": "Blocked"
+  },
+  "components": {
+    "table": {
+      "noData": "No data available"
+    },
+    "dynamicTitle": {
+      "appName": "NC League"
+    },
+    "hero": {
+      "title": "Welcome to NC League",
+      "subtitle": "The platform for your soccer league: results, tables, stats, and news!",
+      "button": "Discover the latest matchday"
+    },
+    "latestNews": {
+      "title": "Latest News",
+      "readAll": "Read all news"
+    },
+    "leagueTableWidget": {
+      "title": "League Table",
+      "noData": "No data available for the league table.",
+      "viewFull": "View full table"
+    },
+    "upcomingMatches": {
+      "title": "Upcoming Matches",
+      "noMatches": "No matches scheduled.",
+      "viewFull": "View all matches"
+    },
+    "pinnedArticle": {
+      "title": "Featured",
+      "noArticle": "No featured article selected."
+    },
+    "comments": {
+      "writeComment": "Write a comment...",
+      "submit": "Submit",
+      "noComments": "No comments yet. Be the first to comment!"
+    }
+  },
   "pages": {
+    "home": {
+      "buildingTitle": "We are building your homepage!",
+      "buildingSubtitle": "Check back soon to see the content."
+    },
+    "matches": {
+      "title": "Matches",
+      "selectCompetitionAndSeason": "Select a competition and season to view matches.",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "noUpcoming": "No upcoming matches",
+      "noUpcomingSubtitle": "Check back later for schedule updates.",
+      "addFirstMatch": "Add the first match",
+      "noCompleted": "No completed matches",
+      "noCompletedSubtitle": "Results will appear here as soon as matches are finished."
+    },
+    "news": {
+      "title": "News",
+      "newPost": "New Post",
+      "noNews": "No news found.",
+      "noNewsTitle": "No news yet",
+      "noNewsSubtitle": "Check back later for the latest updates."
+    },
+    "newsDetails": {
+      "notFoundTitle": "Article Not Found",
+      "notFoundSubtitle": "The article you are looking for does not exist or has been removed.",
+      "backToNews": "Back to news",
+      "allNews": "All News",
+      "comments": "Comments"
+    },
+    "notFound": {
+      "title": "404 - Page Not Found",
+      "subtitle": "The page you are looking for does not exist.",
+      "button": "Go back to Home"
+    },
+    "notFoundAdmin": {
+      "title": "404 - Page Not Found",
+      "subtitle": "The requested page does not exist in the admin area."
+    },
+    "players": {
+      "title": "Players",
+      "newPlayer": "New Player",
+      "manage": "Manage",
+      "searchPlaceholder": "Search by name, team, role...",
+      "noPlayersFound": "No players found",
+      "noPlayersRegistered": "No players registered",
+      "noPlayersFoundSubtitle": "Try changing your search terms.",
+      "addFirstPlayer": "Add the first player",
+      "playersFound_one": "{{count}} player found",
+      "playersFound_other": "{{count}} players found",
+      "yearsOld": "years old"
+    },
+    "playerDetails": {
+      "playerNotFound": "Player not found",
+      "backToPlayers": "Back to players",
+      "yearsOld": "years old",
+      "goalsScored": "Goals Scored",
+      "matchesPlayed": "Matches Played",
+      "dataUnavailable": "Data unavailable",
+      "avgGoals": "Avg Goals/Match",
+      "goalsHistory": "Goal History",
+      "noGoals": "No goals recorded for this player."
+    },
+    "profile": {
+      "title": "My Profile",
+      "personalInfo": "Personal Information",
+      "personalInfoSubtitle": "Update your personal details.",
+      "profilePicture": "Profile Picture",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "saveChanges": "Save Changes",
+      "changePassword": "Change Password",
+      "changePasswordSubtitle": "Make sure to use a secure password.",
+      "newPassword": "New Password",
+      "updatePassword": "Update Password"
+    },
+    "seasonArchive": {
+      "title": "Season Archive",
+      "season": "Season",
+      "competition": "Competition",
+      "division": "Division"
+    },
+    "statistics": {
+      "title": "Statistics",
+      "competition": "Competition",
+      "selectCompetition": "Select Competition",
+      "season": "Season",
+      "selectSeason": "Select Season",
+      "topScorers": "Top Scorers",
+      "errorLoading": "Error loading data.",
+      "pos": "Pos",
+      "player": "Player",
+      "team": "Team",
+      "goals": "Goals",
+      "noData": "No data available for the selected filters."
+    },
+    "tables": {
+      "title": "Tables",
+      "selectCompetition": "Select Competition",
+      "selectSeason": "Select Season",
+      "selectToView": "Select a competition and season to view the table.",
+      "pos": "#",
+      "team": "Team",
+      "mp": "P",
+      "w": "W",
+      "d": "D",
+      "l": "L",
+      "gf": "GF",
+      "ga": "GA",
+      "gd": "GD",
+      "pts": "Pts"
+    },
+    "teams": {
+      "title": "Teams",
+      "newTeam": "New Team",
+      "manage": "Manage",
+      "noTeamsFound": "No teams found",
+      "noTeamsFoundSubtitle": "Teams will be displayed here once added.",
+      "addFirstTeam": "Add the first team"
+    },
+    "teamDetails": {
+      "teamNotFound": "Team not found",
+      "backToTeams": "Back to teams",
+      "results": "Results",
+      "stats": "Statistics",
+      "latestMatches": "Latest Matches",
+      "seasonalStats": "Seasonal Stats",
+      "played": "Played",
+      "wins": "Wins",
+      "draws": "Draws",
+      "losses": "Losses",
+      "goalsFor": "Goals For",
+      "goalsAgainst": "Goals Against",
+      "hallOfFame": "Hall of Fame",
+      "noTrophies": "No trophies in the cabinet.",
+      "sponsors": "Sponsors",
+      "noSponsors": "No sponsors for this team."
+    },
+    "gallery": {
+      "title": "Gallery",
+      "uploadMedia": "Upload Media",
+      "uploadDialogTitle": "Upload new media files",
+      "uploadDialogDescription": "You can upload up to 10 files at a time. Select an album to organize them.",
+      "fileLabel": "Files (images or videos)",
+      "fileError": "You must select at least one file.",
+      "fileLimitError": "You can upload a maximum of 10 files at a time.",
+      "albumLabel": "Add to album (optional)",
+      "noAlbum": "No album",
+      "uploadButton": "Upload",
+      "tabs": {
+        "albums": "Albums",
+        "allMedia": "All Media"
+      },
+      "noAlbumsTitle": "No albums created",
+      "noAlbumsSubtitle": "Albums help you organize your photos and videos.",
+      "noMediaTitle": "No media uploaded",
+      "noMediaSubtitle": "Start by uploading your first photos or videos.",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items"
+    },
+    "albumDetails": {
+      "notFoundTitle": "Album not found",
+      "backToGallery": "Back to gallery",
+      "emptyAlbumTitle": "This album is empty",
+      "emptyAlbumSubtitle": "Upload new media to add them to this album."
+    },
     "admin": {
+      "sidebar": {
+        "leagueManagement": "League Management",
+        "dashboard": "Dashboard",
+        "teams": "Teams",
+        "players": "Players",
+        "fixtures": "Fixtures",
+        "competitions": "Competitions",
+        "seasons": "Seasons",
+        "venues": "Venues",
+        "sponsors": "Sponsors",
+        "honors": "Honors",
+        "contentManagement": "Content Management",
+        "articles": "Articles",
+        "gallery": "Gallery",
+        "siteConfig": "Site Configuration",
+        "homepageLayout": "Homepage Layout",
+        "appearance": "Appearance",
+        "countdownEvent": "Countdown Event",
+        "administration": "Administration",
+        "userManagement": "User Management"
+      },
+      "index": {
+        "title": "Admin Dashboard",
+        "teams": "Teams",
+        "manageTeams": "Manage teams",
+        "players": "Players",
+        "managePlayers": "Manage players",
+        "scheduledMatches": "Scheduled Matches",
+        "manageFixtures": "Manage fixtures",
+        "registeredUsers": "Registered Users",
+        "manageUsers": "Manage users",
+        "quickActions": "Quick Actions",
+        "newTeam": "New Team",
+        "newPlayer": "New Player",
+        "newMatch": "New Match",
+        "newArticle": "New Article"
+      },
+      "teams": {
+        "title": "Manage Teams",
+        "newTeam": "New Team",
+        "searchPlaceholder": "Search by name, parish, venue...",
+        "teamsFound_one": "{{count}} team found",
+        "teamsFound_other": "{{count}} teams found",
+        "errorLoading": "Error loading teams",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action cannot be undone. This will permanently delete the team \"{{teamName}}\" and all associated data.",
+        "cancelButton": "Cancel",
+        "deleteButton": "Delete",
+        "table": {
+          "name": "Name",
+          "parish": "Parish",
+          "venue": "Venue",
+          "colors": "Colors",
+          "actions": "Actions"
+        }
+      },
+      "teamForm": {
+        "editTitle": "Edit Team",
+        "newTitle": "New Team",
+        "cancelButton": "Cancel",
+        "saveButton": "Save Changes",
+        "createButton": "Create Team",
+        "basicInfo": "Basic Information",
+        "teamNameLabel": "Team Name",
+        "teamNamePlaceholder": "e.g., Real F.C.",
+        "parishLabel": "Parish",
+        "parishPlaceholder": "e.g., St. John's",
+        "colorsLabel": "Team Colors",
+        "colorsPlaceholder": "Select up to 2 colors...",
+        "venueLabel": "Home Venue",
+        "venuePlaceholder": "Select a venue...",
+        "noVenue": "No venue",
+        "images": "Images",
+        "logoLabel": "Team Logo",
+        "squadPhotoLabel": "Squad Photo"
+      },
+      "players": {
+        "title": "Manage Players",
+        "importButton": "Import",
+        "newPlayerButton": "New Player",
+        "searchPlaceholder": "Search by name or team...",
+        "playersFound_one": "{{count}} player found",
+        "playersFound_other": "{{count}} players found",
+        "errorLoading": "Error loading players",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the player \"{{playerName}}\".",
+        "table": {
+          "name": "Name",
+          "team": "Team",
+          "role": "Role",
+          "actions": "Actions"
+        },
+        "mobile": {
+          "noTeam": "No team",
+          "roleLabel": "Role"
+        }
+      },
+      "playerForm": {
+        "editTitle": "Edit Player",
+        "newTitle": "New Player",
+        "cancelButton": "Cancel",
+        "saveButton": "Save Changes",
+        "createButton": "Create Player",
+        "photoLabel": "Player Photo",
+        "firstNameLabel": "First Name",
+        "firstNamePlaceholder": "John",
+        "lastNameLabel": "Last Name",
+        "lastNamePlaceholder": "Doe",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Select a team...",
+        "noTeam": "No team",
+        "dobLabel": "Date of Birth",
+        "nationalityLabel": "Nationality",
+        "nationalityPlaceholder": "Select nationality...",
+        "roleLabel": "Role",
+        "rolePlaceholder": "Select a role...",
+        "jerseyNumberLabel": "Jersey Number",
+        "documentIdLabel": "Document ID",
+        "documentIdPlaceholder": "e.g., AA12345BB"
+      },
+      "fixtures": {
+        "title": "Manage Fixtures",
+        "importButton": "Import",
+        "newBulkButton": "Bulk Create",
+        "newMatchButton": "New Match",
+        "exportButton": "Export to Excel",
+        "exporting": "Exporting...",
+        "noMatchesToExport": "No matches to export.",
+        "searchPlaceholder": "Search by team or venue...",
+        "matchesFound_one": "{{count}} match selected",
+        "matchesFound_other": "{{count}} matches selected",
+        "bulkActions": "Bulk Actions",
+        "editStatus": "Edit status",
+        "assignCompetition": "Assign competition",
+        "assignSeason": "Assign season",
+        "assignVenue": "Assign venue",
+        "assignReferee": "Assign referee",
+        "deleteSelected": "Delete selected",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the match {{matchName}}.",
+        "deleteSelectedDialogTitle": "Delete selected matches?",
+        "deleteSelectedDialogDescription": "You are about to permanently delete {{count}} matches. This action cannot be undone.",
+        "table": {
+          "match": "Match",
+          "date": "Date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "bulkEdit": {
+          "statusTitle": "Edit Match Status",
+          "statusDescription": "Select a new status for the {{count}} selected matches.",
+          "statusLabel": "New Status",
+          "competitionTitle": "Assign Competition",
+          "competitionDescription": "Select a competition for the {{count}} selected matches.",
+          "competitionLabel": "Competition",
+          "seasonTitle": "Assign Season",
+          "seasonDescription": "Select a season for the {{count}} selected matches.",
+          "seasonLabel": "Season",
+          "venueTitle": "Assign Venue",
+          "venueDescription": "Select a venue for the {{count}} selected matches.",
+          "venueLabel": "Venue",
+          "refereeTitle": "Assign Referee",
+          "refereeDescription": "Select a referee for the {{count}} selected matches.",
+          "refereeLabel": "Referee"
+        }
+      },
+      "fixtureForm": {
+        "editTitle": "Edit Match",
+        "newTitle": "New Match",
+        "competitionLabel": "Competition",
+        "competitionPlaceholder": "Select competition...",
+        "seasonLabel": "Season",
+        "seasonPlaceholder": "Select season...",
+        "homeTeamLabel": "Home Team",
+        "homeTeamPlaceholder": "Select team...",
+        "awayTeamLabel": "Away Team",
+        "awayTeamPlaceholder": "Select team...",
+        "refereeLabel": "Referee (optional)",
+        "refereePlaceholder": "Select referee...",
+        "noReferee": "No referee",
+        "dateLabel": "Date and Time",
+        "venueLabel": "Venue (optional)",
+        "venuePlaceholder": "Select a venue...",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Select status...",
+        "homeScoreLabel": "Home Score",
+        "awayScoreLabel": "Away Score"
+      },
+      "fixtureBulkForm": {
+        "title": "Bulk Create Fixtures",
+        "saveAllButton": "Save All Fixtures",
+        "teamsLabel": "Teams & Referee",
+        "homeTeamPlaceholder": "Home Team",
+        "awayTeamPlaceholder": "Away Team",
+        "refereePlaceholder": "Referee (optional)",
+        "dateAndVenueLabel": "Date & Venue",
+        "venuePlaceholder": "Venue (optional)",
+        "competitionAndSeasonLabel": "Competition & Season",
+        "competitionPlaceholder": "Competition (optional)",
+        "seasonPlaceholder": "Season (optional)",
+        "deleteRowButton": "Delete row",
+        "addMatchButton": "Add Match"
+      },
+      "fixtureImport": {
+        "title": "Import Fixtures from File",
+        "step1Title": "1. Upload your file",
+        "step1Description": "Select a .xlsx or .csv file containing fixture data.",
+        "uploadBoxClick": "Click to upload",
+        "uploadBoxDrag": "or drag and drop",
+        "step2Title": "2. Map columns",
+        "step2Description": "Match the columns from your file to the required fields.",
+        "backButton": "Back",
+        "previewButton": "Go to Preview",
+        "step3Title": "3. Preview and Confirm",
+        "step3Description": "Review the data. Rows with errors will not be imported.",
+        "tableStatus": "Status",
+        "tableErrors": "Errors",
+        "importButton_one": "Import {{count}} Valid Match",
+        "importButton_other": "Import {{count}} Valid Matches",
+        "mapping": {
+          "home_team_name": "Home Team Name",
+          "away_team_name": "Away Team Name",
+          "match_date": "Match Date (DD/MM/YYYY HH:mm)",
+          "referee_team_name": "Referee Name (Optional)",
+          "competition_name": "Competition Name (Optional)",
+          "season_name": "Season Name (Optional)",
+          "home_score": "Home Score (Optional)",
+          "away_score": "Away Score (Optional)",
+          "venue_name": "Venue Name (Optional)"
+        },
+        "errors": {
+          "emptyFile": "The file is empty or does not contain valid data.",
+          "readFileError": "Error reading the file. Make sure it is a valid format (.xlsx, .csv).",
+          "homeTeamNotFound": "Home team not found: \"{{name}}\"",
+          "awayTeamNotFound": "Away team not found: \"{{name}}\"",
+          "teamsSame": "Teams must be different.",
+          "invalidDate": "Invalid date: \"{{date}}\"",
+          "scoresRequired": "Scores are required for completed matches.",
+          "refereeNotFound": "Referee not found: \"{{name}}\"",
+          "refereeSameAsTeam": "Referee cannot be one of the teams.",
+          "venueNotFound": "Venue not found: \"{{name}}\"",
+          "competitionNotFound": "Competition not found: \"{{name}}\"",
+          "seasonNotFound": "Season not found: \"{{name}}\"",
+          "noValidMatches": "No valid matches to import."
+        }
+      },
+      "fixtureDetails": {
+        "title": "Match Details",
+        "editButton": "Edit Match",
+        "homeLabel": "Home",
+        "awayLabel": "Away",
+        "dateLabel": "Date",
+        "venueLabel": "Venue",
+        "statusLabel": "Status",
+        "refereeLabel": "Referee",
+        "scorersTitle": "Scorers",
+        "noScorers": "No scorers entered.",
+        "addScorerButton": "Add Scorer",
+        "addScorerDialogTitle": "Add Scorer",
+        "addScorerDialogDescription": "Select the player and the minute of the goal.",
+        "deleteScorerDialogTitle": "Delete scorer?",
+        "deleteScorerDialogDescription": "This action will remove the goal from the match.",
+        "goalForm": {
+          "teamLabel": "Team",
+          "teamPlaceholder": "Select a team",
+          "playerLabel": "Player",
+          "playerLoading": "Loading players...",
+          "playerPlaceholder": "Select a player",
+          "minuteLabel": "Minute",
+          "addButton": "Add"
+        }
+      },
       "users": {
         "title": "User Management",
         "searchPlaceholder": "Search by name, email, role...",
         "usersFound_one": "{{count}} user found",
         "usersFound_other": "{{count}} users found",
-        "errorLoading": "Error loading users",
+        "errorLoading": "Error loading users.",
         "accessDeniedTitle": "Access Denied",
         "accessDeniedDescription": "You do not have the necessary permissions to view this page.",
-        "demoteError": "You cannot remove the admin role from yourself.",
-        "actionsButton": "Actions",
-        "changeRoleLabel": "Change Role",
-        "blockUser": "Block User",
-        "unblockUser": "Unblock User",
+        "demoteError": "You cannot demote your own admin account.",
         "table": {
           "name": "Name",
           "email": "Email",
@@ -66,8 +536,260 @@
           "status": "Status",
           "actions": "Actions"
         },
-        "rolePlaceholder": "Change role..."
+        "actionsButton": "Actions",
+        "changeRoleLabel": "Change Role",
+        "blockUser": "Block User",
+        "unblockUser": "Unblock User"
+      },
+      "venues": {
+        "title": "Manage Venues",
+        "newVenue": "New Venue",
+        "searchPlaceholder": "Search by name, address, city...",
+        "errorLoading": "Error loading venues.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the venue \"{{name}}\".",
+        "table": {
+          "name": "Name",
+          "structure": "Structure",
+          "address": "Address",
+          "city": "City",
+          "actions": "Actions"
+        }
+      },
+      "venueForm": {
+        "editTitle": "Edit Venue",
+        "newTitle": "New Venue",
+        "mainInfo": "Main Information",
+        "nameLabel": "Venue Name",
+        "namePlaceholder": "e.g., Community Sports Field",
+        "structureLabel": "Structure",
+        "structurePlaceholder": "e.g., Sports Hall",
+        "addressLabel": "Address",
+        "addressPlaceholder": "123 Main St",
+        "cityLabel": "City",
+        "cityPlaceholder": "New York",
+        "geoPosition": "Geographic Position",
+        "latitudeLabel": "Latitude",
+        "latitudePlaceholder": "40.7128",
+        "longitudeLabel": "Longitude",
+        "longitudePlaceholder": "-74.0060",
+        "image": "Image",
+        "imageLabel": "Venue Photo"
+      },
+      "competitions": {
+        "title": "Manage Competitions",
+        "newCompetition": "New Competition",
+        "searchPlaceholder": "Search by name...",
+        "errorLoading": "Error loading competitions.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the competition \"{{name}}\".",
+        "table": {
+          "name": "Name",
+          "slug": "Slug",
+          "level": "Level",
+          "actions": "Actions"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Edit Competition",
+        "newTitle": "New Competition",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g., Championship",
+        "slugLabel": "Slug (for URL)",
+        "slugPlaceholder": "championship",
+        "levelLabel": "Level (for sorting)",
+        "levelPlaceholder": "1"
+      },
+      "seasons": {
+        "title": "Manage Seasons",
+        "newSeason": "New Season",
+        "searchPlaceholder": "Search by name...",
+        "errorLoading": "Error loading seasons.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the season \"{{name}}\".",
+        "table": {
+          "name": "Name",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "actions": "Actions"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Edit Season",
+        "newTitle": "New Season",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g., 2023/2024",
+        "startDateLabel": "Start Date",
+        "endDateLabel": "End Date"
+      },
+      "sponsors": {
+        "title": "Manage Sponsors",
+        "newSponsor": "New Sponsor",
+        "errorLoading": "Error loading sponsors.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the sponsor \"{{name}}\".",
+        "table": {
+          "name": "Name",
+          "team": "Team",
+          "website": "Website",
+          "actions": "Actions"
+        }
+      },
+      "sponsorForm": {
+        "editTitle": "Edit Sponsor",
+        "newTitle": "New Sponsor",
+        "logoLabel": "Logo",
+        "nameLabel": "Name",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Select a team...",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://www.example.com"
+      },
+      "honors": {
+        "title": "Manage Honors",
+        "newHonor": "New Honor",
+        "errorLoading": "Error loading honors.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete this honor.",
+        "table": {
+          "team": "Team",
+          "achievement": "Achievement",
+          "competition": "Competition",
+          "season": "Season",
+          "actions": "Actions"
+        }
+      },
+      "honorForm": {
+        "editTitle": "Edit Honor",
+        "newTitle": "New Honor",
+        "teamLabel": "Team",
+        "teamPlaceholder": "Select a team...",
+        "competitionLabel": "Competition",
+        "competitionPlaceholder": "Select a competition...",
+        "seasonLabel": "Season",
+        "seasonPlaceholder": "Select a season...",
+        "achievementLabel": "Achievement",
+        "achievementPlaceholder": "e.g., Winner"
+      },
+      "articles": {
+        "title": "Manage Articles",
+        "newArticle": "New Article",
+        "searchPlaceholder": "Search by title...",
+        "errorLoading": "Error loading articles.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the article \"{{name}}\".",
+        "pinTooltip": "Pin to top",
+        "unpinTooltip": "Unpin",
+        "table": {
+          "pin": "Pin",
+          "title": "Title",
+          "status": "Status",
+          "author": "Author",
+          "publishedAt": "Published At",
+          "actions": "Actions"
+        },
+        "status": {
+          "draft": "Draft",
+          "published": "Published"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Edit Article",
+        "newTitle": "New Article",
+        "mainContent": "Main Content",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Title of your article",
+        "slugLabel": "Slug (auto-generated)",
+        "slugPlaceholder": "title-of-your-article",
+        "contentLabel": "Content",
+        "contentPlaceholder": "Write your article here...",
+        "publication": "Publication",
+        "statusLabel": "Status",
+        "statusPlaceholder": "Select a status",
+        "coverImage": "Cover Image"
+      },
+      "albums": {
+        "title": "Manage Albums",
+        "newAlbum": "New Album",
+        "errorLoading": "Error loading albums.",
+        "deleteDialogTitle": "Are you sure?",
+        "deleteDialogDescription": "This action will permanently delete the album \"{{name}}\" and move all media out of the album.",
+        "table": {
+          "name": "Name",
+          "itemCount": "Items",
+          "createdAt": "Created At",
+          "actions": "Actions"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Edit Album",
+        "newTitle": "New Album",
+        "nameLabel": "Album Name",
+        "descriptionLabel": "Description (optional)"
+      },
+      "theme": {
+        "title": "Site Appearance",
+        "saveButton": "Save Changes",
+        "colorsCardTitle": "Colors",
+        "colorsCardDescription": "Customize the main colors of the site.",
+        "primaryColorLabel": "Primary Color",
+        "secondaryColorLabel": "Secondary Color",
+        "typographyCardTitle": "Typography",
+        "typographyCardDescription": "Choose the font for the site.",
+        "fontFamilyLabel": "Font Family",
+        "fontPlaceholder": "Select a font",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Upload your tournament's logo.",
+        "logoFileLabel": "Logo File"
+      },
+      "event": {
+        "title": "Next Event Countdown",
+        "saveButton": "Save Changes",
+        "settingsCardTitle": "Countdown Settings",
+        "settingsCardDescription": "Configure the countdown widget that appears on the homepage.",
+        "switchLabel": "Enable Countdown",
+        "switchDescription": "Show or hide the widget on the homepage.",
+        "titleLabel": "Event Title",
+        "titlePlaceholder": "e.g., Playoffs Start",
+        "dateLabel": "Event Date and Time"
+      },
+      "homepage": {
+        "title": "Homepage Layout",
+        "addRowButton": "Add Row",
+        "saveButton": "Save Layout",
+        "layoutCardTitle": "Page Structure",
+        "layoutCardDescription": "Drag and drop widgets to reorder them. Add rows and columns to customize the layout.",
+        "layout": "Layout",
+        "deleteRow": "Delete Row",
+        "row": "Row",
+        "startBuilding": "Start building your homepage by adding a row.",
+        "widgetPaletteTitle": "Available Widgets",
+        "heroWidgetForm": {
+          "title": "Configure Hero Widget",
+          "description": "Customize the title, subtitle, and button of the main section.",
+          "mainTitleLabel": "Main Title",
+          "subtitleLabel": "Subtitle",
+          "buttonTextLabel": "Button Text",
+          "buttonLinkLabel": "Button Link (e.g., /matches)"
+        },
+        "pinnedArticleWidgetForm": {
+          "title": "Configure Featured Article Widget",
+          "description": "Choose which article to display in this section. The article must first be 'pinned' in the article management.",
+          "pinnedArticleLabel": "Pinned Article",
+          "loadingPlaceholder": "Loading articles...",
+          "selectPlaceholder": "Select an article",
+          "noPinnedArticles": "No pinned articles found. Go to 'Articles' and pin an article to show it here."
+        }
       }
     }
+  },
+  "widgets": {
+    "hero": "Hero Section",
+    "countdown": "Event Countdown",
+    "media_carousel": "Media Carousel",
+    "upcoming_matches": "Upcoming Matches",
+    "latest_news": "Latest News",
+    "league_table": "League Table",
+    "pinned_article": "Featured Article"
   }
 }

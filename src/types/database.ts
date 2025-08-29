@@ -90,6 +90,8 @@ export interface Match {
   created_at: string;
   updated_at: string;
   venues?: { name: string } | null;
+  competitions?: { name: string } | null;
+  seasons?: { name: string } | null;
 }
 
 export interface Goal {
