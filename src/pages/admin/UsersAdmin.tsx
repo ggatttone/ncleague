@@ -5,14 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSupabaseQuery, useSupabaseMutation } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
-import { Loader2, Search, XCircle } from "lucide-react";
+import { Loader2, Search, XCircle, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { showError } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 import { useTranslation } from "react-i18next";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Profile {
   id: string;
@@ -20,6 +29,7 @@ interface Profile {
   last_name: string | null;
   role: 'admin' | 'editor' | 'player' | 'captain';
   email: string;
+  status: 'active' | 'blocked';
 }
 
 const UsersAdmin = () => {
@@ -27,6 +37,7 @@ const UsersAdmin = () => {
   const { hasPermission, user: currentUser } = useAuth();
   const isMobile = useIsMobile();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const { data: profiles, isLoading, error, refetch } = useSupabaseQuery<Profile[]>(
     ['admin-users'],
@@ -68,6 +79,23 @@ const UsersAdmin = () => {
     }
   );
 
+  const updateUserStatusMutation = useMutation({
+    mutationFn: async ({ userId, action }: { userId: string; action: 'block' | 'unblock' }) => {
+      const { data, error } = await supabase.functions.invoke('update-user-status', {
+        body: { userId, action },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      showSuccess('Stato utente aggiornato con successo!');
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (err: any) => {
+      showError(`Errore: ${err.message}`);
+    },
+  });
+
   const filteredProfiles = useMemo(() => {
     if (!profiles || !searchTerm) return profiles;
     
@@ -87,10 +115,16 @@ const UsersAdmin = () => {
     await updateRoleMutation.mutateAsync({ id: profileId, role: newRole });
   };
 
+  const handleStatusChange = (profileId: string, currentStatus: 'active' | 'blocked') => {
+    const action = currentStatus === 'active' ? 'block' : 'unblock';
+    updateUserStatusMutation.mutate({ userId: profileId, action });
+  };
+
   const columns = [
     { key: "name", label: t('pages.admin.users.table.name') },
     { key: "email", label: t('pages.admin.users.table.email') },
     { key: "role", label: t('pages.admin.users.table.role') },
+    { key: "status", label: t('pages.admin.users.table.status') },
     { key: "actions", label: t('pages.admin.users.table.actions') },
   ];
 
@@ -102,22 +136,35 @@ const UsersAdmin = () => {
         {t(`roles.${profile.role}`)}
       </Badge>
     ),
+    status: (
+      <Badge variant={profile.status === 'blocked' ? 'destructive' : 'outline'} className="capitalize">
+        {t(`userStatus.${profile.status}`)}
+      </Badge>
+    ),
     actions: (
-      <Select
-        value={profile.role}
-        onValueChange={(newRole: Profile['role']) => handleRoleChange(profile.id, newRole)}
-        disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={t('pages.admin.users.rolePlaceholder')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="admin">{t('roles.admin')}</SelectItem>
-          <SelectItem value="editor">{t('roles.editor')}</SelectItem>
-          <SelectItem value="captain">{t('roles.captain')}</SelectItem>
-          <SelectItem value="player">{t('roles.player')}</SelectItem>
-        </SelectContent>
-      </Select>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" disabled={currentUser?.id === profile.id}>
+            {t('pages.admin.users.actionsButton')} <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{t('pages.admin.users.changeRoleLabel')}</DropdownMenuLabel>
+          {['admin', 'editor', 'captain', 'player'].map(role => (
+            <DropdownMenuItem key={role} onSelect={() => handleRoleChange(profile.id, role as Profile['role'])} disabled={profile.role === role}>
+              {t(`roles.${role}`)}
+            </DropdownMenuItem>
+          ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={() => handleStatusChange(profile.id, profile.status)}
+            className={profile.status === 'active' ? 'text-destructive focus:text-destructive' : ''}
+            disabled={updateUserStatusMutation.isPending}
+          >
+            {profile.status === 'active' ? t('pages.admin.users.blockUser') : t('pages.admin.users.unblockUser')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     ),
   })) || [];
 
@@ -158,21 +205,29 @@ const UsersAdmin = () => {
     <div className="space-y-4">
       {filteredProfiles?.map(profile => {
         const actions = (
-          <Select
-            value={profile.role}
-            onValueChange={(newRole: Profile['role']) => handleRoleChange(profile.id, newRole)}
-            disabled={updateRoleMutation.isPending || !hasPermission(['admin']) || (currentUser?.id === profile.id)}
-          >
-            <SelectTrigger className="w-[120px] h-9">
-              <SelectValue placeholder={t('pages.admin.users.rolePlaceholder')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="admin">{t('roles.admin')}</SelectItem>
-              <SelectItem value="editor">{t('roles.editor')}</SelectItem>
-              <SelectItem value="captain">{t('roles.captain')}</SelectItem>
-              <SelectItem value="player">{t('roles.player')}</SelectItem>
-            </SelectContent>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8" disabled={currentUser?.id === profile.id}>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t('pages.admin.users.changeRoleLabel')}</DropdownMenuLabel>
+              {['admin', 'editor', 'captain', 'player'].map(role => (
+                <DropdownMenuItem key={role} onSelect={() => handleRoleChange(profile.id, role as Profile['role'])} disabled={profile.role === role}>
+                  {t(`roles.${role}`)}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => handleStatusChange(profile.id, profile.status)}
+                className={profile.status === 'active' ? 'text-destructive focus:text-destructive' : ''}
+                disabled={updateUserStatusMutation.isPending}
+              >
+                {profile.status === 'active' ? t('pages.admin.users.blockUser') : t('pages.admin.users.unblockUser')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
         return (
           <AdminMobileCard
@@ -181,9 +236,12 @@ const UsersAdmin = () => {
             subtitle={profile.email}
             actions={actions}
           >
-            <div className="mt-2">
+            <div className="mt-2 flex items-center gap-2">
               <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
                 {t(`roles.${profile.role}`)}
+              </Badge>
+              <Badge variant={profile.status === 'blocked' ? 'destructive' : 'outline'} className="capitalize">
+                {t(`userStatus.${profile.status}`)}
               </Badge>
             </div>
           </AdminMobileCard>

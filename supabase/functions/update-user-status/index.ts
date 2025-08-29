@@ -6,12 +6,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Funzione per verificare se l'utente che invoca è un amministratore
-async function isUserAdmin(supabaseClient: SupabaseClient): Promise<boolean> {
+async function isUserAdmin(supabaseClient: SupabaseClient): Promise<string | null> {
   const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
   if (userError || !user) {
     console.error('Auth error:', userError?.message);
-    return false;
+    return null;
   }
 
   const { data: profile, error: profileError } = await supabaseClient
@@ -22,65 +21,64 @@ async function isUserAdmin(supabaseClient: SupabaseClient): Promise<boolean> {
 
   if (profileError || !profile) {
     console.error('Profile error:', profileError?.message);
-    return false;
+    return null;
   }
 
-  return profile.role === 'admin';
+  return profile.role === 'admin' ? user.id : null;
 }
 
 serve(async (req) => {
-  // Gestisce la richiesta pre-flight CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Crea un client Supabase con l'autorizzazione dell'utente che ha effettuato la richiesta
+    const { userId, action } = await req.json();
+    if (!userId || !action || !['block', 'unblock'].includes(action)) {
+      return new Response(JSON.stringify({ error: 'userId e action (block/unblock) sono obbligatori.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const userSupabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     );
 
-    // Verifica che l'utente sia un amministratore prima di procedere
-    const isAdmin = await isUserAdmin(userSupabaseClient);
-    if (!isAdmin) {
+    const adminUserId = await isUserAdmin(userSupabaseClient);
+    if (!adminUserId) {
       return new Response(JSON.stringify({ error: 'Accesso negato: l\'utente non è un amministratore.' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Se l'utente è un admin, crea un client con la service role key per eseguire operazioni di amministrazione
+    if (adminUserId === userId && action === 'block') {
+      return new Response(JSON.stringify({ error: 'Un amministratore non può bloccare il proprio account.' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const adminSupabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Recupera tutti gli utenti da auth.users
-    const { data: { users }, error: usersError } = await adminSupabaseClient.auth.admin.listUsers();
-    if (usersError) throw usersError;
+    const ban_duration = action === 'block' ? '3153600000s' : 'none'; // 100 years or none
 
-    // Recupera tutti i profili dalla tabella public.profiles
-    const { data: profiles, error: profilesError } = await adminSupabaseClient
-      .from('profiles')
-      .select('*');
-    if (profilesError) throw profilesError;
+    const { data: updatedUser, error } = await adminSupabaseClient.auth.admin.updateUserById(
+      userId,
+      { ban_duration }
+    );
 
-    // Crea una mappa degli utenti per una facile ricerca, includendo il loro stato
-    const userMap = new Map(users.map(u => {
-      const isBanned = u.banned_until && (new Date(u.banned_until) > new Date() || u.banned_until === 'infinity');
-      return [u.id, { email: u.email, status: isBanned ? 'blocked' : 'active' }];
-    }));
+    if (error) {
+      throw error;
+    }
 
-    // Combina i dati del profilo con l'email e lo stato dell'utente
-    const combinedData = profiles.map(profile => ({
-      ...profile,
-      email: userMap.get(profile.id)?.email || 'N/A',
-      status: userMap.get(profile.id)?.status || 'active',
-    }));
-
-    return new Response(JSON.stringify(combinedData), {
+    return new Response(JSON.stringify(updatedUser), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
