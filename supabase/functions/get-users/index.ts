@@ -57,28 +57,35 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Recupera tutti gli utenti da auth.users
+    // 1. Recupera tutti gli utenti da auth.users
     const { data: { users }, error: usersError } = await adminSupabaseClient.auth.admin.listUsers();
     if (usersError) throw usersError;
 
-    // Recupera tutti i profili dalla tabella public.profiles
+    // 2. Recupera tutti i profili dalla tabella public.profiles
     const { data: profiles, error: profilesError } = await adminSupabaseClient
       .from('profiles')
       .select('*');
     if (profilesError) throw profilesError;
 
-    // Crea una mappa degli utenti per una facile ricerca, includendo il loro stato
-    const userMap = new Map(users.map(u => {
-      const isBanned = u.banned_until && (new Date(u.banned_until) > new Date() || u.banned_until === 'infinity');
-      return [u.id, { email: u.email, status: isBanned ? 'blocked' : 'active' }];
-    }));
+    // 3. Crea una mappa dei profili per una facile ricerca
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
 
-    // Combina i dati del profilo con l'email e lo stato dell'utente
-    const combinedData = profiles.map(profile => ({
-      ...profile,
-      email: userMap.get(profile.id)?.email || 'N/A',
-      status: userMap.get(profile.id)?.status || 'active',
-    }));
+    // 4. Combina i dati, partendo dalla lista degli utenti (source of truth)
+    const combinedData = users.map(user => {
+      const profile = profileMap.get(user.id);
+      const isBanned = user.banned_until && (new Date(user.banned_until) > new Date() || user.banned_until === 'infinity');
+      
+      return {
+        id: user.id,
+        first_name: profile?.first_name || null,
+        last_name: profile?.last_name || null,
+        role: profile?.role || 'player', // Default role if profile is missing
+        avatar_url: profile?.avatar_url || null,
+        updated_at: profile?.updated_at || user.created_at,
+        email: user.email,
+        status: isBanned ? 'blocked' : 'active',
+      };
+    });
 
     return new Response(JSON.stringify(combinedData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
