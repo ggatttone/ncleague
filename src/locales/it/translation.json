@@ -1,9 +1,4 @@
 {
-  "themeToggle": {
-    "light": "Chiaro",
-    "dark": "Scuro",
-    "system": "Sistema"
-  },
   "navbar": {
     "home": "Home",
     "matches": "Partite",
@@ -17,43 +12,95 @@
   "userMenu": {
     "profile": "Profilo",
     "admin": "Admin",
-    "logout": "Logout",
-    "login": "Login"
+    "logout": "Esci",
+    "login": "Accedi"
+  },
+  "themeToggle": {
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "errors": {
+    "requiredField": "Questo campo è obbligatorio",
+    "passwordMinLength": "La password deve essere di almeno 6 caratteri",
+    "loadingMatches": "Errore nel caricamento delle partite",
+    "loadingTables": "Errore nel caricamento della classifica",
+    "loadingNews": "Errore nel caricamento delle notizie"
+  },
+  "matchStatus": {
+    "scheduled": "Programmata",
+    "ongoing": "In corso",
+    "completed": "Completata",
+    "postponed": "Rinviata",
+    "cancelled": "Cancellata"
+  },
+  "userStatus": {
+    "active": "Attivo",
+    "blocked": "Bloccato"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor",
+    "captain": "Capitano",
+    "player": "Player"
+  },
+  "components": {
+    "comments": {
+      "writeComment": "Scrivi un commento...",
+      "submit": "Invia",
+      "noComments": "Nessun commento ancora. Sii il primo a commentare!"
+    },
+    "dynamicTitle": {
+      "appName": "NC League"
+    },
+    "hero": {
+      "title": "Benvenuti su NC League",
+      "subtitle": "La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!",
+      "button": "Scopri l'ultima giornata"
+    },
+    "latestNews": {
+      "title": "Ultime Notizie",
+      "readAll": "Leggi tutte le notizie"
+    },
+    "leagueTableWidget": {
+      "title": "Classifica",
+      "noData": "Nessun dato disponibile per la classifica.",
+      "viewFull": "Vedi classifica completa"
+    },
+    "pinnedArticle": {
+      "title": "In Evidenza",
+      "noArticle": "Nessun articolo in evidenza selezionato."
+    },
+    "table": {
+      "noData": "Nessun dato disponibile"
+    },
+    "upcomingMatches": {
+      "title": "Prossime Partite",
+      "noMatches": "Nessuna partita in programma.",
+      "viewFull": "Vedi tutte le partite"
+    }
   },
   "pages": {
     "home": {
-      "buildingTitle": "Sito in costruzione",
-      "buildingSubtitle": "L'amministratore non ha ancora configurato la homepage."
+      "buildingTitle": "Stiamo costruendo la tua homepage!",
+      "buildingSubtitle": "Torna presto per vedere i contenuti."
     },
     "matches": {
       "title": "Partite",
-      "upcoming": "Prossime",
+      "selectCompetitionAndSeason": "Seleziona una competizione e una stagione per visualizzare le partite.",
+      "upcoming": "In Programma",
       "completed": "Completate",
       "noUpcoming": "Nessuna partita in programma",
-      "noUpcomingSubtitle": "Le prossime partite verranno visualizzate qui.",
-      "addFirstMatch": "Aggiungi prima partita",
+      "noUpcomingSubtitle": "Controlla più tardi per aggiornamenti.",
+      "addFirstMatch": "Aggiungi la prima partita",
       "noCompleted": "Nessuna partita completata",
-      "noCompletedSubtitle": "I risultati delle partite verranno visualizzati qui.",
-      "selectCompetitionAndSeason": "Seleziona una competizione e una stagione per visualizzare le partite."
-    },
-    "news": {
-      "title": "Feed",
-      "newPost": "Nuovo Post",
-      "noNewsTitle": "Nessuna notizia al momento",
-      "noNewsSubtitle": "Torna più tardi per gli ultimi aggiornamenti.",
-      "noNews": "Nessuna notizia trovata."
-    },
-    "newsDetails": {
-      "allNews": "Tutte le news",
-      "notFoundTitle": "Articolo non trovato",
-      "notFoundSubtitle": "L'articolo che stai cercando non esiste o non è più disponibile.",
-      "backToNews": "Torna alle news",
-      "comments": "Commenti"
+      "noCompletedSubtitle": "I risultati appariranno qui dopo le partite."
     },
     "tables": {
       "title": "Classifiche",
       "selectCompetition": "Seleziona Competizione",
       "selectSeason": "Seleziona Stagione",
+      "selectToView": "Seleziona una competizione e una stagione per visualizzare la classifica.",
       "pos": "Pos",
       "team": "Squadra",
       "mp": "G",
@@ -63,59 +110,70 @@
       "gf": "GF",
       "ga": "GS",
       "gd": "DR",
-      "pts": "PT",
-      "selectToView": "Seleziona una competizione e una stagione per visualizzare la classifica."
+      "pts": "PT"
     },
     "statistics": {
       "title": "Statistiche",
       "competition": "Competizione",
+      "selectCompetition": "Seleziona Competizione",
       "season": "Stagione",
-      "selectCompetition": "Seleziona una competizione",
-      "selectSeason": "Seleziona una stagione",
+      "selectSeason": "Seleziona Stagione",
       "topScorers": "Classifica Marcatori",
       "errorLoading": "Errore nel caricamento dei dati.",
-      "pos": "Pos.",
+      "pos": "Pos",
       "player": "Giocatore",
       "team": "Squadra",
       "goals": "Goal",
-      "noData": "Nessun dato disponibile per la selezione corrente."
+      "noData": "Nessun dato disponibile per i filtri selezionati."
+    },
+    "news": {
+      "title": "Notizie",
+      "newPost": "Nuovo Post",
+      "noNewsTitle": "Nessuna notizia trovata",
+      "noNewsSubtitle": "Gli articoli pubblicati appariranno qui."
+    },
+    "newsDetails": {
+      "notFoundTitle": "Articolo non trovato",
+      "notFoundSubtitle": "L'articolo che stai cercando non esiste o è stato rimosso.",
+      "backToNews": "Torna alle notizie",
+      "allNews": "Tutte le notizie",
+      "comments": "Commenti"
     },
     "players": {
       "title": "Giocatori",
-      "newPlayer": "Nuovo giocatore",
+      "newPlayer": "Nuovo Giocatore",
       "manage": "Gestisci",
-      "searchPlaceholder": "Cerca giocatori, squadre o ruoli...",
+      "searchPlaceholder": "Cerca per nome, squadra, ruolo...",
       "noPlayersFound": "Nessun giocatore trovato",
-      "noPlayersRegistered": "Nessun giocatore registrato",
       "noPlayersFoundSubtitle": "Prova a modificare i termini di ricerca.",
-      "addFirstPlayer": "Aggiungi primo giocatore",
+      "noPlayersRegistered": "Nessun giocatore registrato",
+      "addFirstPlayer": "Aggiungi il primo giocatore",
       "playersFound_one": "{{count}} giocatore trovato",
       "playersFound_other": "{{count}} giocatori trovati",
       "yearsOld": "anni"
     },
     "playerDetails": {
-      "backToPlayers": "Torna ai giocatori",
       "playerNotFound": "Giocatore non trovato",
-      "team": "Squadra",
+      "backToPlayers": "Torna ai giocatori",
       "yearsOld": "anni",
       "goalsScored": "Goal Segnati",
       "matchesPlayed": "Partite Giocate",
-      "avgGoals": "Media Goal",
       "dataUnavailable": "Dato non disponibile",
-      "goalsHistory": "Cronologia Goal",
-      "noGoals": "Nessun goal registrato"
+      "avgGoals": "Media Goal/Partita",
+      "goalsHistory": "Storico Goal",
+      "noGoals": "Nessun goal registrato per questo giocatore."
     },
     "teams": {
       "title": "Squadre",
-      "newTeam": "Nuova squadra",
+      "newTeam": "Nuova Squadra",
       "manage": "Gestisci",
       "noTeamsFound": "Nessuna squadra trovata",
-      "noTeamsFoundSubtitle": "Le squadre verranno visualizzate qui una volta aggiunte.",
-      "addFirstTeam": "Aggiungi prima squadra"
+      "noTeamsFoundSubtitle": "Le squadre appariranno qui una volta create.",
+      "addFirstTeam": "Aggiungi la prima squadra"
     },
     "teamDetails": {
-      "backToTeams": "Torna alle squadre",
       "teamNotFound": "Squadra non trovata",
+      "backToTeams": "Torna alle squadre",
       "results": "Risultati",
       "stats": "Statistiche",
       "latestMatches": "Ultime Partite",
@@ -124,54 +182,40 @@
       "wins": "Vittorie",
       "draws": "Pareggi",
       "losses": "Sconfitte",
-      "goalsFor": "Gol Fatti",
-      "goalsAgainst": "Gol Subiti",
-      "hallOfFame": "Albo d'Oro",
-      "noTrophies": "Nessun trofeo registrato.",
+      "goalsFor": "Goal Fatti",
+      "goalsAgainst": "Goal Subiti",
+      "hallOfFame": "Albo d'oro",
+      "noTrophies": "Nessun trofeo in bacheca.",
       "sponsors": "Sponsor",
-      "noSponsors": "Nessuno sponsor registrato."
-    },
-    "profile": {
-      "title": "Il mio profilo",
-      "personalInfo": "Informazioni personali",
-      "personalInfoSubtitle": "Aggiorna il tuo nome, cognome e foto profilo.",
-      "profilePicture": "Foto Profilo",
-      "firstName": "Nome",
-      "lastName": "Cognome",
-      "email": "Email",
-      "saveChanges": "Salva modifiche",
-      "changePassword": "Cambia password",
-      "changePasswordSubtitle": "Scegli una nuova password sicura. Verrai disconnesso dopo la modifica.",
-      "newPassword": "Nuova password",
-      "updatePassword": "Aggiorna password"
+      "noSponsors": "Nessuno sponsor per questa squadra."
     },
     "gallery": {
       "title": "Galleria",
       "uploadMedia": "Carica Media",
-      "uploadDialogTitle": "Carica nuovi media",
-      "uploadDialogDescription": "Puoi selezionare fino a 10 file (immagini o video) alla volta.",
-      "fileLabel": "File *",
-      "fileError": "È richiesto almeno un file.",
-      "fileLimitError": "Puoi caricare un massimo di 10 file alla volta.",
-      "albumLabel": "Album (opzionale)",
+      "uploadDialogTitle": "Carica nuovi file media",
+      "uploadDialogDescription": "Puoi caricare fino a 10 file alla volta. Seleziona un album per organizzarli.",
+      "fileLabel": "File (immagini o video)",
+      "fileError": "Devi selezionare almeno un file.",
+      "fileLimitError": "Puoi caricare al massimo 10 file alla volta.",
+      "albumLabel": "Aggiungi all'album (opzionale)",
       "noAlbum": "Nessun album",
       "uploadButton": "Carica",
       "tabs": {
         "albums": "Album",
         "allMedia": "Tutti i Media"
       },
-      "noAlbumsTitle": "Nessun album creato.",
-      "noAlbumsSubtitle": "Crea il primo album per iniziare a organizzare la galleria.",
-      "noMediaTitle": "Nessun media caricato.",
-      "noMediaSubtitle": "Carica la tua prima immagine o video.",
+      "noAlbumsTitle": "Nessun album creato",
+      "noAlbumsSubtitle": "Crea il tuo primo album per organizzare le foto.",
       "itemCount_one": "{{count}} elemento",
-      "itemCount_other": "{{count}} elementi"
+      "itemCount_other": "{{count}} elementi",
+      "noMediaTitle": "Nessun media trovato",
+      "noMediaSubtitle": "Carica la tua prima foto o video."
     },
     "albumDetails": {
-      "backToGallery": "Tutti gli album",
       "notFoundTitle": "Album non trovato",
-      "emptyAlbumTitle": "Questo album è vuoto.",
-      "emptyAlbumSubtitle": "Nessun elemento è stato ancora aggiunto."
+      "backToGallery": "Torna alla galleria",
+      "emptyAlbumTitle": "Questo album è vuoto",
+      "emptyAlbumSubtitle": "Carica dei media per iniziare a riempirlo."
     },
     "seasonArchive": {
       "title": "Archivio Stagione",
@@ -179,18 +223,41 @@
       "competition": "Competizione",
       "division": "Divisione"
     },
+    "notFound": {
+      "title": "Pagina non trovata",
+      "subtitle": "La pagina che stai cercando non esiste.",
+      "button": "Torna alla Home"
+    },
+    "notFoundAdmin": {
+      "title": "Pagina non trovata",
+      "subtitle": "La pagina richiesta non esiste all'interno del pannello di amministrazione."
+    },
+    "profile": {
+      "title": "Il Mio Profilo",
+      "personalInfo": "Informazioni Personali",
+      "personalInfoSubtitle": "Aggiorna i tuoi dati personali.",
+      "profilePicture": "Immagine del Profilo",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Email",
+      "saveChanges": "Salva Modifiche",
+      "changePassword": "Cambia Password",
+      "changePasswordSubtitle": "Assicurati di usare una password sicura.",
+      "newPassword": "Nuova Password",
+      "updatePassword": "Aggiorna Password"
+    },
     "admin": {
       "sidebar": {
         "leagueManagement": "Gestione Lega",
         "dashboard": "Dashboard",
         "teams": "Squadre",
         "players": "Giocatori",
-        "fixtures": "Calendario",
+        "fixtures": "Partite",
         "competitions": "Competizioni",
         "seasons": "Stagioni",
         "venues": "Campi",
         "sponsors": "Sponsor",
-        "honors": "Albo d'Oro",
+        "honors": "Albo d'oro",
         "contentManagement": "Gestione Contenuti",
         "articles": "Articoli",
         "gallery": "Galleria",
@@ -202,13 +269,13 @@
         "userManagement": "Gestione Utenti"
       },
       "index": {
-        "title": "Admin Dashboard",
+        "title": "Dashboard Amministrazione",
         "teams": "Squadre",
         "manageTeams": "Gestisci squadre",
         "players": "Giocatori",
         "managePlayers": "Gestisci giocatori",
         "scheduledMatches": "Partite Programmate",
-        "manageFixtures": "Gestisci calendario",
+        "manageFixtures": "Gestisci partite",
         "registeredUsers": "Utenti Registrati",
         "manageUsers": "Gestisci utenti",
         "quickActions": "Azioni Rapide",
@@ -218,16 +285,16 @@
         "newArticle": "Nuovo Articolo"
       },
       "teams": {
-        "title": "Squadre",
-        "newTeam": "Nuova squadra",
-        "searchPlaceholder": "Cerca squadre...",
+        "title": "Gestione Squadre",
+        "newTeam": "Nuova Squadra",
+        "searchPlaceholder": "Cerca per nome, parrocchia, campo...",
         "teamsFound_one": "{{count}} squadra trovata",
         "teamsFound_other": "{{count}} squadre trovate",
-        "deleteDialogTitle": "Elimina squadra",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare la squadra \"{{teamName}}\"? Questa azione non può essere annullata e rimuoverà anche tutti i giocatori associati.",
-        "deleteButton": "Elimina",
-        "cancelButton": "Annulla",
         "errorLoading": "Errore nel caricamento delle squadre",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Questa azione non può essere annullata. Questo eliminerà permanentemente la squadra {{teamName}}.",
+        "cancelButton": "Annulla",
+        "deleteButton": "Elimina",
         "table": {
           "name": "Nome",
           "parish": "Parrocchia",
@@ -237,35 +304,35 @@
         }
       },
       "teamForm": {
-        "editTitle": "Modifica squadra",
-        "newTitle": "Nuova squadra",
+        "editTitle": "Modifica Squadra",
+        "newTitle": "Nuova Squadra",
         "cancelButton": "Annulla",
-        "saveButton": "Salva modifiche",
-        "createButton": "Crea squadra",
+        "saveButton": "Salva Modifiche",
+        "createButton": "Crea Squadra",
         "basicInfo": "Informazioni di Base",
-        "teamNameLabel": "Nome squadra *",
-        "teamNamePlaceholder": "Nome squadra",
+        "teamNameLabel": "Nome Squadra",
+        "teamNamePlaceholder": "Es. Real F.C.",
         "parishLabel": "Parrocchia",
-        "parishPlaceholder": "Parrocchia",
-        "colorsLabel": "Colori sociali",
-        "colorsPlaceholder": "Seleziona fino a due colori",
-        "venueLabel": "Campo",
+        "parishPlaceholder": "Es. San Giovanni",
+        "colorsLabel": "Colori Sociali",
+        "colorsPlaceholder": "Seleziona fino a 2 colori...",
+        "venueLabel": "Campo di Gioco",
         "venuePlaceholder": "Seleziona un campo",
         "noVenue": "Nessun campo",
         "images": "Immagini",
-        "logoLabel": "Logo squadra",
-        "squadPhotoLabel": "Foto della rosa"
+        "logoLabel": "Logo Squadra",
+        "squadPhotoLabel": "Foto Rosa"
       },
       "players": {
-        "title": "Giocatori",
+        "title": "Gestione Giocatori",
         "importButton": "Importa",
-        "newPlayerButton": "Nuovo giocatore",
-        "searchPlaceholder": "Cerca giocatori...",
+        "newPlayerButton": "Nuovo Giocatore",
+        "searchPlaceholder": "Cerca per nome o squadra...",
         "playersFound_one": "{{count}} giocatore trovato",
         "playersFound_other": "{{count}} giocatori trovati",
-        "deleteDialogTitle": "Elimina giocatore",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare il giocatore \"{{playerName}}\"? Questa azione non può essere annullata.",
         "errorLoading": "Errore nel caricamento dei giocatori",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Questa azione eliminerà permanentemente il giocatore {{playerName}}.",
         "table": {
           "name": "Nome",
           "team": "Squadra",
@@ -278,48 +345,47 @@
         }
       },
       "playerForm": {
-        "editTitle": "Modifica giocatore",
-        "newTitle": "Nuovo giocatore",
+        "editTitle": "Modifica Giocatore",
+        "newTitle": "Nuovo Giocatore",
         "cancelButton": "Annulla",
-        "saveButton": "Salva modifiche",
-        "createButton": "Crea giocatore",
-        "photoLabel": "Foto del giocatore",
-        "firstNameLabel": "Nome *",
-        "firstNamePlaceholder": "Nome",
-        "lastNameLabel": "Cognome *",
-        "lastNamePlaceholder": "Cognome",
+        "saveButton": "Salva Modifiche",
+        "createButton": "Crea Giocatore",
+        "photoLabel": "Foto Giocatore",
+        "firstNameLabel": "Nome",
+        "firstNamePlaceholder": "Mario",
+        "lastNameLabel": "Cognome",
+        "lastNamePlaceholder": "Rossi",
         "teamLabel": "Squadra",
         "teamPlaceholder": "Seleziona una squadra",
         "noTeam": "Nessuna squadra",
-        "dobLabel": "Data di nascita",
+        "dobLabel": "Data di Nascita",
         "nationalityLabel": "Nazionalità",
         "nationalityPlaceholder": "Seleziona nazionalità",
         "roleLabel": "Ruolo",
         "rolePlaceholder": "Seleziona un ruolo",
-        "jerseyNumberLabel": "Numero maglia",
-        "documentIdLabel": "Documento (opzionale)",
-        "documentIdPlaceholder": "ID documento"
+        "jerseyNumberLabel": "Numero Maglia",
+        "documentIdLabel": "ID Documento",
+        "documentIdPlaceholder": "Es. CI12345"
       },
       "fixtures": {
-        "title": "Calendario Partite",
+        "title": "Gestione Partite",
         "importButton": "Importa",
-        "newBulkButton": "Multiplo",
-        "newMatchButton": "Nuova partita",
-        "searchPlaceholder": "Cerca partite...",
-        "matchesFound_one": "{{count}} partita trovata",
-        "matchesFound_other": "{{count}} partite trovate",
-        "bulkActions": "Azioni di gruppo",
-        "editStatus": "Modifica Stato",
-        "assignCompetition": "Assegna Competizione",
-        "assignSeason": "Assegna Stagione",
-        "assignVenue": "Assegna Campo",
-        "assignReferee": "Assegna Arbitro",
-        "deleteSelected": "Elimina Selezionate",
-        "deleteDialogTitle": "Elimina partita",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare la partita \"{{matchName}}\"? Questa azione non può essere annullata.",
-        "deleteSelectedDialogTitle": "Elimina partite selezionate",
-        "deleteSelectedDialogDescription_one": "Sei sicuro di voler eliminare {{count}} partita? Questa azione non può essere annullata.",
-        "deleteSelectedDialogDescription_other": "Sei sicuro di voler eliminare {{count}} partite? Questa azione non può essere annullata.",
+        "newBulkButton": "Aggiunta Multipla",
+        "newMatchButton": "Nuova Partita",
+        "searchPlaceholder": "Cerca per squadra o campo...",
+        "matchesFound_one": "{{count}} partita selezionata",
+        "matchesFound_other": "{{count}} partite selezionate",
+        "bulkActions": "Azioni Multiple",
+        "editStatus": "Modifica stato",
+        "assignCompetition": "Assegna competizione",
+        "assignSeason": "Assegna stagione",
+        "assignVenue": "Assegna campo",
+        "assignReferee": "Assegna arbitro",
+        "deleteSelected": "Elimina selezionate",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Stai per eliminare la partita {{matchName}}.",
+        "deleteSelectedDialogTitle": "Sei sicuro?",
+        "deleteSelectedDialogDescription": "Stai per eliminare {{count}} partite. Questa azione è irreversibile.",
         "table": {
           "match": "Partita",
           "date": "Data",
@@ -327,58 +393,58 @@
           "actions": "Azioni"
         },
         "bulkEdit": {
-          "statusTitle": "Modifica Stato",
-          "statusDescription": "Seleziona il nuovo stato per le {{count}} partite selezionate.",
+          "statusTitle": "Modifica Stato Partite",
+          "statusDescription": "Seleziona un nuovo stato per le {{count}} partite selezionate.",
           "statusLabel": "Nuovo Stato",
           "competitionTitle": "Assegna Competizione",
-          "competitionDescription": "Seleziona la competizione per le {{count}} partite selezionate.",
+          "competitionDescription": "Seleziona una competizione per le {{count}} partite selezionate.",
           "competitionLabel": "Competizione",
           "seasonTitle": "Assegna Stagione",
-          "seasonDescription": "Seleziona la stagione per le {{count}} partite selezionate.",
+          "seasonDescription": "Seleziona una stagione per le {{count}} partite selezionate.",
           "seasonLabel": "Stagione",
           "venueTitle": "Assegna Campo",
-          "venueDescription": "Seleziona il campo per le {{count}} partite selezionate.",
+          "venueDescription": "Seleziona un campo per le {{count}} partite selezionate.",
           "venueLabel": "Campo",
           "refereeTitle": "Assegna Arbitro",
-          "refereeDescription": "Seleziona la squadra arbitro per le {{count}} partite selezionate.",
+          "refereeDescription": "Seleziona un arbitro per le {{count}} partite selezionate.",
           "refereeLabel": "Arbitro"
         }
       },
       "fixtureForm": {
-        "editTitle": "Modifica partita",
-        "newTitle": "Nuova partita",
+        "editTitle": "Modifica Partita",
+        "newTitle": "Nuova Partita",
         "competitionLabel": "Competizione",
         "competitionPlaceholder": "Seleziona competizione",
         "seasonLabel": "Stagione",
         "seasonPlaceholder": "Seleziona stagione",
-        "homeTeamLabel": "Squadra Casa *",
-        "homeTeamPlaceholder": "Seleziona squadra",
-        "awayTeamLabel": "Squadra Ospite *",
-        "awayTeamPlaceholder": "Seleziona squadra",
-        "refereeLabel": "Arbitro (Opzionale)",
-        "refereePlaceholder": "Seleziona squadra arbitro",
+        "homeTeamLabel": "Squadra Casa",
+        "homeTeamPlaceholder": "Seleziona squadra casa",
+        "awayTeamLabel": "Squadra Ospite",
+        "awayTeamPlaceholder": "Seleziona squadra ospite",
+        "refereeLabel": "Arbitro",
+        "refereePlaceholder": "Seleziona arbitro",
         "noReferee": "Nessun arbitro",
-        "dateLabel": "Data e Ora *",
+        "dateLabel": "Data e Ora",
         "venueLabel": "Campo",
         "venuePlaceholder": "Seleziona campo",
-        "statusLabel": "Stato *",
+        "statusLabel": "Stato",
         "statusPlaceholder": "Seleziona stato",
         "homeScoreLabel": "Punteggio Casa",
         "awayScoreLabel": "Punteggio Ospite"
       },
       "fixtureBulkForm": {
-        "title": "Inserimento Multiplo Partite",
-        "saveAllButton": "Salva Tutte le Partite",
-        "teamsLabel": "Squadre *",
+        "title": "Aggiunta Multipla Partite",
+        "saveAllButton": "Salva Tutte",
+        "teamsLabel": "Squadre e Arbitro",
         "homeTeamPlaceholder": "Squadra Casa",
         "awayTeamPlaceholder": "Squadra Ospite",
         "refereePlaceholder": "Arbitro (opzionale)",
-        "dateAndVenueLabel": "Data e Campo *",
+        "dateAndVenueLabel": "Data e Campo",
         "venuePlaceholder": "Campo (opzionale)",
         "competitionAndSeasonLabel": "Competizione e Stagione",
         "competitionPlaceholder": "Competizione (opzionale)",
         "seasonPlaceholder": "Stagione (opzionale)",
-        "deleteRowButton": "Elimina Riga",
+        "deleteRowButton": "Elimina riga",
         "addMatchButton": "Aggiungi Partita"
       },
       "fixtureImport": {
@@ -388,35 +454,36 @@
         "uploadBoxClick": "Clicca per caricare",
         "uploadBoxDrag": "o trascina il file",
         "step2Title": "2. Mappa le colonne",
-        "step2Description": "Associa le colonne del tuo file ai campi richiesti dal sistema.",
+        "step2Description": "Associa le colonne del tuo file ai campi richiesti.",
         "backButton": "Indietro",
         "previewButton": "Vai all'Anteprima",
         "step3Title": "3. Anteprima e Conferma",
         "step3Description": "Controlla i dati. Le righe con errori non verranno importate.",
         "tableStatus": "Stato",
         "tableErrors": "Errori",
-        "importButton": "Importa {{count}} Partite Valide",
+        "importButton_one": "Importa {{count}} Partita Valida",
+        "importButton_other": "Importa {{count}} Partite Valide",
         "mapping": {
-          "home_team_name": "Squadra Casa",
-          "away_team_name": "Squadra Ospite",
-          "match_date": "Data e Ora Partita",
-          "referee_team_name": "Nome Squadra Arbitro (Opzionale)",
+          "home_team_name": "Nome Squadra Casa",
+          "away_team_name": "Nome Squadra Ospite",
+          "match_date": "Data Partita (gg/mm/aaaa hh:mm)",
+          "referee_team_name": "Nome Arbitro (Opzionale)",
           "competition_name": "Nome Competizione (Opzionale)",
           "season_name": "Nome Stagione (Opzionale)",
-          "home_score": "Punteggio Casa (se completata)",
-          "away_score": "Punteggio Ospite (se completata)",
-          "venue_name": "Campo (Opzionale)"
+          "home_score": "Punteggio Casa (Opzionale)",
+          "away_score": "Punteggio Ospite (Opzionale)",
+          "venue_name": "Nome Campo (Opzionale)"
         },
         "errors": {
           "emptyFile": "Il file è vuoto o non contiene dati validi.",
           "readFileError": "Errore nella lettura del file. Assicurati che sia un formato valido (.xlsx, .csv).",
           "homeTeamNotFound": "Squadra casa non trovata: \"{{name}}\"",
           "awayTeamNotFound": "Squadra ospite non trovata: \"{{name}}\"",
-          "teamsSame": "Squadra casa e ospite non possono essere le stesse.",
+          "teamsSame": "Le squadre devono essere diverse.",
           "invalidDate": "Data non valida: \"{{date}}\"",
-          "scoresRequired": "Punteggi obbligatori e numerici per partite completate.",
-          "refereeNotFound": "Squadra arbitro non trovata: \"{{name}}\"",
-          "refereeSameAsTeam": "L'arbitro non può essere una delle due squadre.",
+          "scoresRequired": "Punteggi obbligatori per partite completate.",
+          "refereeNotFound": "Arbitro non trovato: \"{{name}}\"",
+          "refereeSameAsTeam": "L'arbitro non può essere una delle squadre.",
           "venueNotFound": "Campo non trovato: \"{{name}}\"",
           "competitionNotFound": "Competizione non trovata: \"{{name}}\"",
           "seasonNotFound": "Stagione non trovata: \"{{name}}\"",
@@ -424,84 +491,60 @@
         }
       },
       "fixtureDetails": {
-        "title": "Dettaglio Partita",
-        "editButton": "Modifica",
+        "title": "Dettagli Partita",
+        "editButton": "Modifica Partita",
         "homeLabel": "Casa",
         "awayLabel": "Ospite",
-        "dateLabel": "Data e ora",
+        "dateLabel": "Data",
         "venueLabel": "Campo",
         "statusLabel": "Stato",
         "refereeLabel": "Arbitro",
         "scorersTitle": "Marcatori",
-        "noScorers": "Nessun marcatore registrato.",
-        "addScorerButton": "Aggiungi marcatore",
-        "deleteScorerDialogTitle": "Elimina marcatore",
-        "deleteScorerDialogDescription": "Sei sicuro di voler eliminare questo goal? L'azione non può essere annullata.",
+        "noScorers": "Nessun marcatore inserito.",
+        "addScorerButton": "Aggiungi Marcatore",
+        "deleteScorerDialogTitle": "Sei sicuro?",
+        "deleteScorerDialogDescription": "Questa azione rimuoverà il goal. L'azione è irreversibile.",
         "addScorerDialogTitle": "Aggiungi Marcatore",
-        "addScorerDialogDescription": "Seleziona la squadra, il giocatore e il minuto del goal.",
+        "addScorerDialogDescription": "Seleziona il giocatore e il minuto del goal.",
         "goalForm": {
           "teamLabel": "Squadra",
           "teamPlaceholder": "Seleziona squadra",
           "playerLabel": "Giocatore",
+          "playerLoading": "Caricamento giocatori...",
           "playerPlaceholder": "Seleziona giocatore",
-          "playerLoading": "Caricamento...",
           "minuteLabel": "Minuto",
           "addButton": "Aggiungi Goal"
         }
       },
-      "competitions": {
-        "title": "Competizioni",
-        "newCompetition": "Nuova competizione",
-        "searchPlaceholder": "Cerca competizioni...",
-        "errorLoading": "Errore nel caricamento delle competizioni",
-        "deleteDialogTitle": "Elimina competizione",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare la competizione \"{{name}}\"? Questa azione non può essere annullata.",
+      "users": {
+        "title": "Gestione Utenti",
+        "searchPlaceholder": "Cerca per nome, email, ruolo...",
+        "usersFound_one": "{{count}} utente trovato",
+        "usersFound_other": "{{count}} utenti trovati",
+        "errorLoading": "Errore nel caricamento degli utenti",
+        "accessDeniedTitle": "Accesso Negato",
+        "accessDeniedDescription": "Non hai i permessi necessari per visualizzare questa pagina.",
+        "demoteError": "Non puoi rimuovere il ruolo di admin a te stesso.",
+        "actionsButton": "Azioni",
+        "changeRoleLabel": "Modifica Ruolo",
+        "blockUser": "Blocca Utente",
+        "unblockUser": "Sblocca Utente",
         "table": {
           "name": "Nome",
-          "slug": "Slug",
-          "level": "Livello",
+          "email": "Email",
+          "role": "Ruolo",
+          "status": "Stato",
           "actions": "Azioni"
-        }
-      },
-      "competitionForm": {
-        "editTitle": "Modifica competizione",
-        "newTitle": "Nuova competizione",
-        "nameLabel": "Nome *",
-        "namePlaceholder": "Es: Serie A",
-        "slugLabel": "Slug",
-        "slugPlaceholder": "Es: serie-a (generato se vuoto)",
-        "levelLabel": "Livello",
-        "levelPlaceholder": "Es: 1 (per ordinamento)"
-      },
-      "seasons": {
-        "title": "Stagioni",
-        "newSeason": "Nuova stagione",
-        "searchPlaceholder": "Cerca stagioni...",
-        "errorLoading": "Errore nel caricamento delle stagioni",
-        "deleteDialogTitle": "Elimina stagione",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare la stagione \"{{name}}\"? Questa azione non può essere annullata.",
-        "table": {
-          "name": "Nome",
-          "startDate": "Data Inizio",
-          "endDate": "Data Fine",
-          "actions": "Azioni"
-        }
-      },
-      "seasonForm": {
-        "editTitle": "Modifica stagione",
-        "newTitle": "Nuova stagione",
-        "nameLabel": "Nome *",
-        "namePlaceholder": "Es: 2023/2024",
-        "startDateLabel": "Data Inizio",
-        "endDateLabel": "Data Fine"
+        },
+        "rolePlaceholder": "Cambia ruolo..."
       },
       "venues": {
-        "title": "Campi da Gioco",
-        "newVenue": "Nuovo campo",
-        "searchPlaceholder": "Cerca campi...",
+        "title": "Gestione Campi",
+        "newVenue": "Nuovo Campo",
+        "searchPlaceholder": "Cerca per nome, città, indirizzo...",
         "errorLoading": "Errore nel caricamento dei campi",
-        "deleteDialogTitle": "Elimina campo",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare il campo \"{{name}}\"? Questa azione non può essere annullata.",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Questa azione eliminerà permanentemente il campo {{name}}.",
         "table": {
           "name": "Nome",
           "structure": "Struttura",
@@ -511,32 +554,133 @@
         }
       },
       "venueForm": {
-        "editTitle": "Modifica campo",
-        "newTitle": "Nuovo campo",
+        "editTitle": "Modifica Campo",
+        "newTitle": "Nuovo Campo",
         "mainInfo": "Informazioni Principali",
-        "nameLabel": "Nome campo *",
-        "namePlaceholder": "Nome del campo",
+        "nameLabel": "Nome Campo",
+        "namePlaceholder": "Es. Campo Sportivo Comunale",
         "structureLabel": "Struttura",
-        "structurePlaceholder": "Es: Centro Sportivo, Palazzetto...",
+        "structurePlaceholder": "Es. Palazzetto dello Sport",
         "addressLabel": "Indirizzo",
-        "addressPlaceholder": "Via, numero civico",
+        "addressPlaceholder": "Es. Via Roma, 1",
         "cityLabel": "Città",
-        "cityPlaceholder": "Città",
+        "cityPlaceholder": "Es. Milano",
         "geoPosition": "Posizione Geografica",
         "latitudeLabel": "Latitudine",
-        "latitudePlaceholder": "Es: 45.4642",
+        "latitudePlaceholder": "Es. 45.4642",
         "longitudeLabel": "Longitudine",
-        "longitudePlaceholder": "Es: 9.1900",
-        "mapPreview": "Inserisci latitudine e longitudine per visualizzare la mappa.",
+        "longitudePlaceholder": "Es. 9.1900",
         "image": "Immagine",
-        "imageLabel": "Foto della struttura"
+        "imageLabel": "Foto del campo"
+      },
+      "competitions": {
+        "title": "Gestione Competizioni",
+        "newCompetition": "Nuova Competizione",
+        "searchPlaceholder": "Cerca per nome...",
+        "errorLoading": "Errore nel caricamento delle competizioni",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Questa azione eliminerà permanentemente la competizione {{name}}.",
+        "table": {
+          "name": "Nome",
+          "slug": "Slug",
+          "level": "Livello",
+          "actions": "Azioni"
+        }
+      },
+      "competitionForm": {
+        "editTitle": "Modifica Competizione",
+        "newTitle": "Nuova Competizione",
+        "nameLabel": "Nome",
+        "namePlaceholder": "Es. Serie A",
+        "slugLabel": "Slug (per URL)",
+        "slugPlaceholder": "Es. serie-a",
+        "levelLabel": "Livello (ordinamento)",
+        "levelPlaceholder": "Es. 1"
+      },
+      "seasons": {
+        "title": "Gestione Stagioni",
+        "newSeason": "Nuova Stagione",
+        "searchPlaceholder": "Cerca per nome...",
+        "errorLoading": "Errore nel caricamento delle stagioni",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Questa azione eliminerà permanentemente la stagione {{name}}.",
+        "table": {
+          "name": "Nome",
+          "startDate": "Data Inizio",
+          "endDate": "Data Fine",
+          "actions": "Azioni"
+        }
+      },
+      "seasonForm": {
+        "editTitle": "Modifica Stagione",
+        "newTitle": "Nuova Stagione",
+        "nameLabel": "Nome",
+        "namePlaceholder": "Es. 2023/2024",
+        "startDateLabel": "Data Inizio",
+        "endDateLabel": "Data Fine"
+      },
+      "articles": {
+        "title": "Gestione Articoli",
+        "newArticle": "Nuovo Articolo",
+        "searchPlaceholder": "Cerca per titolo...",
+        "errorLoading": "Errore nel caricamento degli articoli",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Stai per eliminare l'articolo \"{{name}}\".",
+        "pinTooltip": "Metti in evidenza",
+        "unpinTooltip": "Rimuovi evidenza",
+        "table": {
+          "pin": "Pin",
+          "title": "Titolo",
+          "status": "Stato",
+          "author": "Autore",
+          "publishedAt": "Pubblicato il",
+          "actions": "Azioni"
+        },
+        "status": {
+          "draft": "Bozza",
+          "published": "Pubblicato"
+        }
+      },
+      "articleForm": {
+        "editTitle": "Modifica Articolo",
+        "newTitle": "Nuovo Articolo",
+        "mainContent": "Contenuto Principale",
+        "titleLabel": "Titolo",
+        "titlePlaceholder": "Titolo del tuo articolo",
+        "slugLabel": "Slug (generato automaticamente)",
+        "slugPlaceholder": "titolo-del-tuo-articolo",
+        "contentLabel": "Contenuto",
+        "contentPlaceholder": "Scrivi qui il tuo articolo...",
+        "publication": "Pubblicazione",
+        "statusLabel": "Stato",
+        "statusPlaceholder": "Seleziona stato",
+        "coverImage": "Immagine di Copertina"
+      },
+      "albums": {
+        "title": "Gestione Album",
+        "newAlbum": "Nuovo Album",
+        "errorLoading": "Errore nel caricamento degli album",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Stai per eliminare l'album \"{{name}}\" e tutte le foto al suo interno.",
+        "table": {
+          "name": "Nome",
+          "itemCount": "Elementi",
+          "createdAt": "Creato il",
+          "actions": "Azioni"
+        }
+      },
+      "albumForm": {
+        "editTitle": "Modifica Album",
+        "newTitle": "Nuovo Album",
+        "nameLabel": "Nome Album",
+        "descriptionLabel": "Descrizione (opzionale)"
       },
       "sponsors": {
-        "title": "Sponsor",
+        "title": "Gestione Sponsor",
         "newSponsor": "Nuovo Sponsor",
         "errorLoading": "Errore nel caricamento degli sponsor",
-        "deleteDialogTitle": "Elimina sponsor",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare lo sponsor \"{{name}}\"? Questa azione non può essere annullata.",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Stai per eliminare lo sponsor \"{{name}}\".",
         "table": {
           "name": "Nome",
           "team": "Squadra",
@@ -547,19 +691,19 @@
       "sponsorForm": {
         "editTitle": "Modifica Sponsor",
         "newTitle": "Nuovo Sponsor",
-        "logoLabel": "Logo Sponsor",
-        "nameLabel": "Nome *",
-        "teamLabel": "Squadra *",
+        "logoLabel": "Logo",
+        "nameLabel": "Nome Sponsor",
+        "teamLabel": "Squadra Associata",
         "teamPlaceholder": "Seleziona una squadra",
-        "websiteLabel": "Sito Web",
-        "websitePlaceholder": "https://..."
+        "websiteLabel": "Sito Web (opzionale)",
+        "websitePlaceholder": "https://www.esempio.com"
       },
       "honors": {
-        "title": "Albo d'Oro",
-        "newHonor": "Aggiungi Trofeo",
+        "title": "Gestione Albo d'oro",
+        "newHonor": "Nuovo Trofeo",
         "errorLoading": "Errore nel caricamento dell'albo d'oro",
-        "deleteDialogTitle": "Elimina trofeo",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare questo risultato? L'azione non può essere annullata.",
+        "deleteDialogTitle": "Sei sicuro?",
+        "deleteDialogDescription": "Stai per eliminare questo trofeo.",
         "table": {
           "team": "Squadra",
           "achievement": "Risultato",
@@ -571,216 +715,78 @@
       "honorForm": {
         "editTitle": "Modifica Trofeo",
         "newTitle": "Nuovo Trofeo",
-        "teamLabel": "Squadra *",
-        "teamPlaceholder": "Seleziona squadra",
-        "competitionLabel": "Competizione *",
-        "competitionPlaceholder": "Seleziona competizione",
-        "seasonLabel": "Stagione *",
-        "seasonPlaceholder": "Seleziona stagione",
-        "achievementLabel": "Risultato *",
-        "achievementPlaceholder": "Es: Campione, Vincitore Coppa..."
-      },
-      "articles": {
-        "title": "Articoli",
-        "newArticle": "Nuovo articolo",
-        "searchPlaceholder": "Cerca articoli...",
-        "errorLoading": "Errore nel caricamento degli articoli",
-        "deleteDialogTitle": "Elimina articolo",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare l'articolo \"{{name}}\"? Questa azione non può essere annullata.",
-        "pinTooltip": "Fissa articolo in cima",
-        "unpinTooltip": "Sblocca articolo",
-        "table": {
-          "pin": "",
-          "title": "Titolo",
-          "status": "Stato",
-          "author": "Autore",
-          "publishedAt": "Pubblicato il",
-          "actions": "Azioni"
-        },
-        "status": {
-          "published": "Pubblicato",
-          "draft": "Bozza"
-        }
-      },
-      "articleForm": {
-        "editTitle": "Modifica articolo",
-        "newTitle": "Nuovo articolo",
-        "mainContent": "Contenuto Principale",
-        "titleLabel": "Titolo *",
-        "titlePlaceholder": "Titolo dell'articolo",
-        "slugLabel": "Slug *",
-        "slugPlaceholder": "verra-generato-automaticamente",
-        "contentLabel": "Contenuto",
-        "contentPlaceholder": "Scrivi il tuo articolo qui...",
-        "publication": "Pubblicazione",
-        "statusLabel": "Stato",
-        "statusPlaceholder": "Seleziona stato",
-        "coverImage": "Immagine di Copertina"
-      },
-      "albums": {
-        "title": "Album Galleria",
-        "newAlbum": "Nuovo Album",
-        "errorLoading": "Errore nel caricamento degli album",
-        "deleteDialogTitle": "Elimina album",
-        "deleteDialogDescription": "Sei sicuro di voler eliminare l'album \"{{name}}\"? Le immagini al suo interno non verranno eliminate ma non saranno più associate a questo album.",
-        "table": {
-          "name": "Nome",
-          "itemCount": "N. Elementi",
-          "createdAt": "Creato il",
-          "actions": "Azioni"
-        }
-      },
-      "albumForm": {
-        "editTitle": "Modifica album",
-        "newTitle": "Nuovo album",
-        "nameLabel": "Nome *",
-        "descriptionLabel": "Descrizione"
-      },
-      "homepage": {
-        "title": "Gestione Homepage",
-        "saveButton": "Salva",
-        "addRowButton": "Riga",
-        "layoutCardTitle": "Layout",
-        "layoutCardDescription": "Trascina le righe per riordinarle e i widget per spostarli.",
-        "widgetPaletteTitle": "Widget Disponibili",
-        "row": "Riga",
-        "layout": "Layout",
-        "deleteRow": "Elimina Riga",
-        "startBuilding": "Aggiungi una riga per iniziare.",
-        "heroWidgetForm": {
-          "title": "Modifica Widget Hero",
-          "description": "Personalizza i testi e il pulsante della sezione principale.",
-          "mainTitleLabel": "Titolo Principale",
-          "subtitleLabel": "Sottotitolo",
-          "buttonTextLabel": "Testo Pulsante",
-          "buttonLinkLabel": "Link Pulsante"
-        },
-        "pinnedArticleWidgetForm": {
-          "title": "Modifica Widget Articolo in Evidenza",
-          "description": "Seleziona quale articolo fissato mostrare in questo widget.",
-          "pinnedArticleLabel": "Articolo Fissato",
-          "selectPlaceholder": "Seleziona un articolo",
-          "loadingPlaceholder": "Caricamento...",
-          "noPinnedArticles": "Nessun articolo fissato trovato."
-        }
-      },
-      "theme": {
-        "title": "Aspetto del Sito",
-        "saveButton": "Salva Modifiche",
-        "colorsCardTitle": "Colori Principali",
-        "colorsCardDescription": "Questi colori verranno usati in sezioni chiave come l'header della home page.",
-        "primaryColorLabel": "Colore Primario",
-        "secondaryColorLabel": "Colore Secondario",
-        "typographyCardTitle": "Tipografia",
-        "typographyCardDescription": "Scegli il font per i testi del sito.",
-        "fontFamilyLabel": "Font Famiglia",
-        "fontPlaceholder": "Seleziona un font",
-        "logoCardTitle": "Logo",
-        "logoCardDescription": "Carica il logo che apparirà nella barra di navigazione.",
-        "logoFileLabel": "File del logo"
+        "teamLabel": "Squadra",
+        "teamPlaceholder": "Seleziona una squadra",
+        "competitionLabel": "Competizione",
+        "competitionPlaceholder": "Seleziona una competizione",
+        "seasonLabel": "Stagione",
+        "seasonPlaceholder": "Seleziona una stagione",
+        "achievementLabel": "Risultato",
+        "achievementPlaceholder": "Es. Campione, Vice-campione"
       },
       "event": {
         "title": "Gestione Evento Countdown",
         "saveButton": "Salva Modifiche",
         "settingsCardTitle": "Impostazioni Countdown",
-        "settingsCardDescription": "Configura il countdown che apparirà sulla homepage. Attivalo per renderlo visibile a tutti.",
+        "settingsCardDescription": "Configura il countdown che apparirà sulla homepage.",
         "switchLabel": "Attiva Countdown",
-        "switchDescription": "Mostra o nascondi il countdown sulla homepage.",
-        "titleLabel": "Titolo / Messaggio",
-        "titlePlaceholder": "Es: Il prossimo torneo inizia tra...",
-        "dateLabel": "Data e Ora dell'Evento"
+        "switchDescription": "Mostra o nascondi il widget del countdown sulla homepage.",
+        "titleLabel": "Titolo Evento",
+        "titlePlaceholder": "Es. Inizio Prossima Stagione",
+        "dateLabel": "Data e Ora Evento"
       },
-      "users": {
-        "title": "Gestione Utenti",
-        "searchPlaceholder": "Cerca utenti per nome, email o ruolo...",
-        "usersFound_one": "{{count}} utente trovato",
-        "usersFound_other": "{{count}} utenti trovati",
-        "accessDeniedTitle": "Accesso Negato",
-        "accessDeniedDescription": "Non hai i permessi necessari per accedere a questa pagina.",
-        "errorLoading": "Errore nel caricamento degli utenti",
-        "demoteError": "Non puoi declassare il tuo stesso account da amministratore.",
-        "table": {
-          "name": "Nome",
-          "email": "Email",
-          "role": "Ruolo",
-          "actions": "Azioni"
+      "theme": {
+        "title": "Aspetto del Sito",
+        "saveButton": "Salva Modifiche",
+        "colorsCardTitle": "Colori",
+        "colorsCardDescription": "Personalizza i colori principali del sito.",
+        "primaryColorLabel": "Colore Primario",
+        "secondaryColorLabel": "Colore Secondario",
+        "typographyCardTitle": "Tipografia",
+        "typographyCardDescription": "Scegli il font per il sito.",
+        "fontFamilyLabel": "Famiglia di Font",
+        "fontPlaceholder": "Seleziona un font",
+        "logoCardTitle": "Logo",
+        "logoCardDescription": "Carica il logo del tuo sito.",
+        "logoFileLabel": "File Logo"
+      },
+      "homepage": {
+        "title": "Layout Homepage",
+        "addRowButton": "Aggiungi Riga",
+        "saveButton": "Salva Layout",
+        "layoutCardTitle": "Struttura Pagina",
+        "layoutCardDescription": "Trascina e sposta i widget per costruire la tua homepage.",
+        "startBuilding": "Inizia a costruire la tua pagina aggiungendo una riga.",
+        "widgetPaletteTitle": "Widget Disponibili",
+        "layout": "Layout",
+        "deleteRow": "Elimina Riga",
+        "row": "Riga",
+        "heroWidgetForm": {
+          "title": "Configura Widget Hero",
+          "description": "Personalizza il contenuto della sezione principale.",
+          "mainTitleLabel": "Titolo Principale",
+          "subtitleLabel": "Sottotitolo",
+          "buttonTextLabel": "Testo del Pulsante",
+          "buttonLinkLabel": "Link del Pulsante"
         },
-        "rolePlaceholder": "Seleziona ruolo"
+        "pinnedArticleWidgetForm": {
+          "title": "Configura Widget Articolo in Evidenza",
+          "description": "Scegli quale articolo mostrare in questa sezione.",
+          "pinnedArticleLabel": "Articolo in Evidenza",
+          "loadingPlaceholder": "Caricamento articoli...",
+          "selectPlaceholder": "Seleziona un articolo",
+          "noPinnedArticles": "Nessun articolo in evidenza trovato. Fissa un articolo dalla gestione articoli."
+        }
       }
-    },
-    "notFound": {
-      "title": "Pagina non trovata",
-      "subtitle": "La pagina che stai cercando non esiste.",
-      "button": "Torna alla home"
-    },
-    "notFoundAdmin": {
-      "title": "Pagina non trovata",
-      "subtitle": "La pagina richiesta non esiste nell'area admin."
     }
-  },
-  "matchStatus": {
-    "scheduled": "Programmata",
-    "ongoing": "In corso",
-    "completed": "Completata",
-    "postponed": "Rinviata",
-    "cancelled": "Cancellata"
-  },
-  "components": {
-    "comments": {
-      "writeComment": "Scrivi un commento...",
-      "submit": "Invia",
-      "noComments": "Sii il primo a commentare."
-    },
-    "latestNews": {
-      "title": "Ultime Notizie",
-      "readAll": "Vedi tutte le news"
-    },
-    "leagueTableWidget": {
-      "title": "Classifica",
-      "noData": "Nessun dato disponibile per la classifica.",
-      "viewFull": "Vedi classifica completa"
-    },
-    "upcomingMatches": {
-      "title": "Prossime Partite",
-      "noMatches": "Nessuna partita in programma.",
-      "viewFull": "Vedi calendario completo"
-    },
-    "pinnedArticle": {
-      "title": "In Evidenza",
-      "noArticle": "Nessun articolo in evidenza selezionato."
-    },
-    "hero": {
-      "title": "Benvenuti su NC League",
-      "subtitle": "La piattaforma per la tua lega di calcetto: risultati, classifiche, statistiche e news!",
-      "button": "Scopri l'ultima giornata"
-    },
-    "dynamicTitle": {
-      "appName": "NC League"
-    },
-    "table": {
-      "noData": "Nessun dato disponibile."
-    }
-  },
-  "errors": {
-    "loadingMatches": "Errore nel caricamento delle partite",
-    "loadingTables": "Errore nel caricamento della classifica.",
-    "loadingNews": "Errore nel caricamento delle notizie.",
-    "passwordMinLength": "La password deve essere di almeno 6 caratteri",
-    "requiredField": "Questo campo è obbligatorio"
   },
   "widgets": {
-    "hero": "Sezione Hero",
+    "hero": "Hero Section",
     "countdown": "Countdown Evento",
     "media_carousel": "Carosello Media",
     "upcoming_matches": "Prossime Partite",
     "latest_news": "Ultime Notizie",
     "league_table": "Classifica",
     "pinned_article": "Articolo in Evidenza"
-  },
-  "roles": {
-    "admin": "Admin",
-    "editor": "Editor",
-    "captain": "Capitano",
-    "player": "Giocatore"
   }
 }
