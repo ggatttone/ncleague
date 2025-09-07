@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FunctionError } from "@supabase/supabase-js";
+import { FunctionsError } from "@supabase/supabase-js";
 
 interface Profile {
   id: string;
@@ -39,7 +39,7 @@ const UsersAdmin = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const { data: profiles, isLoading, error } = useSupabaseQuery<Profile[], FunctionError>(
+  const { data: profiles, isLoading, error } = useSupabaseQuery<Profile[], FunctionsError>(
     ['admin-users'],
     () => supabase.functions.invoke('get-users'),
     { 
