@@ -10,7 +10,6 @@ import { Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
 import { useTranslation } from "react-i18next";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 const AlbumDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +75,7 @@ const AlbumDetails = () => {
                       {item.mime_type?.startsWith('video/') ? (
                         <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                       ) : (
-                        <img src={getOptimizedImageUrl(publicURL, { width: 400, height: 400, resize: 'cover' })} alt={item.title || ''} className="w-full h-full object-cover" />
+                        <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
                       )}
                     </div>
                   </CardContent>

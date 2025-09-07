@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -155,7 +154,7 @@ const MatchDetails = () => {
             <div className="flex items-center gap-3 flex-1 justify-center sm:justify-start">
               {match.home_teams.logo_url ? (
                 <img 
-                  src={getOptimizedImageUrl(match.home_teams.logo_url, { width: 64, height: 64, resize: 'cover' })} 
+                  src={match.home_teams.logo_url} 
                   alt={`${match.home_teams.name} logo`}
                   className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
@@ -199,7 +198,7 @@ const MatchDetails = () => {
               </div>
               {match.away_teams.logo_url ? (
                 <img 
-                  src={getOptimizedImageUrl(match.away_teams.logo_url, { width: 64, height: 64, resize: 'cover' })} 
+                  src={match.away_teams.logo_url} 
                   alt={`${match.away_teams.name} logo`}
                   className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
