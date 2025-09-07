@@ -8,7 +8,6 @@ import { MapPin, Users, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { useTranslation } from "react-i18next";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 const Teams = () => {
   const { user } = useAuth();
@@ -134,7 +133,7 @@ const Teams = () => {
                     <div className="flex items-center gap-3">
                       {team.logo_url ? (
                         <img 
-                          src={getOptimizedImageUrl(team.logo_url, { width: 48, height: 48, resize: 'cover' })} 
+                          src={team.logo_url} 
                           alt={`${team.name} logo`}
                           className="w-12 h-12 rounded-full object-cover border"
                         />

@@ -8,7 +8,6 @@ import { formatDateRelative, getInitials } from "@/lib/utils";
 import { useSupabaseCountQuery } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase/client";
 import { LikeButton } from "@/components/LikeButton";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 interface ArticlePostCardProps {
   article: ArticleWithAuthor;
@@ -56,7 +55,7 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
             {article.cover_image_url && (
               <Link to={`/news/${article.slug}`} className="block mt-4">
                 <img
-                  src={getOptimizedImageUrl(article.cover_image_url, { width: 600 })}
+                  src={article.cover_image_url}
                   alt={article.title}
                   className="w-full h-auto max-h-80 object-cover rounded-lg border"
                 />

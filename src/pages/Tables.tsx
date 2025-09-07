@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 const Tables = () => {
   const { t } = useTranslation();
@@ -47,7 +46,7 @@ const Tables = () => {
     team: (
       <Link to={`/teams/${row.team_id}`} className="flex items-center gap-3 hover:underline">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={getOptimizedImageUrl(row.team_logo_url, { width: 32, height: 32, resize: 'cover' })} alt={row.team_name} />
+          <AvatarImage src={row.team_logo_url || undefined} alt={row.team_name} />
           <AvatarFallback>{row.team_name.substring(0, 2)}</AvatarFallback>
         </Avatar>
         <span className="font-medium">{row.team_name}</span>

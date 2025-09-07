@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import { getInitials } from '@/lib/utils';
-import { getOptimizedImageUrl } from '@/lib/image';
 
 interface AvatarUploaderProps {
   onUpload: (url: string | null) => void;
@@ -98,7 +97,7 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
   return (
     <div className="flex items-center gap-4">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={getOptimizedImageUrl(avatarUrl, { width: 100, height: 100, resize: 'cover' })} alt="User avatar" />
+        <AvatarImage src={avatarUrl || undefined} alt="User avatar" />
         <AvatarFallback className="text-3xl">
           {getInitials(profile?.first_name, profile?.last_name)}
         </AvatarFallback>

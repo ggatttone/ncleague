@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
-import { getOptimizedImageUrl } from "@/lib/image";
 
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -103,7 +102,7 @@ const PlayerDetails = () => {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-2">
-              <AvatarImage src={getOptimizedImageUrl(playerData.photo_url, { width: 100, height: 100, resize: 'cover' })} alt={`${playerData.first_name} ${playerData.last_name}`} />
+              <AvatarImage src={playerData.photo_url || undefined} alt={`${playerData.first_name} ${playerData.last_name}`} />
               <AvatarFallback className="bg-primary/10 text-primary">
                 {playerData.jersey_number ? (
                   <span className="text-2xl sm:text-3xl font-bold">{playerData.jersey_number}</span>
