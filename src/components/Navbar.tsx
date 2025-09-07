@@ -99,9 +99,9 @@ export const Navbar = () => {
     <nav className="bg-background border-b border-border sticky top-0 z-30">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="font-bold text-xl text-primary">
+          <Link to="/" className="flex items-center font-bold text-xl text-primary">
             {theme?.logo_url ? (
-              <img src={getOptimizedImageUrl(theme.logo_url, { height: 40 })} alt="Logo" className="h-10 max-w-xs object-contain" />
+              <img src={getOptimizedImageUrl(theme.logo_url, { height: 40 })} alt="Logo" className="h-10 w-auto object-contain" />
             ) : (
               <span>NC League</span>
             )}
