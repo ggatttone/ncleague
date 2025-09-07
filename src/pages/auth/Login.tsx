@@ -42,7 +42,7 @@ const Login = () => {
         <div className="text-center">
           {appTheme?.logo_url ? (
             <Link to="/">
-              <img src={getOptimizedImageUrl(appTheme.logo_url, { height: 48 })} alt="Logo" className="mx-auto h-12 mb-6 object-contain" />
+              <img src={getOptimizedImageUrl(appTheme.logo_url, { height: 48 })} alt="Logo" className="mx-auto h-12 mb-6" />
             </Link>
           ) : (
             <h2 className="text-3xl font-bold text-card-foreground">Admin Login</h2>
