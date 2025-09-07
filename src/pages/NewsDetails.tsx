@@ -10,6 +10,7 @@ import { LikeButton } from "@/components/LikeButton";
 import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const NewsDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -82,7 +83,7 @@ const NewsDetails = () => {
 
           {article.cover_image_url && (
             <img
-              src={article.cover_image_url}
+              src={getOptimizedImageUrl(article.cover_image_url, { width: 800 })}
               alt={article.title}
               className="w-full h-auto max-h-96 object-cover rounded-lg mb-8"
             />

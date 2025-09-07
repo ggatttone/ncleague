@@ -21,6 +21,7 @@ import {
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 export const Navbar = () => {
   const location = useLocation();
@@ -54,7 +55,7 @@ export const Navbar = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={profile?.avatar_url || ""} alt="User avatar" />
+            <AvatarImage src={getOptimizedImageUrl(profile?.avatar_url, { width: 32, height: 32, resize: 'cover' })} alt="User avatar" />
             <AvatarFallback>{getInitials(profile?.first_name, profile?.last_name)}</AvatarFallback>
           </Avatar>
         </Button>
@@ -100,7 +101,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="font-bold text-xl text-primary">
             {theme?.logo_url ? (
-              <img src={theme.logo_url} alt="Logo" className="h-10 max-w-xs" />
+              <img src={getOptimizedImageUrl(theme.logo_url, { height: 40 })} alt="Logo" className="h-10 max-w-xs" />
             ) : (
               <span>NC League</span>
             )}

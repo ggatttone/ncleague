@@ -21,6 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const getUploadSchema = (t: (key: string) => string) => z.object({
   album_id: z.string().optional().nullable(),
@@ -189,7 +190,7 @@ const GalleryPage = () => {
                       <CardHeader className="p-0">
                         <div className="aspect-video bg-muted flex items-center justify-center">
                           {publicURL ? (
-                            <img src={publicURL} alt={album.name} className="w-full h-full object-cover" />
+                            <img src={getOptimizedImageUrl(publicURL, { width: 400, resize: 'cover' })} alt={album.name} className="w-full h-full object-cover" />
                           ) : (
                             <Folder className="h-12 w-12 text-muted-foreground" />
                           )}
@@ -230,7 +231,7 @@ const GalleryPage = () => {
                         {item.mime_type?.startsWith('video/') ? (
                           <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
+                          <img src={getOptimizedImageUrl(publicURL, { width: 400, height: 400, resize: 'cover' })} alt={item.title || ''} className="w-full h-full object-cover" />
                         )}
                       </div>
                     </CardContent>

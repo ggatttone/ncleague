@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/supabase/auth-context';
 import { useThemeContext } from '@/components/theme/ThemeProvider';
 import { useMode } from '@/components/theme/ModeProvider';
 import { useEffect, useState } from 'react';
+import { getOptimizedImageUrl } from '@/lib/image';
 
 const Login = () => {
   const { user } = useAuth();
@@ -41,7 +42,7 @@ const Login = () => {
         <div className="text-center">
           {appTheme?.logo_url ? (
             <Link to="/">
-              <img src={appTheme.logo_url} alt="Logo" className="mx-auto h-12 mb-6" />
+              <img src={getOptimizedImageUrl(appTheme.logo_url, { height: 48 })} alt="Logo" className="mx-auto h-12 mb-6" />
             </Link>
           ) : (
             <h2 className="text-3xl font-bold text-card-foreground">Admin Login</h2>

@@ -10,6 +10,7 @@ import { Users, ArrowLeft, Loader2, Trophy, Calendar, Star } from "lucide-react"
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const TeamDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -63,7 +64,7 @@ const TeamDetails = () => {
 
       {team.squad_photo_url && (
         <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
-          <img src={team.squad_photo_url} alt={`Foto rosa ${team.name}`} className="w-full h-auto max-h-96 object-cover" />
+          <img src={getOptimizedImageUrl(team.squad_photo_url, { width: 800 })} alt={`Foto rosa ${team.name}`} className="w-full h-auto max-h-96 object-cover" />
         </div>
       )}
 
@@ -71,7 +72,7 @@ const TeamDetails = () => {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             {team.logo_url ? (
-              <img src={team.logo_url} alt={`${team.name} logo`} className="w-24 h-24 rounded-full object-cover border-2" />
+              <img src={getOptimizedImageUrl(team.logo_url, { width: 100, height: 100, resize: 'cover' })} alt={`${team.name} logo`} className="w-24 h-24 rounded-full object-cover border-2" />
             ) : (
               <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-2"><Users className="text-primary h-12 w-12" /></div>
             )}
@@ -156,7 +157,7 @@ const TeamDetails = () => {
                   {sponsors.map(sponsor => (
                     <a href={sponsor.website_url || '#'} key={sponsor.id} target="_blank" rel="noopener noreferrer">
                       {sponsor.logo_url ? (
-                        <img src={sponsor.logo_url} alt={sponsor.name} className="h-12 max-w-xs object-contain" />
+                        <img src={getOptimizedImageUrl(sponsor.logo_url, { height: 48 })} alt={sponsor.name} className="h-12 max-w-xs object-contain" />
                       ) : (
                         <div className="flex items-center gap-2"><Star className="h-4 w-4" />{sponsor.name}</div>
                       )}

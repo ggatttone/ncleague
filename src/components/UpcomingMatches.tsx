@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -26,7 +27,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {match.home_teams.logo_url ? (
-            <img src={match.home_teams.logo_url} alt={match.home_teams.name} className="w-6 h-6 rounded-full object-cover" />
+            <img src={getOptimizedImageUrl(match.home_teams.logo_url, { width: 24, height: 24, resize: 'cover' })} alt={match.home_teams.name} className="w-6 h-6 rounded-full object-cover" />
           ) : (
             <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"><Trophy className="h-3 w-3 text-muted-foreground" /></div>
           )}
@@ -36,7 +37,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
         <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
           <span className="font-medium text-sm truncate text-right">{match.away_teams.name}</span>
           {match.away_teams.logo_url ? (
-            <img src={match.away_teams.logo_url} alt={match.away_teams.name} className="w-6 h-6 rounded-full object-cover" />
+            <img src={getOptimizedImageUrl(match.away_teams.logo_url, { width: 24, height: 24, resize: 'cover' })} alt={match.away_teams.name} className="w-6 h-6 rounded-full object-cover" />
           ) : (
             <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"><Trophy className="h-3 w-3 text-muted-foreground" /></div>
           )}
