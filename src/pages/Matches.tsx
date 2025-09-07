@@ -16,6 +16,7 @@ import { useSeasons } from "@/hooks/use-seasons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -121,7 +122,7 @@ const Matches = () => {
               <div className="flex items-center gap-3 flex-1">
                 {match.home_teams.logo_url ? (
                   <img 
-                    src={match.home_teams.logo_url} 
+                    src={getOptimizedImageUrl(match.home_teams.logo_url, { width: 32, height: 32, resize: 'cover' })} 
                     alt={`${match.home_teams.name} logo`}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -151,7 +152,7 @@ const Matches = () => {
                 <span className="font-medium text-sm sm:text-base">{match.away_teams.name}</span>
                 {match.away_teams.logo_url ? (
                   <img 
-                    src={match.away_teams.logo_url} 
+                    src={getOptimizedImageUrl(match.away_teams.logo_url, { width: 32, height: 32, resize: 'cover' })} 
                     alt={`${match.away_teams.name} logo`}
                     className="w-8 h-8 rounded-full object-cover"
                   />

@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 export const LeagueTableWidget = () => {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ export const LeagueTableWidget = () => {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
-                        <AvatarImage src={row.team_logo_url || undefined} alt={row.team_name} />
+                        <AvatarImage src={getOptimizedImageUrl(row.team_logo_url, { width: 24, height: 24, resize: 'cover' })} alt={row.team_name} />
                         <AvatarFallback>{row.team_name.substring(0, 2)}</AvatarFallback>
                       </Avatar>
                       <span className="text-sm font-medium truncate">{row.team_name}</span>

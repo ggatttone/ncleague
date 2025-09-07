@@ -11,6 +11,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,7 +186,7 @@ const Players = () => {
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-12 h-12">
-                          <AvatarImage src={player.photo_url || undefined} alt={`${player.first_name} ${player.last_name}`} />
+                          <AvatarImage src={getOptimizedImageUrl(player.photo_url, { width: 48, height: 48, resize: 'cover' })} alt={`${player.first_name} ${player.last_name}`} />
                           <AvatarFallback className="bg-primary/10">
                             {player.jersey_number ? (
                               <span className="font-bold text-primary">{player.jersey_number}</span>

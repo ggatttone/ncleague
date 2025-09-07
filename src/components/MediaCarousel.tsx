@@ -12,6 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { MediaViewer } from "@/components/MediaViewer";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 export const MediaCarousel = () => {
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
@@ -62,7 +63,7 @@ export const MediaCarousel = () => {
                         {item.mime_type?.startsWith('video/') ? (
                           <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
+                          <img src={getOptimizedImageUrl(publicURL, { width: 500 })} alt={item.title || ''} className="w-full h-full object-cover" />
                         )}
                       </CardContent>
                     </Card>

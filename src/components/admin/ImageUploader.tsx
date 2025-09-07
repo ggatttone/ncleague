@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Loader2 } from 'lucide-react';
 import { showError, showLoading, dismissToast, showSuccess } from '@/utils/toast';
+import { getOptimizedImageUrl } from '@/lib/image';
 
 interface ImageUploaderProps {
   bucketName: string;
@@ -58,7 +59,7 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       <Label>{label}</Label>
       <div className="flex items-center gap-4 mt-2">
         <Avatar className="h-20 w-20">
-          <AvatarImage src={currentImageUrl || undefined} alt="Avatar" />
+          <AvatarImage src={getOptimizedImageUrl(currentImageUrl, { width: 80, height: 80, resize: 'cover' })} alt="Avatar" />
           <AvatarFallback className="h-20 w-20">
             <User className="h-10 w-10" />
           </AvatarFallback>
