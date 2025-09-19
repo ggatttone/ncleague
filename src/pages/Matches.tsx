@@ -69,11 +69,14 @@ const Matches = () => {
     }
   );
 
-  const upcomingMatches = matches?.filter(match => 
+  const regularSeasonMatches = matches?.filter(match => match.stage === 'regular_season') || [];
+  const finalStageMatches = matches?.filter(match => match.stage !== 'regular_season') || [];
+
+  const upcomingMatches = regularSeasonMatches.filter(match => 
     match.status === 'scheduled' || match.status === 'ongoing'
   ) || [];
 
-  const completedMatches = matches?.filter(match => 
+  const completedMatches = regularSeasonMatches.filter(match => 
     match.status === 'completed'
   ) || [];
 
@@ -231,12 +234,15 @@ const Matches = () => {
 
     return (
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="upcoming">
             {t('pages.matches.upcoming')} ({upcomingMatches.length})
           </TabsTrigger>
           <TabsTrigger value="completed">
             {t('pages.matches.completed')} ({completedMatches.length})
+          </TabsTrigger>
+          <TabsTrigger value="final-stage">
+            {t('pages.matches.finalStage')} ({finalStageMatches.length})
           </TabsTrigger>
         </TabsList>
 
@@ -274,6 +280,22 @@ const Matches = () => {
           ) : (
             <div className="space-y-4">
               {completedMatches.map((match) => (
+                <MatchCard key={match.id} match={match} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="final-stage" className="mt-6">
+          {finalStageMatches.length === 0 ? (
+            <div className="text-center py-12">
+              <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-xl text-muted-foreground mb-2">Nessuna partita della fase finale</p>
+              <p className="text-muted-foreground">Le partite dei playoff appariranno qui.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {finalStageMatches.map((match) => (
                 <MatchCard key={match.id} match={match} />
               ))}
             </div>
