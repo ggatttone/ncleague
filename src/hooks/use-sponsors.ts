@@ -18,18 +18,18 @@ export interface UpdateSponsorData extends UpsertSponsorData {
 
 // Fetches sponsors associated with a specific team
 export function useSponsors(teamId?: string) {
-  return useSupabaseQuery<({ sponsors: Sponsor | null })[], PostgrestError, Sponsor[]>(
+  return useSupabaseQuery<({ sponsor: Sponsor | null })[], PostgrestError, Sponsor[]>(
     ['sponsors', { teamId }],
     () => {
       if (!teamId) return null;
       return supabase
         .from('sponsor_teams')
-        .select('sponsors(*)')
+        .select('sponsor:sponsors(*)')
         .eq('team_id', teamId);
     },
     { 
       enabled: !!teamId,
-      select: (data) => data?.map((item) => item.sponsors).filter(Boolean) as Sponsor[] || []
+      select: (data) => data?.map((item) => item.sponsor).filter((s): s is Sponsor => s !== null) || []
     }
   );
 }
