@@ -16,6 +16,8 @@ import { useSeasons } from "@/hooks/use-seasons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { usePlayoffBracket } from "@/hooks/use-playoffs";
+import { cn } from "@/lib/utils";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -68,6 +70,9 @@ const Matches = () => {
       enabled: !!selectedCompetition && !!selectedSeason,
     }
   );
+
+  const { data: playoffData } = usePlayoffBracket(selectedCompetition, selectedSeason);
+  const playoffsActive = !!playoffData?.bracket;
 
   const regularSeasonMatches = matches?.filter(match => match.stage === 'regular_season') || [];
   const finalStageMatches = matches?.filter(match => match.stage !== 'regular_season') || [];
@@ -234,16 +239,18 @@ const Matches = () => {
 
     return (
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={cn("grid w-full", playoffsActive ? "grid-cols-3" : "grid-cols-2")}>
           <TabsTrigger value="upcoming">
             {t('pages.matches.upcoming')} ({upcomingMatches.length})
           </TabsTrigger>
           <TabsTrigger value="completed">
             {t('pages.matches.completed')} ({completedMatches.length})
           </TabsTrigger>
-          <TabsTrigger value="final-stage">
-            {t('pages.matches.finalStage')} ({finalStageMatches.length})
-          </TabsTrigger>
+          {playoffsActive && (
+            <TabsTrigger value="final-stage">
+              {t('pages.matches.finalStage')} ({finalStageMatches.length})
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="upcoming" className="mt-6">
@@ -286,21 +293,23 @@ const Matches = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="final-stage" className="mt-6">
-          {finalStageMatches.length === 0 ? (
-            <div className="text-center py-12">
-              <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground mb-2">Nessuna partita della fase finale</p>
-              <p className="text-muted-foreground">Le partite dei playoff appariranno qui.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {finalStageMatches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
+        {playoffsActive && (
+          <TabsContent value="final-stage" className="mt-6">
+            {finalStageMatches.length === 0 ? (
+              <div className="text-center py-12">
+                <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-xl text-muted-foreground mb-2">Nessuna partita della fase finale</p>
+                <p className="text-muted-foreground">Le partite dei playoff appariranno qui.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {finalStageMatches.map((match) => (
+                  <MatchCard key={match.id} match={match} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        )}
       </Tabs>
     );
   };
