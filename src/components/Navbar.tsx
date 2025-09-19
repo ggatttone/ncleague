@@ -21,6 +21,10 @@ import {
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { supabase } from "@/lib/supabase/client";
+import { Competition, Season } from "@/types/database";
+import { usePlayoffBracket } from "@/hooks/use-playoffs";
 
 export const Navbar = () => {
   const location = useLocation();
@@ -29,17 +33,33 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useTranslation();
 
+  // Fetch main competition
+  const { data: competition } = useSupabaseQuery<Competition>(
+    ['main-competition'],
+    async () => supabase.from('competitions').select('*').order('level').limit(1).single()
+  );
+
+  // Fetch latest season
+  const { data: season } = useSupabaseQuery<Season>(
+    ['latest-season'],
+    async () => supabase.from('seasons').select('*').order('start_date', { ascending: false }).limit(1).single()
+  );
+
+  // Check for playoffs
+  const { data: playoffData } = usePlayoffBracket(competition?.id, season?.id);
+  const playoffsActive = !!playoffData?.bracket;
+
   const navLinks = [
     { to: "/", label: t('navbar.home') },
     { to: "/matches", label: t('navbar.matches') },
     { to: "/tables", label: t('navbar.tables') },
-    { to: "/playoffs", label: t('navbar.playoffs') },
+    playoffsActive && { to: "/playoffs", label: t('navbar.playoffs') },
     { to: "/statistics", label: t('navbar.statistics') },
     { to: "/news", label: t('navbar.news') },
     { to: "/players", label: t('navbar.players') },
     { to: "/teams", label: t('navbar.teams') },
     { to: "/gallery", label: t('navbar.gallery') },
-  ];
+  ].filter(Boolean) as { to: string; label: string }[];
 
   const isAdminOrEditor = hasPermission(['admin', 'editor', 'captain']);
 
