@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCreateSponsor, useUpdateSponsor, useSponsor } from "@/hooks/use-sponsors";
+import { useCreateSponsor, useUpdateSponsor, useSponsor, UpsertSponsorData } from "@/hooks/use-sponsors";
 import { useTeams } from "@/hooks/use-teams";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -64,10 +64,17 @@ const SponsorFormAdmin = () => {
   }, [sponsor, isEdit, reset]);
 
   const onSubmit = async (data: SponsorFormData) => {
+    const submissionData: UpsertSponsorData = {
+      name: data.name,
+      team_ids: data.team_ids,
+      logo_url: data.logo_url ?? undefined,
+      website_url: data.website_url ?? undefined,
+    };
+
     if (isEdit && id) {
-      await updateMutation.mutateAsync({ id, ...data });
+      await updateMutation.mutateAsync({ id, ...submissionData });
     } else {
-      await createMutation.mutateAsync(data);
+      await createMutation.mutateAsync(submissionData);
     }
     navigate("/admin/sponsors");
   };
