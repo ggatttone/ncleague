@@ -33,6 +33,7 @@ export const Navbar = () => {
     { to: "/", label: t('navbar.home') },
     { to: "/matches", label: t('navbar.matches') },
     { to: "/tables", label: t('navbar.tables') },
+    { to: "/playoffs", label: t('navbar.playoffs') },
     { to: "/statistics", label: t('navbar.statistics') },
     { to: "/news", label: t('navbar.news') },
     { to: "/players", label: t('navbar.players') },

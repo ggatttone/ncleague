@@ -20,6 +20,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Matches = lazy(() => import("./pages/Matches"));
 const MatchDetails = lazy(() => import("./pages/MatchDetails"));
 const Tables = lazy(() => import("./pages/Tables"));
+const Playoffs = lazy(() => import("./pages/Playoffs"));
 const Statistics = lazy(() => import("./pages/Statistics"));
 const News = lazy(() => import("./pages/News"));
 const NewsDetails = lazy(() => import("./pages/NewsDetails"));
@@ -86,6 +87,8 @@ const App = () => (
                   <Route path="/matches" element={<Matches />} />
                   <Route path="/matches/:id" element={<MatchDetails />} />
                   <Route path="/tables" element={<Tables />} />
+                  <Route path="/playoffs" element={<Playoffs />} />
+                  <Route path="/playoffs/:competitionId/:seasonId" element={<Playoffs />} />
                   <Route path="/statistics" element={<Statistics />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/news/:slug" element={<NewsDetails />} />
