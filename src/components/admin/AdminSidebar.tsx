@@ -21,6 +21,7 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
         { to: "/admin/fixtures", label: t('pages.admin.sidebar.fixtures'), roles: ['admin', 'editor'] },
         { to: "/admin/competitions", label: t('pages.admin.sidebar.competitions'), roles: ['admin', 'editor'] },
         { to: "/admin/seasons", label: t('pages.admin.sidebar.seasons'), roles: ['admin', 'editor'] },
+        { to: "/admin/tournament-modes", label: t('pages.admin.sidebar.tournamentModes'), roles: ['admin', 'editor'] },
         { to: "/admin/venues", label: t('pages.admin.sidebar.venues'), roles: ['admin', 'editor'] },
         { to: "/admin/sponsors", label: t('pages.admin.sidebar.sponsors'), roles: ['admin', 'editor'] },
         { to: "/admin/honors", label: t('pages.admin.sidebar.honors'), roles: ['admin', 'editor'] },

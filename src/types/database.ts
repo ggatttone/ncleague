@@ -14,6 +14,7 @@ export interface Season {
   end_date?: string;
   created_at: string;
   updated_at: string;
+  tournament_mode_id: string | null;
 }
 
 export interface Venue {
@@ -210,6 +211,16 @@ export interface PlayoffBracket {
   competition_id: string;
   season_id: string;
   match_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TournamentMode {
+  id: string;
+  name: string;
+  description?: string | null;
+  handler_key: string;
+  settings?: object | null;
   created_at: string;
   updated_at: string;
 }

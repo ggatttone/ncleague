@@ -51,6 +51,8 @@ const CompetitionsAdmin = lazy(() => import("./pages/admin/CompetitionsAdmin"));
 const CompetitionFormAdmin = lazy(() => import("./pages/admin/CompetitionFormAdmin"));
 const SeasonsAdmin = lazy(() => import("./pages/admin/SeasonsAdmin"));
 const SeasonFormAdmin = lazy(() => import("./pages/admin/SeasonFormAdmin"));
+const TournamentModesAdmin = lazy(() => import("./pages/admin/TournamentModesAdmin"));
+const TournamentModeFormAdmin = lazy(() => import("./pages/admin/TournamentModeFormAdmin"));
 const ArticlesAdmin = lazy(() => import("./pages/admin/ArticlesAdmin"));
 const ArticleFormAdmin = lazy(() => import("./pages/admin/ArticleFormAdmin"));
 const AlbumsAdmin = lazy(() => import("./pages/admin/AlbumsAdmin"));
@@ -137,6 +139,9 @@ const App = () => (
                         <Route path="seasons" element={<SeasonsAdmin />} />
                         <Route path="seasons/new" element={<SeasonFormAdmin />} />
                         <Route path="seasons/:id/edit" element={<SeasonFormAdmin />} />
+                        <Route path="tournament-modes" element={<TournamentModesAdmin />} />
+                        <Route path="tournament-modes/new" element={<TournamentModeFormAdmin />} />
+                        <Route path="tournament-modes/:id/edit" element={<TournamentModeFormAdmin />} />
                         <Route path="articles" element={<ArticlesAdmin />} />
                         <Route path="articles/new" element={<ArticleFormAdmin />} />
                         <Route path="articles/:id/edit" element={<ArticleFormAdmin />} />
