@@ -97,7 +97,9 @@
       "addFirstMatch": "Voeg de eerste wedstrijd toe",
       "noCompleted": "Geen voltooide wedstrijden",
       "noCompletedSubtitle": "Resultaten verschijnen hier zodra de wedstrijden zijn afgelopen.",
-      "noMatchesForFilter": "Geen wedstrijden gevonden voor de geselecteerde filters."
+      "noMatchesForFilter": "Geen wedstrijden gevonden voor de geselecteerde filters.",
+      "selectTeam": "Selecteer Team",
+      "allTeams": "Alle teams"
     },
     "news": {
       "title": "Nieuws",

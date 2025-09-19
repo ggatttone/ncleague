@@ -97,7 +97,9 @@
       "addFirstMatch": "Add the first match",
       "noCompleted": "No completed matches",
       "noCompletedSubtitle": "Results will appear here as soon as matches are finished.",
-      "noMatchesForFilter": "No matches found for the selected filters."
+      "noMatchesForFilter": "No matches found for the selected filters.",
+      "selectTeam": "Select Team",
+      "allTeams": "All teams"
     },
     "news": {
       "title": "News",

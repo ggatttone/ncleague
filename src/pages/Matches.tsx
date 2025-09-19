@@ -368,10 +368,10 @@ const Matches = () => {
         </Select>
         <Select onValueChange={(value) => setSelectedTeam(value === 'all' ? undefined : value)} value={selectedTeam || 'all'} disabled={teamsLoading}>
           <SelectTrigger>
-            <SelectValue placeholder="Seleziona Squadra" />
+            <SelectValue placeholder={t('pages.matches.selectTeam')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tutte le squadre</SelectItem>
+            <SelectItem value="all">{t('pages.matches.allTeams')}</SelectItem>
             {teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
           </SelectContent>
         </Select>
