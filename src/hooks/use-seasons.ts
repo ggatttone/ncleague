@@ -6,6 +6,7 @@ export interface CreateSeasonData {
   name: string;
   start_date?: string;
   end_date?: string;
+  tournament_mode_id?: string | null;
 }
 
 export interface UpdateSeasonData extends CreateSeasonData {

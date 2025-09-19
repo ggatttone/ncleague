@@ -4,17 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCreateSeason, useUpdateSeason, useSeason } from "@/hooks/use-seasons";
-import { useForm } from "react-hook-form";
+import { useTournamentModes } from "@/hooks/use-tournament-modes";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const seasonSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
+  tournament_mode_id: z.string().min(1, "La modalità torneo è obbligatoria").nullable(),
 });
 
 type SeasonFormData = z.infer<typeof seasonSchema>;
@@ -26,6 +29,7 @@ const SeasonFormAdmin = () => {
   const { t } = useTranslation();
 
   const { data: season, isLoading: seasonLoading } = useSeason(id);
+  const { data: tournamentModes, isLoading: modesLoading } = useTournamentModes();
   const createMutation = useCreateSeason();
   const updateMutation = useUpdateSeason();
 
@@ -33,17 +37,22 @@ const SeasonFormAdmin = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
+    control
   } = useForm<SeasonFormData>({
     resolver: zodResolver(seasonSchema),
+    defaultValues: {
+      tournament_mode_id: null,
+    }
   });
 
   useEffect(() => {
     if (season && isEdit) {
       reset({
-        ...season,
+        name: season.name,
         start_date: season.start_date ? season.start_date.split('T')[0] : '',
         end_date: season.end_date ? season.end_date.split('T')[0] : '',
+        tournament_mode_id: season.tournament_mode_id || null,
       });
     }
   }, [season, isEdit, reset]);
@@ -57,7 +66,7 @@ const SeasonFormAdmin = () => {
     navigate("/admin/seasons");
   };
 
-  if (seasonLoading && isEdit) {
+  if ((seasonLoading || modesLoading) && isEdit) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-12">
@@ -85,6 +94,35 @@ const SeasonFormAdmin = () => {
             />
             {errors.name && (
               <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="tournament_mode_id">Modalità Torneo</Label>
+            <Controller
+              name="tournament_mode_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={(value) => field.onChange(value)}
+                  value={field.value || ""}
+                  disabled={modesLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona una modalità..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tournamentModes?.map((mode) => (
+                      <SelectItem key={mode.id} value={mode.id}>
+                        {mode.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.tournament_mode_id && (
+              <p className="text-sm text-destructive mt-1">{errors.tournament_mode_id.message}</p>
             )}
           </div>
 
