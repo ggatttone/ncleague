@@ -4,7 +4,7 @@ import { PlayoffBracket } from '@/types/database';
 import { MatchWithTeams } from './use-matches';
 
 export function usePlayoffBracket(competitionId?: string, seasonId?: string) {
-  return useSupabaseQuery(
+  return useSupabaseQuery<{ bracket: PlayoffBracket | null; matches: MatchWithTeams[] }>(
     ['playoff-bracket', competitionId, seasonId],
     async () => {
       if (!competitionId || !seasonId) return null;
@@ -18,12 +18,12 @@ export function usePlayoffBracket(competitionId?: string, seasonId?: string) {
         .single<PlayoffBracket>();
 
       if (bracketError) {
-        if (bracketError.code === 'PGRST116') return { bracket: null, matches: [] }; // No bracket found, not an error
-        throw bracketError;
+        if (bracketError.code === 'PGRST116') return { data: { bracket: null, matches: [] }, error: null }; // No bracket found, not an error
+        return { data: null, error: bracketError };
       }
       
       if (!bracket || !bracket.match_ids || bracket.match_ids.length === 0) {
-        return { bracket: null, matches: [] };
+        return { data: { bracket: null, matches: [] }, error: null };
       }
 
       // 2. Fetch the matches using the IDs from the bracket
@@ -38,10 +38,10 @@ export function usePlayoffBracket(competitionId?: string, seasonId?: string) {
         .order('match_date', { ascending: true });
 
       if (matchesError) {
-        throw matchesError;
+        return { data: null, error: matchesError };
       }
 
-      return { bracket, matches: (matches as MatchWithTeams[]) || [] };
+      return { data: { bracket, matches: (matches as MatchWithTeams[]) || [] }, error: null };
     },
     { enabled: !!competitionId && !!seasonId }
   );

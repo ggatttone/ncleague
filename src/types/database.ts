@@ -88,6 +88,7 @@ export interface Match {
   home_score: number;
   away_score: number;
   status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
+  stage: 'regular_season' | 'quarter-final' | 'semi-final' | 'third-place_playoff' | 'final' | null;
   created_at: string;
   updated_at: string;
   venues?: { name: string } | null;
