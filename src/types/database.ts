@@ -204,3 +204,12 @@ export interface Honor {
   achievement: string;
   created_at: string;
 }
+
+export interface PlayoffBracket {
+  id: string;
+  competition_id: string;
+  season_id: string;
+  match_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
