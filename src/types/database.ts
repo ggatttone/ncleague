@@ -191,7 +191,6 @@ export interface Event {
 
 export interface Sponsor {
   id: string;
-  team_id: string;
   name: string;
   logo_url?: string;
   website_url?: string;
