@@ -10,9 +10,10 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
+import { useTeams } from "@/hooks/use-teams";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -29,9 +30,11 @@ const Matches = () => {
   const { t } = useTranslation();
   const [selectedCompetition, setSelectedCompetition] = useState<string | undefined>();
   const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
+  const [selectedTeam, setSelectedTeam] = useState<string | undefined>();
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
+  const { data: teams, isLoading: teamsLoading } = useTeams();
 
   useEffect(() => {
     if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
@@ -74,16 +77,26 @@ const Matches = () => {
   const { data: playoffData } = usePlayoffBracket(selectedCompetition, selectedSeason);
   const playoffsActive = !!playoffData?.bracket;
 
-  const regularSeasonMatches = matches?.filter(match => match.stage === 'regular_season') || [];
-  const finalStageMatches = matches?.filter(match => match.stage !== 'regular_season') || [];
+  const filteredMatches = useMemo(() => {
+    if (!matches) return [];
+    if (!selectedTeam) return matches;
+    
+    return matches.filter(match => 
+      match.home_teams.id === selectedTeam ||
+      match.away_teams.id === selectedTeam
+    );
+  }, [matches, selectedTeam]);
+
+  const regularSeasonMatches = filteredMatches.filter(match => match.stage === 'regular_season') || [];
+  const finalStageMatches = filteredMatches.filter(match => match.stage !== 'regular_season') || [];
 
   const upcomingMatches = regularSeasonMatches.filter(match => 
     match.status === 'scheduled' || match.status === 'ongoing'
-  ) || [];
+  );
 
   const completedMatches = regularSeasonMatches.filter(match => 
     match.status === 'completed'
-  ) || [];
+  );
 
   const getStatusBadge = (status: string) => {
     const statusKey = `matchStatus.${status}`;
@@ -257,9 +270,9 @@ const Matches = () => {
           {upcomingMatches.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground mb-2">{t('pages.matches.noUpcoming')}</p>
+              <p className="text-xl text-muted-foreground mb-2">{selectedTeam ? t('pages.matches.noMatchesForFilter') : t('pages.matches.noUpcoming')}</p>
               <p className="text-muted-foreground mb-4">{t('pages.matches.noUpcomingSubtitle')}</p>
-              {user && (
+              {user && !selectedTeam && (
                 <Link to="/admin/fixtures/new">
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -281,7 +294,7 @@ const Matches = () => {
           {completedMatches.length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground mb-2">{t('pages.matches.noCompleted')}</p>
+              <p className="text-xl text-muted-foreground mb-2">{selectedTeam ? t('pages.matches.noMatchesForFilter') : t('pages.matches.noCompleted')}</p>
               <p className="text-muted-foreground">{t('pages.matches.noCompletedSubtitle')}</p>
             </div>
           ) : (
@@ -336,7 +349,7 @@ const Matches = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-3xl">
         <Select onValueChange={setSelectedCompetition} value={selectedCompetition} disabled={competitionsLoading}>
           <SelectTrigger>
             <SelectValue placeholder="Seleziona Competizione" />
@@ -351,6 +364,15 @@ const Matches = () => {
           </SelectTrigger>
           <SelectContent>
             {seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select onValueChange={(value) => setSelectedTeam(value === 'all' ? undefined : value)} value={selectedTeam || 'all'} disabled={teamsLoading}>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleziona Squadra" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutte le squadre</SelectItem>
+            {teams?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>

@@ -96,7 +96,8 @@
       "noUpcomingSubtitle": "Kom later terug voor updates van het schema.",
       "addFirstMatch": "Voeg de eerste wedstrijd toe",
       "noCompleted": "Geen voltooide wedstrijden",
-      "noCompletedSubtitle": "Resultaten verschijnen hier zodra de wedstrijden zijn afgelopen."
+      "noCompletedSubtitle": "Resultaten verschijnen hier zodra de wedstrijden zijn afgelopen.",
+      "noMatchesForFilter": "Geen wedstrijden gevonden voor de geselecteerde filters."
     },
     "news": {
       "title": "Nieuws",
