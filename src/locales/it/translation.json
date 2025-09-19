@@ -97,7 +97,9 @@
       "addFirstMatch": "Aggiungi la prima partita",
       "noCompleted": "Nessuna partita completata",
       "noCompletedSubtitle": "I risultati appariranno qui non appena le partite saranno concluse.",
-      "noMatchesForFilter": "Nessuna partita trovata per i filtri selezionati."
+      "noMatchesForFilter": "Nessuna partita trovata per i filtri selezionati.",
+      "selectTeam": "Seleziona Squadra",
+      "allTeams": "Tutte le squadre"
     },
     "news": {
       "title": "Notizie",
