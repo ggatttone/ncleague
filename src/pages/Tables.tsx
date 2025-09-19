@@ -1,5 +1,4 @@
 import { MainLayout } from "@/components/MainLayout";
-import { Table } from "@/components/Table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
@@ -9,6 +8,10 @@ import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { usePlayoffBracket } from "@/hooks/use-playoffs";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Tables = () => {
   const { t } = useTranslation();
@@ -18,6 +21,7 @@ const Tables = () => {
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
   const { data: tableData, isLoading: tableLoading, error: tableError } = useLeagueTable(selectedCompetition, selectedSeason);
+  const { data: playoffData, isLoading: playoffLoading } = usePlayoffBracket(selectedCompetition, selectedSeason);
 
   useEffect(() => {
     if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
@@ -28,39 +32,7 @@ const Tables = () => {
     }
   }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
 
-  const columns = [
-    { key: "position", label: t('pages.tables.pos') },
-    { key: "team", label: t('pages.tables.team') },
-    { key: "mp", label: t('pages.tables.mp') },
-    { key: "w", label: t('pages.tables.w') },
-    { key: "d", label: t('pages.tables.d') },
-    { key: "l", label: t('pages.tables.l') },
-    { key: "gf", label: t('pages.tables.gf') },
-    { key: "ga", label: t('pages.tables.ga') },
-    { key: "gd", label: t('pages.tables.gd') },
-    { key: "pts", label: t('pages.tables.pts') },
-  ];
-
-  const data = tableData?.map((row, index) => ({
-    position: <div className="font-bold text-center">{index + 1}</div>,
-    team: (
-      <Link to={`/teams/${row.team_id}`} className="flex items-center gap-3 hover:underline">
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={row.team_logo_url || undefined} alt={row.team_name} />
-          <AvatarFallback>{row.team_name.substring(0, 2)}</AvatarFallback>
-        </Avatar>
-        <span className="font-medium">{row.team_name}</span>
-      </Link>
-    ),
-    mp: <div className="text-center">{row.matches_played}</div>,
-    w: <div className="text-center">{row.wins}</div>,
-    d: <div className="text-center">{row.draws}</div>,
-    l: <div className="text-center">{row.losses}</div>,
-    gf: <div className="text-center">{row.goals_for}</div>,
-    ga: <div className="text-center">{row.goals_against}</div>,
-    gd: <div className="text-center">{row.goal_difference}</div>,
-    pts: <div className="font-bold text-center">{row.points}</div>,
-  })) || [];
+  const isLoading = tableLoading || playoffLoading || competitionsLoading || seasonsLoading;
 
   return (
     <MainLayout>
@@ -86,9 +58,19 @@ const Tables = () => {
           </Select>
         </div>
 
-        {tableLoading && (
+        {isLoading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {playoffData?.bracket && (
+          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md mb-6" role="alert">
+            <p className="font-bold">{t('pages.tables.playoffsStartedTitle')}</p>
+            <p>{t('pages.tables.playoffsStartedDescription')}</p>
+            <Link to={`/playoffs/${selectedCompetition}/${selectedSeason}`}>
+              <Button variant="link" className="p-0 h-auto mt-2 text-blue-700">{t('pages.tables.viewPlayoffBracket')}</Button>
+            </Link>
           </div>
         )}
 
@@ -99,10 +81,49 @@ const Tables = () => {
           </div>
         )}
 
-        {!tableLoading && !tableError && selectedCompetition && selectedSeason && (
+        {!isLoading && !tableError && selectedCompetition && selectedSeason && (
           tableData && tableData.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table columns={columns} data={data} />
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[50px] text-center">{t('pages.tables.pos')}</TableHead>
+                    <TableHead>{t('pages.tables.team')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.mp')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.w')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.d')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.l')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.gf')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.ga')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.gd')}</TableHead>
+                    <TableHead className="text-center">{t('pages.tables.pts')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tableData.map((row, index) => (
+                    <TableRow key={row.team_id} className={cn(playoffData?.bracket && index < 4 && "bg-green-100/50 dark:bg-green-900/20")}>
+                      <TableCell className="font-bold text-center">{index + 1}</TableCell>
+                      <TableCell>
+                        <Link to={`/teams/${row.team_id}`} className="flex items-center gap-3 hover:underline">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={row.team_logo_url || undefined} alt={row.team_name} />
+                            <AvatarFallback>{row.team_name.substring(0, 2)}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">{row.team_name}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-center">{row.matches_played}</TableCell>
+                      <TableCell className="text-center">{row.wins}</TableCell>
+                      <TableCell className="text-center">{row.draws}</TableCell>
+                      <TableCell className="text-center">{row.losses}</TableCell>
+                      <TableCell className="text-center">{row.goals_for}</TableCell>
+                      <TableCell className="text-center">{row.goals_against}</TableCell>
+                      <TableCell className="text-center">{row.goal_difference}</TableCell>
+                      <TableCell className="font-bold text-center">{row.points}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           ) : (
             <div className="text-center py-12 bg-muted/50 rounded-lg">
@@ -111,7 +132,7 @@ const Tables = () => {
           )
         )}
 
-        {!selectedCompetition || !selectedSeason && !tableLoading && (
+        {!selectedCompetition || !selectedSeason && !isLoading && (
            <div className="text-center py-12 bg-muted/50 rounded-lg">
             <p className="text-muted-foreground">{t('pages.tables.selectToView')}</p>
           </div>

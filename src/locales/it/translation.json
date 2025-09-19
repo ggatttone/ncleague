@@ -192,7 +192,10 @@
       "gf": "GF",
       "ga": "GS",
       "gd": "DR",
-      "pts": "PT"
+      "pts": "PT",
+      "playoffsStartedTitle": "Fase Finale Iniziata",
+      "playoffsStartedDescription": "La classifica della stagione regolare è bloccata. I playoff sono in corso!",
+      "viewPlayoffBracket": "Visualizza il tabellone playoff"
     },
     "teams": {
       "title": "Squadre",
