@@ -24,7 +24,7 @@ export function useSponsors(teamId?: string) {
       if (!teamId) return null;
       return supabase
         .from('sponsor_teams')
-        .select('sponsor:sponsors(*)')
+        .select('sponsor:sponsors!inner(*)')
         .eq('team_id', teamId);
     },
     { 
