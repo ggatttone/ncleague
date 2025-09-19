@@ -1,6 +1,7 @@
 import { useSupabaseQuery, useSupabaseMutation } from './use-supabase-query';
 import { supabase } from '@/lib/supabase/client';
 import { Sponsor, Team } from '@/types/database';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export type SponsorWithTeams = Sponsor & { teams: Team[] };
 
@@ -17,19 +18,19 @@ export interface UpdateSponsorData extends UpsertSponsorData {
 
 // Fetches sponsors associated with a specific team
 export function useSponsors(teamId?: string) {
-  return useSupabaseQuery<(Sponsor)[]>(
+  return useSupabaseQuery<({ sponsors: Sponsor | null })[], PostgrestError, Sponsor[]>(
     ['sponsors', { teamId }],
-    async () => {
+    () => {
       if (!teamId) return null;
-      const { data, error } = await supabase
+      return supabase
         .from('sponsor_teams')
         .select('sponsors(*)')
         .eq('team_id', teamId);
-      
-      if (error) throw error;
-      return data.map((item: any) => item.sponsors);
     },
-    { enabled: !!teamId }
+    { 
+      enabled: !!teamId,
+      select: (data) => data?.map((item) => item.sponsors).filter(Boolean) as Sponsor[] || []
+    }
   );
 }
 

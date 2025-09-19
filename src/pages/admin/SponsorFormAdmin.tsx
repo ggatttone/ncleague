@@ -45,7 +45,10 @@ const SponsorFormAdmin = () => {
   } = useForm<SponsorFormData>({ 
     resolver: zodResolver(sponsorSchema),
     defaultValues: {
+      name: "",
       team_ids: [],
+      logo_url: null,
+      website_url: null,
     }
   });
 
@@ -95,7 +98,6 @@ const SponsorFormAdmin = () => {
                   selected={field.value}
                   onChange={field.onChange}
                   placeholder={t('pages.admin.sponsorForm.teamPlaceholder')}
-                  disabled={teamsLoading}
                 />
               )}
             />
