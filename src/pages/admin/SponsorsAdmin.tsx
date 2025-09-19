@@ -38,7 +38,7 @@ const SponsorsAdmin = () => {
 
   const data = sponsors?.map(sponsor => ({
     name: sponsor.name,
-    team: sponsor.teams?.name || "-",
+    team: sponsor.teams?.map(t => t.name).join(', ') || "-",
     website: sponsor.website_url ? <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="underline">{sponsor.website_url}</a> : "-",
     actions: (
       <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ const SponsorsAdmin = () => {
           <AdminMobileCard
             key={sponsor.id}
             title={sponsor.name}
-            subtitle={sponsor.teams?.name || "Nessuna squadra"}
+            subtitle={sponsor.teams?.map(t => t.name).join(', ') || "Nessuna squadra"}
             actions={actions}
           />
         );
