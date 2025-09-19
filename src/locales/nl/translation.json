@@ -192,7 +192,10 @@
       "gf": "DV",
       "ga": "DT",
       "gd": "DS",
-      "pts": "Ptn"
+      "pts": "Ptn",
+      "playoffsStartedTitle": "Eindfase Begonnen",
+      "playoffsStartedDescription": "Het reguliere seizoensklassement is vergrendeld. De play-offs zijn aan de gang!",
+      "viewPlayoffBracket": "Bekijk play-off schema"
     },
     "teams": {
       "title": "Teams",

@@ -192,7 +192,10 @@
       "gf": "GF",
       "ga": "GA",
       "gd": "GD",
-      "pts": "Pts"
+      "pts": "Pts",
+      "playoffsStartedTitle": "Final Stage Started",
+      "playoffsStartedDescription": "The regular season table is locked. The playoffs are underway!",
+      "viewPlayoffBracket": "View playoff bracket"
     },
     "teams": {
       "title": "Teams",
