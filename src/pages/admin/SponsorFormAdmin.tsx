@@ -11,12 +11,12 @@ import { z } from "zod";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelect, OptionType } from "@/components/ui/multi-select";
 import { useTranslation } from "react-i18next";
 
 const sponsorSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
-  team_id: z.string().min(1, "La squadra è obbligatoria"),
+  team_ids: z.array(z.string()).min(1, "Seleziona almeno una squadra"),
   logo_url: z.string().url("URL non valido").optional().nullable(),
   website_url: z.string().url("URL non valido").optional().nullable(),
 });
@@ -42,12 +42,22 @@ const SponsorFormAdmin = () => {
     control,
     setValue,
     watch,
-  } = useForm<SponsorFormData>({ resolver: zodResolver(sponsorSchema) });
+  } = useForm<SponsorFormData>({ 
+    resolver: zodResolver(sponsorSchema),
+    defaultValues: {
+      team_ids: [],
+    }
+  });
 
   const logoUrlValue = watch('logo_url');
 
   useEffect(() => {
-    if (sponsor && isEdit) reset(sponsor);
+    if (sponsor && isEdit) {
+      reset({
+        ...sponsor,
+        team_ids: sponsor.teams?.map(t => t.id) || [],
+      });
+    }
   }, [sponsor, isEdit, reset]);
 
   const onSubmit = async (data: SponsorFormData) => {
@@ -58,6 +68,8 @@ const SponsorFormAdmin = () => {
     }
     navigate("/admin/sponsors");
   };
+
+  const teamOptions: OptionType[] = teams?.map(t => ({ value: t.id, label: t.name })) || [];
 
   if ((sponsorLoading || teamsLoading) && isEdit) return <AdminLayout><Loader2 className="h-8 w-8 animate-spin" /></AdminLayout>;
 
@@ -73,18 +85,21 @@ const SponsorFormAdmin = () => {
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
           </div>
           <div>
-            <Label htmlFor="team_id">{t('pages.admin.sponsorForm.teamLabel')}</Label>
+            <Label htmlFor="team_ids">{t('pages.admin.sponsorForm.teamLabel')}</Label>
             <Controller
-              name="team_id"
+              name="team_ids"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value} disabled={teamsLoading}>
-                  <SelectTrigger><SelectValue placeholder={t('pages.admin.sponsorForm.teamPlaceholder')} /></SelectTrigger>
-                  <SelectContent>{teams?.map((team) => <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>)}</SelectContent>
-                </Select>
+                <MultiSelect
+                  options={teamOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder={t('pages.admin.sponsorForm.teamPlaceholder')}
+                  disabled={teamsLoading}
+                />
               )}
             />
-            {errors.team_id && <p className="text-sm text-destructive mt-1">{errors.team_id.message}</p>}
+            {errors.team_ids && <p className="text-sm text-destructive mt-1">{errors.team_ids.message}</p>}
           </div>
           <div>
             <Label htmlFor="website_url">{t('pages.admin.sponsorForm.websiteLabel')}</Label>
