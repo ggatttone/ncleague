@@ -91,6 +91,7 @@
       "selectCompetitionAndSeason": "Select a competition and season to view matches.",
       "upcoming": "Upcoming",
       "completed": "Completed",
+      "finalStage": "Final Stage",
       "noUpcoming": "No upcoming matches",
       "noUpcomingSubtitle": "Check back later for schedule updates.",
       "addFirstMatch": "Add the first match",
