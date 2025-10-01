@@ -19,6 +19,7 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
         { to: "/admin/teams", label: t('pages.admin.sidebar.teams'), roles: ['admin', 'editor', 'captain'] },
         { to: "/admin/players", label: t('pages.admin.sidebar.players'), roles: ['admin', 'editor', 'captain'] },
         { to: "/admin/fixtures", label: t('pages.admin.sidebar.fixtures'), roles: ['admin', 'editor'] },
+        { to: "/admin/schedule-generator", label: "Generatore Calendario", roles: ['admin', 'editor'] },
         { to: "/admin/competitions", label: t('pages.admin.sidebar.competitions'), roles: ['admin', 'editor'] },
         { to: "/admin/seasons", label: t('pages.admin.sidebar.seasons'), roles: ['admin', 'editor'] },
         { to: "/admin/tournament-modes", label: t('pages.admin.sidebar.tournamentModes'), roles: ['admin', 'editor'] },
