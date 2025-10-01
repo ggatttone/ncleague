@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCreateSeason, useUpdateSeason, useSeason } from "@/hooks/use-seasons";
+import { useCreateSeason, useUpdateSeason, useSeason, CreateSeasonData } from "@/hooks/use-seasons";
 import { useTournamentModes } from "@/hooks/use-tournament-modes";
 import { useTeams } from "@/hooks/use-teams";
 import { useForm, Controller } from "react-hook-form";
@@ -67,10 +67,18 @@ const SeasonFormAdmin = () => {
   }, [season, isEdit, reset]);
 
   const onSubmit = async (data: SeasonFormData) => {
+    const submissionData: CreateSeasonData = {
+      name: data.name,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      tournament_mode_id: data.tournament_mode_id,
+      team_ids: data.team_ids,
+    };
+
     if (isEdit && id) {
-      await updateMutation.mutateAsync({ id, ...data });
+      await updateMutation.mutateAsync({ id, ...submissionData });
     } else {
-      await createMutation.mutateAsync(data);
+      await createMutation.mutateAsync(submissionData);
     }
     navigate("/admin/seasons");
   };
