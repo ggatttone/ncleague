@@ -27,6 +27,7 @@ const matchSchema = z.object({
   season_id: z.string().optional().nullable(),
   home_score: z.coerce.number().min(0).optional(),
   away_score: z.coerce.number().min(0).optional(),
+  video_url: z.string().url("URL non valido").optional().or(z.literal('')),
 }).refine(data => data.home_team_id !== data.away_team_id, {
   message: "Le squadre devono essere diverse",
   path: ["away_team_id"],
@@ -69,6 +70,7 @@ const FixtureFormAdmin = () => {
       competition_id: null,
       season_id: null,
       referee_team_id: null,
+      video_url: '',
     }
   });
 
@@ -87,6 +89,7 @@ const FixtureFormAdmin = () => {
         season_id: match.season_id || null,
         home_score: match.home_score,
         away_score: match.away_score,
+        video_url: match.video_url || '',
       });
     }
   }, [match, isEdit, reset]);
@@ -100,6 +103,7 @@ const FixtureFormAdmin = () => {
       referee_team_id: data.referee_team_id || undefined,
       home_score: data.status === 'completed' ? data.home_score : 0,
       away_score: data.status === 'completed' ? data.away_score : 0,
+      video_url: data.video_url || undefined,
     };
 
     if (isEdit && id) {
@@ -236,6 +240,12 @@ const FixtureFormAdmin = () => {
                 )}
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="video_url">URL Video Highlights (es. YouTube)</Label>
+            <Input id="video-url" type="url" {...register("video_url")} placeholder="https://www.youtube.com/watch?v=..." />
+            {errors.video_url && <p className="text-sm text-destructive mt-1">{errors.video_url.message}</p>}
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
