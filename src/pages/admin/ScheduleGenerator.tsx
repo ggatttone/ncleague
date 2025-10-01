@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -117,90 +117,92 @@ const ScheduleGenerator = () => {
             <CardTitle>1. Imposta Vincoli</CardTitle>
             <CardDescription>Definisci i parametri per la generazione del calendario.</CardDescription>
           </CardHeader>
-          <CardContent as="form" onSubmit={handleSubmit((data) => generatePreviewMutation.mutate(data))} className="space-y-4">
-            {/* Season and Stage */}
-            <div className="space-y-2">
-              <Controller name="season_id" control={control} render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value} disabled={seasonsLoading}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona una stagione..." /></SelectTrigger>
-                  <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-                </Select>
-              )} />
-              {errors.season_id && <p className="text-sm text-destructive">{errors.season_id.message}</p>}
-              <Controller name="stage" control={control} render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona una fase..." /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="regular_season">Stagione Regolare</SelectItem>
-                    <SelectItem value="poule_a">Poule A</SelectItem>
-                    <SelectItem value="poule_b">Poule B</SelectItem>
-                  </SelectContent>
-                </Select>
-              )} />
-              {errors.stage && <p className="text-sm text-destructive">{errors.stage.message}</p>}
-            </div>
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div><Label htmlFor="startDate">Data Inizio</Label><Input id="startDate" type="date" {...control.register("startDate")} /></div>
-              <div><Label htmlFor="endDate">Data Fine</Label><Input id="endDate" type="date" {...control.register("endDate")} /></div>
-            </div>
-            {/* Days */}
-            <div>
-              <Label>Giorni permessi</Label>
-              <Controller name="allowedDays" control={control} render={({ field }) => (
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {daysOfWeek.map(day => (
-                    <div key={day.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`day-${day.id}`}
-                        checked={field.value?.includes(day.id)}
-                        onCheckedChange={(checked) => {
-                          return checked
-                            ? field.onChange([...(field.value || []), day.id])
-                            : field.onChange(field.value?.filter(value => value !== day.id));
-                        }}
-                      />
-                      <Label htmlFor={`day-${day.id}`} className="text-sm font-normal">{day.label}</Label>
-                    </div>
-                  ))}
-                </div>
-              )} />
-              {errors.allowedDays && <p className="text-sm text-destructive">{errors.allowedDays.message}</p>}
-            </div>
-            {/* Times and Venues */}
-            <div><Label htmlFor="timeSlots">Orari (separati da virgola)</Label><Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" /></div>
-            <div>
-              <Label>Campi da utilizzare</Label>
-              <Controller name="venueIds" control={control} render={({ field }) => (
-                <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
-                  {venues?.map(venue => (
-                    <div key={venue.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`venue-${venue.id}`}
-                        checked={field.value?.includes(venue.id)}
-                        onCheckedChange={(checked) => {
-                          return checked
-                            ? field.onChange([...(field.value || []), venue.id])
-                            : field.onChange(field.value?.filter(value => value !== venue.id));
-                        }}
-                      />
-                      <Label htmlFor={`venue-${venue.id}`} className="text-sm font-normal">{venue.name}</Label>
-                    </div>
-                  ))}
-                </div>
-              )} />
-              {errors.venueIds && <p className="text-sm text-destructive">{errors.venueIds.message}</p>}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Controller name="includeReturnGames" control={control} render={({ field }) => (
-                <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
-              )} />
-              <Label htmlFor="includeReturnGames">Includi partite di ritorno</Label>
-            </div>
-            <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
-              {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              <Wand2 className="mr-2 h-4 w-4" /> Genera Anteprima
-            </Button>
+          <CardContent>
+            <form onSubmit={handleSubmit((data) => generatePreviewMutation.mutate(data))} className="space-y-4">
+              {/* Season and Stage */}
+              <div className="space-y-2">
+                <Controller name="season_id" control={control} render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value} disabled={seasonsLoading}>
+                    <SelectTrigger><SelectValue placeholder="Seleziona una stagione..." /></SelectTrigger>
+                    <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                )} />
+                {errors.season_id && <p className="text-sm text-destructive">{errors.season_id.message}</p>}
+                <Controller name="stage" control={control} render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger><SelectValue placeholder="Seleziona una fase..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="regular_season">Stagione Regolare</SelectItem>
+                      <SelectItem value="poule_a">Poule A</SelectItem>
+                      <SelectItem value="poule_b">Poule B</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )} />
+                {errors.stage && <p className="text-sm text-destructive">{errors.stage.message}</p>}
+              </div>
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label htmlFor="startDate">Data Inizio</Label><Input id="startDate" type="date" {...control.register("startDate")} /></div>
+                <div><Label htmlFor="endDate">Data Fine</Label><Input id="endDate" type="date" {...control.register("endDate")} /></div>
+              </div>
+              {/* Days */}
+              <div>
+                <Label>Giorni permessi</Label>
+                <Controller name="allowedDays" control={control} render={({ field }) => (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {daysOfWeek.map(day => (
+                      <div key={day.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`day-${day.id}`}
+                          checked={field.value?.includes(day.id)}
+                          onCheckedChange={(checked) => {
+                            return checked
+                              ? field.onChange([...(field.value || []), day.id])
+                              : field.onChange(field.value?.filter(value => value !== day.id));
+                          }}
+                        />
+                        <Label htmlFor={`day-${day.id}`} className="text-sm font-normal">{day.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                )} />
+                {errors.allowedDays && <p className="text-sm text-destructive">{errors.allowedDays.message}</p>}
+              </div>
+              {/* Times and Venues */}
+              <div><Label htmlFor="timeSlots">Orari (separati da virgola)</Label><Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" /></div>
+              <div>
+                <Label>Campi da utilizzare</Label>
+                <Controller name="venueIds" control={control} render={({ field }) => (
+                  <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
+                    {venues?.map(venue => (
+                      <div key={venue.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`venue-${venue.id}`}
+                          checked={field.value?.includes(venue.id)}
+                          onCheckedChange={(checked) => {
+                            return checked
+                              ? field.onChange([...(field.value || []), venue.id])
+                              : field.onChange(field.value?.filter(value => value !== venue.id));
+                          }}
+                        />
+                        <Label htmlFor={`venue-${venue.id}`} className="text-sm font-normal">{venue.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                )} />
+                {errors.venueIds && <p className="text-sm text-destructive">{errors.venueIds.message}</p>}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Controller name="includeReturnGames" control={control} render={({ field }) => (
+                  <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
+                )} />
+                <Label htmlFor="includeReturnGames">Includi partite di ritorno</Label>
+              </div>
+              <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
+                {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Wand2 className="mr-2 h-4 w-4" /> Genera Anteprima
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
