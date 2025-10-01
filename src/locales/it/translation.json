@@ -296,7 +296,37 @@
           "description": "Stai per chiudere la fase '{{phaseName}}'. Questa azione è irreversibile e genererà le partite per la fase successiva.",
           "confirmButton": "Conferma e Chiudi Fase",
           "success": "Fase chiusa con successo! Le nuove partite sono state generate.",
-          "error": "Errore nella chiusura della fase"
+          "error": "Errore nella chiusura della fase",
+          "steps": {
+            "summary": "Riepilogo",
+            "openMatches": "Partite Aperte",
+            "tieBreakers": "Risoluzione Parità",
+            "confirm": "Conferma"
+          },
+          "step1": {
+            "title": "Riepilogo Validazione",
+            "description": "Controlla eventuali problemi prima di procedere. Se ci sono avvisi, puoi risolverli manualmente nei passaggi successivi.",
+            "noStandings": "Nessuna classifica disponibile per la validazione."
+          },
+          "step2": {
+            "title": "Gestione Partite Aperte",
+            "description": "Le seguenti partite non sono ancora state completate. Scegli come gestirle.",
+            "cancel": "Annulla partita (0-0, 0 punti)",
+            "freeze": "Congela (ignora per la classifica)",
+            "enterResult": "Inserisci risultato manualmente"
+          },
+          "step3": {
+            "title": "Risoluzione Parità",
+            "description": "Ci sono squadre a pari punti. Trascina per definire l'ordine corretto in classifica.",
+            "tieAtPoints": "Parità a {{points}} punti"
+          },
+          "step4": {
+            "title": "Riepilogo e Conferma",
+            "description": "Stai per chiudere la fase con le seguenti modifiche manuali. Questa azione è irreversibile.",
+            "resolvedMatches": "Partite Risolte Manualmente",
+            "tieBreakers": "Parità Risolte Manualmente",
+            "noOverrides": "Nessuna modifica manuale effettuata."
+          }
         },
         "phases": {
           "InizioTorneo": "Inizio Torneo",
