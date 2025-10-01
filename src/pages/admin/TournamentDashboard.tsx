@@ -95,7 +95,14 @@ const TournamentDashboard = () => {
       )}
 
       <StandingsSimulatorDialog open={isSimulatorOpen} onOpenChange={setSimulatorOpen} />
-      <ClosePhaseDialog open={isClosePhaseOpen} onOpenChange={setClosePhaseOpen} seasonId={selectedSeason} currentPhaseName={currentPhaseName} />
+      <ClosePhaseDialog 
+        open={isClosePhaseOpen} 
+        onOpenChange={setClosePhaseOpen} 
+        seasonId={selectedSeason} 
+        competitionId={selectedCompetition}
+        currentPhaseName={currentPhaseName}
+        standings={tableData}
+      />
     </AdminLayout>
   );
 };

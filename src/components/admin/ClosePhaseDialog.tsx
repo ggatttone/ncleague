@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Dispatch, SetStateAction } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Stepper } from "@/components/ui/stepper";
@@ -101,7 +101,7 @@ const SortableTeamItem = ({ team }: { team: LeagueTableRow }) => {
   );
 };
 
-const Step3Ties = ({ ties, setTies }: { ties: LeagueTableRow[][], setTies: (t: LeagueTableRow[][]) => void }) => {
+const Step3Ties = ({ ties, setTies }: { ties: LeagueTableRow[][], setTies: Dispatch<SetStateAction<LeagueTableRow[][]>> }) => {
   const { t } = useTranslation();
   const sensors = useSensors(useSensor(PointerSensor));
 
