@@ -16,6 +16,7 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       category: t('pages.admin.sidebar.leagueManagement'),
       links: [
         { to: "/admin", label: t('pages.admin.sidebar.dashboard'), roles: ['admin', 'editor', 'captain'], exact: true },
+        { to: "/admin/tournament-dashboard", label: "Dashboard Torneo", roles: ['admin', 'editor'] },
         { to: "/admin/teams", label: t('pages.admin.sidebar.teams'), roles: ['admin', 'editor', 'captain'] },
         { to: "/admin/players", label: t('pages.admin.sidebar.players'), roles: ['admin', 'editor', 'captain'] },
         { to: "/admin/fixtures", label: t('pages.admin.sidebar.fixtures'), roles: ['admin', 'editor'] },

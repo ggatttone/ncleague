@@ -282,6 +282,36 @@
         "administration": "Amministrazione",
         "userManagement": "Gestione Utenti"
       },
+      "tournamentDashboard": {
+        "title": "Dashboard Torneo",
+        "simulator": {
+          "button": "Simulatore Classifica",
+          "title": "Simulatore Classifica",
+          "description": "Modifica i risultati delle partite non giocate per vedere come cambia la classifica.",
+          "placeholder": "Funzionalità in costruzione."
+        },
+        "closePhase": {
+          "button": "Chiudi Fase",
+          "title": "Chiudere la fase attuale?",
+          "description": "Stai per chiudere la fase '{{phaseName}}'. Questa azione è irreversibile e genererà le partite per la fase successiva.",
+          "confirmButton": "Conferma e Chiudi Fase",
+          "success": "Fase chiusa con successo! Le nuove partite sono state generate.",
+          "error": "Errore nella chiusura della fase"
+        },
+        "phases": {
+          "InizioTorneo": "Inizio Torneo",
+          "Fase1": "Fase 1",
+          "Fase2": "Fase 2",
+          "FaseFinale": "Fase Finale"
+        },
+        "validator": {
+          "title": "Avvisi sulla Classifica",
+          "unevenMatches": "Non tutte le squadre hanno giocato lo stesso numero di partite. La classifica potrebbe essere provvisoria."
+        },
+        "liveStandings": {
+          "title": "Classifica Live"
+        }
+      },
       "index": {
         "title": "Dashboard Amministrazione",
         "teams": "Squadre",
