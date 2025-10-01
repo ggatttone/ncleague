@@ -282,6 +282,36 @@
         "administration": "Administratie",
         "userManagement": "Gebruikersbeheer"
       },
+      "tournamentDashboard": {
+        "title": "Toernooi Dashboard",
+        "simulator": {
+          "button": "Klassement Simulator",
+          "title": "Klassement Simulator",
+          "description": "Wijzig de resultaten van ongespeelde wedstrijden om te zien hoe het klassement verandert.",
+          "placeholder": "Functie in aanbouw."
+        },
+        "closePhase": {
+          "button": "Fase Sluiten",
+          "title": "Huidige fase sluiten?",
+          "description": "Je staat op het punt de fase '{{phaseName}}' te sluiten. Deze actie is onomkeerbaar en zal wedstrijden voor de volgende fase genereren.",
+          "confirmButton": "Bevestig en Sluit Fase",
+          "success": "Fase succesvol gesloten! Nieuwe wedstrijden zijn gegenereerd.",
+          "error": "Fout bij het sluiten van de fase"
+        },
+        "phases": {
+          "InizioTorneo": "Start Toernooi",
+          "Fase1": "Fase 1",
+          "Fase2": "Fase 2",
+          "FaseFinale": "Eindfase"
+        },
+        "validator": {
+          "title": "Klassement Waarschuwingen",
+          "unevenMatches": "Niet alle teams hebben hetzelfde aantal wedstrijden gespeeld. Het klassement kan voorlopig zijn."
+        },
+        "liveStandings": {
+          "title": "Live Klassement"
+        }
+      },
       "index": {
         "title": "Beheerdersdashboard",
         "teams": "Teams",

@@ -32,6 +32,7 @@ const GalleryPage = lazy(() => import("./pages/Gallery"));
 const AlbumDetails = lazy(() => import("./pages/AlbumDetails"));
 const SeasonArchive = lazy(() => import("./pages/SeasonArchive"));
 const AdminIndex = lazy(() => import("./pages/admin/AdminIndex"));
+const TournamentDashboard = lazy(() => import("./pages/admin/TournamentDashboard"));
 const TeamsAdmin = lazy(() => import("./pages/admin/TeamsAdmin"));
 const TeamFormAdmin = lazy(() => import("./pages/admin/TeamFormAdmin"));
 const TeamDetailsAdmin = lazy(() => import("./pages/admin/TeamDetailsAdmin"));
@@ -115,6 +116,7 @@ const App = () => (
                     <RequireAuth>
                       <Routes>
                         <Route path="/" element={<AdminIndex />} />
+                        <Route path="tournament-dashboard" element={<TournamentDashboard />} />
                         <Route path="teams" element={<TeamsAdmin />} />
                         <Route path="teams/new" element={<TeamFormAdmin />} />
                         <Route path="teams/:id" element={<TeamDetailsAdmin />} />

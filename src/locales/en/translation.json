@@ -282,6 +282,36 @@
         "administration": "Administration",
         "userManagement": "User Management"
       },
+      "tournamentDashboard": {
+        "title": "Tournament Dashboard",
+        "simulator": {
+          "button": "Standings Simulator",
+          "title": "Standings Simulator",
+          "description": "Modify the results of unplayed matches to see how the standings change.",
+          "placeholder": "Feature under construction."
+        },
+        "closePhase": {
+          "button": "Close Phase",
+          "title": "Close the current phase?",
+          "description": "You are about to close the '{{phaseName}}' phase. This action is irreversible and will generate matches for the next phase.",
+          "confirmButton": "Confirm and Close Phase",
+          "success": "Phase closed successfully! New matches have been generated.",
+          "error": "Error closing phase"
+        },
+        "phases": {
+          "InizioTorneo": "Tournament Start",
+          "Fase1": "Phase 1",
+          "Fase2": "Phase 2",
+          "FaseFinale": "Final Phase"
+        },
+        "validator": {
+          "title": "Standings Warnings",
+          "unevenMatches": "Not all teams have played the same number of matches. The standings may be provisional."
+        },
+        "liveStandings": {
+          "title": "Live Standings"
+        }
+      },
       "index": {
         "title": "Admin Dashboard",
         "teams": "Teams",
