@@ -44,6 +44,7 @@ const FixtureFormAdmin = lazy(() => import("./pages/admin/FixtureFormAdmin"));
 const FixtureDetailsAdmin = lazy(() => import("./pages/admin/FixtureDetailsAdmin"));
 const FixtureBulkFormAdmin = lazy(() => import("./pages/admin/FixtureBulkFormAdmin"));
 const FixtureImportAdmin = lazy(() => import("./pages/admin/FixtureImportAdmin"));
+const ScheduleGenerator = lazy(() => import("./pages/admin/ScheduleGenerator"));
 const UsersAdmin = lazy(() => import("./pages/admin/UsersAdmin"));
 const VenuesAdmin = lazy(() => import("./pages/admin/VenuesAdmin"));
 const VenueFormAdmin = lazy(() => import("./pages/admin/VenueFormAdmin"));
@@ -129,6 +130,7 @@ const App = () => (
                         <Route path="fixtures/import" element={<FixtureImportAdmin />} />
                         <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
                         <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
+                        <Route path="schedule-generator" element={<ScheduleGenerator />} />
                         <Route path="users" element={<UsersAdmin />} />
                         <Route path="venues" element={<VenuesAdmin />} />
                         <Route path="venues/new" element={<VenueFormAdmin />} />
