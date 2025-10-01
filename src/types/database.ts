@@ -89,6 +89,7 @@ export interface Match {
   away_score: number;
   status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
   stage: 'regular_season' | 'quarter-final' | 'semi-final' | 'third-place_playoff' | 'final' | null;
+  video_url?: string | null;
   created_at: string;
   updated_at: string;
   venues?: { name: string } | null;
