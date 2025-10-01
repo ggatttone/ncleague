@@ -5,9 +5,10 @@ import { Match, Team, Goal, Player } from "@/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel, Video } from "lucide-react";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { VideoPlayer } from "@/components/VideoPlayer";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -235,7 +236,7 @@ const MatchDetails = () => {
 
       {/* Goals */}
       {(match.status === 'completed' || match.status === 'ongoing') && (
-        <Card>
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
@@ -317,6 +318,21 @@ const MatchDetails = () => {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Video Highlights */}
+      {match.video_url && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Video className="h-5 w-5" />
+              Highlights
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VideoPlayer url={match.video_url} />
           </CardContent>
         </Card>
       )}
