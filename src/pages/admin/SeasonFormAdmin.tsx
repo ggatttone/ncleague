@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCreateSeason, useUpdateSeason, useSeason } from "@/hooks/use-seasons";
 import { useTournamentModes } from "@/hooks/use-tournament-modes";
+import { useTeams } from "@/hooks/use-teams";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,12 +13,14 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelect, OptionType } from "@/components/ui/multi-select";
 
 const seasonSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
   tournament_mode_id: z.string().min(1, "La modalità torneo è obbligatoria").nullable(),
+  team_ids: z.array(z.string()).optional(),
 });
 
 type SeasonFormData = z.infer<typeof seasonSchema>;
@@ -30,6 +33,7 @@ const SeasonFormAdmin = () => {
 
   const { data: season, isLoading: seasonLoading } = useSeason(id);
   const { data: tournamentModes, isLoading: modesLoading } = useTournamentModes();
+  const { data: teams, isLoading: teamsLoading } = useTeams();
   const createMutation = useCreateSeason();
   const updateMutation = useUpdateSeason();
 
@@ -43,6 +47,7 @@ const SeasonFormAdmin = () => {
     resolver: zodResolver(seasonSchema),
     defaultValues: {
       tournament_mode_id: null,
+      team_ids: [],
     }
   });
 
@@ -53,6 +58,7 @@ const SeasonFormAdmin = () => {
         start_date: season.start_date ? season.start_date.split('T')[0] : '',
         end_date: season.end_date ? season.end_date.split('T')[0] : '',
         tournament_mode_id: season.tournament_mode_id || null,
+        team_ids: season.teams?.map(t => t.id) || [],
       });
     }
   }, [season, isEdit, reset]);
@@ -66,7 +72,9 @@ const SeasonFormAdmin = () => {
     navigate("/admin/seasons");
   };
 
-  if ((seasonLoading || modesLoading) && isEdit) {
+  const teamOptions: OptionType[] = teams?.map(t => ({ value: t.id, label: t.name })) || [];
+
+  if ((seasonLoading || modesLoading || teamsLoading) && isEdit) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-12">
@@ -124,6 +132,24 @@ const SeasonFormAdmin = () => {
             {errors.tournament_mode_id && (
               <p className="text-sm text-destructive mt-1">{errors.tournament_mode_id.message}</p>
             )}
+          </div>
+
+          <div>
+            <Label htmlFor="team_ids">Squadre Partecipanti</Label>
+            <Controller
+              name="team_ids"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  options={teamOptions}
+                  selected={field.value || []}
+                  onChange={field.onChange}
+                  placeholder="Seleziona le squadre..."
+                  disabled={teamsLoading}
+                />
+              )}
+            />
+            {errors.team_ids && <p className="text-sm text-destructive mt-1">{errors.team_ids.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
