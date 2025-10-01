@@ -46,6 +46,9 @@ const SeasonFormAdmin = () => {
   } = useForm<SeasonFormData>({
     resolver: zodResolver(seasonSchema),
     defaultValues: {
+      name: "",
+      start_date: "",
+      end_date: "",
       tournament_mode_id: null,
       team_ids: [],
     }
@@ -145,7 +148,6 @@ const SeasonFormAdmin = () => {
                   selected={field.value || []}
                   onChange={field.onChange}
                   placeholder="Seleziona le squadre..."
-                  disabled={teamsLoading}
                 />
               )}
             />
