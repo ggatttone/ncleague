@@ -68,7 +68,6 @@ const Playoffs = () => {
 
   const { data: playoffData, isLoading: bracketLoading } = usePlayoffBracket(selectedCompetition, selectedSeason);
 
-  const semiFinals = playoffData?.matches.filter(m => m.stage === 'semi-final') || [];
   const thirdPlaceMatch = playoffData?.matches.find(m => m.stage === 'third-place_playoff');
   const finalMatch = playoffData?.matches.find(m => m.stage === 'final');
 
@@ -98,18 +97,9 @@ const Playoffs = () => {
             <p className="text-muted-foreground">Tabellone playoff non ancora generato per questa stagione.</p>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
-            {/* Semifinals */}
-            <div className="space-y-8 w-full max-w-xs">
-              <MatchCard match={semiFinals[0]} title="Semifinale 1" />
-              <MatchCard match={semiFinals[1]} title="Semifinale 2" />
-            </div>
-
-            {/* Finals */}
-            <div className="space-y-8 w-full max-w-xs">
-              <MatchCard match={finalMatch} title="Finale" />
-              <MatchCard match={thirdPlaceMatch} title="Finale 3°/4° Posto" />
-            </div>
+          <div className="flex flex-col items-center justify-center gap-8 w-full max-w-xs mx-auto">
+            <MatchCard match={finalMatch} title="Finale" />
+            <MatchCard match={thirdPlaceMatch} title="Finale 3°/4° Posto" />
           </div>
         )}
       </div>

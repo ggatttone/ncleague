@@ -118,6 +118,7 @@ export interface LeagueTableRow {
   goals_against: number;
   goal_difference: number;
   points: number;
+  fair_play_points?: number;
 }
 
 export interface Article {
