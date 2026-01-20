@@ -1,16 +1,28 @@
-import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase/client';
+import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseQueryResult, UseMutationOptions } from '@tanstack/react-query';
 import { PostgrestError } from '@supabase/supabase-js';
 import { showError } from '@/utils/toast';
+
+type QueryKey = readonly unknown[];
+
+interface ErrorWithMessage {
+  message: string;
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object' && 'message' in error) {
+    return (error as ErrorWithMessage).message;
+  }
+  return 'An unknown error occurred';
+}
 
 export function useSupabaseQuery<
   TQueryFnData,
   TError = PostgrestError,
   TData = TQueryFnData
 >(
-  key: any[],
+  key: QueryKey,
   query: () => PromiseLike<{ data: TQueryFnData | null; error: TError | null }> | null,
-  options?: Omit<UseQueryOptions<TQueryFnData | null, TError, TData | null, any[]>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<TQueryFnData | null, TError, TData | null, QueryKey>, 'queryKey' | 'queryFn'>
 ): UseQueryResult<TData | null, TError> {
   return useQuery({
     queryKey: key,
@@ -19,7 +31,7 @@ export function useSupabaseQuery<
       if (!promise) return null;
       const { data, error } = await promise;
       if (error) {
-        showError((error as any).message);
+        showError(getErrorMessage(error));
         throw error;
       }
       return data;
@@ -28,10 +40,10 @@ export function useSupabaseQuery<
   });
 }
 
-export function useSupabaseCountQuery(
-  key: any[],
-  query: () => PromiseLike<{ data: any; count: number | null; error: PostgrestError | null }> | null,
-  options = {}
+export function useSupabaseCountQuery<TData = unknown>(
+  key: QueryKey,
+  query: () => PromiseLike<{ data: TData; count: number | null; error: PostgrestError | null }> | null,
+  options: Omit<UseQueryOptions<number | null, PostgrestError, number | null, QueryKey>, 'queryKey' | 'queryFn'> = {}
 ) {
   return useQuery({
     queryKey: key,
@@ -51,10 +63,14 @@ export function useSupabaseCountQuery(
   });
 }
 
-export function useSupabaseMutation<T, V = any>(
+interface WithId {
+  id: string;
+}
+
+export function useSupabaseMutation<T, V = unknown>(
   key: string[],
   mutation: (variables: V) => PromiseLike<{ data: T | null; error: PostgrestError | null }>,
-  options: { onSuccess?: (data: T | null, variables: V) => void, [key: string]: any } = {}
+  options: Omit<UseMutationOptions<T | null, Error, V>, 'mutationFn'> = {}
 ) {
   const queryClient = useQueryClient();
   const { onSuccess: customOnSuccess, ...restOptions } = options;
@@ -68,16 +84,17 @@ export function useSupabaseMutation<T, V = any>(
       }
       return data;
     },
-    onSuccess: (data: T | null, variables: V) => {
+    onSuccess: (data: T | null, variables: V, context: unknown) => {
       queryClient.invalidateQueries({ queryKey: key });
 
-      if (data && (data as any).id && key.length > 0 && typeof key[0] === 'string' && key[0].endsWith('s')) {
-        const singleItemQueryKey = [key[0].slice(0, -1), (data as any).id];
+      const dataWithId = data as WithId | null;
+      if (dataWithId?.id && key.length > 0 && typeof key[0] === 'string' && key[0].endsWith('s')) {
+        const singleItemQueryKey = [key[0].slice(0, -1), dataWithId.id];
         queryClient.invalidateQueries({ queryKey: singleItemQueryKey });
       }
-      
+
       if (customOnSuccess) {
-        customOnSuccess(data, variables);
+        customOnSuccess(data, variables, context);
       }
     },
     ...restOptions,

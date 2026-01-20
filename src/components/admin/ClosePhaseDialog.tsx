@@ -35,7 +35,18 @@ const Step1Summary = ({ standings }: { standings: LeagueTableRow[] | null | unde
   );
 };
 
-const Step2OpenMatches = ({ openMatches, overrides, setOverrides }: { openMatches: MatchWithTeams[], overrides: any, setOverrides: (o: any) => void }) => {
+interface MatchResolution {
+  resolution?: string;
+  home_score?: number;
+  away_score?: number;
+}
+
+interface ManualOverrides {
+  resolved_matches: Record<string, MatchResolution>;
+  tie_breakers: Record<string, string[]>;
+}
+
+const Step2OpenMatches = ({ openMatches, overrides, setOverrides }: { openMatches: MatchWithTeams[], overrides: ManualOverrides, setOverrides: (o: ManualOverrides) => void }) => {
   const { t } = useTranslation();
   const handleResolutionChange = (matchId: string, resolution: string) => {
     setOverrides({
@@ -141,7 +152,7 @@ const Step3Ties = ({ ties, setTies }: { ties: LeagueTableRow[][], setTies: Dispa
   );
 };
 
-const Step4Confirm = ({ overrides, teamsMap }: { overrides: any, teamsMap: Map<string, string> }) => {
+const Step4Confirm = ({ overrides, teamsMap }: { overrides: ManualOverrides, teamsMap: Map<string, string> }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -152,7 +163,7 @@ const Step4Confirm = ({ overrides, teamsMap }: { overrides: any, teamsMap: Map<s
           <div>
             <h4 className="font-medium">{t('pages.admin.tournamentDashboard.closePhase.step4.resolvedMatches')}</h4>
             <ul className="list-disc pl-5 mt-1">
-              {Object.entries(overrides.resolved_matches).map(([matchId, res]: [string, any]) => (
+              {Object.entries(overrides.resolved_matches).map(([matchId, res]) => (
                 <li key={matchId}>Partita {matchId.substring(0, 8)}: {res.resolution} {res.resolution === 'result' && `(${res.home_score}-${res.away_score})`}</li>
               ))}
             </ul>
@@ -162,8 +173,8 @@ const Step4Confirm = ({ overrides, teamsMap }: { overrides: any, teamsMap: Map<s
           <div>
             <h4 className="font-medium">{t('pages.admin.tournamentDashboard.closePhase.step4.tieBreakers')}</h4>
             <ul className="list-disc pl-5 mt-1">
-              {Object.entries(overrides.tie_breakers).map(([points, teams]: [string, any]) => (
-                <li key={points}>{t('pages.admin.tournamentDashboard.closePhase.step3.tieAtPoints', { points })}: {teams.map((id: string) => teamsMap.get(id)).join(' > ')}</li>
+              {Object.entries(overrides.tie_breakers).map(([points, teamIds]) => (
+                <li key={points}>{t('pages.admin.tournamentDashboard.closePhase.step3.tieAtPoints', { points })}: {teamIds.map((id) => teamsMap.get(id)).join(' > ')}</li>
               ))}
             </ul>
           </div>
@@ -191,7 +202,7 @@ export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(0);
-  const [manualOverrides, setManualOverrides] = useState<{ resolved_matches: any, tie_breakers: any }>({ resolved_matches: {}, tie_breakers: {} });
+  const [manualOverrides, setManualOverrides] = useState<ManualOverrides>({ resolved_matches: {}, tie_breakers: {} });
   const [orderedTies, setOrderedTies] = useState<LeagueTableRow[][]>([]);
 
   const { data: openMatches, isLoading: isLoadingMatches } = useSupabaseQuery<(Match & { home_teams: Team; away_teams: Team })[]>(
@@ -222,7 +233,7 @@ export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, 
   }, [open, ties]);
 
   const closePhaseMutation = useMutation({
-    mutationFn: async (overrides: any) => {
+    mutationFn: async (overrides: ManualOverrides) => {
       if (!seasonId) throw new Error("Season ID is required.");
       const { data, error } = await supabase.functions.invoke('tournament-phase-manager', {
         body: { season_id: seasonId, phase_to_close: currentPhaseName, manual_overrides: overrides }
@@ -236,7 +247,7 @@ export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, 
       queryClient.invalidateQueries({ queryKey: ['league-table', competitionId, seasonId] });
       onOpenChange(false);
     },
-    onError: (err: any) => showError(`${t('pages.admin.tournamentDashboard.closePhase.error')}: ${err.message}`),
+    onError: (err: Error) => showError(`${t('pages.admin.tournamentDashboard.closePhase.error')}: ${err.message}`),
   });
 
   const steps = [
@@ -248,7 +259,7 @@ export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, 
 
   const handleNext = () => {
     if (currentStep === 2) { // After tie-breaking
-      const tieOverrides: any = {};
+      const tieOverrides: Record<string, string[]> = {};
       orderedTies.forEach(group => {
         tieOverrides[group[0].points] = group.map(t => t.team_id);
       });

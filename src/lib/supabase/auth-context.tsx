@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
-        let { data: profileData, error: profileError } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', currentUser.id)

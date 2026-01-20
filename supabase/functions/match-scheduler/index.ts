@@ -29,7 +29,7 @@ async function isUserAdmin(supabaseClient: SupabaseClient): Promise<boolean> {
 
 function generateRoundRobinPairings(teams: any[], includeReturnGames: boolean) {
     const pairings: { home_team_id: string, away_team_id: string }[] = [];
-    let teamList = [...teams];
+    const teamList = [...teams];
 
     if (teamList.length % 2 !== 0) {
         teamList.push({ id: 'BYE' });
@@ -63,7 +63,7 @@ function generateRoundRobinPairings(teams: any[], includeReturnGames: boolean) {
 function generateSlots(constraints: any) {
     const slots: { match_date: string, venue_id: string }[] = [];
     const { startDate, endDate, allowedDays, timeSlots, venueIds } = constraints;
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
     const finalDate = new Date(endDate);
 
     while (currentDate <= finalDate) {

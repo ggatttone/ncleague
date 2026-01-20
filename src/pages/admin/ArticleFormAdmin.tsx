@@ -31,8 +31,8 @@ const generateSlug = (title: string) => {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-')           // Sostituisci spazi con -
-    .replace(/[^\w\-]+/g, '')       // Rimuovi caratteri non validi
-    .replace(/\-\-+/g, '-')         // Sostituisci multipli - con uno solo
+    .replace(/[^\w-]+/g, '')        // Rimuovi caratteri non validi
+    .replace(/--+/g, '-')           // Sostituisci multipli - con uno solo
     .replace(/^-+/, '')             // Rimuovi - dall'inizio
     .replace(/-+$/, '');            // Rimuovi - dalla fine
 };

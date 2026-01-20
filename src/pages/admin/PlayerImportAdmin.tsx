@@ -32,14 +32,16 @@ const REQUIRED_FIELDS = [
   { id: 'document_id', label: 'ID Documento (Opzionale)' },
 ];
 
+type ExcelRow = Record<string, string | number | undefined>;
+
 type PreviewRow = {
-  original: any;
+  original: ExcelRow;
   isValid: boolean;
   errors: string[];
   data: CreatePlayerData | null;
 };
 
-const parseDate = (dateInput: any): Date | null => {
+const parseDate = (dateInput: string | number | Date | null | undefined): Date | null => {
     if (!dateInput) return null;
     if (dateInput instanceof Date) return dateInput;
     
@@ -61,7 +63,7 @@ const PlayerImportAdmin = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<ExcelRow[]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [previewData, setPreviewData] = useState<PreviewRow[]>([]);
 
@@ -86,7 +88,7 @@ const PlayerImportAdmin = () => {
           return;
         }
 
-        const fileHeaders = Object.keys(jsonData[0] as any);
+        const fileHeaders = Object.keys(jsonData[0] as ExcelRow);
         setHeaders(fileHeaders);
         setRows(jsonData);
         setCurrentStep(1);

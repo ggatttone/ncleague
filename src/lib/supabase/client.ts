@@ -1,7 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-// ⚠️ SOSTITUISCI CON LE CREDENZIALI DEL TUO NUOVO PROGETTO
-const supabaseUrl = 'https://REDACTED_PROJECT_2.supabase.co';
-const supabaseKey = 'REDACTED_SUPABASE_ANON_KEY_2';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables. Check .env.local file.');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

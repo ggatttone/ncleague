@@ -24,8 +24,10 @@ const steps = [
   { label: "Anteprima e Importa" },
 ];
 
+type ExcelRow = Record<string, string | number | undefined>;
+
 type PreviewRow = {
-  original: any;
+  original: ExcelRow;
   isValid: boolean;
   errors: string[];
   data: {
@@ -73,7 +75,7 @@ const FixtureImportAdmin = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [fileName, setFileName] = useState("");
   const [headers, setHeaders] = useState<string[]>([]);
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<ExcelRow[]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [previewData, setPreviewData] = useState<PreviewRow[]>([]);
 
@@ -114,7 +116,7 @@ const FixtureImportAdmin = () => {
           return;
         }
 
-        const fileHeaders = Object.keys(jsonData[0] as any);
+        const fileHeaders = Object.keys(jsonData[0] as ExcelRow);
         setHeaders(fileHeaders);
         setRows(jsonData);
         setCurrentStep(1);

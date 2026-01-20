@@ -33,7 +33,7 @@ const COLUMN_LAYOUTS = {
 };
 
 // Componente per un singolo Widget nella colonna
-const SortableWidget = ({ widget, onEdit, onDelete, widgetConfig }: { widget: Widget, onEdit: () => void, onDelete: () => void, widgetConfig: any }) => {
+const SortableWidget = ({ widget, onEdit, onDelete, widgetConfig }: { widget: Widget, onEdit: () => void, onDelete: () => void, widgetConfig: WidgetConfig }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: widget.id, data: { type: 'Widget' } });
   const style = { transform: CSS.Transform.toString(transform), transition };
   const config = widgetConfig[widget.widget_type as WidgetType];
@@ -90,13 +90,13 @@ const SortableRow = ({ row, onUpdateRow, onDeleteRow, children }: { row: Row, on
 };
 
 // Componente per la Palette dei Widget
-const WidgetPalette = ({ onAddWidget, widgetConfig }: { onAddWidget: (type: string) => void, widgetConfig: any }) => {
+const WidgetPalette = ({ onAddWidget, widgetConfig }: { onAddWidget: (type: string) => void, widgetConfig: WidgetConfig }) => {
   const { t } = useTranslation();
   return (
     <Card className="w-full lg:w-64">
       <CardHeader><CardTitle className="text-base">{t('pages.admin.homepage.widgetPaletteTitle')}</CardTitle></CardHeader>
       <CardContent className="space-y-2">
-        {Object.entries(widgetConfig).map(([type, config]: [string, any]) => (
+        {Object.entries(widgetConfig).map(([type, config]) => (
           <Button key={type} variant="outline" className="w-full justify-start" onClick={() => onAddWidget(type)}>
             <Plus className="h-4 w-4 mr-2" /> {config.name}
           </Button>
@@ -111,7 +111,7 @@ const HomepageAdmin = () => {
   const { data: layoutData, isLoading } = useHomepageLayout();
   const updateLayoutMutation = useUpdateHomepageLayout();
   const [layout, setLayout] = useState<Row[]>([]);
-  const [activeItem, setActiveItem] = useState<any>(null);
+  const [activeItem, setActiveItem] = useState<Row | Widget | null>(null);
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -246,7 +246,7 @@ const HomepageAdmin = () => {
     }
   };
 
-  const handleSaveSettings = (settings: any) => {
+  const handleSaveSettings = (settings: Record<string, unknown>) => {
     if (!editingWidget) return;
     setLayout(prev => JSON.parse(JSON.stringify(prev)).map((row: Row) => ({
       ...row,

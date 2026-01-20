@@ -4,39 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTeams, useDeleteTeam } from "@/hooks/use-teams";
 import { Link } from "react-router-dom";
-import { useState, useMemo } from "react";
-import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Search, Loader2, Plus, Edit } from "lucide-react";
+import { useAdminListPage } from "@/hooks/use-admin-list-page";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { useTranslation } from "react-i18next";
+import { Team } from "@/types/database";
 
 const TeamsAdmin = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const { data: teams, isLoading, error } = useTeams();
   const deleteTeamMutation = useDeleteTeam();
-  const isMobile = useIsMobile();
   const { t } = useTranslation();
 
-  const filteredTeams = useMemo(() => {
-    if (!teams || !searchTerm) return teams;
-    
-    return teams.filter(team => 
-      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.parish?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.venues?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [teams, searchTerm]);
+  const { searchTerm, setSearchTerm, filteredData: filteredTeams, isMobile } = useAdminListPage<Team & { venues?: { name: string } }>({
+    data: teams,
+    searchFields: ['name', 'parish', 'venues.name'],
+  });
 
   const handleDeleteTeam = async (teamId: string) => {
     await deleteTeamMutation.mutateAsync(teamId);
@@ -66,32 +49,12 @@ const TeamsAdmin = () => {
             <Edit className="h-4 w-4" />
           </Button>
         </Link>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t('pages.admin.teams.deleteDialogTitle')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('pages.admin.teams.deleteDialogDescription', { teamName: team.name })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t('pages.admin.teams.cancelButton')}</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => handleDeleteTeam(team.id)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                disabled={deleteTeamMutation.isPending}
-              >
-                {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('pages.admin.teams.deleteButton')}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteConfirmDialog
+          title={t('pages.admin.teams.deleteDialogTitle')}
+          description={t('pages.admin.teams.deleteDialogDescription', { teamName: team.name })}
+          onConfirm={() => handleDeleteTeam(team.id)}
+          isPending={deleteTeamMutation.isPending}
+        />
       </div>
     ),
   })) || [];
@@ -109,47 +72,36 @@ const TeamsAdmin = () => {
 
   const renderMobileList = () => (
     <div className="space-y-4">
-      {filteredTeams?.map(team => {
-        const actions = (
-          <>
-            <Link to={`/admin/teams/${team.id}/edit`}>
-              <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
-            </Link>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t('pages.admin.teams.deleteDialogTitle')}</AlertDialogTitle>
-                  <AlertDialogDescription>{t('pages.admin.teams.deleteDialogDescription', { teamName: team.name })}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t('pages.admin.teams.cancelButton')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleDeleteTeam(team.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteTeamMutation.isPending}>
-                    {deleteTeamMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} {t('pages.admin.teams.deleteButton')}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        );
-        return (
-          <AdminMobileCard
-            key={team.id}
-            title={<Link to={`/admin/teams/${team.id}`} className="hover:underline">{team.name}</Link>}
-            subtitle={team.parish || "Nessuna parrocchia"}
-            actions={actions}
-          >
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
-              <div className="font-semibold text-muted-foreground">{t('pages.admin.teams.table.venue')}:</div>
-              <div>{team.venues?.name || "-"}</div>
-              <div className="font-semibold text-muted-foreground">{t('pages.admin.teams.table.colors')}:</div>
-              <div>{team.colors || "-"}</div>
-            </div>
-          </AdminMobileCard>
-        );
-      })}
+      {filteredTeams?.map(team => (
+        <AdminMobileCard
+          key={team.id}
+          title={<Link to={`/admin/teams/${team.id}`} className="hover:underline">{team.name}</Link>}
+          subtitle={team.parish || "Nessuna parrocchia"}
+          actions={
+            <>
+              <Link to={`/admin/teams/${team.id}/edit`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </Link>
+              <DeleteConfirmDialog
+                title={t('pages.admin.teams.deleteDialogTitle')}
+                description={t('pages.admin.teams.deleteDialogDescription', { teamName: team.name })}
+                onConfirm={() => handleDeleteTeam(team.id)}
+                isPending={deleteTeamMutation.isPending}
+                triggerSize="icon"
+              />
+            </>
+          }
+        >
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+            <div className="font-semibold text-muted-foreground">{t('pages.admin.teams.table.venue')}:</div>
+            <div>{team.venues?.name || "-"}</div>
+            <div className="font-semibold text-muted-foreground">{t('pages.admin.teams.table.colors')}:</div>
+            <div>{team.colors || "-"}</div>
+          </div>
+        </AdminMobileCard>
+      ))}
     </div>
   );
 
