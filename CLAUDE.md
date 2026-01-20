@@ -95,6 +95,14 @@ src/
 - Usare **shadcn/ui** per i componenti UI (già installati, non reinstallare)
 - I componenti in `src/components/ui/` NON vanno modificati - creare nuovi componenti se necessario
 
+### Design Frontend (skill: frontend-design)
+- Creare interfacce **distintive** e memorabili, evitando l'estetica generica "AI"
+- **Tipografia**: Preferire font caratteristici (Google Fonts: Playfair Display, Space Grotesk, DM Sans, Outfit)
+- **Colori**: Palette audaci e coesive, usare CSS variables del tema esistente
+- **Animazioni**: Micro-interazioni significative con Tailwind animate o CSS transitions
+- **Layout**: Composizioni creative con asimmetria controllata quando appropriato
+- Mantenere coerenza con il sistema di tema esistente (admin personalizzabile)
+
 ### Best Practices
 - TypeScript strict dove possibile
 - Componenti funzionali con hooks
