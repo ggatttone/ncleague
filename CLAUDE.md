@@ -152,6 +152,36 @@ Entità principali:
 
 ---
 
+## Skills Installate (skills.sh)
+
+Il progetto utilizza **Agent Skills** da [skills.sh](https://skills.sh/) per migliorare le capacità di sviluppo. Le skills sono installate in `.agents/skills/`.
+
+### Skills Principali per NCL App
+
+| Categoria | Skills | Utilizzo |
+|-----------|--------|----------|
+| **React** | `vercel-react-best-practices`, `react-patterns`, `react-hook-form-zod` | Pattern e best practices React |
+| **Supabase** | `supabase-best-practices` | RLS, Auth, ottimizzazione query |
+| **Styling** | `shadcn-ui`, `tailwind-css-patterns`, `tailwind-v4-shadcn` | Design system e componenti |
+| **TypeScript** | `typescript-advanced-types`, `typescript-docs` | Tipi avanzati e documentazione |
+| **Testing** | `webapp-testing`, `playwright-skill` | Test E2E e unit testing |
+| **Quality** | `accessibility`, `core-web-vitals`, `performance`, `seo` | A11y, performance, SEO |
+| **Mobile** | `react-native-best-practices` | Pattern per Capacitor/mobile |
+| **i18n** | `i18n-localization` | Internazionalizzazione |
+| **Documenti** | `xlsx`, `pdf`, `docx` | Import/export file |
+
+### Comandi Skills
+
+```bash
+# Aggiungere nuove skills
+npx skills add <owner/repo>
+
+# Esempio
+npx skills add anthropics/skills
+```
+
+---
+
 ## Note per lo Sviluppo
 
 - La homepage usa un sistema di widget dinamico configurabile da admin
