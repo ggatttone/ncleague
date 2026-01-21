@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Shield } from "lucide-react";
-import { useAuth } from "@/lib/supabase/auth-context";
+import { useAuth, UserRole } from "@/lib/supabase/auth-context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -80,7 +80,7 @@ export const AdminSidebar = ({ onLinkClick }: { onLinkClick?: () => void }) => {
       <nav className="flex-1 px-2 py-4 overflow-y-auto">
         <Accordion type="single" collapsible defaultValue={activeCategory} className="w-full">
           {adminMenuConfig.map((group) => {
-            const visibleLinks = group.links.filter(link => hasPermission(link.roles as any));
+            const visibleLinks = group.links.filter(link => hasPermission(link.roles as UserRole[]));
             if (visibleLinks.length === 0) return null;
 
             return (

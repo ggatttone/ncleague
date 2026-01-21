@@ -217,12 +217,22 @@ export interface PlayoffBracket {
   updated_at: string;
 }
 
+export interface TournamentModeSettings {
+  phases?: string[];
+  pointsPerWin?: number;
+  pointsPerDraw?: number;
+  pointsPerLoss?: number;
+  groupCount?: number;
+  teamsPerGroup?: number;
+  [key: string]: unknown;
+}
+
 export interface TournamentMode {
   id: string;
   name: string;
   description?: string | null;
   handler_key: string;
-  settings?: object | null;
+  settings?: TournamentModeSettings | null;
   created_at: string;
   updated_at: string;
 }

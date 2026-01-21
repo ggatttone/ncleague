@@ -19,6 +19,7 @@ export const GoogleMapEmbed = ({ lat, lon }: GoogleMapEmbedProps) => {
   return (
     <div className="aspect-video w-full">
       <iframe
+        title="Google Maps location"
         width="100%"
         height="100%"
         style={{ border: 0 }}

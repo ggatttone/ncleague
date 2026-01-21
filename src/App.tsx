@@ -70,7 +70,22 @@ const HomepageAdmin = lazy(() => import("./pages/admin/HomepageAdmin"));
 const NotFoundAdmin = lazy(() => import("./pages/admin/NotFoundAdmin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes - data considered fresh
+      gcTime: 1000 * 60 * 30, // 30 minutes - cache retention
+      refetchOnWindowFocus: false, // Don't refetch on tab focus
+      retry: (failureCount, error) => {
+        // Don't retry on Supabase client errors (4xx)
+        if (error instanceof Error && error.message.includes('PGRST')) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -83,10 +98,18 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              {/* Skip to main content link for keyboard navigation */}
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none"
+              >
+                Vai al contenuto principale
+              </a>
               <Navbar />
               <ErrorBoundary>
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
+                <main id="main-content">
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -169,8 +192,9 @@ const App = () => (
                   } />
                   
                   <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
+                    </Routes>
+                  </Suspense>
+                </main>
               </ErrorBoundary>
             </BrowserRouter>
           </TooltipProvider>

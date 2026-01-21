@@ -53,7 +53,7 @@ export function useAddLike() {
 
 // Hook to remove a like
 export function useRemoveLike() {
-  return useSupabaseMutation<any, string>(
+  return useSupabaseMutation<null, string>(
     ['likes'],
     async (likeId: string) => supabase.from('likes').delete().eq('id', likeId)
   );
@@ -96,7 +96,7 @@ export function useAddComment() {
 // Hook to delete a comment
 export function useDeleteComment() {
   const queryClient = useQueryClient();
-  return useSupabaseMutation<any, { commentId: string; articleId: string }>(
+  return useSupabaseMutation<null, { commentId: string; articleId: string }>(
     ['comments'],
     async ({ commentId }: { commentId: string; articleId: string }) =>
       supabase.from('comments').delete().eq('id', commentId),

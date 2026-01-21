@@ -20,6 +20,7 @@ export const MediaViewer = ({ item, open, onOpenChange }: MediaViewerProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 bg-transparent border-0 max-w-6xl w-auto h-auto max-h-[90vh] flex items-center justify-center">
         {isVideo ? (
+          // eslint-disable-next-line jsx-a11y/media-has-caption -- User-uploaded content, captions not available
           <video
             src={publicURL}
             className="max-w-full max-h-[90vh] object-contain"

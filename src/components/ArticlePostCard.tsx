@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -13,7 +14,7 @@ interface ArticlePostCardProps {
   article: ArticleWithAuthor;
 }
 
-export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
+export const ArticlePostCard = memo(({ article }: ArticlePostCardProps) => {
   const authorName = `${article.profiles?.first_name || ''} ${article.profiles?.last_name || ''}`.trim() || 'Autore Sconosciuto';
   const relativeDate = formatDateRelative(article.published_at);
 
@@ -57,6 +58,7 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
                 <img
                   src={article.cover_image_url}
                   alt={article.title}
+                  loading="lazy"
                   className="w-full h-auto max-h-80 object-cover rounded-lg border"
                 />
               </Link>
@@ -76,4 +78,4 @@ export const ArticlePostCard = ({ article }: ArticlePostCardProps) => {
       </div>
     </Card>
   );
-};
+});

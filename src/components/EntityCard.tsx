@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { memo, ReactNode } from "react";
 
 interface EntityCardProps {
   title: string;
@@ -7,12 +7,13 @@ interface EntityCardProps {
   imageUrl?: string;
 }
 
-export const EntityCard = ({ title, subtitle, children, imageUrl }: EntityCardProps) => (
+export const EntityCard = memo(({ title, subtitle, children, imageUrl }: EntityCardProps) => (
   <div className="bg-card rounded-lg shadow p-6 flex items-center gap-6">
     {imageUrl && (
       <img
         src={imageUrl}
         alt={title}
+        loading="lazy"
         className="w-20 h-20 rounded-full object-cover border border-border"
       />
     )}
@@ -22,4 +23,4 @@ export const EntityCard = ({ title, subtitle, children, imageUrl }: EntityCardPr
       {children}
     </div>
   </div>
-);
+));
