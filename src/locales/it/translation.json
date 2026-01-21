@@ -864,5 +864,31 @@
     "latest_news": "Ultime Notizie",
     "league_table": "Classifica",
     "pinned_article": "Articolo in Evidenza"
+  },
+  "common": {
+    "days": {
+      "monday": "Lunedì",
+      "tuesday": "Martedì",
+      "wednesday": "Mercoledì",
+      "thursday": "Giovedì",
+      "friday": "Venerdì",
+      "saturday": "Sabato",
+      "sunday": "Domenica"
+    },
+    "noTeam": "Nessuna squadra",
+    "noParish": "Nessuna parrocchia"
+  },
+  "validation": {
+    "nameRequired": "Il nome è obbligatorio",
+    "titleRequired": "Il titolo è obbligatorio",
+    "slugRequired": "Lo slug è obbligatorio",
+    "dateRequired": "La data è obbligatoria",
+    "firstNameRequired": "Il nome è obbligatorio",
+    "lastNameRequired": "Il cognome è obbligatorio",
+    "teamNameRequired": "Il nome della squadra è obbligatorio",
+    "venueNameRequired": "Il nome del campo è obbligatorio",
+    "handlerRequired": "L'handler è obbligatorio",
+    "tournamentModeRequired": "La modalità torneo è obbligatoria",
+    "noValidPlayersToImport": "Nessun giocatore valido da importare."
   }
 }

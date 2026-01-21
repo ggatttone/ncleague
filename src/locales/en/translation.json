@@ -834,5 +834,31 @@
     "latest_news": "Latest News",
     "league_table": "League Table",
     "pinned_article": "Featured Article"
+  },
+  "common": {
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "noTeam": "No team",
+    "noParish": "No parish"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "titleRequired": "Title is required",
+    "slugRequired": "Slug is required",
+    "dateRequired": "Date is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "teamNameRequired": "Team name is required",
+    "venueNameRequired": "Venue name is required",
+    "handlerRequired": "Handler is required",
+    "tournamentModeRequired": "Tournament mode is required",
+    "noValidPlayersToImport": "No valid players to import."
   }
 }

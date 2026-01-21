@@ -2,40 +2,24 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Table } from "@/components/Table";
 import { Link } from "react-router-dom";
 import { usePlayers, useDeletePlayer } from "@/hooks/use-players";
-import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Plus, Edit, Trash2, Upload } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Search, Loader2, Plus, Edit, Upload } from "lucide-react";
+import { useAdminListPage } from "@/hooks/use-admin-list-page";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { useTranslation } from "react-i18next";
+import { Player } from "@/types/database";
 
 const PlayersAdmin = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const { data: players, isLoading, error } = usePlayers();
   const deletePlayerMutation = useDeletePlayer();
-  const isMobile = useIsMobile();
   const { t } = useTranslation();
 
-  const filteredPlayers = useMemo(() => {
-    if (!players || !searchTerm) return players;
-    
-    return players.filter(player => 
-      `${player.first_name} ${player.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.teams?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [players, searchTerm]);
+  const { searchTerm, setSearchTerm, filteredData: filteredPlayers, isMobile } = useAdminListPage<Player & { teams?: { id: string; name: string } }>({
+    data: players,
+    searchFields: ['first_name', 'last_name', 'teams.name'],
+  });
 
   const handleDeletePlayer = async (playerId: string) => {
     await deletePlayerMutation.mutateAsync(playerId);
@@ -67,32 +51,12 @@ const PlayersAdmin = () => {
             <Edit className="h-4 w-4" />
           </Button>
         </Link>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t('pages.admin.players.deleteDialogTitle')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annulla</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => handleDeletePlayer(player.id)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                disabled={deletePlayerMutation.isPending}
-              >
-                {deletePlayerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Elimina
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteConfirmDialog
+          title={t('pages.admin.players.deleteDialogTitle')}
+          description={t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}
+          onConfirm={() => handleDeletePlayer(player.id)}
+          isPending={deletePlayerMutation.isPending}
+        />
       </div>
     ),
   })) || [];
@@ -110,44 +74,33 @@ const PlayersAdmin = () => {
 
   const renderMobileList = () => (
     <div className="space-y-4">
-      {filteredPlayers?.map(player => {
-        const actions = (
-          <>
-            <Link to={`/admin/players/${player.id}/edit`}>
-              <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
-            </Link>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t('pages.admin.players.deleteDialogTitle')}</AlertDialogTitle>
-                  <AlertDialogDescription>{t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annulla</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleDeletePlayer(player.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deletePlayerMutation.isPending}>
-                    {deletePlayerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        );
-        return (
-          <AdminMobileCard
-            key={player.id}
-            title={<Link to={`/admin/players/${player.id}`} className="hover:underline">{player.first_name} {player.last_name}</Link>}
-            subtitle={player.teams?.name || t('pages.admin.players.mobile.noTeam')}
-            actions={actions}
-          >
-            <div className="mt-2 text-sm">
-              <span className="font-semibold text-muted-foreground">{t('pages.admin.players.mobile.roleLabel')}:</span> {player.role || "-"}
-            </div>
-          </AdminMobileCard>
-        );
-      })}
+      {filteredPlayers?.map(player => (
+        <AdminMobileCard
+          key={player.id}
+          title={<Link to={`/admin/players/${player.id}`} className="hover:underline">{player.first_name} {player.last_name}</Link>}
+          subtitle={player.teams?.name || t('pages.admin.players.mobile.noTeam')}
+          actions={
+            <>
+              <Link to={`/admin/players/${player.id}/edit`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </Link>
+              <DeleteConfirmDialog
+                title={t('pages.admin.players.deleteDialogTitle')}
+                description={t('pages.admin.players.deleteDialogDescription', { playerName: `${player.first_name} ${player.last_name}` })}
+                onConfirm={() => handleDeletePlayer(player.id)}
+                isPending={deletePlayerMutation.isPending}
+                triggerSize="icon"
+              />
+            </>
+          }
+        >
+          <div className="mt-2 text-sm">
+            <span className="font-semibold text-muted-foreground">{t('pages.admin.players.mobile.roleLabel')}:</span> {player.role || "-"}
+          </div>
+        </AdminMobileCard>
+      ))}
     </div>
   );
 

@@ -4,40 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useVenues, useDeleteVenue } from "@/hooks/use-venues";
 import { Link } from "react-router-dom";
-import { useState, useMemo } from "react";
-import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Search, Loader2, Plus, Edit } from "lucide-react";
+import { useAdminListPage } from "@/hooks/use-admin-list-page";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { useTranslation } from "react-i18next";
+import { Venue } from "@/types/database";
 
 const VenuesAdmin = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const { data: venues, isLoading, error } = useVenues();
   const deleteVenueMutation = useDeleteVenue();
-  const isMobile = useIsMobile();
   const { t } = useTranslation();
 
-  const filteredVenues = useMemo(() => {
-    if (!venues || !searchTerm) return venues;
-    
-    return venues.filter(venue => 
-      venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      venue.struttura?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      venue.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      venue.city?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [venues, searchTerm]);
+  const { searchTerm, setSearchTerm, filteredData: filteredVenues, isMobile } = useAdminListPage<Venue>({
+    data: venues,
+    searchFields: ['name', 'struttura', 'address', 'city'],
+  });
 
   const handleDeleteVenue = async (venueId: string) => {
     await deleteVenueMutation.mutateAsync(venueId);
@@ -63,32 +45,12 @@ const VenuesAdmin = () => {
             <Edit className="h-4 w-4" />
           </Button>
         </Link>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t('pages.admin.venues.deleteDialogTitle')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annulla</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => handleDeleteVenue(venue.id)}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                disabled={deleteVenueMutation.isPending}
-              >
-                {deleteVenueMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Elimina
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteConfirmDialog
+          title={t('pages.admin.venues.deleteDialogTitle')}
+          description={t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}
+          onConfirm={() => handleDeleteVenue(venue.id)}
+          isPending={deleteVenueMutation.isPending}
+        />
       </div>
     ),
   })) || [];
@@ -106,35 +68,31 @@ const VenuesAdmin = () => {
 
   const renderMobileList = () => (
     <div className="space-y-4">
-      {filteredVenues?.map(venue => {
-        const actions = (
-          <>
-            <Link to={`/admin/venues/${venue.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
-            <AlertDialog>
-              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.venues.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}</AlertDialogDescription></AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annulla</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleDeleteVenue(venue.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteVenueMutation.isPending}>
-                    {deleteVenueMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        );
-        return (
-          <AdminMobileCard
-            key={venue.id}
-            title={venue.name}
-            subtitle={venue.city || "Città non specificata"}
-            actions={actions}
-          >
-            <div className="mt-2 text-sm text-muted-foreground">{venue.address}</div>
-          </AdminMobileCard>
-        );
-      })}
+      {filteredVenues?.map(venue => (
+        <AdminMobileCard
+          key={venue.id}
+          title={venue.name}
+          subtitle={venue.city || "Città non specificata"}
+          actions={
+            <>
+              <Link to={`/admin/venues/${venue.id}/edit`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </Link>
+              <DeleteConfirmDialog
+                title={t('pages.admin.venues.deleteDialogTitle')}
+                description={t('pages.admin.venues.deleteDialogDescription', { name: venue.name })}
+                onConfirm={() => handleDeleteVenue(venue.id)}
+                isPending={deleteVenueMutation.isPending}
+                triggerSize="icon"
+              />
+            </>
+          }
+        >
+          <div className="mt-2 text-sm text-muted-foreground">{venue.address}</div>
+        </AdminMobileCard>
+      ))}
     </div>
   );
 

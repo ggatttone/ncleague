@@ -76,7 +76,7 @@ const TeamsAdmin = () => {
         <AdminMobileCard
           key={team.id}
           title={<Link to={`/admin/teams/${team.id}`} className="hover:underline">{team.name}</Link>}
-          subtitle={team.parish || "Nessuna parrocchia"}
+          subtitle={team.parish || t('common.noParish')}
           actions={
             <>
               <Link to={`/admin/teams/${team.id}/edit`}>

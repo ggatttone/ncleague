@@ -834,5 +834,31 @@
     "latest_news": "Laatste Nieuws",
     "league_table": "Klassement",
     "pinned_article": "Uitgelicht Artikel"
+  },
+  "common": {
+    "days": {
+      "monday": "Maandag",
+      "tuesday": "Dinsdag",
+      "wednesday": "Woensdag",
+      "thursday": "Donderdag",
+      "friday": "Vrijdag",
+      "saturday": "Zaterdag",
+      "sunday": "Zondag"
+    },
+    "noTeam": "Geen team",
+    "noParish": "Geen parochie"
+  },
+  "validation": {
+    "nameRequired": "Naam is verplicht",
+    "titleRequired": "Titel is verplicht",
+    "slugRequired": "Slug is verplicht",
+    "dateRequired": "Datum is verplicht",
+    "firstNameRequired": "Voornaam is verplicht",
+    "lastNameRequired": "Achternaam is verplicht",
+    "teamNameRequired": "Teamnaam is verplicht",
+    "venueNameRequired": "Locatienaam is verplicht",
+    "handlerRequired": "Handler is verplicht",
+    "tournamentModeRequired": "Toernooimodus is verplicht",
+    "noValidPlayersToImport": "Geen geldige spelers om te importeren."
   }
 }

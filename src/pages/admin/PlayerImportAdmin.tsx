@@ -14,25 +14,14 @@ import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide
 import { showError, showSuccess } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
 import { CreatePlayerData } from "@/hooks/use-players";
-
-const steps = [
-  { label: "Carica File" },
-  { label: "Mappa Colonne" },
-  { label: "Anteprima e Importa" },
-];
-
-const REQUIRED_FIELDS = [
-  { id: 'first_name', label: 'Nome' },
-  { id: 'last_name', label: 'Cognome' },
-  { id: 'team_name', label: 'Nome Squadra' },
-  { id: 'date_of_birth', label: 'Data di Nascita (Opzionale)' },
-  { id: 'role', label: 'Ruolo (Opzionale)' },
-  { id: 'jersey_number', label: 'Numero Maglia (Opzionale)' },
-  { id: 'nationality', label: 'Nazionalità (Opzionale)' },
-  { id: 'document_id', label: 'ID Documento (Opzionale)' },
-];
+import { useTranslation } from "react-i18next";
 
 type ExcelRow = Record<string, string | number | undefined>;
+
+interface FieldDef {
+  id: string;
+  label: string;
+}
 
 type PreviewRow = {
   original: ExcelRow;
@@ -61,6 +50,7 @@ const parseDate = (dateInput: string | number | Date | null | undefined): Date |
 
 const PlayerImportAdmin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ExcelRow[]>([]);
@@ -69,6 +59,23 @@ const PlayerImportAdmin = () => {
 
   const { data: teams, isLoading: teamsLoading } = useTeams();
   const createMultiplePlayersMutation = useCreateMultiplePlayers();
+
+  const steps = [
+    { label: t('pages.admin.playerImport.steps.uploadFile', 'Carica File') },
+    { label: t('pages.admin.playerImport.steps.mapColumns', 'Mappa Colonne') },
+    { label: t('pages.admin.playerImport.steps.previewImport', 'Anteprima e Importa') },
+  ];
+
+  const REQUIRED_FIELDS: FieldDef[] = [
+    { id: 'first_name', label: t('pages.admin.playerImport.fields.firstName', 'Nome') },
+    { id: 'last_name', label: t('pages.admin.playerImport.fields.lastName', 'Cognome') },
+    { id: 'team_name', label: t('pages.admin.playerImport.fields.teamName', 'Nome Squadra') },
+    { id: 'date_of_birth', label: t('pages.admin.playerImport.fields.dateOfBirth', 'Data di Nascita (Opzionale)') },
+    { id: 'role', label: t('pages.admin.playerImport.fields.role', 'Ruolo (Opzionale)') },
+    { id: 'jersey_number', label: t('pages.admin.playerImport.fields.jerseyNumber', 'Numero Maglia (Opzionale)') },
+    { id: 'nationality', label: t('pages.admin.playerImport.fields.nationality', 'Nazionalità (Opzionale)') },
+    { id: 'document_id', label: t('pages.admin.playerImport.fields.documentId', 'ID Documento (Opzionale)') },
+  ];
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -112,11 +119,11 @@ const PlayerImportAdmin = () => {
 
       if (!firstName) {
         previewRow.isValid = false;
-        previewRow.errors.push("Il nome è obbligatorio.");
+        previewRow.errors.push(t('validation.firstNameRequired'));
       }
       if (!lastName) {
         previewRow.isValid = false;
-        previewRow.errors.push("Il cognome è obbligatorio.");
+        previewRow.errors.push(t('validation.lastNameRequired'));
       }
       if (!teamId) {
         previewRow.isValid = false;
@@ -148,7 +155,7 @@ const PlayerImportAdmin = () => {
   const handleImport = async () => {
     const validPlayers = previewData.filter(p => p.isValid && p.data).map(p => p.data!);
     if (validPlayers.length === 0) {
-      showError("Nessun giocatore valido da importare.");
+      showError(t('validation.noValidPlayersToImport'));
       return;
     }
     await createMultiplePlayersMutation.mutateAsync(validPlayers, {

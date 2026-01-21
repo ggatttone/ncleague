@@ -3,20 +3,10 @@ import { Table } from "@/components/Table";
 import { Button } from "@/components/ui/button";
 import { useAllSponsors, useDeleteSponsor } from "@/hooks/use-sponsors";
 import { Link } from "react-router-dom";
-import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Loader2, Plus, Edit } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
+import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import { useTranslation } from "react-i18next";
 
 const SponsorsAdmin = () => {
@@ -45,25 +35,12 @@ const SponsorsAdmin = () => {
         <Link to={`/admin/sponsors/${sponsor.id}/edit`}>
           <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
         </Link>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t('pages.admin.sponsors.deleteDialogTitle')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annulla</AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleDelete(sponsor.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteSponsorMutation.isPending}>
-                {deleteSponsorMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteConfirmDialog
+          title={t('pages.admin.sponsors.deleteDialogTitle')}
+          description={t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}
+          onConfirm={() => handleDelete(sponsor.id)}
+          isPending={deleteSponsorMutation.isPending}
+        />
       </div>
     ),
   })) || [];
@@ -72,33 +49,27 @@ const SponsorsAdmin = () => {
 
   const renderMobileList = () => (
     <div className="space-y-4">
-      {sponsors?.map(sponsor => {
-        const actions = (
-          <>
-            <Link to={`/admin/sponsors/${sponsor.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button></Link>
-            <AlertDialog>
-              <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>{t('pages.admin.sponsors.deleteDialogTitle')}</AlertDialogTitle><AlertDialogDescription>{t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}</AlertDialogDescription></AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annulla</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleDelete(sponsor.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={deleteSponsorMutation.isPending}>
-                    {deleteSponsorMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Elimina
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        );
-        return (
-          <AdminMobileCard
-            key={sponsor.id}
-            title={sponsor.name}
-            subtitle={sponsor.teams?.map(t => t.name).join(', ') || "Nessuna squadra"}
-            actions={actions}
-          />
-        );
-      })}
+      {sponsors?.map(sponsor => (
+        <AdminMobileCard
+          key={sponsor.id}
+          title={sponsor.name}
+          subtitle={sponsor.teams?.map(t => t.name).join(', ') || t('common.noTeam')}
+          actions={
+            <>
+              <Link to={`/admin/sponsors/${sponsor.id}/edit`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="h-4 w-4" /></Button>
+              </Link>
+              <DeleteConfirmDialog
+                title={t('pages.admin.sponsors.deleteDialogTitle')}
+                description={t('pages.admin.sponsors.deleteDialogDescription', { name: sponsor.name })}
+                onConfirm={() => handleDelete(sponsor.id)}
+                isPending={deleteSponsorMutation.isPending}
+                triggerSize="icon"
+              />
+            </>
+          }
+        />
+      ))}
     </div>
   );
 

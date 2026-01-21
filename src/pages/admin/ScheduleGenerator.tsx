@@ -20,6 +20,7 @@ import { showError, showSuccess } from "@/utils/toast";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const scheduleSchema = z.object({
   season_id: z.string().min(1, "Seleziona una stagione"),
@@ -34,15 +35,21 @@ const scheduleSchema = z.object({
 
 type ScheduleFormData = z.infer<typeof scheduleSchema>;
 
-const daysOfWeek = [
-  { id: 1, label: "Lunedì" }, { id: 2, label: "Martedì" }, { id: 3, label: "Mercoledì" },
-  { id: 4, label: "Giovedì" }, { id: 5, label: "Venerdì" }, { id: 6, label: "Sabato" }, { id: 0, label: "Domenica" }
-];
-
 const ScheduleGenerator = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [preview, setPreview] = useState<any[] | null>(null);
+  const { t } = useTranslation();
+
+  const daysOfWeek = [
+    { id: 1, label: t('common.days.monday') },
+    { id: 2, label: t('common.days.tuesday') },
+    { id: 3, label: t('common.days.wednesday') },
+    { id: 4, label: t('common.days.thursday') },
+    { id: 5, label: t('common.days.friday') },
+    { id: 6, label: t('common.days.saturday') },
+    { id: 0, label: t('common.days.sunday') }
+  ];
 
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
   const { data: venues, isLoading: venuesLoading } = useVenues();

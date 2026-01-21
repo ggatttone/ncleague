@@ -13,6 +13,13 @@ interface ResourceConfig<T extends BaseEntity, TCreate = Omit<T, 'id'>, TUpdate 
   singularKey?: string;
 }
 
+interface PaginationOptions {
+  page?: number;
+  pageSize?: number;
+}
+
+const DEFAULT_PAGE_SIZE = 50;
+
 export function createResourceHooks<
   T extends BaseEntity,
   TCreate = Omit<T, 'id'>,
@@ -26,13 +33,29 @@ export function createResourceHooks<
     singularKey = queryKey.slice(0, -1),
   } = config;
 
-  function useList() {
+  function useList(options?: PaginationOptions) {
+    const { page = 0, pageSize = DEFAULT_PAGE_SIZE } = options || {};
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+
+    return useSupabaseQuery<T[]>(
+      [queryKey, { page, pageSize }],
+      async () => supabase
+        .from(tableName)
+        .select(selectQuery)
+        .order(orderBy.column, { ascending: orderBy.ascending ?? true })
+        .range(from, to) as unknown as Promise<{ data: T[] | null; error: import('@supabase/supabase-js').PostgrestError | null }>
+    );
+  }
+
+  // For backwards compatibility - fetch all without pagination
+  function useListAll() {
     return useSupabaseQuery<T[]>(
       [queryKey],
       async () => supabase
         .from(tableName)
         .select(selectQuery)
-        .order(orderBy.column, { ascending: orderBy.ascending ?? true })
+        .order(orderBy.column, { ascending: orderBy.ascending ?? true }) as unknown as Promise<{ data: T[] | null; error: import('@supabase/supabase-js').PostgrestError | null }>
     );
   }
 
@@ -83,6 +106,7 @@ export function createResourceHooks<
 
   return {
     useList,
+    useListAll,
     useById,
     useCreate,
     useUpdate,

@@ -12,6 +12,7 @@ import { DynamicTitle } from "@/components/theme/DynamicTitle";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Navbar } from "@/components/Navbar";
 import { PageLoader } from "@/components/PageLoader";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Lazy load all page components
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -83,8 +84,9 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Navbar />
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -167,8 +169,9 @@ const App = () => (
                   } />
                   
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
             </BrowserRouter>
           </TooltipProvider>
         </ModeProvider>

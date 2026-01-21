@@ -6,7 +6,7 @@ interface UseAdminListPageOptions<T> {
   searchFields: (keyof T | string)[];
 }
 
-export function useAdminListPage<T extends Record<string, unknown>>({
+export function useAdminListPage<T extends object>({
   data,
   searchFields,
 }: UseAdminListPageOptions<T>) {
