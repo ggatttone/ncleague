@@ -37,6 +37,12 @@ This little project reminded me that innovation doesn’t always need to start f
 
 https://www.ncleague.football/
 
-https://www.dyad.sh/ 
+https://www.dyad.sh/
 
- 
+---
+
+## Documentation
+
+- [Tournament Modes System](docs/TOURNAMENT_MODES.md) - Technical documentation for the flexible tournament mode system
+- [Development Guidelines](CLAUDE.md) - Coding conventions and project structure
+
