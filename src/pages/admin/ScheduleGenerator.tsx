@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useSeasons } from "@/hooks/use-seasons";
+import { useSeasons, useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useVenues } from "@/hooks/use-venues";
 import { useTeams } from "@/hooks/use-teams";
 import { useForm, Controller } from "react-hook-form";
@@ -21,6 +21,11 @@ import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getSchedulablePhases } from "@/lib/tournament/handler-registry";
+import type { TournamentHandlerKey, PhaseConfig } from "@/types/tournament-handlers";
+
+// Import handler to register phases
+import "@/lib/tournament/handlers/league-only";
 
 const scheduleSchema = z.object({
   season_id: z.string().min(1, "Seleziona una stagione"),
@@ -34,6 +39,13 @@ const scheduleSchema = z.object({
 });
 
 type ScheduleFormData = z.infer<typeof scheduleSchema>;
+
+// Default phases for backward compatibility
+const DEFAULT_PHASES: PhaseConfig[] = [
+  { id: "regular_season", nameKey: "tournament.phases.regularSeason", order: 1, matchGeneration: { type: "round_robin" }, isTerminal: false },
+  { id: "poule_a", nameKey: "tournament.phases.pouleA", order: 2, matchGeneration: { type: "round_robin" }, isTerminal: false },
+  { id: "poule_b", nameKey: "tournament.phases.pouleB", order: 2, matchGeneration: { type: "round_robin" }, isTerminal: true },
+];
 
 const ScheduleGenerator = () => {
   const navigate = useNavigate();
@@ -52,10 +64,10 @@ const ScheduleGenerator = () => {
   ];
 
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
-  const { data: venues, isLoading: venuesLoading } = useVenues();
-  const { data: teams, isLoading: teamsLoading } = useTeams();
+  const { data: venues } = useVenues();
+  const { data: teams } = useTeams();
 
-  const { control, handleSubmit, formState: { errors } } = useForm<ScheduleFormData>({
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<ScheduleFormData>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
       allowedDays: [],
@@ -63,6 +75,30 @@ const ScheduleGenerator = () => {
       includeReturnGames: true,
     },
   });
+
+  const selectedSeasonId = watch("season_id");
+
+  // Load season with tournament mode when season changes
+  const { data: seasonWithMode, isLoading: seasonModeLoading } = useSeasonWithTournamentMode(selectedSeasonId);
+
+  // Get available stages based on tournament mode
+  const availableStages = useMemo(() => {
+    if (seasonWithMode?.tournament_modes?.handler_key) {
+      const handlerKey = seasonWithMode.tournament_modes.handler_key as TournamentHandlerKey;
+      const phases = getSchedulablePhases(handlerKey);
+      if (phases.length > 0) {
+        return phases;
+      }
+    }
+    return DEFAULT_PHASES;
+  }, [seasonWithMode]);
+
+  // Reset stage when season changes
+  useEffect(() => {
+    if (selectedSeasonId) {
+      setValue("stage", "");
+    }
+  }, [selectedSeasonId, setValue]);
 
   const generatePreviewMutation = useMutation({
     mutationFn: async (formData: ScheduleFormData) => {
@@ -88,7 +124,7 @@ const ScheduleGenerator = () => {
     },
     onSuccess: (data) => {
       setPreview(data);
-      showSuccess(`Anteprima di ${data.length} partite generata con successo!`);
+      showSuccess(t('admin.scheduleGenerator.previewSuccess', { count: data.length }));
     },
     onError: (err: any) => showError(`Errore: ${err.message}`),
   });
@@ -102,7 +138,7 @@ const ScheduleGenerator = () => {
       return data;
     },
     onSuccess: () => {
-      showSuccess("Calendario salvato con successo!");
+      showSuccess(t('admin.scheduleGenerator.saveSuccess'));
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       navigate('/admin/fixtures');
     },
@@ -115,46 +151,73 @@ const ScheduleGenerator = () => {
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Generatore Calendario Automatico</h1>
+        <h1 className="text-2xl font-bold">{t('admin.scheduleGenerator.title')}</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>1. Imposta Vincoli</CardTitle>
-            <CardDescription>Definisci i parametri per la generazione del calendario.</CardDescription>
+            <CardTitle>{t('admin.scheduleGenerator.step1Title')}</CardTitle>
+            <CardDescription>{t('admin.scheduleGenerator.step1Description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit((data) => generatePreviewMutation.mutate(data))} className="space-y-4">
-              {/* Season and Stage */}
+              {/* Season */}
               <div className="space-y-2">
+                <Label>{t('common.season')}</Label>
                 <Controller name="season_id" control={control} render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value} disabled={seasonsLoading}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona una stagione..." /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('admin.scheduleGenerator.selectSeason')} /></SelectTrigger>
                     <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                   </Select>
                 )} />
                 {errors.season_id && <p className="text-sm text-destructive">{errors.season_id.message}</p>}
+              </div>
+
+              {/* Stage - Dynamic based on tournament mode */}
+              <div className="space-y-2">
+                <Label>{t('common.phase')}</Label>
                 <Controller name="stage" control={control} render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona una fase..." /></SelectTrigger>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={!selectedSeasonId || seasonModeLoading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('admin.scheduleGenerator.selectStage')} />
+                    </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="regular_season">Stagione Regolare</SelectItem>
-                      <SelectItem value="poule_a">Poule A</SelectItem>
-                      <SelectItem value="poule_b">Poule B</SelectItem>
+                      {availableStages.map(phase => (
+                        <SelectItem key={phase.id} value={phase.id}>
+                          {t(phase.nameKey, { defaultValue: phase.id })}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )} />
                 {errors.stage && <p className="text-sm text-destructive">{errors.stage.message}</p>}
+                {seasonWithMode?.tournament_modes && (
+                  <p className="text-xs text-muted-foreground">
+                    {t('admin.scheduleGenerator.tournamentMode')}: {seasonWithMode.tournament_modes.name}
+                  </p>
+                )}
               </div>
+
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4">
-                <div><Label htmlFor="startDate">Data Inizio</Label><Input id="startDate" type="date" {...control.register("startDate")} /></div>
-                <div><Label htmlFor="endDate">Data Fine</Label><Input id="endDate" type="date" {...control.register("endDate")} /></div>
+                <div>
+                  <Label htmlFor="startDate">{t('common.startDate')}</Label>
+                  <Input id="startDate" type="date" {...control.register("startDate")} />
+                </div>
+                <div>
+                  <Label htmlFor="endDate">{t('common.endDate')}</Label>
+                  <Input id="endDate" type="date" {...control.register("endDate")} />
+                </div>
               </div>
+
               {/* Days */}
               <div>
-                <Label>Giorni permessi</Label>
+                <Label>{t('admin.scheduleGenerator.allowedDays')}</Label>
                 <Controller name="allowedDays" control={control} render={({ field }) => (
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {daysOfWeek.map(day => (
@@ -175,10 +238,14 @@ const ScheduleGenerator = () => {
                 )} />
                 {errors.allowedDays && <p className="text-sm text-destructive">{errors.allowedDays.message}</p>}
               </div>
+
               {/* Times and Venues */}
-              <div><Label htmlFor="timeSlots">Orari (separati da virgola)</Label><Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" /></div>
               <div>
-                <Label>Campi da utilizzare</Label>
+                <Label htmlFor="timeSlots">{t('admin.scheduleGenerator.timeSlots')}</Label>
+                <Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" />
+              </div>
+              <div>
+                <Label>{t('admin.scheduleGenerator.venues')}</Label>
                 <Controller name="venueIds" control={control} render={({ field }) => (
                   <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
                     {venues?.map(venue => (
@@ -203,11 +270,11 @@ const ScheduleGenerator = () => {
                 <Controller name="includeReturnGames" control={control} render={({ field }) => (
                   <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
                 )} />
-                <Label htmlFor="includeReturnGames">Includi partite di ritorno</Label>
+                <Label htmlFor="includeReturnGames">{t('admin.scheduleGenerator.includeReturnGames')}</Label>
               </div>
               <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
                 {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Wand2 className="mr-2 h-4 w-4" /> Genera Anteprima
+                <Wand2 className="mr-2 h-4 w-4" /> {t('admin.scheduleGenerator.generatePreview')}
               </Button>
             </form>
           </CardContent>
@@ -215,15 +282,15 @@ const ScheduleGenerator = () => {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>2. Anteprima Calendario</CardTitle>
-            <CardDescription>Controlla il calendario generato prima di salvarlo.</CardDescription>
+            <CardTitle>{t('admin.scheduleGenerator.step2Title')}</CardTitle>
+            <CardDescription>{t('admin.scheduleGenerator.step2Description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {generatePreviewMutation.isPending && <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>}
             {!preview && !generatePreviewMutation.isPending && (
               <div className="text-center py-12 text-muted-foreground">
                 <Calendar className="mx-auto h-12 w-12 mb-4" />
-                <p>L'anteprima del calendario apparirà qui.</p>
+                <p>{t('admin.scheduleGenerator.previewPlaceholder')}</p>
               </div>
             )}
             {preview && (
@@ -232,10 +299,10 @@ const ScheduleGenerator = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Data</TableHead>
-                        <TableHead>Casa</TableHead>
-                        <TableHead>Ospite</TableHead>
-                        <TableHead>Campo</TableHead>
+                        <TableHead>{t('common.date')}</TableHead>
+                        <TableHead>{t('common.home')}</TableHead>
+                        <TableHead>{t('common.away')}</TableHead>
+                        <TableHead>{t('common.venue')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -252,7 +319,7 @@ const ScheduleGenerator = () => {
                 </div>
                 <Button onClick={() => saveScheduleMutation.mutate(preview)} className="w-full mt-4" disabled={saveScheduleMutation.isPending}>
                   {saveScheduleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Conferma e Salva Calendario
+                  {t('admin.scheduleGenerator.confirmSave')}
                 </Button>
               </>
             )}

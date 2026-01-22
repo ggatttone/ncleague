@@ -199,7 +199,8 @@
       "pts": "Ptn",
       "playoffsStartedTitle": "Eindfase Begonnen",
       "playoffsStartedDescription": "Het reguliere seizoensklassement is vergrendeld. De play-offs zijn aan de gang!",
-      "viewPlayoffBracket": "Bekijk play-off schema"
+      "viewPlayoffBracket": "Bekijk play-off schema",
+      "tournamentMode": "Toernooiformaat"
     },
     "teams": {
       "title": "Teams",
@@ -327,6 +328,36 @@
         "newPlayer": "Nieuwe Speler",
         "newMatch": "Nieuwe Wedstrijd",
         "newArticle": "Nieuw Artikel"
+      },
+      "tournamentModes": {
+        "title": "Toernooiformaten",
+        "createTitle": "Nieuw Toernooiformaat",
+        "editTitle": "Toernooiformaat Bewerken",
+        "formDescription": "Configureer het toernooiformaat en specifieke instellingen",
+        "basicInfo": "Basisinformatie",
+        "selectFormat": "Selecteer Formaat",
+        "selectFormatDescription": "Kies het type toernooi dat je wilt configureren",
+        "settings": "Instellingen",
+        "settingsDescription": "Configureer de specifieke opties voor dit formaat"
+      },
+      "scheduleGenerator": {
+        "title": "Automatische Wedstrijdplanner",
+        "step1Title": "1. Stel Beperkingen in",
+        "step1Description": "Definieer de parameters voor de planning.",
+        "step2Title": "2. Planning Voorbeeld",
+        "step2Description": "Controleer de gegenereerde planning voordat je opslaat.",
+        "selectSeason": "Selecteer een seizoen...",
+        "selectStage": "Selecteer een fase...",
+        "tournamentMode": "Toernooiformaat",
+        "allowedDays": "Toegestane dagen",
+        "timeSlots": "Tijdslots (komma gescheiden)",
+        "venues": "Te gebruiken locaties",
+        "includeReturnGames": "Retourwedstrijden toevoegen",
+        "generatePreview": "Voorbeeld Genereren",
+        "previewPlaceholder": "Het voorbeeld van de planning verschijnt hier.",
+        "previewSuccess": "Voorbeeld van {{count}} wedstrijden succesvol gegenereerd!",
+        "confirmSave": "Bevestigen en Planning Opslaan",
+        "saveSuccess": "Planning succesvol opgeslagen!"
       },
       "teams": {
         "title": "Beheer Teams",
@@ -907,6 +938,16 @@
       "doubleRoundRobin": "Thuis en Uit",
       "doubleRoundRobinDescription": "Elk team speelt twee keer tegen elke tegenstander (thuis en uit)",
       "tieBreakers": "Beslissingsregels",
+      "tieBreakersDescription": "Sleep om de volgorde van beslissingsregels te wijzigen",
+      "addTieBreaker": "Regel toevoegen",
+      "tieBreaker": {
+        "head_to_head": "Onderlinge resultaten",
+        "goal_difference": "Doelsaldo",
+        "goals_scored": "Doelpunten voor",
+        "goals_against": "Doelpunten tegen",
+        "wins": "Overwinningen",
+        "fair_play": "Fair play"
+      },
       "tieBreakerHeadToHead": "Onderlinge resultaten",
       "tieBreakerGoalDifference": "Doelsaldo",
       "tieBreakerGoalsScored": "Doelpunten voor",
@@ -927,14 +968,21 @@
       "playoffFormat": "Play-off Formaat",
       "playoffFormatSingle": "Enkele wedstrijd",
       "playoffFormatHomeAway": "Thuis en uit",
-      "playoffFormatBestOf3": "Best of 3"
+      "playoffFormatBestOf3": "Best of 3",
+      "comingSoon": "Configuratie voor {{mode}} komt binnenkort",
+      "unknownHandler": "Onbekende handler: {{handler}}"
     },
     "validation": {
+      "nameRequired": "Naam is verplicht",
+      "handlerRequired": "Selecteer een toernooiformaat",
       "atLeastOneTieBreaker": "Selecteer minimaal één beslissingsregel",
       "minTwoPoules": "Minimaal twee poules vereist",
       "equalPouleSize": "Poules moeten gelijke grootte hebben",
       "teamCountMismatch": "Aantal teams komt niet overeen met configuratie",
-      "bracketSizeInvalid": "Bracket grootte moet 4, 8, 16 of 32 zijn"
+      "bracketSizeInvalid": "Bracket grootte moet 4, 8, 16 of 32 zijn",
+      "minTeams": "Minimaal {{min}} teams vereist",
+      "manyTeamsWarning": "Je hebt {{count}} teams geselecteerd. De competitie kan erg lang zijn.",
+      "manyMatchesWarning": "Er worden {{count}} wedstrijden gegenereerd. Zorg ervoor dat je genoeg tijd hebt om het seizoen af te maken."
     }
   }
 }

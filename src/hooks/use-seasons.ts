@@ -32,6 +32,30 @@ export function useSeason(id: string | undefined) {
   );
 }
 
+export interface SeasonWithTournamentMode extends Season {
+  tournament_modes: {
+    id: string;
+    name: string;
+    handler_key: string;
+    settings: Record<string, unknown> | null;
+  } | null;
+}
+
+export function useSeasonWithTournamentMode(id: string | undefined) {
+  return useSupabaseQuery<SeasonWithTournamentMode>(
+    ['season-with-tournament-mode', id],
+    async () => {
+      if (!id) return null;
+      return supabase
+        .from('seasons')
+        .select('*, tournament_modes(id, name, handler_key, settings)')
+        .eq('id', id)
+        .single();
+    },
+    { enabled: !!id }
+  );
+}
+
 export function useCreateSeason() {
   return useSupabaseMutation<Season, CreateSeasonData>(
     ['seasons'],

@@ -199,7 +199,8 @@
       "pts": "PT",
       "playoffsStartedTitle": "Fase Finale Iniziata",
       "playoffsStartedDescription": "La classifica della stagione regolare è bloccata. I playoff sono in corso!",
-      "viewPlayoffBracket": "Visualizza il tabellone playoff"
+      "viewPlayoffBracket": "Visualizza il tabellone playoff",
+      "tournamentMode": "Modalità Torneo"
     },
     "teams": {
       "title": "Squadre",
@@ -357,6 +358,36 @@
         "newPlayer": "Nuovo Giocatore",
         "newMatch": "Nuova Partita",
         "newArticle": "Nuovo Articolo"
+      },
+      "tournamentModes": {
+        "title": "Modalità Torneo",
+        "createTitle": "Nuova Modalità Torneo",
+        "editTitle": "Modifica Modalità Torneo",
+        "formDescription": "Configura il formato del torneo e le impostazioni specifiche",
+        "basicInfo": "Informazioni di Base",
+        "selectFormat": "Seleziona Formato",
+        "selectFormatDescription": "Scegli il tipo di torneo che vuoi configurare",
+        "settings": "Impostazioni",
+        "settingsDescription": "Configura le opzioni specifiche per questo formato"
+      },
+      "scheduleGenerator": {
+        "title": "Generatore Calendario Automatico",
+        "step1Title": "1. Imposta Vincoli",
+        "step1Description": "Definisci i parametri per la generazione del calendario.",
+        "step2Title": "2. Anteprima Calendario",
+        "step2Description": "Controlla il calendario generato prima di salvarlo.",
+        "selectSeason": "Seleziona una stagione...",
+        "selectStage": "Seleziona una fase...",
+        "tournamentMode": "Modalità Torneo",
+        "allowedDays": "Giorni permessi",
+        "timeSlots": "Orari (separati da virgola)",
+        "venues": "Campi da utilizzare",
+        "includeReturnGames": "Includi partite di ritorno",
+        "generatePreview": "Genera Anteprima",
+        "previewPlaceholder": "L'anteprima del calendario apparirà qui.",
+        "previewSuccess": "Anteprima di {{count}} partite generata con successo!",
+        "confirmSave": "Conferma e Salva Calendario",
+        "saveSuccess": "Calendario salvato con successo!"
       },
       "teams": {
         "title": "Gestione Squadre",
@@ -937,6 +968,16 @@
       "doubleRoundRobin": "Andata e Ritorno",
       "doubleRoundRobinDescription": "Ogni squadra gioca due volte contro ogni avversario (casa e trasferta)",
       "tieBreakers": "Criteri Spareggio",
+      "tieBreakersDescription": "Trascina per riordinare i criteri di spareggio",
+      "addTieBreaker": "Aggiungi criterio",
+      "tieBreaker": {
+        "head_to_head": "Scontri diretti",
+        "goal_difference": "Differenza reti",
+        "goals_scored": "Gol segnati",
+        "goals_against": "Gol subiti",
+        "wins": "Vittorie",
+        "fair_play": "Fair play"
+      },
       "tieBreakerHeadToHead": "Scontri diretti",
       "tieBreakerGoalDifference": "Differenza reti",
       "tieBreakerGoalsScored": "Gol segnati",
@@ -957,14 +998,21 @@
       "playoffFormat": "Formato Playoff",
       "playoffFormatSingle": "Partita singola",
       "playoffFormatHomeAway": "Andata e ritorno",
-      "playoffFormatBestOf3": "Al meglio di 3"
+      "playoffFormatBestOf3": "Al meglio di 3",
+      "comingSoon": "Configurazione per {{mode}} in arrivo",
+      "unknownHandler": "Handler sconosciuto: {{handler}}"
     },
     "validation": {
+      "nameRequired": "Il nome è obbligatorio",
+      "handlerRequired": "Seleziona un formato torneo",
       "atLeastOneTieBreaker": "Seleziona almeno un criterio di spareggio",
       "minTwoPoules": "Servono almeno due poule",
       "equalPouleSize": "Le poule devono avere la stessa dimensione",
       "teamCountMismatch": "Il numero di squadre non corrisponde alla configurazione",
-      "bracketSizeInvalid": "La dimensione del bracket deve essere 4, 8, 16 o 32"
+      "bracketSizeInvalid": "La dimensione del bracket deve essere 4, 8, 16 o 32",
+      "minTeams": "Servono almeno {{min}} squadre",
+      "manyTeamsWarning": "Hai selezionato {{count}} squadre. Il campionato potrebbe essere molto lungo.",
+      "manyMatchesWarning": "Verranno generate {{count}} partite. Assicurati di avere sufficiente tempo per completare la stagione."
     }
   }
 }

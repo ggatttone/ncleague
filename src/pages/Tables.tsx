@@ -1,9 +1,9 @@
 import { MainLayout } from "@/components/MainLayout";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { useSeasons } from "@/hooks/use-seasons";
+import { useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useNclStandings } from "@/hooks/use-ncl-standings";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -14,6 +14,20 @@ import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeagueTableRow } from "@/types/database";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase/client";
+import { getSchedulablePhases } from "@/lib/tournament/handler-registry";
+import type { TournamentHandlerKey, PhaseConfig } from "@/types/tournament-handlers";
+
+// Import handler to register phases
+import "@/lib/tournament/handlers/league-only";
+
+// Default phases for backward compatibility
+const DEFAULT_PHASES: PhaseConfig[] = [
+  { id: "regular_season", nameKey: "tournament.phases.regularSeason", order: 1, matchGeneration: { type: "round_robin" }, isTerminal: false },
+  { id: "poule_a", nameKey: "tournament.phases.pouleA", order: 2, matchGeneration: { type: "round_robin" }, isTerminal: false },
+  { id: "poule_b", nameKey: "tournament.phases.pouleB", order: 2, matchGeneration: { type: "round_robin" }, isTerminal: true },
+];
 
 const StandingsTable = ({ data, playoffTeamCount }: { data: LeagueTableRow[], playoffTeamCount?: number }) => {
   const { t } = useTranslation();
@@ -80,8 +94,23 @@ const Tables = () => {
   const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
-  const { data: seasons, isLoading: seasonsLoading } = useSeasons();
-  
+
+  // Fetch all seasons
+  const { data: seasons, isLoading: seasonsLoading } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('seasons')
+        .select('*')
+        .order('start_date', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch tournament mode for selected season
+  const { data: seasonWithMode, isLoading: seasonModeLoading } = useSeasonWithTournamentMode(selectedSeason);
+
   useEffect(() => {
     if (!competitionsLoading && competitions?.length === 1 && !selectedCompetition) {
       setSelectedCompetition(competitions[0].id);
@@ -91,10 +120,25 @@ const Tables = () => {
     }
   }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
 
+  // Get available phases based on tournament mode
+  const availablePhases = useMemo(() => {
+    if (seasonWithMode?.tournament_modes?.handler_key) {
+      const handlerKey = seasonWithMode.tournament_modes.handler_key as TournamentHandlerKey;
+      const phases = getSchedulablePhases(handlerKey);
+      if (phases.length > 0) {
+        return phases;
+      }
+    }
+    return DEFAULT_PHASES;
+  }, [seasonWithMode]);
+
   const { data: playoffData } = usePlayoffBracket(selectedCompetition, selectedSeason);
   const playoffsActive = !!playoffData?.bracket;
 
   const isLoading = competitionsLoading || seasonsLoading;
+
+  // Determine default tab based on available phases
+  const defaultTab = availablePhases.length > 0 ? availablePhases[0].id : "regular_season";
 
   return (
     <MainLayout>
@@ -116,6 +160,8 @@ const Tables = () => {
           <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : !selectedCompetition || !selectedSeason ? (
           <div className="text-center py-12 bg-muted/50 rounded-lg"><p className="text-muted-foreground">{t('pages.tables.selectToView')}</p></div>
+        ) : seasonModeLoading ? (
+          <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : (
           <>
             {playoffsActive && (
@@ -125,21 +171,32 @@ const Tables = () => {
                 <Link to={`/playoffs/${selectedCompetition}/${selectedSeason}`}><Button variant="link" className="p-0 h-auto mt-2 text-blue-700">{t('pages.tables.viewPlayoffBracket')}</Button></Link>
               </div>
             )}
-            <Tabs defaultValue="regular_season" className="w-full">
+
+            {/* Show tournament mode info */}
+            {seasonWithMode?.tournament_modes && (
+              <p className="text-sm text-muted-foreground mb-4">
+                {t('pages.tables.tournamentMode')}: {seasonWithMode.tournament_modes.name}
+              </p>
+            )}
+
+            <Tabs defaultValue={defaultTab} className="w-full" key={selectedSeason}>
               <TabsList>
-                <TabsTrigger value="regular_season">Qualificazione</TabsTrigger>
-                <TabsTrigger value="poule_a">Poule A</TabsTrigger>
-                <TabsTrigger value="poule_b">Poule B</TabsTrigger>
+                {availablePhases.map(phase => (
+                  <TabsTrigger key={phase.id} value={phase.id}>
+                    {t(phase.nameKey, { defaultValue: phase.id })}
+                  </TabsTrigger>
+                ))}
               </TabsList>
-              <TabsContent value="regular_season" className="mt-4">
-                <StandingsTabContent competitionId={selectedCompetition} seasonId={selectedSeason} stage="regular_season" playoffTeamCount={playoffsActive ? 4 : undefined} />
-              </TabsContent>
-              <TabsContent value="poule_a" className="mt-4">
-                <StandingsTabContent competitionId={selectedCompetition} seasonId={selectedSeason} stage="poule_a" />
-              </TabsContent>
-              <TabsContent value="poule_b" className="mt-4">
-                <StandingsTabContent competitionId={selectedCompetition} seasonId={selectedSeason} stage="poule_b" />
-              </TabsContent>
+              {availablePhases.map((phase, index) => (
+                <TabsContent key={phase.id} value={phase.id} className="mt-4">
+                  <StandingsTabContent
+                    competitionId={selectedCompetition}
+                    seasonId={selectedSeason}
+                    stage={phase.id}
+                    playoffTeamCount={index === 0 && playoffsActive ? 4 : undefined}
+                  />
+                </TabsContent>
+              ))}
             </Tabs>
           </>
         )}

@@ -199,7 +199,8 @@
       "pts": "Pts",
       "playoffsStartedTitle": "Final Stage Started",
       "playoffsStartedDescription": "The regular season table is locked. The playoffs are underway!",
-      "viewPlayoffBracket": "View playoff bracket"
+      "viewPlayoffBracket": "View playoff bracket",
+      "tournamentMode": "Tournament Mode"
     },
     "teams": {
       "title": "Teams",
@@ -327,6 +328,36 @@
         "newPlayer": "New Player",
         "newMatch": "New Match",
         "newArticle": "New Article"
+      },
+      "tournamentModes": {
+        "title": "Tournament Modes",
+        "createTitle": "New Tournament Mode",
+        "editTitle": "Edit Tournament Mode",
+        "formDescription": "Configure the tournament format and specific settings",
+        "basicInfo": "Basic Information",
+        "selectFormat": "Select Format",
+        "selectFormatDescription": "Choose the type of tournament you want to configure",
+        "settings": "Settings",
+        "settingsDescription": "Configure the specific options for this format"
+      },
+      "scheduleGenerator": {
+        "title": "Automatic Schedule Generator",
+        "step1Title": "1. Set Constraints",
+        "step1Description": "Define the parameters for schedule generation.",
+        "step2Title": "2. Schedule Preview",
+        "step2Description": "Review the generated schedule before saving.",
+        "selectSeason": "Select a season...",
+        "selectStage": "Select a phase...",
+        "tournamentMode": "Tournament Mode",
+        "allowedDays": "Allowed days",
+        "timeSlots": "Time slots (comma separated)",
+        "venues": "Venues to use",
+        "includeReturnGames": "Include return games",
+        "generatePreview": "Generate Preview",
+        "previewPlaceholder": "Schedule preview will appear here.",
+        "previewSuccess": "Preview of {{count}} matches generated successfully!",
+        "confirmSave": "Confirm and Save Schedule",
+        "saveSuccess": "Schedule saved successfully!"
       },
       "teams": {
         "title": "Manage Teams",
@@ -907,6 +938,16 @@
       "doubleRoundRobin": "Home and Away",
       "doubleRoundRobinDescription": "Each team plays twice against every opponent (home and away)",
       "tieBreakers": "Tie-Breakers",
+      "tieBreakersDescription": "Drag to reorder tie-breaker criteria",
+      "addTieBreaker": "Add criteria",
+      "tieBreaker": {
+        "head_to_head": "Head-to-head",
+        "goal_difference": "Goal difference",
+        "goals_scored": "Goals scored",
+        "goals_against": "Goals against",
+        "wins": "Wins",
+        "fair_play": "Fair play"
+      },
       "tieBreakerHeadToHead": "Head-to-head",
       "tieBreakerGoalDifference": "Goal difference",
       "tieBreakerGoalsScored": "Goals scored",
@@ -927,14 +968,21 @@
       "playoffFormat": "Playoff Format",
       "playoffFormatSingle": "Single match",
       "playoffFormatHomeAway": "Home and away",
-      "playoffFormatBestOf3": "Best of 3"
+      "playoffFormatBestOf3": "Best of 3",
+      "comingSoon": "Configuration for {{mode}} coming soon",
+      "unknownHandler": "Unknown handler: {{handler}}"
     },
     "validation": {
+      "nameRequired": "Name is required",
+      "handlerRequired": "Select a tournament format",
       "atLeastOneTieBreaker": "Select at least one tie-breaker criteria",
       "minTwoPoules": "At least two poules required",
       "equalPouleSize": "Poules must have equal size",
       "teamCountMismatch": "Team count doesn't match configuration",
-      "bracketSizeInvalid": "Bracket size must be 4, 8, 16 or 32"
+      "bracketSizeInvalid": "Bracket size must be 4, 8, 16 or 32",
+      "minTeams": "At least {{min}} teams required",
+      "manyTeamsWarning": "You selected {{count}} teams. The league may be very long.",
+      "manyMatchesWarning": "{{count}} matches will be generated. Make sure you have enough time to complete the season."
     }
   }
 }
