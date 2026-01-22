@@ -182,6 +182,11 @@
       "goals": "Goals",
       "noData": "No data available for the selected filters."
     },
+    "playoffs": {
+      "title": "Playoffs",
+      "noBracket": "Playoff bracket not yet generated for this season.",
+      "noKnockoutPhase": "The \"{{mode}}\" mode does not include a knockout phase."
+    },
     "tables": {
       "title": "Tables",
       "selectCompetition": "Select Competition",
@@ -876,6 +881,8 @@
       "saturday": "Saturday",
       "sunday": "Sunday"
     },
+    "selectCompetition": "Select Competition",
+    "selectSeason": "Select Season",
     "noTeam": "No team",
     "noParish": "No parish"
   },
@@ -922,12 +929,21 @@
       "phase2": "Phase 2",
       "groupStage": "Group Stage",
       "knockout": "Knockout Stage",
+      "roundOf32": "Round of 32",
+      "roundOf16": "Round of 16",
       "quarterFinal": "Quarter-Finals",
       "semiFinal": "Semi-Finals",
       "thirdPlace": "3rd Place Match",
       "final": "Final",
       "pouleA": "Poule A",
-      "pouleB": "Poule B"
+      "pouleB": "Poule B",
+      "unknown": "Unknown Phase"
+    },
+    "bracket": {
+      "tbd": "TBD",
+      "completed": "Completed",
+      "upcoming": "Upcoming",
+      "noBracket": "No bracket available"
     },
     "settings": {
       "pointsSystem": "Points System",
@@ -955,12 +971,28 @@
       "tieBreakerWins": "Wins",
       "tieBreakerFairPlay": "Fair play",
       "bracketSize": "Bracket Size",
+      "bracketSizeDescription": "Select the number of teams for the knockout bracket",
+      "teams": "teams",
+      "totalMatchesInfo": "{{count}} total matches will be generated",
       "seedingMethod": "Seeding Method",
+      "seedingMethodDescription": "How teams will be paired in the bracket",
+      "seedingMethods": {
+        "seeded": "By Standings",
+        "seededDescription": "Top teams face bottom teams in the first round (1 vs 8, 2 vs 7, etc.)",
+        "random": "Random",
+        "randomDescription": "Pairings are drawn randomly",
+        "manual": "Manual",
+        "manualDescription": "Manually choose bracket pairings"
+      },
       "seedingRandom": "Random",
       "seedingSeeded": "By standings",
       "seedingManual": "Manual",
+      "additionalMatches": "Additional Matches",
       "thirdPlaceMatch": "3rd/4th Place Match",
+      "thirdPlaceMatchDescription": "Add a match between semi-final losers to determine 3rd and 4th place",
       "doubleElimination": "Double Elimination",
+      "doubleEliminationDescription": "Players have a second chance in the loser bracket after first loss",
+      "doubleEliminationNotYetAvailable": "Double elimination is not yet available. It will be implemented in a future update.",
       "groupCount": "Number of Groups",
       "teamsPerGroup": "Teams per Group",
       "advancingPerGroup": "Teams Advancing",
@@ -982,7 +1014,12 @@
       "bracketSizeInvalid": "Bracket size must be 4, 8, 16 or 32",
       "minTeams": "At least {{min}} teams required",
       "manyTeamsWarning": "You selected {{count}} teams. The league may be very long.",
-      "manyMatchesWarning": "{{count}} matches will be generated. Make sure you have enough time to complete the season."
+      "manyMatchesWarning": "{{count}} matches will be generated. Make sure you have enough time to complete the season.",
+      "knockoutPowerOfTwo": "For an optimal bracket, select {{validSizes}} teams. You selected {{count}} teams.",
+      "tooManyTeamsForBracket": "You selected {{count}} teams, but the bracket supports only {{bracketSize}}.",
+      "fewerTeamsThanBracket": "You selected {{count}} teams, but the bracket is configured for {{bracketSize}}. Some positions will be byes.",
+      "doubleEliminationNotImplemented": "Double elimination is not yet implemented.",
+      "invalidKnockoutSettings": "Invalid knockout configuration."
     }
   }
 }

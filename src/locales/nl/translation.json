@@ -182,6 +182,11 @@
       "goals": "Goals",
       "noData": "Geen gegevens beschikbaar voor de geselecteerde filters."
     },
+    "playoffs": {
+      "title": "Play-offs",
+      "noBracket": "Play-off schema nog niet gegenereerd voor dit seizoen.",
+      "noKnockoutPhase": "De \"{{mode}}\" modus bevat geen knock-outfase."
+    },
     "tables": {
       "title": "Klassement",
       "selectCompetition": "Selecteer Competitie",
@@ -876,6 +881,8 @@
       "saturday": "Zaterdag",
       "sunday": "Zondag"
     },
+    "selectCompetition": "Selecteer Competitie",
+    "selectSeason": "Selecteer Seizoen",
     "noTeam": "Geen team",
     "noParish": "Geen parochie"
   },
@@ -922,12 +929,21 @@
       "phase2": "Fase 2",
       "groupStage": "Groepsfase",
       "knockout": "Knock-outfase",
+      "roundOf32": "32e Finales",
+      "roundOf16": "16e Finales",
       "quarterFinal": "Kwartfinales",
       "semiFinal": "Halve Finales",
       "thirdPlace": "Wedstrijd om 3e Plaats",
       "final": "Finale",
       "pouleA": "Poule A",
-      "pouleB": "Poule B"
+      "pouleB": "Poule B",
+      "unknown": "Onbekende Fase"
+    },
+    "bracket": {
+      "tbd": "Nader te bepalen",
+      "completed": "Voltooid",
+      "upcoming": "Aanstaande",
+      "noBracket": "Geen bracket beschikbaar"
     },
     "settings": {
       "pointsSystem": "Puntensysteem",
@@ -955,12 +971,28 @@
       "tieBreakerWins": "Overwinningen",
       "tieBreakerFairPlay": "Fair play",
       "bracketSize": "Bracket Grootte",
+      "bracketSizeDescription": "Selecteer het aantal teams voor de knock-outbracket",
+      "teams": "teams",
+      "totalMatchesInfo": "Er worden {{count}} wedstrijden gegenereerd",
       "seedingMethod": "Plaatsingsmethode",
+      "seedingMethodDescription": "Hoe teams worden gekoppeld in de bracket",
+      "seedingMethods": {
+        "seeded": "Op basis van Stand",
+        "seededDescription": "Topteams spelen tegen laagste teams in de eerste ronde (1 vs 8, 2 vs 7, etc.)",
+        "random": "Willekeurig",
+        "randomDescription": "Koppelingen worden willekeurig getrokken",
+        "manual": "Handmatig",
+        "manualDescription": "Kies handmatig de bracket-koppelingen"
+      },
       "seedingRandom": "Willekeurig",
       "seedingSeeded": "Op basis van stand",
       "seedingManual": "Handmatig",
+      "additionalMatches": "Extra Wedstrijden",
       "thirdPlaceMatch": "Wedstrijd om 3e/4e Plaats",
+      "thirdPlaceMatchDescription": "Voeg een wedstrijd toe tussen de verliezers van de halve finales om de 3e en 4e plaats te bepalen",
       "doubleElimination": "Dubbele Eliminatie",
+      "doubleEliminationDescription": "Spelers krijgen een tweede kans in de verliezers-bracket na het eerste verlies",
+      "doubleEliminationNotYetAvailable": "Dubbele eliminatie is nog niet beschikbaar. Dit wordt in een toekomstige update geïmplementeerd.",
       "groupCount": "Aantal Groepen",
       "teamsPerGroup": "Teams per Groep",
       "advancingPerGroup": "Teams die Doorgaan",
@@ -982,7 +1014,12 @@
       "bracketSizeInvalid": "Bracket grootte moet 4, 8, 16 of 32 zijn",
       "minTeams": "Minimaal {{min}} teams vereist",
       "manyTeamsWarning": "Je hebt {{count}} teams geselecteerd. De competitie kan erg lang zijn.",
-      "manyMatchesWarning": "Er worden {{count}} wedstrijden gegenereerd. Zorg ervoor dat je genoeg tijd hebt om het seizoen af te maken."
+      "manyMatchesWarning": "Er worden {{count}} wedstrijden gegenereerd. Zorg ervoor dat je genoeg tijd hebt om het seizoen af te maken.",
+      "knockoutPowerOfTwo": "Voor een optimale bracket, selecteer {{validSizes}} teams. Je hebt {{count}} teams geselecteerd.",
+      "tooManyTeamsForBracket": "Je hebt {{count}} teams geselecteerd, maar de bracket ondersteunt slechts {{bracketSize}}.",
+      "fewerTeamsThanBracket": "Je hebt {{count}} teams geselecteerd, maar de bracket is geconfigureerd voor {{bracketSize}}. Sommige posities zullen byes zijn.",
+      "doubleEliminationNotImplemented": "Dubbele eliminatie is nog niet geïmplementeerd.",
+      "invalidKnockoutSettings": "Ongeldige knock-out configuratie."
     }
   }
 }

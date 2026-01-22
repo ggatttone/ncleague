@@ -1,39 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/MainLayout';
 import { usePlayoffBracket } from '@/hooks/use-playoffs';
 import { useCompetitions } from '@/hooks/use-competitions';
-import { useSeasons } from '@/hooks/use-seasons';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSeasons, useSeasonWithTournamentMode } from '@/hooks/use-seasons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { Loader2, Trophy } from 'lucide-react';
-import { MatchWithTeams } from '@/hooks/use-matches';
 import { useTranslation } from 'react-i18next';
-
-const MatchCard = ({ match, title }: { match?: MatchWithTeams; title: string }) => {
-  const homeTeam = match?.home_teams;
-  const awayTeam = match?.away_teams;
-
-  return (
-    <Card className="w-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between items-center">
-            <span>{homeTeam?.name || 'TBD'}</span>
-            <span className="font-bold">{match?.home_score ?? '-'}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span>{awayTeam?.name || 'TBD'}</span>
-            <span className="font-bold">{match?.away_score ?? '-'}</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+import { BracketView } from '@/components/BracketView';
+import { getHandlerMetadata } from '@/lib/tournament/handler-registry';
+import type { TournamentHandlerKey } from '@/types/tournament-handlers';
 
 const Playoffs = () => {
   const { competitionId: urlCompetitionId, seasonId: urlSeasonId } = useParams();
@@ -45,6 +22,33 @@ const Playoffs = () => {
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
+
+  // Get season with tournament mode for displaying mode info
+  const { data: seasonWithMode } = useSeasonWithTournamentMode(selectedSeason);
+
+  // Get tournament mode metadata
+  const tournamentModeInfo = useMemo(() => {
+    if (!seasonWithMode?.tournament_modes?.handler_key) return null;
+    const handlerKey = seasonWithMode.tournament_modes.handler_key as TournamentHandlerKey;
+    const metadata = getHandlerMetadata(handlerKey);
+    return metadata
+      ? {
+          name: t(metadata.nameKey),
+          key: handlerKey,
+        }
+      : null;
+  }, [seasonWithMode, t]);
+
+  // Check if tournament mode has knockout phases
+  const hasKnockoutPhase = useMemo(() => {
+    const handlerKey = seasonWithMode?.tournament_modes?.handler_key;
+    return (
+      handlerKey === 'knockout' ||
+      handlerKey === 'groups_knockout' ||
+      handlerKey === 'round_robin_final' ||
+      handlerKey === 'swiss_system'
+    );
+  }, [seasonWithMode]);
 
   useEffect(() => {
     if (urlCompetitionId && urlSeasonId) {
@@ -59,7 +63,7 @@ const Playoffs = () => {
       }
     }
   }, [competitions, seasons, competitionsLoading, seasonsLoading, urlCompetitionId, urlSeasonId, selectedCompetition, selectedSeason]);
-  
+
   useEffect(() => {
     if (selectedCompetition && selectedSeason && (selectedCompetition !== urlCompetitionId || selectedSeason !== urlSeasonId)) {
       navigate(`/playoffs/${selectedCompetition}/${selectedSeason}`, { replace: true });
@@ -68,39 +72,66 @@ const Playoffs = () => {
 
   const { data: playoffData, isLoading: bracketLoading } = usePlayoffBracket(selectedCompetition, selectedSeason);
 
-  const thirdPlaceMatch = playoffData?.matches.find(m => m.stage === 'third-place_playoff');
-  const finalMatch = playoffData?.matches.find(m => m.stage === 'final');
-
   const isLoading = competitionsLoading || seasonsLoading || bracketLoading;
 
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Playoffs</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="text-3xl font-bold">{t('pages.playoffs.title')}</h1>
+          {tournamentModeInfo && (
+            <Badge variant="outline" className="text-sm">
+              {tournamentModeInfo.name}
+            </Badge>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-lg">
           <Select onValueChange={setSelectedCompetition} value={selectedCompetition} disabled={competitionsLoading}>
-            <SelectTrigger><SelectValue placeholder="Seleziona Competizione" /></SelectTrigger>
-            <SelectContent>{competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+            <SelectTrigger>
+              <SelectValue placeholder={t('common.selectCompetition')} />
+            </SelectTrigger>
+            <SelectContent>
+              {competitions?.map(c => (
+                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <Select onValueChange={setSelectedSeason} value={selectedSeason} disabled={seasonsLoading}>
-            <SelectTrigger><SelectValue placeholder="Seleziona Stagione" /></SelectTrigger>
-            <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+            <SelectTrigger>
+              <SelectValue placeholder={t('common.selectSeason')} />
+            </SelectTrigger>
+            <SelectContent>
+              {seasons?.map(s => (
+                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center py-20"><Loader2 className="h-10 w-10 animate-spin" /></div>
-        ) : !playoffData?.bracket ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin" />
+          </div>
+        ) : !playoffData?.matches || playoffData.matches.length === 0 ? (
           <div className="text-center py-20 bg-muted/50 rounded-lg">
             <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">Tabellone playoff non ancora generato per questa stagione.</p>
+            <p className="text-muted-foreground">
+              {t('pages.playoffs.noBracket')}
+            </p>
+            {!hasKnockoutPhase && seasonWithMode?.tournament_modes && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {t('pages.playoffs.noKnockoutPhase', {
+                  mode: tournamentModeInfo?.name || seasonWithMode.tournament_modes.name,
+                })}
+              </p>
+            )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-8 w-full max-w-xs mx-auto">
-            <MatchCard match={finalMatch} title="Finale" />
-            <MatchCard match={thirdPlaceMatch} title="Finale 3°/4° Posto" />
-          </div>
+          <BracketView
+            matches={playoffData.matches}
+            showThirdPlace={true}
+          />
         )}
       </div>
     </MainLayout>
