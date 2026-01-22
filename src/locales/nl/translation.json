@@ -860,5 +860,81 @@
     "handlerRequired": "Handler is verplicht",
     "tournamentModeRequired": "Toernooimodus is verplicht",
     "noValidPlayersToImport": "Geen geldige spelers om te importeren."
+  },
+  "tournament": {
+    "modes": {
+      "leagueOnly": {
+        "name": "Alleen Competitie",
+        "description": "Klassiek round-robin formaat. Alle teams spelen tegen elkaar. Ideaal voor kleine competities."
+      },
+      "knockout": {
+        "name": "Knock-out",
+        "description": "Bracket formaat. Eén verlies betekent uitschakeling. Snel en spannend."
+      },
+      "groupsKnockout": {
+        "name": "Poules + Knock-out",
+        "description": "Groepsfase gevolgd door knock-outronden. WK formaat."
+      },
+      "swissSystem": {
+        "name": "Zwitsers Systeem",
+        "description": "Dynamische koppelingen op basis van stand. Gebalanceerde competitie."
+      },
+      "roundRobinFinal": {
+        "name": "Competitie + Finale",
+        "description": "Volledige competitie gevolgd door play-offs tussen topteams."
+      }
+    },
+    "phases": {
+      "start": "Start Toernooi",
+      "regularSeason": "Regulier Seizoen",
+      "phase1": "Fase 1",
+      "phase2": "Fase 2",
+      "groupStage": "Groepsfase",
+      "knockout": "Knock-outfase",
+      "quarterFinal": "Kwartfinales",
+      "semiFinal": "Halve Finales",
+      "thirdPlace": "Wedstrijd om 3e Plaats",
+      "final": "Finale",
+      "pouleA": "Poule A",
+      "pouleB": "Poule B"
+    },
+    "settings": {
+      "pointsSystem": "Puntensysteem",
+      "pointsPerWin": "Punten per Winst",
+      "pointsPerDraw": "Punten per Gelijkspel",
+      "pointsPerLoss": "Punten per Verlies",
+      "matchFormat": "Wedstrijdformaat",
+      "doubleRoundRobin": "Thuis en Uit",
+      "doubleRoundRobinDescription": "Elk team speelt twee keer tegen elke tegenstander (thuis en uit)",
+      "tieBreakers": "Beslissingsregels",
+      "tieBreakerHeadToHead": "Onderlinge resultaten",
+      "tieBreakerGoalDifference": "Doelsaldo",
+      "tieBreakerGoalsScored": "Doelpunten voor",
+      "tieBreakerGoalsAgainst": "Doelpunten tegen",
+      "tieBreakerWins": "Overwinningen",
+      "tieBreakerFairPlay": "Fair play",
+      "bracketSize": "Bracket Grootte",
+      "seedingMethod": "Plaatsingsmethode",
+      "seedingRandom": "Willekeurig",
+      "seedingSeeded": "Op basis van stand",
+      "seedingManual": "Handmatig",
+      "thirdPlaceMatch": "Wedstrijd om 3e/4e Plaats",
+      "doubleElimination": "Dubbele Eliminatie",
+      "groupCount": "Aantal Groepen",
+      "teamsPerGroup": "Teams per Groep",
+      "advancingPerGroup": "Teams die Doorgaan",
+      "playoffTeams": "Play-off Teams",
+      "playoffFormat": "Play-off Formaat",
+      "playoffFormatSingle": "Enkele wedstrijd",
+      "playoffFormatHomeAway": "Thuis en uit",
+      "playoffFormatBestOf3": "Best of 3"
+    },
+    "validation": {
+      "atLeastOneTieBreaker": "Selecteer minimaal één beslissingsregel",
+      "minTwoPoules": "Minimaal twee poules vereist",
+      "equalPouleSize": "Poules moeten gelijke grootte hebben",
+      "teamCountMismatch": "Aantal teams komt niet overeen met configuratie",
+      "bracketSizeInvalid": "Bracket grootte moet 4, 8, 16 of 32 zijn"
+    }
   }
 }

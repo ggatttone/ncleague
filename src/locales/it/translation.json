@@ -890,5 +890,81 @@
     "handlerRequired": "L'handler è obbligatorio",
     "tournamentModeRequired": "La modalità torneo è obbligatoria",
     "noValidPlayersToImport": "Nessun giocatore valido da importare."
+  },
+  "tournament": {
+    "modes": {
+      "leagueOnly": {
+        "name": "Solo Campionato",
+        "description": "Formato round-robin classico. Tutte le squadre si affrontano. Ideale per piccole leghe."
+      },
+      "knockout": {
+        "name": "Eliminazione Diretta",
+        "description": "Formato a bracket. Una sconfitta elimina. Veloce ed emozionante."
+      },
+      "groupsKnockout": {
+        "name": "Gironi + Playoff",
+        "description": "Fase a gironi seguita da eliminazione diretta. Formato Mondiale."
+      },
+      "swissSystem": {
+        "name": "Swiss System",
+        "description": "Abbinamenti dinamici basati sulla classifica. Competizione bilanciata."
+      },
+      "roundRobinFinal": {
+        "name": "Campionato + Finale",
+        "description": "Campionato completo seguito da playoff tra le migliori squadre."
+      }
+    },
+    "phases": {
+      "start": "Inizio Torneo",
+      "regularSeason": "Stagione Regolare",
+      "phase1": "Fase 1",
+      "phase2": "Fase 2",
+      "groupStage": "Fase a Gironi",
+      "knockout": "Fase Eliminazione",
+      "quarterFinal": "Quarti di Finale",
+      "semiFinal": "Semifinali",
+      "thirdPlace": "Finale 3°/4° Posto",
+      "final": "Finale",
+      "pouleA": "Poule A",
+      "pouleB": "Poule B"
+    },
+    "settings": {
+      "pointsSystem": "Sistema Punti",
+      "pointsPerWin": "Punti Vittoria",
+      "pointsPerDraw": "Punti Pareggio",
+      "pointsPerLoss": "Punti Sconfitta",
+      "matchFormat": "Formato Partite",
+      "doubleRoundRobin": "Andata e Ritorno",
+      "doubleRoundRobinDescription": "Ogni squadra gioca due volte contro ogni avversario (casa e trasferta)",
+      "tieBreakers": "Criteri Spareggio",
+      "tieBreakerHeadToHead": "Scontri diretti",
+      "tieBreakerGoalDifference": "Differenza reti",
+      "tieBreakerGoalsScored": "Gol segnati",
+      "tieBreakerGoalsAgainst": "Gol subiti",
+      "tieBreakerWins": "Vittorie",
+      "tieBreakerFairPlay": "Fair play",
+      "bracketSize": "Dimensione Bracket",
+      "seedingMethod": "Metodo Seeding",
+      "seedingRandom": "Casuale",
+      "seedingSeeded": "Per classifica",
+      "seedingManual": "Manuale",
+      "thirdPlaceMatch": "Finale 3°/4° posto",
+      "doubleElimination": "Doppia eliminazione",
+      "groupCount": "Numero Gironi",
+      "teamsPerGroup": "Squadre per Girone",
+      "advancingPerGroup": "Squadre che avanzano",
+      "playoffTeams": "Squadre nei Playoff",
+      "playoffFormat": "Formato Playoff",
+      "playoffFormatSingle": "Partita singola",
+      "playoffFormatHomeAway": "Andata e ritorno",
+      "playoffFormatBestOf3": "Al meglio di 3"
+    },
+    "validation": {
+      "atLeastOneTieBreaker": "Seleziona almeno un criterio di spareggio",
+      "minTwoPoules": "Servono almeno due poule",
+      "equalPouleSize": "Le poule devono avere la stessa dimensione",
+      "teamCountMismatch": "Il numero di squadre non corrisponde alla configurazione",
+      "bracketSizeInvalid": "La dimensione del bracket deve essere 4, 8, 16 o 32"
+    }
   }
 }
