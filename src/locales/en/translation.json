@@ -996,6 +996,17 @@
       "groupCount": "Number of Groups",
       "teamsPerGroup": "Teams per Group",
       "advancingPerGroup": "Teams Advancing",
+      "groupConfiguration": "Group Configuration",
+      "groupConfigurationDescription": "Set the number of groups and teams per group",
+      "groups": "groups",
+      "teamsAdvance": "teams advance",
+      "totalTeamsRequired": "Total teams required",
+      "teamsInKnockout": "Teams in knockout stage",
+      "pointsSystemGroupDescription": "Points will be used to determine group stage standings",
+      "doubleRoundRobinGroupDescription": "Each team plays twice against every opponent in their group",
+      "knockoutPhase": "Knockout Phase",
+      "knockoutPhaseDescription": "Configuration for the knockout stage after groups",
+      "knockoutSeedingDescription": "How group winners will be paired in the knockout stage",
       "playoffTeams": "Playoff Teams",
       "playoffFormat": "Playoff Format",
       "playoffFormatSingle": "Single match",
@@ -1019,7 +1030,12 @@
       "tooManyTeamsForBracket": "You selected {{count}} teams, but the bracket supports only {{bracketSize}}.",
       "fewerTeamsThanBracket": "You selected {{count}} teams, but the bracket is configured for {{bracketSize}}. Some positions will be byes.",
       "doubleEliminationNotImplemented": "Double elimination is not yet implemented.",
-      "invalidKnockoutSettings": "Invalid knockout configuration."
+      "invalidKnockoutSettings": "Invalid knockout configuration.",
+      "notEnoughTeamsForGroups": "At least {{required}} teams needed for {{groups}} groups of {{perGroup}} teams each.",
+      "extraTeamsWarning": "You have {{count}} teams, but the configuration requires {{required}}. Extra teams won't participate.",
+      "advancingTeamsNotPowerOfTwo": "Advancing teams ({{count}}) should be a power of 2 (4, 8, 16) for an optimal bracket.",
+      "tooManyAdvancing": "You cannot advance {{advancing}} teams from a group of {{perGroup}}.",
+      "invalidGroupsKnockoutSettings": "Invalid groups + knockout configuration."
     }
   }
 }

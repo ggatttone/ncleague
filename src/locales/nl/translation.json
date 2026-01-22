@@ -996,6 +996,17 @@
       "groupCount": "Aantal Groepen",
       "teamsPerGroup": "Teams per Groep",
       "advancingPerGroup": "Teams die Doorgaan",
+      "groupConfiguration": "Groepsconfiguratie",
+      "groupConfigurationDescription": "Stel het aantal groepen en teams per groep in",
+      "groups": "groepen",
+      "teamsAdvance": "teams gaan door",
+      "totalTeamsRequired": "Totaal aantal teams vereist",
+      "teamsInKnockout": "Teams in knock-outfase",
+      "pointsSystemGroupDescription": "Punten worden gebruikt om de groepsstand te bepalen",
+      "doubleRoundRobinGroupDescription": "Elk team speelt twee keer tegen elke tegenstander in hun groep",
+      "knockoutPhase": "Knock-outfase",
+      "knockoutPhaseDescription": "Configuratie voor de knock-outfase na de groepen",
+      "knockoutSeedingDescription": "Hoe groepswinnaars worden gekoppeld in de knock-outfase",
       "playoffTeams": "Play-off Teams",
       "playoffFormat": "Play-off Formaat",
       "playoffFormatSingle": "Enkele wedstrijd",
@@ -1019,7 +1030,12 @@
       "tooManyTeamsForBracket": "Je hebt {{count}} teams geselecteerd, maar de bracket ondersteunt slechts {{bracketSize}}.",
       "fewerTeamsThanBracket": "Je hebt {{count}} teams geselecteerd, maar de bracket is geconfigureerd voor {{bracketSize}}. Sommige posities zullen byes zijn.",
       "doubleEliminationNotImplemented": "Dubbele eliminatie is nog niet geïmplementeerd.",
-      "invalidKnockoutSettings": "Ongeldige knock-out configuratie."
+      "invalidKnockoutSettings": "Ongeldige knock-out configuratie.",
+      "notEnoughTeamsForGroups": "Minimaal {{required}} teams nodig voor {{groups}} groepen van {{perGroup}} teams elk.",
+      "extraTeamsWarning": "Je hebt {{count}} teams, maar de configuratie vereist {{required}}. Extra teams zullen niet deelnemen.",
+      "advancingTeamsNotPowerOfTwo": "Doorstromende teams ({{count}}) moeten een macht van 2 zijn (4, 8, 16) voor een optimale bracket.",
+      "tooManyAdvancing": "Je kunt niet {{advancing}} teams laten doorstromen uit een groep van {{perGroup}}.",
+      "invalidGroupsKnockoutSettings": "Ongeldige groepen + knock-out configuratie."
     }
   }
 }

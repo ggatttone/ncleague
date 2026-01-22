@@ -1026,6 +1026,17 @@
       "groupCount": "Numero Gironi",
       "teamsPerGroup": "Squadre per Girone",
       "advancingPerGroup": "Squadre che avanzano",
+      "groupConfiguration": "Configurazione Gironi",
+      "groupConfigurationDescription": "Imposta il numero di gironi e squadre per girone",
+      "groups": "gironi",
+      "teamsAdvance": "squadre avanzano",
+      "totalTeamsRequired": "Squadre totali richieste",
+      "teamsInKnockout": "Squadre alla fase eliminazione",
+      "pointsSystemGroupDescription": "I punti verranno usati per determinare la classifica nei gironi",
+      "doubleRoundRobinGroupDescription": "Ogni squadra gioca due volte contro ogni avversario nel proprio girone",
+      "knockoutPhase": "Fase Eliminazione",
+      "knockoutPhaseDescription": "Configurazione della fase ad eliminazione diretta dopo i gironi",
+      "knockoutSeedingDescription": "Come verranno abbinati i vincitori dei gironi nella fase knockout",
       "playoffTeams": "Squadre nei Playoff",
       "playoffFormat": "Formato Playoff",
       "playoffFormatSingle": "Partita singola",
@@ -1049,7 +1060,12 @@
       "tooManyTeamsForBracket": "Hai selezionato {{count}} squadre, ma il bracket supporta solo {{bracketSize}}.",
       "fewerTeamsThanBracket": "Hai selezionato {{count}} squadre, ma il bracket è configurato per {{bracketSize}}. Alcune posizioni saranno bye.",
       "doubleEliminationNotImplemented": "La doppia eliminazione non è ancora implementata.",
-      "invalidKnockoutSettings": "Configurazione knockout non valida."
+      "invalidKnockoutSettings": "Configurazione knockout non valida.",
+      "notEnoughTeamsForGroups": "Servono almeno {{required}} squadre per {{groups}} gironi da {{perGroup}} squadre ciascuno.",
+      "extraTeamsWarning": "Hai {{count}} squadre, ma la configurazione richiede {{required}}. Le squadre in eccesso non parteciperanno.",
+      "advancingTeamsNotPowerOfTwo": "Le squadre che avanzano ({{count}}) dovrebbero essere una potenza di 2 (4, 8, 16) per un bracket ottimale.",
+      "tooManyAdvancing": "Non puoi far avanzare {{advancing}} squadre da un girone di {{perGroup}}.",
+      "invalidGroupsKnockoutSettings": "Configurazione gironi + knockout non valida."
     }
   }
 }
