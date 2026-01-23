@@ -66,6 +66,21 @@
       "noData": "Nessun dato disponibile per la classifica.",
       "viewFull": "Visualizza classifica completa"
     },
+    "groupStageView": {
+      "noTeams": "Nessuna squadra in questo girone",
+      "error": "Errore nel caricamento delle classifiche dei gironi",
+      "advancingInfo": "Le prime {{count}} di ogni girone avanzano ({{total}} in totale)",
+      "qualifies": "Si qualifica",
+      "qualifiedTeams": "Squadre Qualificate alla Fase ad Eliminazione"
+    },
+    "tournamentModePreview": {
+      "title": "Anteprima Torneo",
+      "mode": "Modalità",
+      "phases": "Fasi",
+      "estimatedMatches": "Partite Stimate",
+      "teams": "Squadre",
+      "valid": "Configurazione valida"
+    },
     "upcomingMatches": {
       "title": "Prossime Partite",
       "noMatches": "Nessuna partita in programma.",

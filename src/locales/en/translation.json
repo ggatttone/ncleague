@@ -66,6 +66,21 @@
       "noData": "No data available for the league table.",
       "viewFull": "View full table"
     },
+    "groupStageView": {
+      "noTeams": "No teams in this group",
+      "error": "Error loading group standings",
+      "advancingInfo": "Top {{count}} from each group advance ({{total}} total)",
+      "qualifies": "Qualifies",
+      "qualifiedTeams": "Teams Advancing to Knockout"
+    },
+    "tournamentModePreview": {
+      "title": "Tournament Preview",
+      "mode": "Mode",
+      "phases": "Phases",
+      "estimatedMatches": "Estimated Matches",
+      "teams": "Teams",
+      "valid": "Configuration is valid"
+    },
     "upcomingMatches": {
       "title": "Upcoming Matches",
       "noMatches": "No matches scheduled.",
