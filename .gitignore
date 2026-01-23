@@ -29,3 +29,7 @@ dist-ssr
 .claude/
 .cursor/
 .opencode/
+
+# Supabase CLI temp files
+supabase/.temp/
+supabase_dump.sql
