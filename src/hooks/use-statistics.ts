@@ -11,7 +11,11 @@ export interface TopScorer {
   goals_scored: number;
 }
 
-const fetchTopScorers = async (competitionId: string, seasonId: string): Promise<TopScorer[]> => {
+const fetchTopScorers = async (
+  competitionId: string,
+  seasonId: string,
+  stageFilter?: string
+): Promise<TopScorer[]> => {
   if (!competitionId || !seasonId) {
     return [];
   }
@@ -19,6 +23,7 @@ const fetchTopScorers = async (competitionId: string, seasonId: string): Promise
   const { data, error } = await supabase.rpc('get_top_scorers', {
     p_competition_id: competitionId,
     p_season_id: seasonId,
+    p_stage_filter: stageFilter || null,
   });
 
   if (error) {
@@ -29,10 +34,14 @@ const fetchTopScorers = async (competitionId: string, seasonId: string): Promise
   return data || [];
 };
 
-export const useTopScorers = (competitionId: string, seasonId: string) => {
+export const useTopScorers = (
+  competitionId: string,
+  seasonId: string,
+  stageFilter?: string
+) => {
   return useQuery<TopScorer[], Error>({
-    queryKey: ["topScorers", competitionId, seasonId],
-    queryFn: () => fetchTopScorers(competitionId, seasonId),
-    enabled: !!competitionId && !!seasonId, // Esegui la query solo se entrambi gli ID sono presenti
+    queryKey: ["topScorers", competitionId, seasonId, stageFilter],
+    queryFn: () => fetchTopScorers(competitionId, seasonId, stageFilter),
+    enabled: !!competitionId && !!seasonId,
   });
 };

@@ -1,8 +1,10 @@
 import { MainLayout } from "@/components/MainLayout";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { useSeasons } from "@/hooks/use-seasons";
+import { useSeasons, useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useTopScorers } from "@/hooks/use-statistics";
+import { getSchedulablePhases } from "@/lib/tournament/handler-registry";
+import type { TournamentHandlerKey } from "@/types/tournament-handlers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2 } from "lucide-react";
@@ -11,18 +13,36 @@ import { useTranslation } from "react-i18next";
 const Statistics = () => {
   const [selectedCompetition, setSelectedCompetition] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const [selectedStage, setSelectedStage] = useState<string>("");
   const { t } = useTranslation();
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
-  const { data: topScorers, isLoading: topScorersLoading, isError } = useTopScorers(selectedCompetition, selectedSeason);
+  const { data: seasonWithMode } = useSeasonWithTournamentMode(selectedSeason || undefined);
+
+  // Get available stages from tournament mode
+  const availableStages = useMemo(() => {
+    if (seasonWithMode?.tournament_modes?.handler_key) {
+      const handlerKey = seasonWithMode.tournament_modes.handler_key as TournamentHandlerKey;
+      return getSchedulablePhases(handlerKey);
+    }
+    return [];
+  }, [seasonWithMode]);
+
+  // Pass stageFilter only if a specific stage is selected
+  const stageFilter = selectedStage || undefined;
+  const { data: topScorers, isLoading: topScorersLoading, isError } = useTopScorers(
+    selectedCompetition,
+    selectedSeason,
+    stageFilter
+  );
 
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">{t('pages.statistics.title')}</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 p-4 border rounded-lg bg-card">
+        <div className={`grid grid-cols-1 ${availableStages.length > 1 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4 mb-8 p-4 border rounded-lg bg-card`}>
           <div>
             <label htmlFor="competition-select" className="block text-sm font-medium text-muted-foreground mb-1">
               {t('pages.statistics.competition')}
@@ -50,7 +70,10 @@ const Statistics = () => {
             </label>
             <Select
               value={selectedSeason}
-              onValueChange={setSelectedSeason}
+              onValueChange={(value) => {
+                setSelectedSeason(value);
+                setSelectedStage(""); // Reset stage when season changes
+              }}
               disabled={seasonsLoading}
             >
               <SelectTrigger id="season-select">
@@ -65,6 +88,29 @@ const Statistics = () => {
               </SelectContent>
             </Select>
           </div>
+          {availableStages.length > 1 && (
+            <div>
+              <label htmlFor="stage-select" className="block text-sm font-medium text-muted-foreground mb-1">
+                {t('pages.statistics.stage')}
+              </label>
+              <Select
+                value={selectedStage}
+                onValueChange={setSelectedStage}
+              >
+                <SelectTrigger id="stage-select">
+                  <SelectValue placeholder={t('pages.statistics.allStages')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">{t('pages.statistics.allStages')}</SelectItem>
+                  {availableStages.map((phase) => (
+                    <SelectItem key={phase.id} value={phase.id}>
+                      {t(phase.nameKey)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {topScorersLoading && (

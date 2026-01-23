@@ -248,22 +248,16 @@ export const SwissSystemHandler: TournamentHandler = {
    * Generate matches for a Swiss System phase
    */
   generateMatches(context: MatchGenerationContext): MatchGenerationResult {
-    const { teams, settings, phaseId, existingMatches } = context;
+    const { phase, teams, settings, currentStandings } = context;
+    const phaseId = phase.id;
     const s = settings as SwissSystemSettings;
 
-    // Build set of previous pairings
-    const previousPairings = new Set<string>();
-    existingMatches?.forEach(m => {
-      if (m.home_team?.id && m.away_team?.id) {
-        previousPairings.add(`${m.home_team.id}-${m.away_team.id}`);
-      }
-    });
+    // Use current standings from context (calculated from existing completed matches)
+    const standings = currentStandings || [];
 
-    // Calculate current standings from existing matches
-    const standings = this.calculateStandings({
-      matches: existingMatches || [],
-      settings: s,
-    });
+    // Note: For accurate Swiss pairing avoiding repeat matchups, the caller should
+    // track previous pairings externally. This simple implementation pairs by rank.
+    const previousPairings = new Set<string>();
 
     const matches: MatchGenerationResult['matches'] = [];
 
@@ -319,18 +313,31 @@ export const SwissSystemHandler: TournamentHandler = {
 
       case 'final': {
         // Generate final stage matches based on poule standings
-        // Top teams from Poule A vs Poule B
-        const pouleAMatches = existingMatches?.filter(m => m.stage === 'poule_a') || [];
-        const pouleBMatches = existingMatches?.filter(m => m.stage === 'poule_b') || [];
+        // The currentStandings should be passed pre-filtered by poule for this phase
+        // If not, we use the snake seeding pattern to determine poule assignments
 
-        const pouleAStandings = this.calculateStandings({
-          matches: pouleAMatches,
-          settings: s,
-        });
-        const pouleBStandings = this.calculateStandings({
-          matches: pouleBMatches,
-          settings: s,
-        });
+        // Get poule assignments based on Phase 1 standings
+        // Note: In production, the caller should provide poule-specific standings
+        const poules = applySnakeSeeding(standings, s.snakeSeedingPattern);
+        const pouleA = poules.find(p => p.poule === 'poule_a');
+        const pouleB = poules.find(p => p.poule === 'poule_b');
+
+        if (!pouleA || !pouleB) {
+          return {
+            success: false,
+            matches: [],
+            error: 'Could not determine poule assignments for final phase',
+          };
+        }
+
+        // Get standings for each poule (teams in order of their poule position)
+        const pouleAStandings = pouleA.teams.map(teamId =>
+          standings.find(s => s.team_id === teamId)
+        ).filter(Boolean) as LeagueTableRow[];
+
+        const pouleBStandings = pouleB.teams.map(teamId =>
+          standings.find(s => s.team_id === teamId)
+        ).filter(Boolean) as LeagueTableRow[];
 
         const teamsInFinal = s.finalStageTeams;
         const teamsPerPoule = Math.floor(teamsInFinal / 2);

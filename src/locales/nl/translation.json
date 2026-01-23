@@ -174,6 +174,8 @@
       "selectCompetition": "Selecteer Competitie",
       "season": "Seizoen",
       "selectSeason": "Selecteer Seizoen",
+      "stage": "Fase",
+      "allStages": "Alle fases",
       "topScorers": "Topscorers",
       "errorLoading": "Fout bij het laden van gegevens.",
       "pos": "Pos",

@@ -7,20 +7,15 @@ import { ProactiveValidator } from "@/components/admin/ProactiveValidator";
 import { StandingsSimulatorDialog } from "@/components/admin/StandingsSimulatorDialog";
 import { ClosePhaseDialog } from "@/components/admin/ClosePhaseDialog";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { useSeasons } from "@/hooks/use-seasons";
+import { useSeasons, useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useLeagueTable } from "@/hooks/use-league-table";
 import { useMatches } from "@/hooks/use-matches";
+import { getHandlerPhases } from "@/lib/tournament/handler-registry";
+import type { TournamentHandlerKey } from "@/types/tournament-handlers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-const phaseMapping: { [key: string]: { name: string, step: number } } = {
-  'regular_season': { name: "Fase 1", step: 1 },
-  'poule_a': { name: "Fase 2", step: 2 },
-  'poule_b': { name: "Fase 2", step: 2 },
-  'final': { name: "Fase Finale", step: 3 },
-};
 
 const TournamentDashboard = () => {
   const { t } = useTranslation();
@@ -31,6 +26,7 @@ const TournamentDashboard = () => {
 
   const { data: competitions, isLoading: competitionsLoading } = useCompetitions();
   const { data: seasons, isLoading: seasonsLoading } = useSeasons();
+  const { data: seasonWithMode } = useSeasonWithTournamentMode(selectedSeason);
   const { data: tableData } = useLeagueTable(selectedCompetition, selectedSeason);
   const { data: allMatches } = useMatches();
 
@@ -43,18 +39,41 @@ const TournamentDashboard = () => {
     }
   }, [competitions, seasons, competitionsLoading, seasonsLoading, selectedCompetition, selectedSeason]);
 
-  const { currentPhaseName, currentPhaseStep } = useMemo(() => {
-    const seasonMatches = allMatches?.filter(m => m.season_id === selectedSeason) || [];
-    if (seasonMatches.length === 0) {
-      return { currentPhaseName: "Inizio Torneo", currentPhaseStep: 0 };
+  // Get phases from tournament mode handler
+  const phases = useMemo(() => {
+    const handlerKey = seasonWithMode?.tournament_modes?.handler_key as TournamentHandlerKey | undefined;
+    if (handlerKey) {
+      return getHandlerPhases(handlerKey);
     }
-    const latestMatch = seasonMatches.sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())[0];
-    const phaseInfo = phaseMapping[latestMatch.stage || 'regular_season'];
+    return [];
+  }, [seasonWithMode]);
+
+  // Determine current phase from latest match stage
+  const { currentPhaseKey, currentPhaseName } = useMemo(() => {
+    const seasonMatches = allMatches?.filter(m => m.season_id === selectedSeason) || [];
+
+    if (seasonMatches.length === 0) {
+      return { currentPhaseKey: 'start', currentPhaseName: t('tournament.phases.start') };
+    }
+
+    // Find the latest match by date
+    const latestMatch = seasonMatches.sort(
+      (a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime()
+    )[0];
+
+    const stage = latestMatch?.stage || 'regular_season';
+
+    // Find phase info from handler phases
+    const phaseInfo = phases.find(p => p.id === stage);
+    const phaseName = phaseInfo
+      ? t(phaseInfo.nameKey, { defaultValue: stage })
+      : stage;
+
     return {
-      currentPhaseName: phaseInfo?.name || "Fase 1",
-      currentPhaseStep: phaseInfo?.step || 1,
+      currentPhaseKey: stage,
+      currentPhaseName: phaseName,
     };
-  }, [allMatches, selectedSeason]);
+  }, [allMatches, selectedSeason, phases, t]);
 
   const isLoading = competitionsLoading || seasonsLoading;
 
@@ -81,7 +100,10 @@ const TournamentDashboard = () => {
 
       {isLoading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : (
         <>
-          <PhaseVisualizer currentPhase={currentPhaseStep} />
+          <PhaseVisualizer
+            currentPhaseKey={currentPhaseKey}
+            tournamentMode={seasonWithMode?.tournament_modes}
+          />
           <ProactiveValidator standings={tableData} />
           <Card>
             <CardHeader>
