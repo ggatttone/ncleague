@@ -9,12 +9,13 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { TournamentHandlerKey } from '@/types/tournament-handlers';
-import type { TournamentModeSettings, LeagueOnlySettings, KnockoutSettings, GroupsKnockoutSettings } from '@/types/tournament-settings';
-import { DEFAULT_LEAGUE_ONLY_SETTINGS, DEFAULT_KNOCKOUT_SETTINGS, DEFAULT_GROUPS_KNOCKOUT_SETTINGS } from '@/types/tournament-settings';
+import type { TournamentModeSettings, LeagueOnlySettings, KnockoutSettings, GroupsKnockoutSettings, SwissSystemSettings } from '@/types/tournament-settings';
+import { DEFAULT_LEAGUE_ONLY_SETTINGS, DEFAULT_KNOCKOUT_SETTINGS, DEFAULT_GROUPS_KNOCKOUT_SETTINGS, DEFAULT_SWISS_SYSTEM_SETTINGS } from '@/types/tournament-settings';
 import { getDefaultSettings } from '@/lib/tournament/handler-registry';
 import { LeagueOnlySettingsForm } from './LeagueOnlySettingsForm';
 import { KnockoutSettingsForm } from './KnockoutSettingsForm';
 import { GroupsKnockoutSettingsForm } from './GroupsKnockoutSettingsForm';
+import { SwissSystemSettingsForm } from './SwissSystemSettingsForm';
 
 interface TournamentSettingsFormProps {
   handlerKey: TournamentHandlerKey | string;
@@ -34,6 +35,8 @@ function getTypedDefaultSettings(handlerKey: string): TournamentModeSettings {
       return DEFAULT_KNOCKOUT_SETTINGS;
     case 'groups_knockout':
       return DEFAULT_GROUPS_KNOCKOUT_SETTINGS;
+    case 'swiss_system':
+      return DEFAULT_SWISS_SYSTEM_SETTINGS;
     default:
       return getDefaultSettings(handlerKey as TournamentHandlerKey);
   }
@@ -76,6 +79,20 @@ function isGroupsKnockoutSettings(
     'teamsPerGroup' in settings &&
     'advancingPerGroup' in settings &&
     'knockoutSettings' in settings
+  );
+}
+
+/**
+ * Type guard for SwissSystemSettings
+ */
+function isSwissSystemSettings(
+  settings: TournamentModeSettings
+): settings is SwissSystemSettings {
+  return (
+    'phase1Rounds' in settings &&
+    'snakeSeedingPattern' in settings &&
+    'pouleFormat' in settings &&
+    'finalStageTeams' in settings
   );
 }
 
@@ -131,14 +148,16 @@ export function TournamentSettingsForm({
       );
 
     case 'swiss_system':
-      // TODO: Implement SwissSystemSettingsForm in Phase 5
+      // Ensure settings match the expected type
+      const swissSettings: SwissSystemSettings = isSwissSystemSettings(settings)
+        ? settings
+        : DEFAULT_SWISS_SYSTEM_SETTINGS;
       return (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {t('tournament.settings.comingSoon', { mode: t('tournament.modes.swissSystem.name') })}
-          </AlertDescription>
-        </Alert>
+        <SwissSystemSettingsForm
+          value={swissSettings}
+          onChange={onChange}
+          disabled={disabled}
+        />
       );
 
     case 'round_robin_final':
@@ -168,4 +187,5 @@ export function TournamentSettingsForm({
 export { LeagueOnlySettingsForm } from './LeagueOnlySettingsForm';
 export { KnockoutSettingsForm } from './KnockoutSettingsForm';
 export { GroupsKnockoutSettingsForm } from './GroupsKnockoutSettingsForm';
+export { SwissSystemSettingsForm } from './SwissSystemSettingsForm';
 export { TieBreakersConfig } from './TieBreakersConfig';
