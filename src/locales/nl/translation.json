@@ -1039,6 +1039,23 @@
       "pouleMatches": "Poule Wedstrijden",
       "finalMatches": "Finale Wedstrijden",
       "pointsSystemDescription": "Punten worden gebruikt om de stand te bepalen",
+      "leaguePhase": "Competitiefase",
+      "leaguePhaseDescription": "Configuratie voor de round-robin competitiefase",
+      "playoffConfiguration": "Playoff Configuratie",
+      "playoffConfigurationDescription": "Stel in hoe de playoffs werken na de competitiefase",
+      "playoffTeamsDescription": "Aantal teams dat zich kwalificeert voor de playoffs vanuit de competitiestand",
+      "playoffTeams2Description": "Directe finale",
+      "playoffTeams4Description": "Halve finales + Finale",
+      "playoffTeams8Description": "Kwart + Halve + Finale",
+      "playoffFormatSingleMatch": "Enkele Wedstrijd",
+      "playoffFormatSingleMatchDescription": "Eén wedstrijd bepaalt wie doorgaat",
+      "playoffFormatHomeAway": "Thuis en Uit",
+      "playoffFormatHomeAwayDescription": "Twee wedstrijden met totaalscore",
+      "playoffFormatBestOf3": "Best of 3",
+      "playoffFormatBestOf3Description": "Wie 2 wedstrijden wint gaat door (max 3 wedstrijden)",
+      "playoffSeedingInfo": "Teams worden geplaatst in de bracket op basis van hun competitiepositie",
+      "leagueMatchesEstimate": "Competitiewedstrijden (schatting)",
+      "playoffMatchesEstimate": "Playoffwedstrijden (schatting)",
       "comingSoon": "Configuratie voor {{mode}} komt binnenkort",
       "unknownHandler": "Onbekende handler: {{handler}}"
     },
@@ -1067,7 +1084,10 @@
       "duplicateSnakePositions": "Snake seeding patroon bevat dubbele posities",
       "notEnoughTeamsForSwiss": "Niet genoeg teams voor het geconfigureerde seeding patroon",
       "tooManySwissRounds": "Je hebt meer Zwitserse rondes geconfigureerd dan mogelijk is met dit aantal teams",
-      "invalidSwissSystemSettings": "Ongeldige Zwitsers Systeem configuratie"
+      "invalidSwissSystemSettings": "Ongeldige Zwitsers Systeem configuratie",
+      "notEnoughTeamsForPlayoffs": "Minimaal {{required}} teams nodig voor playoffs, maar je hebt {{available}}.",
+      "allTeamsInPlayoffsWarning": "Alle teams doen mee aan de playoffs. De competitiefase bepaalt alleen de plaatsing.",
+      "invalidRoundRobinFinalSettings": "Ongeldige Round Robin + Finale configuratie."
     }
   }
 }

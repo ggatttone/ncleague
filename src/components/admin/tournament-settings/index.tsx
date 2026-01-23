@@ -9,13 +9,14 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { TournamentHandlerKey } from '@/types/tournament-handlers';
-import type { TournamentModeSettings, LeagueOnlySettings, KnockoutSettings, GroupsKnockoutSettings, SwissSystemSettings } from '@/types/tournament-settings';
-import { DEFAULT_LEAGUE_ONLY_SETTINGS, DEFAULT_KNOCKOUT_SETTINGS, DEFAULT_GROUPS_KNOCKOUT_SETTINGS, DEFAULT_SWISS_SYSTEM_SETTINGS } from '@/types/tournament-settings';
+import type { TournamentModeSettings, LeagueOnlySettings, KnockoutSettings, GroupsKnockoutSettings, SwissSystemSettings, RoundRobinFinalSettings } from '@/types/tournament-settings';
+import { DEFAULT_LEAGUE_ONLY_SETTINGS, DEFAULT_KNOCKOUT_SETTINGS, DEFAULT_GROUPS_KNOCKOUT_SETTINGS, DEFAULT_SWISS_SYSTEM_SETTINGS, DEFAULT_ROUND_ROBIN_FINAL_SETTINGS } from '@/types/tournament-settings';
 import { getDefaultSettings } from '@/lib/tournament/handler-registry';
 import { LeagueOnlySettingsForm } from './LeagueOnlySettingsForm';
 import { KnockoutSettingsForm } from './KnockoutSettingsForm';
 import { GroupsKnockoutSettingsForm } from './GroupsKnockoutSettingsForm';
 import { SwissSystemSettingsForm } from './SwissSystemSettingsForm';
+import { RoundRobinFinalSettingsForm } from './RoundRobinFinalSettingsForm';
 
 interface TournamentSettingsFormProps {
   handlerKey: TournamentHandlerKey | string;
@@ -37,6 +38,8 @@ function getTypedDefaultSettings(handlerKey: string): TournamentModeSettings {
       return DEFAULT_GROUPS_KNOCKOUT_SETTINGS;
     case 'swiss_system':
       return DEFAULT_SWISS_SYSTEM_SETTINGS;
+    case 'round_robin_final':
+      return DEFAULT_ROUND_ROBIN_FINAL_SETTINGS;
     default:
       return getDefaultSettings(handlerKey as TournamentHandlerKey);
   }
@@ -93,6 +96,21 @@ function isSwissSystemSettings(
     'snakeSeedingPattern' in settings &&
     'pouleFormat' in settings &&
     'finalStageTeams' in settings
+  );
+}
+
+/**
+ * Type guard for RoundRobinFinalSettings
+ */
+function isRoundRobinFinalSettings(
+  settings: TournamentModeSettings
+): settings is RoundRobinFinalSettings {
+  return (
+    'pointsPerWin' in settings &&
+    'pointsPerDraw' in settings &&
+    'doubleRoundRobin' in settings &&
+    'playoffTeams' in settings &&
+    'playoffFormat' in settings
   );
 }
 
@@ -161,14 +179,16 @@ export function TournamentSettingsForm({
       );
 
     case 'round_robin_final':
-      // TODO: Implement RoundRobinFinalSettingsForm in Phase 6
+      // Ensure settings match the expected type
+      const roundRobinFinalSettings: RoundRobinFinalSettings = isRoundRobinFinalSettings(settings)
+        ? settings
+        : DEFAULT_ROUND_ROBIN_FINAL_SETTINGS;
       return (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {t('tournament.settings.comingSoon', { mode: t('tournament.modes.roundRobinFinal.name') })}
-          </AlertDescription>
-        </Alert>
+        <RoundRobinFinalSettingsForm
+          value={roundRobinFinalSettings}
+          onChange={onChange}
+          disabled={disabled}
+        />
       );
 
     default:
@@ -188,4 +208,5 @@ export { LeagueOnlySettingsForm } from './LeagueOnlySettingsForm';
 export { KnockoutSettingsForm } from './KnockoutSettingsForm';
 export { GroupsKnockoutSettingsForm } from './GroupsKnockoutSettingsForm';
 export { SwissSystemSettingsForm } from './SwissSystemSettingsForm';
+export { RoundRobinFinalSettingsForm } from './RoundRobinFinalSettingsForm';
 export { TieBreakersConfig } from './TieBreakersConfig';

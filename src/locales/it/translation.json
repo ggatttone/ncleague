@@ -1069,6 +1069,23 @@
       "pouleMatches": "Partite Poule",
       "finalMatches": "Partite Finali",
       "pointsSystemDescription": "I punti verranno usati per determinare la classifica",
+      "leaguePhase": "Fase Campionato",
+      "leaguePhaseDescription": "Configurazione della fase round-robin del campionato",
+      "playoffConfiguration": "Configurazione Playoff",
+      "playoffConfigurationDescription": "Imposta come funzioneranno i playoff dopo il campionato",
+      "playoffTeamsDescription": "Numero di squadre che si qualificano per i playoff dalla classifica del campionato",
+      "playoffTeams2Description": "Finale diretta",
+      "playoffTeams4Description": "Semifinali + Finale",
+      "playoffTeams8Description": "Quarti + Semi + Finale",
+      "playoffFormatSingleMatch": "Partita Singola",
+      "playoffFormatSingleMatchDescription": "Una singola partita decide chi avanza",
+      "playoffFormatHomeAway": "Andata e Ritorno",
+      "playoffFormatHomeAwayDescription": "Due partite con classifica aggregata",
+      "playoffFormatBestOf3": "Al Meglio di 3",
+      "playoffFormatBestOf3Description": "Chi vince 2 partite avanza (massimo 3 partite)",
+      "playoffSeedingInfo": "Le squadre verranno abbinate nel bracket in base alla loro posizione in classifica",
+      "leagueMatchesEstimate": "Partite campionato (stima)",
+      "playoffMatchesEstimate": "Partite playoff (stima)",
       "comingSoon": "Configurazione per {{mode}} in arrivo",
       "unknownHandler": "Handler sconosciuto: {{handler}}"
     },
@@ -1097,7 +1114,10 @@
       "duplicateSnakePositions": "Il pattern snake seeding contiene posizioni duplicate",
       "notEnoughTeamsForSwiss": "Non hai abbastanza squadre per il pattern di seeding configurato",
       "tooManySwissRounds": "Hai configurato più turni Swiss di quanti siano possibili con questo numero di squadre",
-      "invalidSwissSystemSettings": "Configurazione Swiss System non valida"
+      "invalidSwissSystemSettings": "Configurazione Swiss System non valida",
+      "notEnoughTeamsForPlayoffs": "Servono almeno {{required}} squadre per i playoff, ma ne hai {{available}}.",
+      "allTeamsInPlayoffsWarning": "Tutte le squadre parteciperanno ai playoff. La fase campionato servirà solo per il seeding.",
+      "invalidRoundRobinFinalSettings": "Configurazione Round Robin + Finale non valida."
     }
   }
 }

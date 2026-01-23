@@ -1039,6 +1039,23 @@
       "pouleMatches": "Poule Matches",
       "finalMatches": "Final Matches",
       "pointsSystemDescription": "Points will be used to determine standings",
+      "leaguePhase": "League Phase",
+      "leaguePhaseDescription": "Configuration for the round-robin league phase",
+      "playoffConfiguration": "Playoff Configuration",
+      "playoffConfigurationDescription": "Set up how playoffs will work after the league phase",
+      "playoffTeamsDescription": "Number of teams qualifying for playoffs from the league standings",
+      "playoffTeams2Description": "Direct final",
+      "playoffTeams4Description": "Semi-finals + Final",
+      "playoffTeams8Description": "Quarter + Semi + Final",
+      "playoffFormatSingleMatch": "Single Match",
+      "playoffFormatSingleMatchDescription": "One match decides who advances",
+      "playoffFormatHomeAway": "Home and Away",
+      "playoffFormatHomeAwayDescription": "Two matches with aggregate score",
+      "playoffFormatBestOf3": "Best of 3",
+      "playoffFormatBestOf3Description": "Whoever wins 2 matches advances (max 3 matches)",
+      "playoffSeedingInfo": "Teams will be seeded in the bracket based on their league position",
+      "leagueMatchesEstimate": "League matches (estimate)",
+      "playoffMatchesEstimate": "Playoff matches (estimate)",
       "comingSoon": "Configuration for {{mode}} coming soon",
       "unknownHandler": "Unknown handler: {{handler}}"
     },
@@ -1067,7 +1084,10 @@
       "duplicateSnakePositions": "Snake seeding pattern contains duplicate positions",
       "notEnoughTeamsForSwiss": "Not enough teams for the configured seeding pattern",
       "tooManySwissRounds": "You configured more Swiss rounds than possible with this team count",
-      "invalidSwissSystemSettings": "Invalid Swiss System configuration"
+      "invalidSwissSystemSettings": "Invalid Swiss System configuration",
+      "notEnoughTeamsForPlayoffs": "At least {{required}} teams needed for playoffs, but you have {{available}}.",
+      "allTeamsInPlayoffsWarning": "All teams will participate in playoffs. The league phase will only determine seeding.",
+      "invalidRoundRobinFinalSettings": "Invalid Round Robin + Final configuration."
     }
   }
 }
