@@ -236,3 +236,33 @@ export interface TournamentMode {
   created_at: string;
   updated_at: string;
 }
+
+// Season Draft types for wizard persistence
+export interface SeasonDraftData {
+  basicInfo: {
+    name: string;
+    start_date?: string;
+    end_date?: string;
+  };
+  teams: {
+    team_ids: string[];
+  };
+  tournament: {
+    tournament_mode_id?: string;
+    custom_settings?: TournamentModeSettings;
+    use_custom_settings: boolean;
+  };
+  completedSteps: number[];
+  lastModified: string;
+}
+
+export interface SeasonDraft {
+  id: string;
+  user_id: string;
+  name: string | null;
+  current_step: number;
+  draft_data: SeasonDraftData;
+  season_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
