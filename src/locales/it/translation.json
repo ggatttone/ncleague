@@ -35,6 +35,13 @@
     "postponed": "Rinviata",
     "cancelled": "Cancellata"
   },
+  "matchStage": {
+    "regular_season": "Stagione regolare",
+    "quarter-final": "Quarti di finale",
+    "semi-final": "Semifinale",
+    "third-place_playoff": "Finale 3°/4° posto",
+    "final": "Finale"
+  },
   "roles": {
     "admin": "Amministratore",
     "editor": "Editore",
@@ -363,6 +370,18 @@
         },
         "liveStandings": {
           "title": "Classifica Live"
+        },
+        "phaseCard": {
+          "matches": "partite",
+          "generateSchedule": "Genera Calendario",
+          "viewMatches": "Vedi Partite",
+          "closePhase": "Chiudi Fase"
+        },
+        "actionsPanel": {
+          "generateSchedule": "Prossimo passo: genera il calendario per {{phase}}",
+          "completeMatches": "{{count}} partite rimanenti in {{phase}}",
+          "startMatches": "Inizia a giocare le partite di {{phase}}",
+          "allComplete": "Tutte le fasi completate!"
         }
       },
       "index": {
@@ -528,6 +547,19 @@
         "deleteDialogDescription": "Questa azione eliminerà permanentemente la partita {{matchName}}.",
         "deleteSelectedDialogTitle": "Eliminare le partite selezionate?",
         "deleteSelectedDialogDescription": "Stai per eliminare permanentemente {{count}} partite. Questa azione non può essere annullata.",
+        "filters": {
+          "status": "Stato",
+          "competition": "Competizione",
+          "season": "Stagione",
+          "venue": "Campo",
+          "stage": "Fase",
+          "allStatuses": "Tutti gli stati",
+          "allCompetitions": "Tutte le competizioni",
+          "allSeasons": "Tutte le stagioni",
+          "allVenues": "Tutti i campi",
+          "allStages": "Tutte le fasi",
+          "clearFilters": "Rimuovi filtri"
+        },
         "table": {
           "match": "Partita",
           "date": "Data",

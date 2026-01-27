@@ -35,6 +35,13 @@
     "postponed": "Uitgesteld",
     "cancelled": "Geannuleerd"
   },
+  "matchStage": {
+    "regular_season": "Regulier seizoen",
+    "quarter-final": "Kwartfinale",
+    "semi-final": "Halve finale",
+    "third-place_playoff": "Troostfinale",
+    "final": "Finale"
+  },
   "roles": {
     "admin": "Beheerder",
     "editor": "Redacteur",
@@ -318,6 +325,18 @@
         },
         "liveStandings": {
           "title": "Live Klassement"
+        },
+        "phaseCard": {
+          "matches": "wedstrijden",
+          "generateSchedule": "Schema Genereren",
+          "viewMatches": "Wedstrijden Bekijken",
+          "closePhase": "Fase Sluiten"
+        },
+        "actionsPanel": {
+          "generateSchedule": "Volgende stap: genereer het schema voor {{phase}}",
+          "completeMatches": "{{count}} wedstrijden resterend in {{phase}}",
+          "startMatches": "Begin met het spelen van wedstrijden in {{phase}}",
+          "allComplete": "Alle fasen voltooid!"
         }
       },
       "index": {
@@ -483,6 +502,19 @@
         "deleteDialogDescription": "Deze actie zal de wedstrijd {{matchName}} permanent verwijderen.",
         "deleteSelectedDialogTitle": "Geselecteerde wedstrijden verwijderen?",
         "deleteSelectedDialogDescription": "Je staat op het punt om {{count}} wedstrijden permanent te verwijderen. Deze actie kan niet ongedaan worden gemaakt.",
+        "filters": {
+          "status": "Status",
+          "competition": "Competitie",
+          "season": "Seizoen",
+          "venue": "Locatie",
+          "stage": "Fase",
+          "allStatuses": "Alle statussen",
+          "allCompetitions": "Alle competities",
+          "allSeasons": "Alle seizoenen",
+          "allVenues": "Alle locaties",
+          "allStages": "Alle fases",
+          "clearFilters": "Filters wissen"
+        },
         "table": {
           "match": "Wedstrijd",
           "date": "Datum",

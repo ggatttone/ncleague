@@ -194,11 +194,12 @@ interface ClosePhaseDialogProps {
   onOpenChange: (open: boolean) => void;
   seasonId?: string;
   competitionId?: string;
+  currentPhaseKey?: string;
   currentPhaseName: string;
   standings: LeagueTableRow[] | null | undefined;
 }
 
-export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, currentPhaseName, standings }: ClosePhaseDialogProps) => {
+export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, currentPhaseKey, currentPhaseName, standings }: ClosePhaseDialogProps) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(0);
@@ -236,7 +237,7 @@ export const ClosePhaseDialog = ({ open, onOpenChange, seasonId, competitionId, 
     mutationFn: async (overrides: ManualOverrides) => {
       if (!seasonId) throw new Error("Season ID is required.");
       const { data, error } = await supabase.functions.invoke('tournament-phase-manager', {
-        body: { season_id: seasonId, phase_to_close: currentPhaseName, manual_overrides: overrides }
+        body: { season_id: seasonId, phase_to_close: currentPhaseKey ?? currentPhaseName, manual_overrides: overrides }
       });
       if (error) throw error;
       return data;

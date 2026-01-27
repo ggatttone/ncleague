@@ -35,6 +35,13 @@
     "postponed": "Postponed",
     "cancelled": "Cancelled"
   },
+  "matchStage": {
+    "regular_season": "Regular Season",
+    "quarter-final": "Quarter-final",
+    "semi-final": "Semi-final",
+    "third-place_playoff": "Third Place Playoff",
+    "final": "Final"
+  },
   "roles": {
     "admin": "Administrator",
     "editor": "Editor",
@@ -333,6 +340,18 @@
         },
         "liveStandings": {
           "title": "Live Standings"
+        },
+        "phaseCard": {
+          "matches": "matches",
+          "generateSchedule": "Generate Schedule",
+          "viewMatches": "View Matches",
+          "closePhase": "Close Phase"
+        },
+        "actionsPanel": {
+          "generateSchedule": "Next step: generate the schedule for {{phase}}",
+          "completeMatches": "{{count}} matches remaining in {{phase}}",
+          "startMatches": "Start playing matches in {{phase}}",
+          "allComplete": "All phases completed!"
         }
       },
       "index": {
@@ -498,6 +517,19 @@
         "deleteDialogDescription": "This action will permanently delete the match {{matchName}}.",
         "deleteSelectedDialogTitle": "Delete selected matches?",
         "deleteSelectedDialogDescription": "You are about to permanently delete {{count}} matches. This action cannot be undone.",
+        "filters": {
+          "status": "Status",
+          "competition": "Competition",
+          "season": "Season",
+          "venue": "Venue",
+          "stage": "Stage",
+          "allStatuses": "All statuses",
+          "allCompetitions": "All competitions",
+          "allSeasons": "All seasons",
+          "allVenues": "All venues",
+          "allStages": "All stages",
+          "clearFilters": "Clear filters"
+        },
         "table": {
           "match": "Match",
           "date": "Date",

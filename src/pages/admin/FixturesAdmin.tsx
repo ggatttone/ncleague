@@ -9,7 +9,14 @@ import { useTeams } from "@/hooks/use-teams";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, Plus, Edit, Trash2, Upload, ChevronDown, FileDown } from "lucide-react";
+import { Search, Loader2, Plus, Edit, Trash2, Upload, ChevronDown, FileDown, Filter, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import * as XLSX from "xlsx";
 import {
   AlertDialog,
@@ -44,6 +51,11 @@ const FixturesAdmin = () => {
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
   const [dialogState, setDialogState] = useState<{ open: boolean; type: 'status' | 'competition' | 'season' | 'venue' | 'referee' | null }>({ open: false, type: null });
   const [isExporting, setIsExporting] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterCompetition, setFilterCompetition] = useState<string>("all");
+  const [filterSeason, setFilterSeason] = useState<string>("all");
+  const [filterVenue, setFilterVenue] = useState<string>("all");
+  const [filterStage, setFilterStage] = useState<string>("all");
   const isMobile = useIsMobile();
   const { t } = useTranslation();
 
@@ -57,15 +69,36 @@ const FixturesAdmin = () => {
   const updateMultipleMutation = useUpdateMultipleMatches();
   const deleteMultipleMutation = useDeleteMultipleMatches();
 
+  const activeFilterCount = [filterStatus, filterCompetition, filterSeason, filterVenue, filterStage].filter(f => f !== "all").length;
+
+  const clearAllFilters = () => {
+    setFilterStatus("all");
+    setFilterCompetition("all");
+    setFilterSeason("all");
+    setFilterVenue("all");
+    setFilterStage("all");
+    setSearchTerm("");
+  };
+
   const filteredMatches = useMemo(() => {
-    if (!matches || !searchTerm) return matches;
-    
-    return matches.filter(match => 
-      match.home_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.away_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.venues?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [matches, searchTerm]);
+    if (!matches) return matches;
+
+    return matches.filter(match => {
+      if (searchTerm && !(
+        match.home_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        match.away_teams.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        match.venues?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )) return false;
+
+      if (filterStatus !== "all" && match.status !== filterStatus) return false;
+      if (filterCompetition !== "all" && match.competition_id !== filterCompetition) return false;
+      if (filterSeason !== "all" && match.season_id !== filterSeason) return false;
+      if (filterVenue !== "all" && match.venue_id !== filterVenue) return false;
+      if (filterStage !== "all" && match.stage !== filterStage) return false;
+
+      return true;
+    });
+  }, [matches, searchTerm, filterStatus, filterCompetition, filterSeason, filterVenue, filterStage]);
 
   const isAllSelected = filteredMatches && selectedMatches.length === filteredMatches.length && filteredMatches.length > 0;
 
@@ -265,10 +298,77 @@ const FixturesAdmin = () => {
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 space-y-3">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input placeholder={t('pages.admin.fixtures.searchPlaceholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[150px] h-9">
+                <SelectValue placeholder={t('pages.admin.fixtures.filters.status')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('pages.admin.fixtures.filters.allStatuses')}</SelectItem>
+                {statusOptions.map(opt => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterCompetition} onValueChange={setFilterCompetition}>
+              <SelectTrigger className="w-[170px] h-9">
+                <SelectValue placeholder={t('pages.admin.fixtures.filters.competition')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('pages.admin.fixtures.filters.allCompetitions')}</SelectItem>
+                {competitionOptions.map(opt => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterSeason} onValueChange={setFilterSeason}>
+              <SelectTrigger className="w-[150px] h-9">
+                <SelectValue placeholder={t('pages.admin.fixtures.filters.season')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('pages.admin.fixtures.filters.allSeasons')}</SelectItem>
+                {seasonOptions.map(opt => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterVenue} onValueChange={setFilterVenue}>
+              <SelectTrigger className="w-[150px] h-9">
+                <SelectValue placeholder={t('pages.admin.fixtures.filters.venue')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('pages.admin.fixtures.filters.allVenues')}</SelectItem>
+                {venueOptions.map(opt => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterStage} onValueChange={setFilterStage}>
+              <SelectTrigger className="w-[150px] h-9">
+                <SelectValue placeholder={t('pages.admin.fixtures.filters.stage')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('pages.admin.fixtures.filters.allStages')}</SelectItem>
+                <SelectItem value="regular_season">{t('matchStage.regular_season')}</SelectItem>
+                <SelectItem value="quarter-final">{t('matchStage.quarter-final')}</SelectItem>
+                <SelectItem value="semi-final">{t('matchStage.semi-final')}</SelectItem>
+                <SelectItem value="third-place_playoff">{t('matchStage.third-place_playoff')}</SelectItem>
+                <SelectItem value="final">{t('matchStage.final')}</SelectItem>
+              </SelectContent>
+            </Select>
+            {activeFilterCount > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-9 gap-1">
+                <X className="h-3 w-3" />
+                {t('pages.admin.fixtures.filters.clearFilters')}
+                <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">{activeFilterCount}</Badge>
+              </Button>
+            )}
           </div>
         </div>
 
