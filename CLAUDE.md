@@ -134,6 +134,26 @@ npm run preview  # Preview build produzione
 
 ---
 
+## Flusso Gestione Torneo
+
+Il sistema di gestione torneo segue questo flusso:
+
+1. **Creazione Stagione** (`/admin/seasons/wizard`)
+   - Wizard 4 step con salvataggio bozza automatico
+   - Componenti in `src/components/admin/season-wizard/`
+
+2. **Generazione Calendario** (`/admin/schedule-generator`)
+   - Auto-select stagione e fase
+   - Preset scheduling (weekend, infrasettimanali)
+
+3. **Dashboard Torneo** (`/admin/tournament-dashboard`)
+   - PhaseCard interattive
+   - Chiusura fase e avanzamento
+
+Per dettagli tecnici: `docs/dev/TOURNAMENT_ARCHITECTURE.md`
+
+---
+
 ## Database (Supabase)
 
 Entità principali:
