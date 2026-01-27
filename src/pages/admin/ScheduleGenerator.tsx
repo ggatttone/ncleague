@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,6 +75,7 @@ const ScheduleGenerator = () => {
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
       season_id: searchParams.get("season") || undefined,
+      stage: searchParams.get("phase") || "",
       allowedDays: [],
       venueIds: [],
       includeReturnGames: true,
@@ -102,18 +103,26 @@ const ScheduleGenerator = () => {
   const { phaseStatusMap } = useSeasonPhaseStatus(selectedSeasonId);
 
   // Reset stage when season changes, auto-select first pending phase
+  // Skip reset if phase was provided via URL params
+  const lastAutoSelectedSeasonRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (selectedSeasonId) {
-      setValue("stage", "");
-      // Auto-select first pending/unscheduled phase after data loads
-      const firstPending = availableStages.find(
-        phase => !phaseStatusMap.get(phase.id) || phaseStatusMap.get(phase.id)?.status === 'pending'
-      );
-      if (firstPending) {
-        setValue("stage", firstPending.id);
-      }
+    if (!selectedSeasonId) return;
+    if (lastAutoSelectedSeasonRef.current === selectedSeasonId) return;
+    if (availableStages.length === 0) return;
+
+    const phaseFromUrl = searchParams.get("phase");
+    if (phaseFromUrl) {
+      lastAutoSelectedSeasonRef.current = selectedSeasonId;
+      return;
     }
-  }, [selectedSeasonId, setValue, availableStages, phaseStatusMap]);
+
+    lastAutoSelectedSeasonRef.current = selectedSeasonId;
+    const firstPending = availableStages.find(
+      phase => !phaseStatusMap.get(phase.id) || phaseStatusMap.get(phase.id)?.status === 'pending'
+    );
+    setValue("stage", firstPending?.id || "");
+  }, [selectedSeasonId, setValue, availableStages, phaseStatusMap, searchParams]);
 
   const generatePreviewMutation = useMutation({
     mutationFn: async (formData: ScheduleFormData) => {
