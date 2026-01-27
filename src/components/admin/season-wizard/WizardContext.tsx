@@ -111,6 +111,10 @@ export function WizardProvider({ children }: WizardProviderProps) {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingSaveRef = useRef(false);
 
+  // Ref to avoid stale currentStep in closures
+  const currentStepRef = useRef(currentStep);
+  useEffect(() => { currentStepRef.current = currentStep; }, [currentStep]);
+
   // Load existing draft data (for resuming drafts)
   useEffect(() => {
     if (existingDraft) {
@@ -213,10 +217,10 @@ export function WizardProvider({ children }: WizardProviderProps) {
   const setStepData = useCallback(<K extends WizardStepKey>(step: K, data: SeasonDraftData[K]) => {
     setFormData(prev => {
       const updated = { ...prev, [step]: data };
-      debouncedSave(updated, currentStep);
+      debouncedSave(updated, currentStepRef.current);
       return updated;
     });
-  }, [currentStep, debouncedSave]);
+  }, [debouncedSave]);
 
   const nextStep = useCallback(async () => {
     // Cancel pending debounced save
@@ -224,8 +228,19 @@ export function WizardProvider({ children }: WizardProviderProps) {
       clearTimeout(saveTimeoutRef.current);
     }
 
+    // Mark current step as completed
+    const stepKey = WIZARD_STEPS[currentStep].key;
+    const updatedData = {
+      ...formData,
+      completedSteps: formData.completedSteps.includes(stepKey)
+        ? formData.completedSteps
+        : [...formData.completedSteps, stepKey],
+      lastModified: new Date().toISOString(),
+    };
+    setFormData(updatedData);
+
     // Save immediately on step change
-    await saveDraft(formData, currentStep + 1);
+    await saveDraft(updatedData, currentStep + 1);
     setCurrentStep(prev => Math.min(prev + 1, WIZARD_STEPS.length - 1));
   }, [formData, currentStep, saveDraft]);
 
@@ -321,7 +336,7 @@ export function WizardProvider({ children }: WizardProviderProps) {
       setCreatedSeason(resultSeason);
 
       // Navigate to success screen
-      navigate(`/admin/seasons/wizard/success/${resultSeason.id}`, { replace: true });
+      navigate(`/admin/seasons/wizard/success/${resultSeason.id}${seasonIdToUpdate ? '?mode=edit' : ''}`, { replace: true });
     } catch (error) {
       console.error("Failed to save season:", error);
       showError(existingDraft?.season_id ? "Errore nell'aggiornamento della stagione" : "Errore nella creazione della stagione");

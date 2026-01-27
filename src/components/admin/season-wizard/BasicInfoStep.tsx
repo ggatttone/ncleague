@@ -42,29 +42,30 @@ export function BasicInfoStep() {
     reset(formData.basicInfo);
   }, [formData.basicInfo, reset]);
 
-  // Update context on field changes
-  const watchedFields = watch();
+  // Update context on field changes via subscription
   useEffect(() => {
-    // Skip if we just synced from context
-    if (skipNextWatchUpdate.current) {
-      skipNextWatchUpdate.current = false;
-      return;
-    }
+    const subscription = watch((value, { name }) => {
+      if (!name) return; // skip reset events
+      if (skipNextWatchUpdate.current) {
+        skipNextWatchUpdate.current = false;
+        return;
+      }
 
-    const { name, start_date, end_date } = watchedFields;
-    // Only update if values actually changed
-    if (
-      name !== formData.basicInfo.name ||
-      start_date !== formData.basicInfo.start_date ||
-      end_date !== formData.basicInfo.end_date
-    ) {
-      setStepData("basicInfo", {
-        name: name || "",
-        start_date: start_date || "",
-        end_date: end_date || "",
-      });
-    }
-  }, [watchedFields, formData.basicInfo, setStepData]);
+      const { name: n, start_date, end_date } = value;
+      if (
+        n !== formData.basicInfo.name ||
+        (start_date || "") !== formData.basicInfo.start_date ||
+        (end_date || "") !== formData.basicInfo.end_date
+      ) {
+        setStepData("basicInfo", {
+          name: n || "",
+          start_date: start_date || "",
+          end_date: end_date || "",
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, formData.basicInfo, setStepData]);
 
   const onSubmit = async () => {
     await nextStep();

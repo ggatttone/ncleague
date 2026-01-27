@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ import { it } from "date-fns/locale";
 export function SuccessScreen() {
   const navigate = useNavigate();
   const { seasonId } = useParams<{ seasonId: string }>();
+  const [searchParams] = useSearchParams();
+  const isEditMode = searchParams.get('mode') === 'edit';
   const { data: season, isLoading } = useSeason(seasonId);
 
   const formatDate = (dateStr?: string) => {
@@ -60,9 +62,9 @@ export function SuccessScreen() {
             <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400 animate-[fade-in_0.6s_ease-out]" />
           </div>
         </div>
-        <CardTitle className="text-2xl">Stagione Creata con Successo!</CardTitle>
+        <CardTitle className="text-2xl">{isEditMode ? "Stagione Aggiornata!" : "Stagione Creata con Successo!"}</CardTitle>
         <CardDescription>
-          La nuova stagione è pronta per essere configurata
+          {isEditMode ? "Le modifiche sono state salvate" : "La nuova stagione è pronta per essere configurata"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -70,7 +72,7 @@ export function SuccessScreen() {
         <div className="rounded-lg border p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-lg font-semibold">{season.name}</span>
-            <Badge variant="secondary">Nuova</Badge>
+            <Badge variant="secondary">{isEditMode ? "Aggiornata" : "Nuova"}</Badge>
           </div>
           <Separator />
           <div className="grid gap-2 text-sm">
