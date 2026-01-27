@@ -56,8 +56,8 @@ export function SuccessScreen() {
     <Card className="max-w-2xl mx-auto">
       <CardHeader className="text-center pb-2">
         <div className="flex justify-center mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 animate-[scale-in_0.4s_ease-out]">
+            <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400 animate-[fade-in_0.6s_ease-out]" />
           </div>
         </div>
         <CardTitle className="text-2xl">Stagione Creata con Successo!</CardTitle>
@@ -85,39 +85,26 @@ export function SuccessScreen() {
           </div>
         </div>
 
-        {/* Next Steps */}
-        <div className="space-y-3">
-          <h3 className="font-medium">Prossimi Passi</h3>
-          <div className="grid gap-2">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <Calendar className="h-5 w-5 text-primary mt-0.5" />
-              <div className="flex-1">
-                <p className="font-medium text-primary">Genera il Calendario</p>
-                <p className="text-sm text-muted-foreground">
-                  Crea automaticamente le partite per questa stagione
-                </p>
-              </div>
-              <Button asChild size="sm">
-                <Link to={`/admin/schedule-generator?season=${season.id}`}>
-                  Genera
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+        {/* Primary CTA - Genera Calendario */}
+        <Button asChild size="lg" className="w-full text-base py-6">
+          <Link to={`/admin/schedule-generator?season=${season.id}`}>
+            <Calendar className="mr-2 h-5 w-5" />
+            Genera Calendario
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Link>
+        </Button>
 
         <Separator />
 
-        {/* Action Buttons */}
+        {/* Secondary Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <Button
             variant="outline"
             className="flex-1"
-            onClick={() => navigate("/admin/seasons")}
+            onClick={() => navigate(`/admin/tournament-dashboard?season=${season.id}`)}
           >
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            Vai alle Stagioni
+            Vai al Dashboard
           </Button>
           <Button
             variant="outline"
