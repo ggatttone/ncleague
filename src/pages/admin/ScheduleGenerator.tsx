@@ -19,10 +19,13 @@ import { supabase } from "@/lib/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getSchedulablePhases } from "@/lib/tournament/handler-registry";
 import type { TournamentHandlerKey, PhaseConfig } from "@/types/tournament-handlers";
+import { useSeasonPhaseStatus } from "@/hooks/use-season-phase-status";
+import { PhaseStatusBadge } from "@/components/admin/schedule-generator/PhaseStatusBadge";
+import { SchedulePresets } from "@/components/admin/schedule-generator/SchedulePresets";
 
 // Import handler to register phases
 import "@/lib/tournament/handlers/league-only";
@@ -49,6 +52,7 @@ const DEFAULT_PHASES: PhaseConfig[] = [
 
 const ScheduleGenerator = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [preview, setPreview] = useState<any[] | null>(null);
   const { t } = useTranslation();
@@ -70,6 +74,7 @@ const ScheduleGenerator = () => {
   const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<ScheduleFormData>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
+      season_id: searchParams.get("season") || undefined,
       allowedDays: [],
       venueIds: [],
       includeReturnGames: true,
@@ -93,12 +98,22 @@ const ScheduleGenerator = () => {
     return DEFAULT_PHASES;
   }, [seasonWithMode]);
 
-  // Reset stage when season changes
+  // Phase status for badge display and auto-select
+  const { phaseStatusMap } = useSeasonPhaseStatus(selectedSeasonId);
+
+  // Reset stage when season changes, auto-select first pending phase
   useEffect(() => {
     if (selectedSeasonId) {
       setValue("stage", "");
+      // Auto-select first pending/unscheduled phase after data loads
+      const firstPending = availableStages.find(
+        phase => !phaseStatusMap.get(phase.id) || phaseStatusMap.get(phase.id)?.status === 'pending'
+      );
+      if (firstPending) {
+        setValue("stage", firstPending.id);
+      }
     }
-  }, [selectedSeasonId, setValue]);
+  }, [selectedSeasonId, setValue, availableStages, phaseStatusMap]);
 
   const generatePreviewMutation = useMutation({
     mutationFn: async (formData: ScheduleFormData) => {
@@ -119,12 +134,24 @@ const ScheduleGenerator = () => {
           }
         }
       });
-      if (error) throw error;
-      return data;
+      if (error) {
+        // Extract actual error message from Edge Function response
+        let msg = error.message;
+        try {
+          if (error.context && typeof error.context.json === 'function') {
+            const body = await error.context.json();
+            msg = body?.error || msg;
+          }
+        } catch { /* ignore parse errors */ }
+        throw new Error(msg);
+      }
+      // Edge function returns { success, matches, total_matches, ... }
+      const matches = data?.matches ?? data;
+      return matches;
     },
     onSuccess: (data) => {
       setPreview(data);
-      showSuccess(t('admin.scheduleGenerator.previewSuccess', { count: data.length }));
+      showSuccess(t('pages.admin.scheduleGenerator.previewSuccess', { count: data?.length ?? 0 }));
     },
     onError: (err: any) => showError(`Errore: ${err.message}`),
   });
@@ -138,7 +165,7 @@ const ScheduleGenerator = () => {
       return data;
     },
     onSuccess: () => {
-      showSuccess(t('admin.scheduleGenerator.saveSuccess'));
+      showSuccess(t('pages.admin.scheduleGenerator.saveSuccess'));
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       navigate('/admin/fixtures');
     },
@@ -151,14 +178,14 @@ const ScheduleGenerator = () => {
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">{t('admin.scheduleGenerator.title')}</h1>
+        <h1 className="text-2xl font-bold">{t('pages.admin.scheduleGenerator.title')}</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>{t('admin.scheduleGenerator.step1Title')}</CardTitle>
-            <CardDescription>{t('admin.scheduleGenerator.step1Description')}</CardDescription>
+            <CardTitle>{t('pages.admin.scheduleGenerator.step1Title')}</CardTitle>
+            <CardDescription>{t('pages.admin.scheduleGenerator.step1Description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit((data) => generatePreviewMutation.mutate(data))} className="space-y-4">
@@ -167,7 +194,7 @@ const ScheduleGenerator = () => {
                 <Label>{t('common.season')}</Label>
                 <Controller name="season_id" control={control} render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value} disabled={seasonsLoading}>
-                    <SelectTrigger><SelectValue placeholder={t('admin.scheduleGenerator.selectSeason')} /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('pages.admin.scheduleGenerator.selectSeason')} /></SelectTrigger>
                     <SelectContent>{seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                   </Select>
                 )} />
@@ -184,21 +211,28 @@ const ScheduleGenerator = () => {
                     disabled={!selectedSeasonId || seasonModeLoading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('admin.scheduleGenerator.selectStage')} />
+                      <SelectValue placeholder={t('pages.admin.scheduleGenerator.selectStage')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {availableStages.map(phase => (
-                        <SelectItem key={phase.id} value={phase.id}>
-                          {t(phase.nameKey, { defaultValue: phase.id })}
-                        </SelectItem>
-                      ))}
+                      {availableStages.map(phase => {
+                        const ps = phaseStatusMap.get(phase.id);
+                        const isCompleted = ps?.status === 'completed';
+                        return (
+                          <SelectItem key={phase.id} value={phase.id} disabled={isCompleted}>
+                            <span className="flex items-center gap-2">
+                              {t(phase.nameKey, { defaultValue: phase.id })}
+                              {ps && <PhaseStatusBadge status={ps.status} totalMatches={ps.totalMatches} completedMatches={ps.completedMatches} />}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 )} />
                 {errors.stage && <p className="text-sm text-destructive">{errors.stage.message}</p>}
                 {seasonWithMode?.tournament_modes && (
                   <p className="text-xs text-muted-foreground">
-                    {t('admin.scheduleGenerator.tournamentMode')}: {seasonWithMode.tournament_modes.name}
+                    {t('pages.admin.scheduleGenerator.tournamentMode')}: {seasonWithMode.tournament_modes.name}
                   </p>
                 )}
               </div>
@@ -215,9 +249,15 @@ const ScheduleGenerator = () => {
                 </div>
               </div>
 
+              {/* Presets */}
+              <SchedulePresets onApply={(days, times) => {
+                setValue('allowedDays', days);
+                setValue('timeSlots', times);
+              }} />
+
               {/* Days */}
               <div>
-                <Label>{t('admin.scheduleGenerator.allowedDays')}</Label>
+                <Label>{t('pages.admin.scheduleGenerator.allowedDays')}</Label>
                 <Controller name="allowedDays" control={control} render={({ field }) => (
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {daysOfWeek.map(day => (
@@ -241,11 +281,11 @@ const ScheduleGenerator = () => {
 
               {/* Times and Venues */}
               <div>
-                <Label htmlFor="timeSlots">{t('admin.scheduleGenerator.timeSlots')}</Label>
+                <Label htmlFor="timeSlots">{t('pages.admin.scheduleGenerator.timeSlots')}</Label>
                 <Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" />
               </div>
               <div>
-                <Label>{t('admin.scheduleGenerator.venues')}</Label>
+                <Label>{t('pages.admin.scheduleGenerator.venues')}</Label>
                 <Controller name="venueIds" control={control} render={({ field }) => (
                   <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
                     {venues?.map(venue => (
@@ -270,11 +310,11 @@ const ScheduleGenerator = () => {
                 <Controller name="includeReturnGames" control={control} render={({ field }) => (
                   <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
                 )} />
-                <Label htmlFor="includeReturnGames">{t('admin.scheduleGenerator.includeReturnGames')}</Label>
+                <Label htmlFor="includeReturnGames">{t('pages.admin.scheduleGenerator.includeReturnGames')}</Label>
               </div>
               <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
                 {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Wand2 className="mr-2 h-4 w-4" /> {t('admin.scheduleGenerator.generatePreview')}
+                <Wand2 className="mr-2 h-4 w-4" /> {t('pages.admin.scheduleGenerator.generatePreview')}
               </Button>
             </form>
           </CardContent>
@@ -282,15 +322,15 @@ const ScheduleGenerator = () => {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>{t('admin.scheduleGenerator.step2Title')}</CardTitle>
-            <CardDescription>{t('admin.scheduleGenerator.step2Description')}</CardDescription>
+            <CardTitle>{t('pages.admin.scheduleGenerator.step2Title')}</CardTitle>
+            <CardDescription>{t('pages.admin.scheduleGenerator.step2Description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {generatePreviewMutation.isPending && <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>}
             {!preview && !generatePreviewMutation.isPending && (
               <div className="text-center py-12 text-muted-foreground">
                 <Calendar className="mx-auto h-12 w-12 mb-4" />
-                <p>{t('admin.scheduleGenerator.previewPlaceholder')}</p>
+                <p>{t('pages.admin.scheduleGenerator.previewPlaceholder')}</p>
               </div>
             )}
             {preview && (
@@ -319,7 +359,7 @@ const ScheduleGenerator = () => {
                 </div>
                 <Button onClick={() => saveScheduleMutation.mutate(preview)} className="w-full mt-4" disabled={saveScheduleMutation.isPending}>
                   {saveScheduleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t('admin.scheduleGenerator.confirmSave')}
+                  {t('pages.admin.scheduleGenerator.confirmSave')}
                 </Button>
               </>
             )}

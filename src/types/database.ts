@@ -10,6 +10,7 @@ export interface Competition {
 export interface Season {
   id: string;
   name: string;
+  competition_id?: string | null;
   start_date?: string;
   end_date?: string;
   created_at: string;

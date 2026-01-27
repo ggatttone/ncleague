@@ -379,7 +379,19 @@
         "previewPlaceholder": "Schedule preview will appear here.",
         "previewSuccess": "Preview of {{count}} matches generated successfully!",
         "confirmSave": "Confirm and Save Schedule",
-        "saveSuccess": "Schedule saved successfully!"
+        "saveSuccess": "Schedule saved successfully!",
+        "phaseStatus": {
+          "pending": "Pending",
+          "scheduled": "Scheduled",
+          "in_progress": "In progress",
+          "completed": "Completed"
+        },
+        "presets": {
+          "title": "Quick presets",
+          "weekend": "Weekend",
+          "weeknight": "Weeknights",
+          "allDays": "All days"
+        }
       },
       "teams": {
         "title": "Manage Teams",
@@ -901,7 +913,15 @@
     "selectCompetition": "Select Competition",
     "selectSeason": "Select Season",
     "noTeam": "No team",
-    "noParish": "No parish"
+    "noParish": "No parish",
+    "season": "Season",
+    "phase": "Phase",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "date": "Date",
+    "home": "Home",
+    "away": "Away",
+    "venue": "Venue"
   },
   "validation": {
     "nameRequired": "Name is required",

@@ -409,7 +409,19 @@
         "previewPlaceholder": "L'anteprima del calendario apparirà qui.",
         "previewSuccess": "Anteprima di {{count}} partite generata con successo!",
         "confirmSave": "Conferma e Salva Calendario",
-        "saveSuccess": "Calendario salvato con successo!"
+        "saveSuccess": "Calendario salvato con successo!",
+        "phaseStatus": {
+          "pending": "In attesa",
+          "scheduled": "Programmato",
+          "in_progress": "In corso",
+          "completed": "Completato"
+        },
+        "presets": {
+          "title": "Preset rapidi",
+          "weekend": "Weekend",
+          "weeknight": "Infrasettimanali",
+          "allDays": "Tutti i giorni"
+        }
       },
       "teams": {
         "title": "Gestione Squadre",
@@ -931,7 +943,15 @@
     "selectCompetition": "Seleziona Competizione",
     "selectSeason": "Seleziona Stagione",
     "noTeam": "Nessuna squadra",
-    "noParish": "Nessuna parrocchia"
+    "noParish": "Nessuna parrocchia",
+    "season": "Stagione",
+    "phase": "Fase",
+    "startDate": "Data inizio",
+    "endDate": "Data fine",
+    "date": "Data",
+    "home": "Casa",
+    "away": "Trasferta",
+    "venue": "Campo"
   },
   "validation": {
     "nameRequired": "Il nome è obbligatorio",

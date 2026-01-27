@@ -364,7 +364,19 @@
         "previewPlaceholder": "Het voorbeeld van de planning verschijnt hier.",
         "previewSuccess": "Voorbeeld van {{count}} wedstrijden succesvol gegenereerd!",
         "confirmSave": "Bevestigen en Planning Opslaan",
-        "saveSuccess": "Planning succesvol opgeslagen!"
+        "saveSuccess": "Planning succesvol opgeslagen!",
+        "phaseStatus": {
+          "pending": "In afwachting",
+          "scheduled": "Gepland",
+          "in_progress": "Bezig",
+          "completed": "Voltooid"
+        },
+        "presets": {
+          "title": "Snelle presets",
+          "weekend": "Weekend",
+          "weeknight": "Doordeweeks",
+          "allDays": "Alle dagen"
+        }
       },
       "teams": {
         "title": "Beheer Teams",
@@ -886,7 +898,15 @@
     "selectCompetition": "Selecteer Competitie",
     "selectSeason": "Selecteer Seizoen",
     "noTeam": "Geen team",
-    "noParish": "Geen parochie"
+    "noParish": "Geen parochie",
+    "season": "Seizoen",
+    "phase": "Fase",
+    "startDate": "Startdatum",
+    "endDate": "Einddatum",
+    "date": "Datum",
+    "home": "Thuis",
+    "away": "Uit",
+    "venue": "Locatie"
   },
   "validation": {
     "nameRequired": "Naam is verplicht",

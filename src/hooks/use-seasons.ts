@@ -4,6 +4,7 @@ import { Season } from '@/types/database';
 
 export interface CreateSeasonData {
   name: string;
+  competition_id?: string | null;
   start_date?: string;
   end_date?: string;
   tournament_mode_id?: string | null;
