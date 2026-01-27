@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   ArrowLeft,
   Check,
@@ -21,9 +23,10 @@ import {
 } from "lucide-react";
 import { useTeams } from "@/hooks/use-teams";
 import { useTournamentModes } from "@/hooks/use-tournament-modes";
+import { useSeasonMatches } from "@/hooks/use-matches";
 import { getHandlerPhases, isValidHandlerKey } from "@/lib/tournament/handler-registry";
 import { TournamentHandlerKey } from "@/types/tournament-handlers";
-import { useWizard } from "./WizardContext";
+import { useWizard, MatchAction } from "./WizardContext";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 
@@ -34,11 +37,27 @@ interface Warning {
 
 export function ConfirmStep() {
   const { t } = useTranslation();
-  const { formData, prevStep, saveAndExit, publishDraft, isSaving, isPublishing } = useWizard();
+  const {
+    formData,
+    prevStep,
+    saveAndExit,
+    publishDraft,
+    isSaving,
+    isPublishing,
+    isEditMode,
+    editingSeasonId,
+    matchAction,
+    setMatchAction,
+  } = useWizard();
   const { data: teams } = useTeams();
   const { data: tournamentModes } = useTournamentModes();
+  const { data: seasonMatches } = useSeasonMatches(editingSeasonId || undefined);
 
   const [teamsOpen, setTeamsOpen] = useState(false);
+
+  // Check if season has matches (for edit mode warning)
+  const hasMatches = isEditMode && seasonMatches && seasonMatches.length > 0;
+  const matchCount = seasonMatches?.length || 0;
 
   // Get selected teams
   const selectedTeams = useMemo(() => {
@@ -253,6 +272,40 @@ export function ConfirmStep() {
             </div>
           </div>
 
+          {/* Matches Warning (Edit Mode) */}
+          {hasMatches && (
+            <Alert className="bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertTitle className="text-amber-800 dark:text-amber-200">
+                Partite esistenti
+              </AlertTitle>
+              <AlertDescription className="mt-2 space-y-3">
+                <p className="text-amber-700 dark:text-amber-300">
+                  Questa stagione ha <strong>{matchCount}</strong> partite schedulate.
+                  Scegli come procedere:
+                </p>
+                <RadioGroup
+                  value={matchAction}
+                  onValueChange={(value) => setMatchAction(value as MatchAction)}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="keep" id="keep-matches" />
+                    <Label htmlFor="keep-matches" className="cursor-pointer">
+                      Mantieni le partite esistenti
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="delete" id="delete-matches" />
+                    <Label htmlFor="delete-matches" className="cursor-pointer text-destructive">
+                      Elimina tutte le partite
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Warnings */}
           {warnings.length > 0 && (
             <div className="space-y-2">
@@ -300,7 +353,7 @@ export function ConfirmStep() {
                 ) : (
                   <Check className="mr-2 h-4 w-4" />
                 )}
-                Crea Stagione
+                {isEditMode ? "Salva Modifiche" : "Crea Stagione"}
               </Button>
             </div>
           </div>

@@ -172,7 +172,7 @@ const App = () => (
                         <Route path="seasons/wizard" element={<SeasonWizard />} />
                         <Route path="seasons/wizard/:draftId" element={<SeasonWizard />} />
                         <Route path="seasons/wizard/success/:seasonId" element={<SeasonWizardSuccess />} />
-                        <Route path="seasons/:id/edit" element={<SeasonFormAdmin />} />
+                        <Route path="seasons/:seasonId/edit" element={<SeasonWizard />} />
                         <Route path="tournament-modes" element={<TournamentModesAdmin />} />
                         <Route path="tournament-modes/new" element={<TournamentModeFormAdmin />} />
                         <Route path="tournament-modes/:id/edit" element={<TournamentModeFormAdmin />} />

@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useSeasonDraft, useCreateDraft, useUpdateDraft, useDeleteDraft } from "@/hooks/use-season-drafts";
-import { useCreateSeason } from "@/hooks/use-seasons";
-import { useCreateTournamentMode, useUpdateTournamentMode } from "@/hooks/use-tournament-modes";
+import { useSeason, useCreateSeason, useUpdateSeason } from "@/hooks/use-seasons";
+import { useDeleteMultipleMatches } from "@/hooks/use-matches";
+import { supabase } from "@/lib/supabase/client";
 import { SeasonDraftData, Season } from "@/types/database";
 import { showSuccess, showError } from "@/utils/toast";
+
+export type MatchAction = "keep" | "delete";
 
 export const WIZARD_STEPS = [
   { key: "basicInfo", label: "Informazioni" },
@@ -32,12 +35,19 @@ interface WizardContextValue {
   isLoading: boolean;
   isPublishing: boolean;
   createdSeason: Season | null;
+  // Edit mode properties
+  isEditMode: boolean;
+  editingSeasonId: string | null;
+  editingSeasonName: string | null;
+  matchAction: MatchAction;
+  setMatchAction: (action: MatchAction) => void;
   setStepData: <K extends WizardStepKey>(step: K, data: SeasonDraftData[K]) => void;
   nextStep: () => Promise<void>;
   prevStep: () => void;
   saveAndExit: () => Promise<void>;
   goToStep: (step: number) => void;
   publishDraft: () => Promise<void>;
+  discardDraft: () => Promise<void>;
 }
 
 const WizardContext = createContext<WizardContextValue | null>(null);
@@ -56,29 +66,52 @@ interface WizardProviderProps {
 
 export function WizardProvider({ children }: WizardProviderProps) {
   const navigate = useNavigate();
-  const { draftId: urlDraftId } = useParams<{ draftId?: string }>();
+  const location = useLocation();
+  const { draftId: urlDraftId, seasonId: urlSeasonId } = useParams<{ draftId?: string; seasonId?: string }>();
+
+  // Edit mode detection - check URL or existing draft's season_id
+  // We need to check multiple sources because after creating an edit draft,
+  // we navigate to /wizard/:draftId which no longer contains /edit in the URL
+  const isEditRouteUrl = location.pathname.includes('/edit');
+  const editingSeasonIdFromUrl = isEditRouteUrl ? urlSeasonId || null : null;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [draftId, setDraftId] = useState<string | null>(urlDraftId || null);
   const [formData, setFormData] = useState<SeasonDraftData>(getEmptyDraftData());
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [matchAction, setMatchAction] = useState<MatchAction>("keep");
+  const [editDraftCreated, setEditDraftCreated] = useState(false);
 
   const { data: existingDraft, isLoading: draftLoading } = useSeasonDraft(draftId || undefined);
+  const { data: existingSeason, isLoading: seasonLoading } = useSeason(editingSeasonIdFromUrl || undefined);
   const createDraft = useCreateDraft();
   const updateDraft = useUpdateDraft();
   const deleteDraft = useDeleteDraft();
   const createSeason = useCreateSeason();
+  const updateSeason = useUpdateSeason();
+  const deleteMatches = useDeleteMultipleMatches();
 
   const [isPublishing, setIsPublishing] = useState(false);
   const [createdSeason, setCreatedSeason] = useState<Season | null>(null);
 
+  // isEditMode is true if:
+  // 1. We're on the /edit URL route, OR
+  // 2. We created an edit draft (editDraftCreated), OR
+  // 3. The loaded draft has a season_id (it's associated with an existing season)
+  const isEditMode = isEditRouteUrl || editDraftCreated || !!existingDraft?.season_id;
+  const editingSeasonId = editingSeasonIdFromUrl || existingDraft?.season_id || null;
+
   const isSaving = createDraft.isPending || updateDraft.isPending;
+  const isLoading = draftLoading || (isEditRouteUrl && seasonLoading && !editDraftCreated);
+
+  // Get the name of the season being edited (from URL-loaded season or from draft name)
+  const editingSeasonName = existingSeason?.name || (isEditMode ? formData.basicInfo.name : null);
 
   // Debounce timer ref
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingSaveRef = useRef(false);
 
-  // Load existing draft data
+  // Load existing draft data (for resuming drafts)
   useEffect(() => {
     if (existingDraft) {
       setFormData(existingDraft.draft_data);
@@ -86,6 +119,47 @@ export function WizardProvider({ children }: WizardProviderProps) {
       setLastSaved(new Date(existingDraft.updated_at));
     }
   }, [existingDraft]);
+
+  // In edit mode, create a draft from the existing season data
+  useEffect(() => {
+    if (isEditMode && existingSeason && !draftId && !editDraftCreated) {
+      const seasonDraftData: SeasonDraftData = {
+        basicInfo: {
+          name: existingSeason.name,
+          start_date: existingSeason.start_date || "",
+          end_date: existingSeason.end_date || "",
+        },
+        teams: {
+          team_ids: existingSeason.teams?.map(t => t.id) || [],
+        },
+        tournament: {
+          tournament_mode_id: existingSeason.tournament_mode_id || "",
+          use_custom_settings: false,
+        },
+        completedSteps: ["basicInfo", "teams", "tournament"],
+        lastModified: new Date().toISOString(),
+      };
+
+      setFormData(seasonDraftData);
+      setEditDraftCreated(true);
+
+      // Create draft in background
+      createDraft.mutateAsync({
+        name: existingSeason.name,
+        current_step: 1,
+        draft_data: seasonDraftData,
+        season_id: existingSeason.id,
+      }).then(result => {
+        setDraftId(result.id);
+        setLastSaved(new Date());
+        // Update URL with draft ID
+        navigate(`/admin/seasons/wizard/${result.id}`, { replace: true });
+      }).catch(error => {
+        console.error("Failed to create edit draft:", error);
+        showError("Errore nella creazione della bozza");
+      });
+    }
+  }, [isEditMode, existingSeason, draftId, editDraftCreated, createDraft, navigate]);
 
   // Auto-save function
   const saveDraft = useCallback(async (data: SeasonDraftData, step: number) => {
@@ -189,39 +263,91 @@ export function WizardProvider({ children }: WizardProviderProps) {
     setIsPublishing(true);
 
     try {
-      // 1. Create the season
-      const newSeason = await createSeason.mutateAsync({
-        name: formData.basicInfo.name,
-        start_date: formData.basicInfo.start_date || undefined,
-        end_date: formData.basicInfo.end_date || undefined,
-        tournament_mode_id: formData.tournament.tournament_mode_id || undefined,
-        team_ids: formData.teams.team_ids,
-      });
+      let resultSeason: Season;
 
-      // 2. Delete the draft if it exists
+      // Get the season_id from the draft (for edit mode)
+      const seasonIdToUpdate = existingDraft?.season_id;
+
+      if (seasonIdToUpdate) {
+        // EDIT MODE: Update existing season
+
+        // 1. If matchAction is "delete", delete all matches for this season
+        if (matchAction === "delete") {
+          const { data: matchIds } = await supabase
+            .from('matches')
+            .select('id')
+            .eq('season_id', seasonIdToUpdate);
+
+          if (matchIds && matchIds.length > 0) {
+            await deleteMatches.mutateAsync(matchIds.map(m => m.id));
+          }
+        }
+
+        // 2. Update the season
+        resultSeason = await updateSeason.mutateAsync({
+          id: seasonIdToUpdate,
+          name: formData.basicInfo.name,
+          start_date: formData.basicInfo.start_date || undefined,
+          end_date: formData.basicInfo.end_date || undefined,
+          tournament_mode_id: formData.tournament.tournament_mode_id || undefined,
+          team_ids: formData.teams.team_ids,
+        });
+
+        showSuccess("Stagione aggiornata con successo!");
+      } else {
+        // CREATE MODE: Create new season
+        resultSeason = await createSeason.mutateAsync({
+          name: formData.basicInfo.name,
+          start_date: formData.basicInfo.start_date || undefined,
+          end_date: formData.basicInfo.end_date || undefined,
+          tournament_mode_id: formData.tournament.tournament_mode_id || undefined,
+          team_ids: formData.teams.team_ids,
+        });
+
+        showSuccess("Stagione creata con successo!");
+      }
+
+      // Delete the draft if it exists
       if (draftId) {
         try {
           await deleteDraft.mutateAsync(draftId);
         } catch (deleteError) {
-          // Log but don't fail - the season was created successfully
+          // Log but don't fail - the season was created/updated successfully
           console.warn("Failed to delete draft:", deleteError);
         }
       }
 
-      // 3. Set created season for success screen
-      setCreatedSeason(newSeason);
+      // Set created season for success screen
+      setCreatedSeason(resultSeason);
 
-      showSuccess("Stagione creata con successo!");
-
-      // 4. Navigate to success screen
-      navigate(`/admin/seasons/wizard/success/${newSeason.id}`, { replace: true });
+      // Navigate to success screen
+      navigate(`/admin/seasons/wizard/success/${resultSeason.id}`, { replace: true });
     } catch (error) {
-      console.error("Failed to create season:", error);
-      showError("Errore nella creazione della stagione");
+      console.error("Failed to save season:", error);
+      showError(existingDraft?.season_id ? "Errore nell'aggiornamento della stagione" : "Errore nella creazione della stagione");
     } finally {
       setIsPublishing(false);
     }
-  }, [formData, draftId, createSeason, deleteDraft, navigate]);
+  }, [formData, draftId, existingDraft?.season_id, matchAction, createSeason, updateSeason, deleteDraft, deleteMatches, navigate]);
+
+  const discardDraft = useCallback(async () => {
+    // Cancel pending debounced save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    try {
+      // Delete the draft if it exists
+      if (draftId) {
+        await deleteDraft.mutateAsync(draftId);
+      }
+      navigate("/admin/seasons");
+    } catch (error) {
+      console.error("Failed to discard draft:", error);
+      // Navigate anyway - draft deletion is not critical
+      navigate("/admin/seasons");
+    }
+  }, [draftId, deleteDraft, navigate]);
 
   const value: WizardContextValue = {
     currentStep,
@@ -229,15 +355,22 @@ export function WizardProvider({ children }: WizardProviderProps) {
     formData,
     lastSaved,
     isSaving,
-    isLoading: draftLoading,
+    isLoading,
     isPublishing,
     createdSeason,
+    // Edit mode properties
+    isEditMode,
+    editingSeasonId,
+    editingSeasonName,
+    matchAction,
+    setMatchAction,
     setStepData,
     nextStep,
     prevStep,
     saveAndExit,
     goToStep,
     publishDraft,
+    discardDraft,
   };
 
   return (

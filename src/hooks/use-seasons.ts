@@ -67,8 +67,8 @@ export function useCreateSeason() {
         .select()
         .single();
 
-      if (seasonError) throw seasonError;
-      if (!newSeason) throw new Error("Failed to create season");
+      if (seasonError) return { data: null, error: seasonError };
+      if (!newSeason) return { data: null, error: { message: "Failed to create season" } as any };
 
       // 2. Insert team associations
       if (team_ids && team_ids.length > 0) {
@@ -77,13 +77,10 @@ export function useCreateSeason() {
           team_id: team_id,
         }));
         const { error: assocError } = await supabase.from('season_teams').insert(associations);
-        if (assocError) {
-          // If associations fail, we should ideally roll back, but for now, we throw.
-          throw assocError;
-        }
+        if (assocError) return { data: null, error: assocError };
       }
-      
-      return newSeason;
+
+      return { data: newSeason, error: null };
     }
   );
 }
@@ -100,15 +97,15 @@ export function useUpdateSeason() {
         .select()
         .single();
 
-      if (seasonError) throw seasonError;
-      if (!updatedSeason) throw new Error("Failed to update season");
+      if (seasonError) return { data: null, error: seasonError };
+      if (!updatedSeason) return { data: null, error: { message: "Failed to update season" } as any };
 
       // 2. Delete existing team associations for this season
       const { error: deleteError } = await supabase
         .from('season_teams')
         .delete()
         .eq('season_id', id);
-      if (deleteError) throw deleteError;
+      if (deleteError) return { data: null, error: deleteError };
 
       // 3. Insert new team associations
       if (team_ids && team_ids.length > 0) {
@@ -117,10 +114,10 @@ export function useUpdateSeason() {
           team_id: team_id,
         }));
         const { error: insertError } = await supabase.from('season_teams').insert(associations);
-        if (insertError) throw insertError;
+        if (insertError) return { data: null, error: insertError };
       }
 
-      return updatedSeason;
+      return { data: updatedSeason, error: null };
     }
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,14 +33,24 @@ export function BasicInfoStep() {
     defaultValues: formData.basicInfo,
   });
 
+  // Ref to skip watchedFields effect after a context sync
+  const skipNextWatchUpdate = useRef(true); // Start true to skip initial render
+
   // Sync form with context data
   useEffect(() => {
+    skipNextWatchUpdate.current = true;
     reset(formData.basicInfo);
   }, [formData.basicInfo, reset]);
 
   // Update context on field changes
   const watchedFields = watch();
   useEffect(() => {
+    // Skip if we just synced from context
+    if (skipNextWatchUpdate.current) {
+      skipNextWatchUpdate.current = false;
+      return;
+    }
+
     const { name, start_date, end_date } = watchedFields;
     // Only update if values actually changed
     if (

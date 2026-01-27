@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,6 +42,17 @@ export function TournamentFormatStep() {
     formData.tournament.custom_settings
   );
 
+  // Ref to skip context update after syncing from context
+  const skipNextContextUpdate = useRef(true); // Start true to skip initial render
+
+  // Sync local state from context (when resuming a draft)
+  useEffect(() => {
+    skipNextContextUpdate.current = true;
+    setSelectedModeId(formData.tournament.tournament_mode_id);
+    setUseCustomSettings(formData.tournament.use_custom_settings || false);
+    setCustomSettings(formData.tournament.custom_settings);
+  }, [formData.tournament]);
+
   // Get handler metadata for all modes
   const handlerMetadata = getAllHandlerMetadata();
 
@@ -61,12 +72,28 @@ export function TournamentFormatStep() {
 
   // Update form data when selection changes
   useEffect(() => {
-    setStepData("tournament", {
-      tournament_mode_id: selectedModeId,
-      use_custom_settings: useCustomSettings,
-      custom_settings: useCustomSettings ? customSettings : undefined,
-    });
-  }, [selectedModeId, useCustomSettings, customSettings, setStepData]);
+    // Skip if we just synced from context
+    if (skipNextContextUpdate.current) {
+      skipNextContextUpdate.current = false;
+      return;
+    }
+
+    // Only update if values actually changed
+    const newCustomSettings = useCustomSettings ? customSettings : undefined;
+    const currentData = formData.tournament;
+
+    if (
+      selectedModeId !== currentData.tournament_mode_id ||
+      useCustomSettings !== currentData.use_custom_settings ||
+      JSON.stringify(newCustomSettings) !== JSON.stringify(currentData.custom_settings)
+    ) {
+      setStepData("tournament", {
+        tournament_mode_id: selectedModeId,
+        use_custom_settings: useCustomSettings,
+        custom_settings: newCustomSettings,
+      });
+    }
+  }, [selectedModeId, useCustomSettings, customSettings, setStepData, formData.tournament]);
 
   const handleModeSelect = (modeId: string) => {
     setSelectedModeId(modeId);

@@ -3,6 +3,7 @@ import { Table } from "@/components/Table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSeasons, useDeleteSeason } from "@/hooks/use-seasons";
+import { DraftsList } from "@/components/admin/season-wizard";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { Search, Loader2, Plus, Edit, Trash2 } from "lucide-react";
@@ -138,13 +139,16 @@ const SeasonsAdmin = () => {
     <AdminLayout>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">{t('pages.admin.seasons.title')}</h1>
-        <Link to="/admin/seasons/new">
+        <Link to="/admin/seasons/wizard">
           <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             {t('pages.admin.seasons.newSeason')}
           </Button>
         </Link>
       </div>
+
+      {/* Pending Drafts Section */}
+      <DraftsList />
 
       <div className="mb-6">
         <div className="relative max-w-md">

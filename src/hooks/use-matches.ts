@@ -140,3 +140,17 @@ export function useDeleteMultipleMatches() {
       supabase.from('matches').delete().in('id', ids)
   );
 }
+
+export function useSeasonMatches(seasonId: string | undefined) {
+  return useSupabaseQuery<Match[]>(
+    ['matches', { seasonId }],
+    async () => {
+      if (!seasonId) return { data: [], error: null };
+      return supabase
+        .from('matches')
+        .select('id')
+        .eq('season_id', seasonId);
+    },
+    { enabled: !!seasonId }
+  );
+}
