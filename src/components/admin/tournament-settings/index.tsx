@@ -126,8 +126,7 @@ export function TournamentSettingsForm({
   const settings = value ?? getTypedDefaultSettings(handlerKey);
 
   switch (handlerKey) {
-    case 'league_only':
-      // Ensure settings match the expected type
+    case 'league_only': {
       const leagueSettings: LeagueOnlySettings = isLeagueOnlySettings(settings)
         ? settings
         : DEFAULT_LEAGUE_ONLY_SETTINGS;
@@ -138,9 +137,9 @@ export function TournamentSettingsForm({
           disabled={disabled}
         />
       );
+    }
 
-    case 'knockout':
-      // Ensure settings match the expected type
+    case 'knockout': {
       const knockoutSettings: KnockoutSettings = isKnockoutSettings(settings)
         ? settings
         : DEFAULT_KNOCKOUT_SETTINGS;
@@ -151,9 +150,9 @@ export function TournamentSettingsForm({
           disabled={disabled}
         />
       );
+    }
 
-    case 'groups_knockout':
-      // Ensure settings match the expected type
+    case 'groups_knockout': {
       const groupsSettings: GroupsKnockoutSettings = isGroupsKnockoutSettings(settings)
         ? settings
         : DEFAULT_GROUPS_KNOCKOUT_SETTINGS;
@@ -164,9 +163,9 @@ export function TournamentSettingsForm({
           disabled={disabled}
         />
       );
+    }
 
-    case 'swiss_system':
-      // Ensure settings match the expected type
+    case 'swiss_system': {
       const swissSettings: SwissSystemSettings = isSwissSystemSettings(settings)
         ? settings
         : DEFAULT_SWISS_SYSTEM_SETTINGS;
@@ -177,9 +176,9 @@ export function TournamentSettingsForm({
           disabled={disabled}
         />
       );
+    }
 
-    case 'round_robin_final':
-      // Ensure settings match the expected type
+    case 'round_robin_final': {
       const roundRobinFinalSettings: RoundRobinFinalSettings = isRoundRobinFinalSettings(settings)
         ? settings
         : DEFAULT_ROUND_ROBIN_FINAL_SETTINGS;
@@ -190,6 +189,7 @@ export function TournamentSettingsForm({
           disabled={disabled}
         />
       );
+    }
 
     default:
       return (

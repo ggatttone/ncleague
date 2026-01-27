@@ -73,6 +73,21 @@
       "noData": "Geen gegevens beschikbaar voor het klassement.",
       "viewFull": "Bekijk volledig klassement"
     },
+    "groupStageView": {
+      "noTeams": "Geen teams in deze groep",
+      "error": "Fout bij het laden van groepsklassementen",
+      "advancingInfo": "Top {{count}} van elke groep gaan door ({{total}} in totaal)",
+      "qualifies": "Gekwalificeerd",
+      "qualifiedTeams": "Teams die Doorgaan naar Knock-out"
+    },
+    "tournamentModePreview": {
+      "title": "Toernooi Voorbeeld",
+      "mode": "Modus",
+      "phases": "Fasen",
+      "estimatedMatches": "Geschatte Wedstrijden",
+      "teams": "Teams",
+      "valid": "Configuratie is geldig"
+    },
     "upcomingMatches": {
       "title": "Aankomende Wedstrijden",
       "noMatches": "Geen wedstrijden gepland.",
@@ -311,7 +326,37 @@
           "description": "Je staat op het punt de fase '{{phaseName}}' te sluiten. Deze actie is onomkeerbaar en zal wedstrijden voor de volgende fase genereren.",
           "confirmButton": "Bevestig en Sluit Fase",
           "success": "Fase succesvol gesloten! Nieuwe wedstrijden zijn gegenereerd.",
-          "error": "Fout bij het sluiten van de fase"
+          "error": "Fout bij het sluiten van de fase",
+          "steps": {
+            "summary": "Samenvatting",
+            "openMatches": "Open Wedstrijden",
+            "tieBreakers": "Beslissingsregels",
+            "confirm": "Bevestigen"
+          },
+          "step1": {
+            "title": "Validatie Samenvatting",
+            "description": "Controleer op problemen voordat je verdergaat. Als er waarschuwingen zijn, kun je ze handmatig oplossen in de volgende stappen.",
+            "noStandings": "Geen klassement beschikbaar voor validatie."
+          },
+          "step2": {
+            "title": "Beheer Open Wedstrijden",
+            "description": "De volgende wedstrijden zijn nog niet voltooid. Kies hoe je ze wilt afhandelen.",
+            "cancel": "Wedstrijd annuleren (0-0, 0 punten)",
+            "freeze": "Bevriezen (negeren voor klassement)",
+            "enterResult": "Resultaat handmatig invoeren"
+          },
+          "step3": {
+            "title": "Gelijke Stand Oplossen",
+            "description": "Er zijn teams met gelijke punten. Sleep om de juiste volgorde in het klassement te bepalen.",
+            "tieAtPoints": "Gelijk op {{points}} punten"
+          },
+          "step4": {
+            "title": "Samenvatting en Bevestiging",
+            "description": "Je staat op het punt de fase te sluiten met de volgende handmatige wijzigingen. Deze actie is onomkeerbaar.",
+            "resolvedMatches": "Handmatig Opgeloste Wedstrijden",
+            "tieBreakers": "Handmatig Opgeloste Gelijke Standen",
+            "noOverrides": "Geen handmatige wijzigingen gemaakt."
+          }
         },
         "phases": {
           "InizioTorneo": "Start Toernooi",

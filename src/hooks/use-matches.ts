@@ -72,7 +72,7 @@ export function useMatch(id: string | undefined) {
 
 export function useTeamMatches(teamId?: string) {
   return useSupabaseQuery<MatchWithTeams[]>(
-    ['matches', { teamId }],
+    ['matches', teamId],
     () => {
       if (!teamId) return null;
       return supabase
@@ -143,7 +143,7 @@ export function useDeleteMultipleMatches() {
 
 export function useSeasonMatches(seasonId: string | undefined) {
   return useSupabaseQuery<Match[]>(
-    ['matches', { seasonId }],
+    ['matches', seasonId],
     async () => {
       if (!seasonId) return { data: [], error: null };
       return supabase

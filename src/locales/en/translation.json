@@ -326,7 +326,37 @@
           "description": "You are about to close the '{{phaseName}}' phase. This action is irreversible and will generate matches for the next phase.",
           "confirmButton": "Confirm and Close Phase",
           "success": "Phase closed successfully! New matches have been generated.",
-          "error": "Error closing phase"
+          "error": "Error closing phase",
+          "steps": {
+            "summary": "Summary",
+            "openMatches": "Open Matches",
+            "tieBreakers": "Tie-Breakers",
+            "confirm": "Confirm"
+          },
+          "step1": {
+            "title": "Validation Summary",
+            "description": "Check for any issues before proceeding. If there are warnings, you can resolve them manually in the following steps.",
+            "noStandings": "No standings available for validation."
+          },
+          "step2": {
+            "title": "Open Matches Management",
+            "description": "The following matches have not yet been completed. Choose how to handle them.",
+            "cancel": "Cancel match (0-0, 0 points)",
+            "freeze": "Freeze (ignore for standings)",
+            "enterResult": "Enter result manually"
+          },
+          "step3": {
+            "title": "Tie-Breaking",
+            "description": "There are teams with equal points. Drag to define the correct standings order.",
+            "tieAtPoints": "Tied at {{points}} points"
+          },
+          "step4": {
+            "title": "Summary and Confirmation",
+            "description": "You are about to close the phase with the following manual changes. This action is irreversible.",
+            "resolvedMatches": "Manually Resolved Matches",
+            "tieBreakers": "Manually Resolved Ties",
+            "noOverrides": "No manual changes made."
+          }
         },
         "phases": {
           "InizioTorneo": "Tournament Start",

@@ -24,7 +24,15 @@ interface GroupTableProps {
   compact?: boolean;
 }
 
-const GroupTable = ({ groupId, standings, advancingCount, compact }: GroupTableProps) => {
+interface ConnectedGroupTableProps {
+  competitionId: string;
+  seasonId: string;
+  groupId: string;
+  advancingCount: number;
+  compact?: boolean;
+}
+
+const GroupTablePresentation = ({ groupId, standings, advancingCount, compact }: GroupTableProps) => {
   const { t } = useTranslation();
 
   // Format group name: "group_a" -> "Group A"
@@ -140,6 +148,94 @@ const GroupTable = ({ groupId, standings, advancingCount, compact }: GroupTableP
   );
 };
 
+const ConnectedGroupTable = ({ competitionId, seasonId, groupId, advancingCount, compact }: ConnectedGroupTableProps) => {
+  const { t } = useTranslation();
+  const { data, isLoading, error } = useNclStandings(competitionId, seasonId, groupId);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex justify-center items-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="text-center py-8 text-destructive text-sm">
+          {t("components.groupStageView.error", { defaultValue: "Error loading group standings" })}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <GroupTablePresentation
+      groupId={groupId}
+      standings={data || []}
+      advancingCount={advancingCount}
+      compact={compact}
+    />
+  );
+};
+
+const QualificationSummary = ({ competitionId, seasonId, groups, advancingPerGroup }: {
+  competitionId: string;
+  seasonId: string;
+  groups: string[];
+  advancingPerGroup: number;
+}) => {
+  return (
+    <>
+      {groups.map((groupId) => (
+        <QualificationBadges
+          key={groupId}
+          competitionId={competitionId}
+          seasonId={seasonId}
+          groupId={groupId}
+          advancingPerGroup={advancingPerGroup}
+        />
+      ))}
+    </>
+  );
+};
+
+const QualificationBadges = ({ competitionId, seasonId, groupId, advancingPerGroup }: {
+  competitionId: string;
+  seasonId: string;
+  groupId: string;
+  advancingPerGroup: number;
+}) => {
+  const { data } = useNclStandings(competitionId, seasonId, groupId);
+  const qualifying = (data || []).slice(0, advancingPerGroup);
+
+  return (
+    <>
+      {qualifying.map((team, idx) => (
+        <Badge
+          key={team.team_id}
+          variant="secondary"
+          className="flex items-center gap-1.5"
+        >
+          <Avatar className="h-4 w-4">
+            <AvatarImage src={team.team_logo_url || undefined} />
+            <AvatarFallback className="text-[8px]">
+              {team.team_name.substring(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <span>{team.team_name}</span>
+          <span className="text-xs text-muted-foreground">
+            ({groupId.replace("group_", "").toUpperCase()}{idx + 1})
+          </span>
+        </Badge>
+      ))}
+    </>
+  );
+};
+
 export const GroupStageView = ({
   competitionId,
   seasonId,
@@ -148,31 +244,6 @@ export const GroupStageView = ({
   compact = false,
 }: GroupStageViewProps) => {
   const { t } = useTranslation();
-
-  // Fetch standings for all groups
-  const groupQueries = groups.map((groupId) => {
-    const { data, isLoading, error } = useNclStandings(competitionId, seasonId, groupId);
-    return { groupId, data, isLoading, error };
-  });
-
-  const isLoading = groupQueries.some((q) => q.isLoading);
-  const hasError = groupQueries.some((q) => q.error);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (hasError) {
-    return (
-      <div className="text-center py-8 text-destructive">
-        {t("components.groupStageView.error", { defaultValue: "Error loading group standings" })}
-      </div>
-    );
-  }
 
   // Calculate advancing teams count
   const totalAdvancing = groups.length * advancingPerGroup;
@@ -208,11 +279,12 @@ export const GroupStageView = ({
         groups.length === 3 && "md:grid-cols-3",
         groups.length >= 4 && "md:grid-cols-2 lg:grid-cols-4"
       )}>
-        {groupQueries.map(({ groupId, data }) => (
-          <GroupTable
+        {groups.map((groupId) => (
+          <ConnectedGroupTable
             key={groupId}
+            competitionId={competitionId}
+            seasonId={seasonId}
             groupId={groupId}
-            standings={data || []}
             advancingCount={advancingPerGroup}
             compact={compact}
           />
@@ -227,27 +299,12 @@ export const GroupStageView = ({
             {t("components.groupStageView.qualifiedTeams", { defaultValue: "Teams Advancing to Knockout" })}
           </h4>
           <div className="flex flex-wrap gap-2">
-            {groupQueries.flatMap(({ groupId, data }) => {
-              const qualifying = (data || []).slice(0, advancingPerGroup);
-              return qualifying.map((team, idx) => (
-                <Badge
-                  key={team.team_id}
-                  variant="secondary"
-                  className="flex items-center gap-1.5"
-                >
-                  <Avatar className="h-4 w-4">
-                    <AvatarImage src={team.team_logo_url || undefined} />
-                    <AvatarFallback className="text-[8px]">
-                      {team.team_name.substring(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span>{team.team_name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    ({groupId.replace("group_", "").toUpperCase()}{idx + 1})
-                  </span>
-                </Badge>
-              ));
-            })}
+            <QualificationSummary
+              competitionId={competitionId}
+              seasonId={seasonId}
+              groups={groups}
+              advancingPerGroup={advancingPerGroup}
+            />
           </div>
         </CardContent>
       </Card>

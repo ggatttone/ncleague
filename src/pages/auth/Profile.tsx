@@ -55,7 +55,8 @@ const ProfilePage = () => {
         avatar_url: profile.avatar_url || null,
       });
     }
-  }, [profile, profileForm.reset]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- profileForm.reset is stable across renders
+  }, [profile]);
 
   const handleProfileUpdate = async (data: ProfileFormData) => {
     if (!user) return;

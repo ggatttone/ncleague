@@ -496,7 +496,7 @@ serve(async (req) => {
           );
           break;
 
-        case 'knockout':
+        case 'knockout': {
           const shuffledTeams = shuffleArray(seasonTeams).map((t, i) => ({ ...t, seed: i + 1 }));
           newMatches = generateKnockoutMatches(
             shuffledTeams,
@@ -506,9 +506,9 @@ serve(async (req) => {
             (settings.seedingMethod as 'random' | 'seeded' | 'manual') ?? 'random'
           );
           break;
+        }
 
-        case 'swiss_pairing':
-          // First Swiss round: random pairing
+        case 'swiss_pairing': {
           const shuffled = shuffleArray(seasonTeams);
           for (let i = 0; i < shuffled.length; i += 2) {
             if (shuffled[i + 1]) {
@@ -524,9 +524,9 @@ serve(async (req) => {
             }
           }
           break;
+        }
 
-        case 'group_assignment':
-          // Groups + Knockout: assign teams to groups and generate group matches
+        case 'group_assignment': {
           const groupCount = (settings.groupCount as number) ?? 4;
           const teamsPerGroup = Math.ceil(seasonTeams.length / groupCount);
           const shuffledForGroups = shuffleArray(seasonTeams);
@@ -545,6 +545,7 @@ serve(async (req) => {
             newMatches.push(...groupMatches);
           }
           break;
+        }
       }
     } else if (nextPhase) {
       // Transitioning between phases

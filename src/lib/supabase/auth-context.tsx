@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from './client';
 
@@ -31,9 +31,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<AuthContextType['profile']>(null);
   const [role, setRole] = useState<UserRole | null>(null);
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
     const fetchSessionAndProfile = async () => {
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+      try {
       setLoading(true);
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
@@ -52,11 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
-        let { data: profileData, error: profileError } = await supabase
+        const { data: initialProfileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', currentUser.id)
           .single();
+
+        let profileData = initialProfileData;
 
         if (profileError && profileError.code === 'PGRST116') {
           const { count: adminCount, error: countError } = await supabase
@@ -66,6 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           if (countError) {
             console.error("Error checking for admins:", countError);
+            setProfile(null);
+            setRole(null);
             setLoading(false);
             return;
           }
@@ -100,6 +108,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setRole(null);
       }
       setLoading(false);
+      } finally {
+        isFetchingRef.current = false;
+      }
     };
 
     fetchSessionAndProfile();
@@ -117,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (role === 'admin') return true;
 
     if (requiredRoles.includes(role)) {
+      // TODO: captain check doesn't validate the captain belongs to teamId (would require async DB call)
       if (role === 'captain' && teamId) {
         return true;
       }
