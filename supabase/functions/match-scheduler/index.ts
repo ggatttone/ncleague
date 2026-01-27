@@ -260,24 +260,34 @@ function generateGroupAssignments(
 function generateSlots(constraints: ScheduleConstraints): { match_date: string; venue_id: string }[] {
   const slots: { match_date: string; venue_id: string }[] = [];
   const { startDate, endDate, allowedDays, timeSlots, venueIds } = constraints;
-  const currentDate = new Date(startDate);
-  const finalDate = new Date(endDate);
+
+  // Parse dates as plain strings to avoid timezone issues
+  const [startY, startM, startD] = startDate.split('-').map(Number);
+  const [endY, endM, endD] = endDate.split('-').map(Number);
+
+  // Use UTC methods throughout to prevent local timezone offset
+  const currentDate = new Date(Date.UTC(startY, startM - 1, startD));
+  const finalDate = new Date(Date.UTC(endY, endM - 1, endD));
 
   while (currentDate <= finalDate) {
-    if (allowedDays.includes(currentDate.getDay())) {
+    if (allowedDays.includes(currentDate.getUTCDay())) {
       for (const time of timeSlots) {
         for (const venueId of venueIds) {
-          const [hours, minutes] = time.split(':');
-          const matchDate = new Date(currentDate);
-          matchDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+          const [hours, minutes] = time.split(':').map(Number);
+          // Build ISO string directly to avoid any timezone conversion
+          const y = currentDate.getUTCFullYear();
+          const m = String(currentDate.getUTCMonth() + 1).padStart(2, '0');
+          const d = String(currentDate.getUTCDate()).padStart(2, '0');
+          const h = String(hours).padStart(2, '0');
+          const min = String(minutes).padStart(2, '0');
           slots.push({
-            match_date: matchDate.toISOString(),
+            match_date: `${y}-${m}-${d}T${h}:${min}:00+00:00`,
             venue_id: venueId,
           });
         }
       }
     }
-    currentDate.setDate(currentDate.getDate() + 1);
+    currentDate.setUTCDate(currentDate.getUTCDate() + 1);
   }
 
   return slots;
