@@ -1,11 +1,10 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSeasons, useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useVenues } from "@/hooks/use-venues";
@@ -13,12 +12,10 @@ import { useTeams } from "@/hooks/use-teams";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Calendar, Wand2 } from "lucide-react";
+import { Loader2, Calendar, Wand2, Plus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase/client";
 import { showError, showSuccess } from "@/utils/toast";
-import { format } from "date-fns";
-import { it } from "date-fns/locale";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getSchedulablePhases } from "@/lib/tournament/handler-registry";
@@ -26,11 +23,19 @@ import type { TournamentHandlerKey, PhaseConfig } from "@/types/tournament-handl
 import { useSeasonPhaseStatus } from "@/hooks/use-season-phase-status";
 import { PhaseStatusBadge } from "@/components/admin/schedule-generator/PhaseStatusBadge";
 import { SchedulePresets } from "@/components/admin/schedule-generator/SchedulePresets";
+import { EventDateEntry } from "@/components/admin/schedule-generator/EventDateEntry";
+import { ConstraintToggles } from "@/components/admin/schedule-generator/ConstraintToggles";
+import { GenerationStats } from "@/components/admin/schedule-generator/GenerationStats";
+import { MatchPreviewList } from "@/components/admin/schedule-generator/MatchPreviewList";
+import type { EventDateConfig, EventConstraints, SchedulingMode } from "@/types/database";
 
 // Import handler to register phases
 import "@/lib/tournament/handlers/league-only";
 
-const scheduleSchema = z.object({
+// ---------- Zod schemas ----------
+
+const classicSchema = z.object({
+  schedulingMode: z.literal("classic"),
   season_id: z.string().min(1, "Seleziona una stagione"),
   stage: z.string().min(1, "Seleziona una fase"),
   startDate: z.string().min(1, "Seleziona una data di inizio"),
@@ -41,6 +46,32 @@ const scheduleSchema = z.object({
   includeReturnGames: z.boolean(),
 });
 
+const eventDateConfigSchema = z.object({
+  date: z.string().min(1, "Data richiesta"),
+  startTime: z.string().min(1, "Orario inizio richiesto"),
+  endTime: z.string().min(1, "Orario fine richiesto"),
+  venueIds: z.array(z.string()).min(1, "Seleziona almeno un campo"),
+  teamIds: z.array(z.string()).min(2, "Seleziona almeno 2 squadre"),
+});
+
+const eventSchema = z.object({
+  schedulingMode: z.literal("event"),
+  season_id: z.string().min(1, "Seleziona una stagione"),
+  stage: z.string().min(1, "Seleziona una fase"),
+  events: z.array(eventDateConfigSchema).min(1, "Aggiungi almeno un evento"),
+  duration: z.number().min(1, "Durata minima 1 minuto"),
+  breakTime: z.number().min(0),
+  eventConstraints: z.object({
+    avoidRepeats: z.boolean(),
+    balanceMatches: z.boolean(),
+    avoidBackToBack: z.boolean(),
+    autoReferee: z.boolean(),
+    targetMatchesPerTeam: z.number().optional(),
+  }),
+});
+
+const scheduleSchema = z.discriminatedUnion("schedulingMode", [classicSchema, eventSchema]);
+
 type ScheduleFormData = z.infer<typeof scheduleSchema>;
 
 // Default phases for backward compatibility
@@ -50,12 +81,32 @@ const DEFAULT_PHASES: PhaseConfig[] = [
   { id: "poule_b", nameKey: "tournament.phases.pouleB", order: 2, matchGeneration: { type: "round_robin" }, isTerminal: true },
 ];
 
+const emptyEvent = (): EventDateConfig => ({
+  date: "",
+  startTime: "18:00",
+  endTime: "21:00",
+  venueIds: [],
+  teamIds: [],
+});
+
 const ScheduleGenerator = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [preview, setPreview] = useState<any[] | null>(null);
+  const [schedulingMode, setSchedulingMode] = useState<SchedulingMode>("classic");
   const { t } = useTranslation();
+
+  // Event mode state (managed outside react-hook-form for simpler UX)
+  const [events, setEvents] = useState<EventDateConfig[]>([emptyEvent()]);
+  const [duration, setDuration] = useState(15);
+  const [breakTime, setBreakTime] = useState(5);
+  const [eventConstraints, setEventConstraints] = useState<EventConstraints>({
+    avoidRepeats: false,
+    balanceMatches: false,
+    avoidBackToBack: false,
+    autoReferee: false,
+  });
 
   const daysOfWeek = [
     { id: 1, label: t('common.days.monday') },
@@ -71,18 +122,24 @@ const ScheduleGenerator = () => {
   const { data: venues } = useVenues();
   const { data: teams } = useTeams();
 
-  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm<ScheduleFormData>({
-    resolver: zodResolver(scheduleSchema),
+  // Classic mode form — only used for classic validation/submission
+  const { control, handleSubmit, formState: { errors }, watch, setValue } = useForm({
+    resolver: zodResolver(classicSchema),
     defaultValues: {
+      schedulingMode: "classic" as const,
       season_id: searchParams.get("season") || undefined,
       stage: searchParams.get("phase") || "",
-      allowedDays: [],
-      venueIds: [],
+      allowedDays: [] as number[],
+      venueIds: [] as string[],
       includeReturnGames: true,
+      startDate: "",
+      endDate: "",
+      timeSlots: "",
     },
   });
 
   const selectedSeasonId = watch("season_id");
+  const selectedStage = watch("stage");
 
   // Load season with tournament mode when season changes
   const { data: seasonWithMode, isLoading: seasonModeLoading } = useSeasonWithTournamentMode(selectedSeasonId);
@@ -103,7 +160,6 @@ const ScheduleGenerator = () => {
   const { phaseStatusMap } = useSeasonPhaseStatus(selectedSeasonId);
 
   // Reset stage when season changes, auto-select first pending phase
-  // Skip reset if phase was provided via URL params
   const lastAutoSelectedSeasonRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -124,27 +180,14 @@ const ScheduleGenerator = () => {
     setValue("stage", firstPending?.id || "");
   }, [selectedSeasonId, setValue, availableStages, phaseStatusMap, searchParams]);
 
+  // ---------- Mutations ----------
+
   const generatePreviewMutation = useMutation({
-    mutationFn: async (formData: ScheduleFormData) => {
+    mutationFn: async (payload: { schedulingMode: SchedulingMode; body: Record<string, unknown> }) => {
       const { data, error } = await supabase.functions.invoke('match-scheduler', {
-        body: {
-          dryRun: true,
-          schedule: {
-            season_id: formData.season_id,
-            stage: formData.stage,
-            constraints: {
-              startDate: formData.startDate,
-              endDate: formData.endDate,
-              allowedDays: formData.allowedDays,
-              timeSlots: formData.timeSlots.split(',').map(t => t.trim()),
-              venueIds: formData.venueIds,
-              includeReturnGames: formData.includeReturnGames,
-            }
-          }
-        }
+        body: { dryRun: true, schedule: payload.body }
       });
       if (error) {
-        // Extract actual error message from Edge Function response
         let msg = error.message;
         try {
           if (error.context && typeof error.context.json === 'function') {
@@ -154,7 +197,6 @@ const ScheduleGenerator = () => {
         } catch { /* ignore parse errors */ }
         throw new Error(msg);
       }
-      // Edge function returns { success, matches, total_matches, ... }
       const matches = data?.matches ?? data;
       return matches;
     },
@@ -162,7 +204,7 @@ const ScheduleGenerator = () => {
       setPreview(data);
       showSuccess(t('pages.admin.scheduleGenerator.previewSuccess', { count: data?.length ?? 0 }));
     },
-    onError: (err: any) => showError(`Errore: ${err.message}`),
+    onError: (err: Error) => showError(`Errore: ${err.message}`),
   });
 
   const saveScheduleMutation = useMutation({
@@ -178,11 +220,74 @@ const ScheduleGenerator = () => {
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       navigate('/admin/fixtures');
     },
-    onError: (err: any) => showError(`Errore nel salvataggio: ${err.message}`),
+    onError: (err: Error) => showError(`Errore nel salvataggio: ${err.message}`),
   });
 
   const teamsMap = useMemo(() => new Map(teams?.map(t => [t.id, t.name])), [teams]);
   const venuesMap = useMemo(() => new Map(venues?.map(v => [v.id, v.name])), [venues]);
+
+  // ---------- Event mode handlers ----------
+
+  const handleEventChange = useCallback((index: number, event: EventDateConfig) => {
+    setEvents(prev => prev.map((e, i) => i === index ? event : e));
+  }, []);
+
+  const handleEventRemove = useCallback((index: number) => {
+    setEvents(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const addEvent = () => setEvents(prev => [...prev, emptyEvent()]);
+
+  // ---------- Submit handlers ----------
+
+  const handleClassicSubmit = handleSubmit((data) => {
+    generatePreviewMutation.mutate({
+      schedulingMode: 'classic',
+      body: {
+        season_id: data.season_id,
+        stage: data.stage,
+        constraints: {
+          startDate: data.startDate,
+          endDate: data.endDate,
+          allowedDays: data.allowedDays,
+          timeSlots: data.timeSlots.split(',').map(s => s.trim()),
+          venueIds: data.venueIds,
+          includeReturnGames: data.includeReturnGames,
+        }
+      }
+    });
+  });
+
+  const handleEventSubmit = () => {
+    // Validate event form manually
+    if (!selectedSeasonId) { showError(t('pages.admin.scheduleGenerator.errorSelectSeason')); return; }
+    if (!selectedStage) { showError(t('pages.admin.scheduleGenerator.errorSelectStage')); return; }
+    if (events.length === 0) { showError(t('pages.admin.scheduleGenerator.errorAddEvent')); return; }
+
+    for (let i = 0; i < events.length; i++) {
+      const ev = events[i];
+      const n = i + 1;
+      if (!ev.date) { showError(t('pages.admin.scheduleGenerator.errorEventDate', { n })); return; }
+      if (!ev.startTime || !ev.endTime) { showError(t('pages.admin.scheduleGenerator.errorEventTime', { n })); return; }
+      if (ev.venueIds.length === 0) { showError(t('pages.admin.scheduleGenerator.errorEventVenue', { n })); return; }
+      if (ev.teamIds.length < 2) { showError(t('pages.admin.scheduleGenerator.errorEventTeams', { n })); return; }
+    }
+
+    generatePreviewMutation.mutate({
+      schedulingMode: 'event',
+      body: {
+        season_id: selectedSeasonId,
+        stage: selectedStage,
+        schedulingMode: 'event',
+        events,
+        duration,
+        breakTime,
+        eventConstraints,
+      }
+    });
+  };
+
+  const isEventMode = schedulingMode === 'event';
 
   return (
     <AdminLayout>
@@ -197,7 +302,7 @@ const ScheduleGenerator = () => {
             <CardDescription>{t('pages.admin.scheduleGenerator.step1Description')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((data) => generatePreviewMutation.mutate(data))} className="space-y-4">
+            <div className="space-y-4">
               {/* Season */}
               <div className="space-y-2">
                 <Label>{t('common.season')}</Label>
@@ -210,7 +315,7 @@ const ScheduleGenerator = () => {
                 {errors.season_id && <p className="text-sm text-destructive">{errors.season_id.message}</p>}
               </div>
 
-              {/* Stage - Dynamic based on tournament mode */}
+              {/* Stage */}
               <div className="space-y-2">
                 <Label>{t('common.phase')}</Label>
                 <Controller name="stage" control={control} render={({ field }) => (
@@ -246,86 +351,155 @@ const ScheduleGenerator = () => {
                 )}
               </div>
 
-              {/* Dates */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="startDate">{t('common.startDate')}</Label>
-                  <Input id="startDate" type="date" {...control.register("startDate")} />
-                </div>
-                <div>
-                  <Label htmlFor="endDate">{t('common.endDate')}</Label>
-                  <Input id="endDate" type="date" {...control.register("endDate")} />
-                </div>
+              {/* Mode Toggle */}
+              <div className="flex items-center rounded-lg border p-1 gap-1">
+                <button
+                  type="button"
+                  className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${!isEventMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                  onClick={() => { setSchedulingMode('classic'); setPreview(null); }}
+                >
+                  {t('pages.admin.scheduleGenerator.modeClassic')}
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${isEventMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                  onClick={() => { setSchedulingMode('event'); setPreview(null); }}
+                >
+                  {t('pages.admin.scheduleGenerator.modeEvent')}
+                </button>
               </div>
 
-              {/* Presets */}
-              <SchedulePresets onApply={(days, times) => {
-                setValue('allowedDays', days);
-                setValue('timeSlots', times);
-              }} />
-
-              {/* Days */}
-              <div>
-                <Label>{t('pages.admin.scheduleGenerator.allowedDays')}</Label>
-                <Controller name="allowedDays" control={control} render={({ field }) => (
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    {daysOfWeek.map(day => (
-                      <div key={day.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`day-${day.id}`}
-                          checked={field.value?.includes(day.id)}
-                          onCheckedChange={(checked) => {
-                            return checked
-                              ? field.onChange([...(field.value || []), day.id])
-                              : field.onChange(field.value?.filter(value => value !== day.id));
-                          }}
-                        />
-                        <Label htmlFor={`day-${day.id}`} className="text-sm font-normal">{day.label}</Label>
-                      </div>
-                    ))}
+              {/* ===== CLASSIC MODE ===== */}
+              {!isEventMode && (
+                <form onSubmit={handleClassicSubmit} className="space-y-4">
+                  {/* Dates */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="startDate">{t('common.startDate')}</Label>
+                      <Input id="startDate" type="date" {...control.register("startDate")} />
+                    </div>
+                    <div>
+                      <Label htmlFor="endDate">{t('common.endDate')}</Label>
+                      <Input id="endDate" type="date" {...control.register("endDate")} />
+                    </div>
                   </div>
-                )} />
-                {errors.allowedDays && <p className="text-sm text-destructive">{errors.allowedDays.message}</p>}
-              </div>
 
-              {/* Times and Venues */}
-              <div>
-                <Label htmlFor="timeSlots">{t('pages.admin.scheduleGenerator.timeSlots')}</Label>
-                <Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" />
-              </div>
-              <div>
-                <Label>{t('pages.admin.scheduleGenerator.venues')}</Label>
-                <Controller name="venueIds" control={control} render={({ field }) => (
-                  <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
-                    {venues?.map(venue => (
-                      <div key={venue.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`venue-${venue.id}`}
-                          checked={field.value?.includes(venue.id)}
-                          onCheckedChange={(checked) => {
-                            return checked
-                              ? field.onChange([...(field.value || []), venue.id])
-                              : field.onChange(field.value?.filter(value => value !== venue.id));
-                          }}
-                        />
-                        <Label htmlFor={`venue-${venue.id}`} className="text-sm font-normal">{venue.name}</Label>
+                  {/* Presets */}
+                  <SchedulePresets onApply={(days, times) => {
+                    setValue('allowedDays', days);
+                    setValue('timeSlots', times);
+                  }} />
+
+                  {/* Days */}
+                  <div>
+                    <Label>{t('pages.admin.scheduleGenerator.allowedDays')}</Label>
+                    <Controller name="allowedDays" control={control} render={({ field }) => (
+                      <div className="grid grid-cols-3 gap-2 mt-2">
+                        {daysOfWeek.map(day => (
+                          <div key={day.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`day-${day.id}`}
+                              checked={field.value?.includes(day.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...(field.value || []), day.id])
+                                  : field.onChange(field.value?.filter(value => value !== day.id));
+                              }}
+                            />
+                            <Label htmlFor={`day-${day.id}`} className="text-sm font-normal">{day.label}</Label>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )} />
+                    {errors.allowedDays && <p className="text-sm text-destructive">{errors.allowedDays.message}</p>}
                   </div>
-                )} />
-                {errors.venueIds && <p className="text-sm text-destructive">{errors.venueIds.message}</p>}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Controller name="includeReturnGames" control={control} render={({ field }) => (
-                  <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
-                )} />
-                <Label htmlFor="includeReturnGames">{t('pages.admin.scheduleGenerator.includeReturnGames')}</Label>
-              </div>
-              <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
-                {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Wand2 className="mr-2 h-4 w-4" /> {t('pages.admin.scheduleGenerator.generatePreview')}
-              </Button>
-            </form>
+
+                  {/* Times and Venues */}
+                  <div>
+                    <Label htmlFor="timeSlots">{t('pages.admin.scheduleGenerator.timeSlots')}</Label>
+                    <Input id="timeSlots" {...control.register("timeSlots")} placeholder="20:00, 21:00" />
+                  </div>
+                  <div>
+                    <Label>{t('pages.admin.scheduleGenerator.venues')}</Label>
+                    <Controller name="venueIds" control={control} render={({ field }) => (
+                      <div className="grid grid-cols-2 gap-2 mt-2 max-h-40 overflow-y-auto">
+                        {venues?.map(venue => (
+                          <div key={venue.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`venue-${venue.id}`}
+                              checked={field.value?.includes(venue.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...(field.value || []), venue.id])
+                                  : field.onChange(field.value?.filter(value => value !== venue.id));
+                              }}
+                            />
+                            <Label htmlFor={`venue-${venue.id}`} className="text-sm font-normal">{venue.name}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    )} />
+                    {errors.venueIds && <p className="text-sm text-destructive">{errors.venueIds.message}</p>}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Controller name="includeReturnGames" control={control} render={({ field }) => (
+                      <Checkbox id="includeReturnGames" checked={field.value} onCheckedChange={field.onChange} />
+                    )} />
+                    <Label htmlFor="includeReturnGames">{t('pages.admin.scheduleGenerator.includeReturnGames')}</Label>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={generatePreviewMutation.isPending}>
+                    {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Wand2 className="mr-2 h-4 w-4" /> {t('pages.admin.scheduleGenerator.generatePreview')}
+                  </Button>
+                </form>
+              )}
+
+              {/* ===== EVENT MODE ===== */}
+              {isEventMode && (
+                <div className="space-y-4">
+                  {/* Duration & Break */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">{t('pages.admin.scheduleGenerator.matchDuration')}</Label>
+                      <Input type="number" min={1} value={duration} onChange={e => setDuration(Number(e.target.value) || 1)} className="h-8 text-sm" />
+                    </div>
+                    <div>
+                      <Label className="text-xs">{t('pages.admin.scheduleGenerator.breakTime')}</Label>
+                      <Input type="number" min={0} value={breakTime} onChange={e => setBreakTime(Number(e.target.value) || 0)} className="h-8 text-sm" />
+                    </div>
+                  </div>
+
+                  {/* Events list */}
+                  <div className="space-y-3">
+                    {events.map((ev, i) => (
+                      <EventDateEntry
+                        key={i}
+                        index={i}
+                        event={ev}
+                        venues={venues ?? []}
+                        teams={teams ?? []}
+                        duration={duration}
+                        breakTime={breakTime}
+                        onChange={handleEventChange}
+                        onRemove={handleEventRemove}
+                      />
+                    ))}
+                    <Button type="button" variant="outline" size="sm" className="w-full" onClick={addEvent}>
+                      <Plus className="mr-1 h-4 w-4" /> {t('pages.admin.scheduleGenerator.addEvent')}
+                    </Button>
+                  </div>
+
+                  {/* Constraints */}
+                  <ConstraintToggles constraints={eventConstraints} onChange={setEventConstraints} />
+
+                  {/* Generate */}
+                  <Button className="w-full" disabled={generatePreviewMutation.isPending} onClick={handleEventSubmit}>
+                    {generatePreviewMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    <Wand2 className="mr-2 h-4 w-4" /> {t('pages.admin.scheduleGenerator.generatePreview')}
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -344,28 +518,19 @@ const ScheduleGenerator = () => {
             )}
             {preview && (
               <>
-                <div className="overflow-auto max-h-96">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t('common.date')}</TableHead>
-                        <TableHead>{t('common.home')}</TableHead>
-                        <TableHead>{t('common.away')}</TableHead>
-                        <TableHead>{t('common.venue')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {preview.map((match, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{format(new Date(match.match_date), 'dd/MM/yy HH:mm', { locale: it })}</TableCell>
-                          <TableCell>{teamsMap.get(match.home_team_id)}</TableCell>
-                          <TableCell>{teamsMap.get(match.away_team_id)}</TableCell>
-                          <TableCell>{venuesMap.get(match.venue_id)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                {/* Generation stats for event mode */}
+                {isEventMode && (
+                  <div className="mb-4">
+                    <GenerationStats matches={preview} teamsMap={teamsMap} />
+                  </div>
+                )}
+
+                <MatchPreviewList
+                  matches={preview}
+                  teamsMap={teamsMap}
+                  venuesMap={venuesMap}
+                  isEventMode={isEventMode}
+                />
                 <Button onClick={() => saveScheduleMutation.mutate(preview)} className="w-full mt-4" disabled={saveScheduleMutation.isPending}>
                   {saveScheduleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {t('pages.admin.scheduleGenerator.confirmSave')}

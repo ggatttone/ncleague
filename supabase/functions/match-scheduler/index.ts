@@ -27,10 +27,32 @@ interface ScheduleConstraints {
 interface ScheduleRequest {
   season_id: string;
   stage: string;
+  schedulingMode?: 'classic' | 'event';
   constraints: ScheduleConstraints;
   algorithm?: MatchGenerationType;
   teams?: string[];  // Optional override for specific teams (e.g., group)
   seedingMethod?: 'random' | 'seeded' | 'manual';
+  // Event mode fields
+  events?: EventDateConfig[];
+  duration?: number;       // match duration in minutes
+  breakTime?: number;      // break between matches in minutes
+  eventConstraints?: EventConstraints;
+}
+
+interface EventDateConfig {
+  date: string;        // "2026-03-15"
+  startTime: string;   // "18:00"
+  endTime: string;     // "21:00"
+  venueIds: string[];
+  teamIds: string[];
+}
+
+interface EventConstraints {
+  avoidRepeats: boolean;
+  balanceMatches: boolean;
+  avoidBackToBack: boolean;
+  autoReferee: boolean;
+  targetMatchesPerTeam?: number;
 }
 
 interface GeneratedMatch {
@@ -44,6 +66,20 @@ interface GeneratedMatch {
   stage: string;
   home_score: number;
   away_score: number;
+  match_day?: number;
+  match_duration_minutes?: number;
+  referee_team_id?: string;
+}
+
+interface EventSlot {
+  match_date: string;
+  venue_id: string;
+}
+
+interface ScoredPairing {
+  home: string;
+  away: string;
+  score: number;
 }
 
 interface TournamentMode {
@@ -347,6 +383,204 @@ function normalizeHandlerKey(key: string): TournamentHandlerKey {
 }
 
 // =============================================================================
+// Event Mode Functions
+// =============================================================================
+
+/**
+ * Generate time slots for a single event based on duration and break time.
+ * Each venue gets floor((endTime - startTime) / (duration + breakTime)) slots.
+ */
+function generateEventSlots(
+  event: EventDateConfig,
+  duration: number,
+  breakTime: number
+): EventSlot[] {
+  const slots: EventSlot[] = [];
+  const [startH, startM] = event.startTime.split(':').map(Number);
+  const [endH, endM] = event.endTime.split(':').map(Number);
+  const startMinutes = startH * 60 + startM;
+  const endMinutes = endH * 60 + endM;
+  const windowMinutes = endMinutes - startMinutes;
+  const slotInterval = duration + breakTime;
+
+  if (slotInterval <= 0 || windowMinutes <= 0) return slots;
+
+  const slotsPerVenue = Math.floor(windowMinutes / slotInterval);
+
+  for (const venueId of event.venueIds) {
+    for (let i = 0; i < slotsPerVenue; i++) {
+      const slotStartMinutes = startMinutes + i * slotInterval;
+      const h = String(Math.floor(slotStartMinutes / 60)).padStart(2, '0');
+      const m = String(slotStartMinutes % 60).padStart(2, '0');
+      slots.push({
+        match_date: `${event.date}T${h}:${m}:00+00:00`,
+        venue_id: venueId,
+      });
+    }
+  }
+
+  return slots;
+}
+
+/**
+ * Generate scored pairings for event mode.
+ * All possible combinations of teamIds are generated and scored based on constraints.
+ */
+function generateEventPairings(
+  teamIds: string[],
+  existingMatchups: Map<string, number>,
+  teamMatchCounts: Map<string, number>,
+  constraints: EventConstraints
+): ScoredPairing[] {
+  const pairings: ScoredPairing[] = [];
+
+  // Generate all C(n,2) combinations
+  for (let i = 0; i < teamIds.length; i++) {
+    for (let j = i + 1; j < teamIds.length; j++) {
+      const home = teamIds[i];
+      const away = teamIds[j];
+      const key = [home, away].sort().join('-');
+      let score = 100; // base score
+
+      if (constraints.avoidRepeats) {
+        const timesPlayed = existingMatchups.get(key) ?? 0;
+        // Lower score for pairs that have already played more
+        score -= timesPlayed * 30;
+      }
+
+      if (constraints.balanceMatches) {
+        const homeCount = teamMatchCounts.get(home) ?? 0;
+        const awayCount = teamMatchCounts.get(away) ?? 0;
+        // Boost score for teams with fewer total matches
+        score += Math.max(0, 10 - homeCount) + Math.max(0, 10 - awayCount);
+      }
+
+      // Randomize within same score band to avoid deterministic bias
+      score += Math.random() * 5;
+
+      pairings.push({ home, away, score });
+    }
+  }
+
+  // Sort descending by score (best pairings first)
+  pairings.sort((a, b) => b.score - a.score);
+  return pairings;
+}
+
+/**
+ * Assign pairings to slots respecting constraints.
+ * Returns the final list of assigned matches for one event.
+ */
+function assignMatchesToSlots(
+  pairings: ScoredPairing[],
+  slots: EventSlot[],
+  allTeamIds: string[],
+  constraints: EventConstraints,
+  matchDay: number,
+  duration: number,
+  competitionId: string,
+  seasonId: string,
+  stage: string,
+  targetMatchesPerTeam?: number
+): GeneratedMatch[] {
+  const matches: GeneratedMatch[] = [];
+  const teamMatchCounts = new Map<string, number>();
+
+  // Track which teams are playing in each slot index (for back-to-back check)
+  // Slots are ordered by time, grouped by venue. We need chronological order.
+  // Sort slots by time to enable back-to-back detection
+  const sortedSlots = [...slots].sort((a, b) => a.match_date.localeCompare(b.match_date));
+
+  // Track teams playing at each time slot (across venues)
+  const timeSlotTeams = new Map<string, Set<string>>(); // match_date -> teams playing
+
+  for (const slot of sortedSlots) {
+    // Find the best pairing for this slot
+    let bestIdx = -1;
+
+    for (let i = 0; i < pairings.length; i++) {
+      const p = pairings[i];
+
+      // Check target matches per team limit
+      if (targetMatchesPerTeam) {
+        const homeCount = teamMatchCounts.get(p.home) ?? 0;
+        const awayCount = teamMatchCounts.get(p.away) ?? 0;
+        if (homeCount >= targetMatchesPerTeam || awayCount >= targetMatchesPerTeam) {
+          continue;
+        }
+      }
+
+      // Check avoidBackToBack: team shouldn't play in consecutive time slots
+      if (constraints.avoidBackToBack) {
+        const slotTime = slot.match_date;
+        // Find previous time slot (different time, any venue)
+        const slotTimes = [...new Set(sortedSlots.map(s => s.match_date))].sort();
+        const currentTimeIdx = slotTimes.indexOf(slotTime);
+        if (currentTimeIdx > 0) {
+          const prevTime = slotTimes[currentTimeIdx - 1];
+          const prevTeams = timeSlotTeams.get(prevTime);
+          if (prevTeams && (prevTeams.has(p.home) || prevTeams.has(p.away))) {
+            continue; // Skip: would be back-to-back
+          }
+        }
+      }
+
+      // Also ensure team isn't already playing at this exact time on another venue
+      const currentTeams = timeSlotTeams.get(slot.match_date);
+      if (currentTeams && (currentTeams.has(p.home) || currentTeams.has(p.away))) {
+        continue; // Team already playing at this time
+      }
+
+      bestIdx = i;
+      break;
+    }
+
+    if (bestIdx === -1) continue; // No valid pairing for this slot
+
+    const pairing = pairings.splice(bestIdx, 1)[0];
+
+    // Track team usage
+    teamMatchCounts.set(pairing.home, (teamMatchCounts.get(pairing.home) ?? 0) + 1);
+    teamMatchCounts.set(pairing.away, (teamMatchCounts.get(pairing.away) ?? 0) + 1);
+
+    // Track time slot usage
+    if (!timeSlotTeams.has(slot.match_date)) {
+      timeSlotTeams.set(slot.match_date, new Set());
+    }
+    timeSlotTeams.get(slot.match_date)!.add(pairing.home);
+    timeSlotTeams.get(slot.match_date)!.add(pairing.away);
+
+    // Auto-referee: pick a team not playing in this time slot
+    let refereeTeamId: string | undefined;
+    if (constraints.autoReferee) {
+      const busyTeams = timeSlotTeams.get(slot.match_date)!;
+      const available = allTeamIds.filter(t => !busyTeams.has(t));
+      if (available.length > 0) {
+        refereeTeamId = available[Math.floor(Math.random() * available.length)];
+      }
+    }
+
+    matches.push({
+      home_team_id: pairing.home,
+      away_team_id: pairing.away,
+      match_date: slot.match_date,
+      venue_id: slot.venue_id,
+      competition_id: competitionId,
+      season_id: seasonId,
+      stage,
+      status: 'scheduled',
+      home_score: 0,
+      away_score: 0,
+      match_day: matchDay,
+      match_duration_minutes: duration,
+      ...(refereeTeamId ? { referee_team_id: refereeTeamId } : {}),
+    });
+  }
+
+  return matches;
+}
+
+// =============================================================================
 // Main Handler
 // =============================================================================
 serve(async (req) => {
@@ -397,12 +631,150 @@ serve(async (req) => {
     const {
       season_id,
       stage,
+      schedulingMode,
       constraints,
       algorithm: explicitAlgorithm,
       teams: overrideTeamIds,
       seedingMethod,
+      events: eventConfigs,
+      duration: eventDuration,
+      breakTime: eventBreakTime,
+      eventConstraints,
     } = schedule as ScheduleRequest;
 
+    // =========================================================================
+    // EVENT MODE
+    // =========================================================================
+    if (schedulingMode === 'event') {
+      if (!season_id || !stage) {
+        return new Response(JSON.stringify({
+          error: 'season_id and stage are required.',
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (!eventConfigs || eventConfigs.length === 0) {
+        return new Response(JSON.stringify({
+          error: 'At least one event is required for event mode.',
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const duration = eventDuration ?? 15;
+      const breakTime = eventBreakTime ?? 5;
+      const ec: EventConstraints = eventConstraints ?? {
+        avoidRepeats: false,
+        balanceMatches: false,
+        avoidBackToBack: false,
+        autoReferee: false,
+      };
+
+      const adminClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+
+      // Load season to get competition_id
+      const { data: seasonData, error: seasonError } = await adminClient
+        .from('seasons')
+        .select('*, competitions(id)')
+        .eq('id', season_id)
+        .single();
+
+      if (seasonError) throw seasonError;
+
+      const competition_id = (seasonData as any).competitions?.id;
+      if (!competition_id) {
+        throw new Error('Competition ID not found for the given season.');
+      }
+
+      // Load existing matches for avoidRepeats / balanceMatches
+      const existingMatchups = new Map<string, number>();
+      const globalTeamMatchCounts = new Map<string, number>();
+
+      if (ec.avoidRepeats || ec.balanceMatches) {
+        const { data: existingMatches } = await adminClient
+          .from('matches')
+          .select('home_team_id, away_team_id')
+          .eq('season_id', season_id);
+
+        if (existingMatches) {
+          for (const m of existingMatches) {
+            const key = [m.home_team_id, m.away_team_id].sort().join('-');
+            existingMatchups.set(key, (existingMatchups.get(key) ?? 0) + 1);
+            globalTeamMatchCounts.set(m.home_team_id, (globalTeamMatchCounts.get(m.home_team_id) ?? 0) + 1);
+            globalTeamMatchCounts.set(m.away_team_id, (globalTeamMatchCounts.get(m.away_team_id) ?? 0) + 1);
+          }
+        }
+      }
+
+      // Process each event
+      const allMatches: GeneratedMatch[] = [];
+      let matchDay = 1;
+
+      for (const event of eventConfigs) {
+        if (!event.teamIds || event.teamIds.length < 2) {
+          throw new Error(`Event on ${event.date} must have at least 2 teams.`);
+        }
+        if (!event.venueIds || event.venueIds.length === 0) {
+          throw new Error(`Event on ${event.date} must have at least 1 venue.`);
+        }
+
+        const slots = generateEventSlots(event, duration, breakTime);
+        if (slots.length === 0) {
+          throw new Error(`Event on ${event.date}: time window too short for duration ${duration}min + break ${breakTime}min.`);
+        }
+
+        const pairings = generateEventPairings(
+          event.teamIds,
+          existingMatchups,
+          globalTeamMatchCounts,
+          ec
+        );
+
+        const eventMatches = assignMatchesToSlots(
+          pairings,
+          slots,
+          event.teamIds,
+          ec,
+          matchDay,
+          duration,
+          competition_id,
+          season_id,
+          stage,
+          ec.targetMatchesPerTeam
+        );
+
+        // Update global counts for subsequent events
+        for (const m of eventMatches) {
+          const key = [m.home_team_id, m.away_team_id].sort().join('-');
+          existingMatchups.set(key, (existingMatchups.get(key) ?? 0) + 1);
+          globalTeamMatchCounts.set(m.home_team_id, (globalTeamMatchCounts.get(m.home_team_id) ?? 0) + 1);
+          globalTeamMatchCounts.set(m.away_team_id, (globalTeamMatchCounts.get(m.away_team_id) ?? 0) + 1);
+        }
+
+        allMatches.push(...eventMatches);
+        matchDay++;
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        schedulingMode: 'event',
+        total_matches: allMatches.length,
+        matches: allMatches,
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // =========================================================================
+    // CLASSIC MODE (unchanged)
+    // =========================================================================
     if (!season_id || !stage || !constraints) {
       return new Response(JSON.stringify({
         error: 'season_id, stage, and constraints are required for a dry run.',
@@ -457,7 +829,18 @@ serve(async (req) => {
     }
 
     // 8. Determine algorithm to use
-    const algorithm = determineAlgorithm(stage, handlerKey, explicitAlgorithm);
+    // In classic scheduling mode (from Schedule Generator), always use round_robin
+    // to generate all matches upfront, regardless of tournament mode configuration
+    let algorithm = determineAlgorithm(stage, handlerKey, explicitAlgorithm);
+
+    // Classic mode from Schedule Generator should always use round_robin for full season generation
+    // Swiss/knockout modes are for round-by-round generation, not bulk scheduling
+    if (schedulingMode === undefined || schedulingMode === 'classic') {
+      if (algorithm === 'swiss_pairing') {
+        algorithm = 'round_robin';
+        console.log('Classic mode: overriding swiss_pairing with round_robin for full season generation');
+      }
+    }
 
     console.log(`Generating schedule: stage=${stage}, algorithm=${algorithm}, handler=${handlerKey}, teams=${teams.length}`);
 

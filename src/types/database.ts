@@ -90,6 +90,8 @@ export interface Match {
   away_score: number;
   status: 'scheduled' | 'ongoing' | 'completed' | 'postponed' | 'cancelled';
   stage: 'regular_season' | 'quarter-final' | 'semi-final' | 'third-place_playoff' | 'final' | null;
+  match_day?: number | null;
+  match_duration_minutes?: number | null;
   video_url?: string | null;
   created_at: string;
   updated_at: string;
@@ -266,4 +268,23 @@ export interface SeasonDraft {
   season_id: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// Event-based scheduling types
+export type SchedulingMode = 'classic' | 'event';
+
+export interface EventDateConfig {
+  date: string;
+  startTime: string;
+  endTime: string;
+  venueIds: string[];
+  teamIds: string[];
+}
+
+export interface EventConstraints {
+  avoidRepeats: boolean;
+  balanceMatches: boolean;
+  avoidBackToBack: boolean;
+  autoReferee: boolean;
+  targetMatchesPerTeam?: number;
 }

@@ -61,6 +61,7 @@ src/
 ├── globals.css             # Stili globali
 ├── components/             # 94+ componenti React
 │   ├── admin/              # Componenti admin (layout-builder, dialogs, ecc.)
+│   │   └── schedule-generator/  # Generatore calendario (presets, event entry, vincoli, stats)
 │   ├── auth/               # Autenticazione (RequireAuth, AvatarUploader)
 │   ├── ui/                 # Componenti shadcn/ui (NON modificare)
 │   └── ...                 # Altri componenti feature
@@ -112,6 +113,25 @@ src/
 - Gestione errori appropriata
 - Accessibilità (a11y) nelle interfacce
 
+### Protocollo di Sviluppo
+
+Ogni modifica al codice DEVE seguire questi passi obbligatori:
+
+1. **Implementazione** — Scrivere il codice seguendo le convenzioni del progetto
+2. **Debug e Build Check** — Eseguire `npm run build` e risolvere tutti gli errori TypeScript e di compilazione prima di procedere
+3. **Guida Test Utente** — Fornire all'utente istruzioni chiare per testare manualmente la modifica:
+   - Prerequisiti (dati necessari, stato dell'app)
+   - Passi da seguire nell'interfaccia
+   - Risultati attesi
+   - Edge case da verificare
+4. **Aggiornamento Documentazione** — Aggiornare i file di documentazione pertinenti:
+   - `CLAUDE.md` se cambiano architettura, struttura file, convenzioni o flussi
+   - `docs/dev/` se esiste documentazione tecnica specifica per l'area modificata
+   - File di traduzione (`src/locales/`) se vengono aggiunte nuove stringhe UI
+5. **Commit** — Solo dopo che build e verifica passano, procedere con il commit
+
+Questo protocollo si applica a TUTTE le modifiche, non solo alle feature principali.
+
 ---
 
 ## Comandi di Sviluppo
@@ -154,6 +174,48 @@ Per dettagli tecnici: `docs/dev/TOURNAMENT_ARCHITECTURE.md`
 
 ---
 
+## Event-Based Scheduling
+
+Il generatore calendario (`/admin/schedule-generator`) supporta due modalità:
+
+### Modalità Classica
+- Date range (inizio/fine) + giorni permessi della settimana
+- Slot orari fissi (es. "20:00, 21:00")
+- Tutte le squadre della stagione partecipano
+
+### Modalità Per Evento
+- Date specifiche selezionabili singolarmente
+- Ogni evento ha: data, orario inizio/fine, campi, squadre partecipanti
+- Durata partita e pausa configurabili (in minuti)
+- Calcolo automatico slot: `floor((endTime - startTime) / (duration + breakTime))` per campo
+- Vincoli intelligenti (opzionali, attivabili via toggle):
+  - Evita ripetizioni matchup precedenti
+  - Bilancia partite per squadra
+  - Evita partite consecutive per stessa squadra
+  - Assegnazione arbitri automatica da squadre non in campo
+
+### Colonne DB
+- `matches.match_day` (int, nullable) — raggruppa partite per evento (incrementale: 1, 2, 3...)
+- `matches.match_duration_minutes` (int, nullable) — durata partita in minuti
+
+### File chiave
+- `src/pages/admin/ScheduleGenerator.tsx` — form con mode toggle (Classico / Per Evento)
+- `src/components/admin/schedule-generator/EventDateEntry.tsx` — entry singolo evento
+- `src/components/admin/schedule-generator/ConstraintToggles.tsx` — toggle vincoli intelligenti
+- `src/components/admin/schedule-generator/GenerationStats.tsx` — statistiche post-generazione
+- `src/components/admin/schedule-generator/MatchPreviewList.tsx` — anteprima partite raggruppate per data/giornata
+- `supabase/functions/match-scheduler/index.ts` — logica generazione (classica + event mode)
+- `src/lib/utils.ts` — contiene `parseAsLocalTime()` per parsing date senza conversione timezone
+
+### Convenzioni
+- L'edge function distingue la modalità tramite `schedulingMode: 'classic' | 'event'`
+- Il match_day è incrementale per evento nell'ordine di creazione
+- I vincoli sono opzionali e indipendenti tra loro
+- Il codice classico non è stato modificato — le due modalità coesistono
+- **Gestione timezone**: L'edge function genera date in UTC (`+00:00`). Per visualizzare gli orari come inseriti dall'utente (senza conversione timezone), usare `parseAsLocalTime()` da `src/lib/utils.ts`
+
+---
+
 ## Database (Supabase)
 
 Entità principali:
@@ -162,6 +224,8 @@ Entità principali:
 - `Team` - Squadre con logo, colori, capitano
 - `Player` - Rosa giocatori con bio, posizione, numero
 - `Match` - Partite con punteggi, stato, fase
+  - `match_day` (int) — raggruppamento per evento
+  - `match_duration_minutes` (int) — durata partita in minuti
 - `Goal` - Statistiche gol per partita
 - `Article` - News con pubblicazione
 - `Album/GalleryItem` - Gestione foto
