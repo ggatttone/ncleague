@@ -94,6 +94,7 @@ const ScheduleGenerator = () => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [preview, setPreview] = useState<any[] | null>(null);
+  const [generationStats, setGenerationStats] = useState<any>(null);
   const [schedulingMode, setSchedulingMode] = useState<SchedulingMode>("classic");
   const { t } = useTranslation();
 
@@ -197,12 +198,13 @@ const ScheduleGenerator = () => {
         } catch { /* ignore parse errors */ }
         throw new Error(msg);
       }
-      const matches = data?.matches ?? data;
-      return matches;
+      return data; // Return full response to capture generation_stats
     },
     onSuccess: (data) => {
-      setPreview(data);
-      showSuccess(t('pages.admin.scheduleGenerator.previewSuccess', { count: data?.length ?? 0 }));
+      const matches = data?.matches ?? data;
+      setPreview(matches);
+      setGenerationStats(data?.generation_stats ?? null);
+      showSuccess(t('pages.admin.scheduleGenerator.previewSuccess', { count: matches?.length ?? 0 }));
     },
     onError: (err: Error) => showError(`Errore: ${err.message}`),
   });
@@ -356,14 +358,14 @@ const ScheduleGenerator = () => {
                 <button
                   type="button"
                   className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${!isEventMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-                  onClick={() => { setSchedulingMode('classic'); setPreview(null); }}
+                  onClick={() => { setSchedulingMode('classic'); setPreview(null); setGenerationStats(null); }}
                 >
                   {t('pages.admin.scheduleGenerator.modeClassic')}
                 </button>
                 <button
                   type="button"
                   className={`flex-1 text-sm py-1.5 rounded-md transition-colors ${isEventMode ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
-                  onClick={() => { setSchedulingMode('event'); setPreview(null); }}
+                  onClick={() => { setSchedulingMode('event'); setPreview(null); setGenerationStats(null); }}
                 >
                   {t('pages.admin.scheduleGenerator.modeEvent')}
                 </button>
@@ -521,7 +523,7 @@ const ScheduleGenerator = () => {
                 {/* Generation stats for event mode */}
                 {isEventMode && (
                   <div className="mb-4">
-                    <GenerationStats matches={preview} teamsMap={teamsMap} />
+                    <GenerationStats matches={preview} teamsMap={teamsMap} generationStats={generationStats} />
                   </div>
                 )}
 

@@ -468,6 +468,7 @@
         "repeats_one": "{{count}} repeat",
         "repeats_other": "{{count}} repeats",
         "imbalance": "Imbalance ({{min}}-{{max}} matches)",
+        "attemptsInfo": "Attempt {{best}} of {{total}} selected",
         "statsTeam": "Team",
         "statsMatches": "Matches",
         "statsRefereed": "Refereed",

@@ -9,9 +9,20 @@ interface GenerationStatsProps {
     referee_team_id?: string | null;
   }>;
   teamsMap: Map<string, string>;
+  generationStats?: {
+    attemptsRun: number;
+    bestAttemptIndex: number;
+    bestScore: number;
+    quality: {
+      repeatViolations: number;
+      backToBackViolations: number;
+      unfilledSlots: number;
+      matchImbalanceStdDev: number;
+    };
+  } | null;
 }
 
-export function GenerationStats({ matches, teamsMap }: GenerationStatsProps) {
+export function GenerationStats({ matches, teamsMap, generationStats }: GenerationStatsProps) {
   const { t } = useTranslation();
   // Count matches per team
   const teamStats = new Map<string, { played: number; refereed: number }>();
@@ -54,6 +65,14 @@ export function GenerationStats({ matches, teamsMap }: GenerationStatsProps) {
         {imbalanced && (
           <span className="text-amber-600 flex items-center gap-1">
             <AlertTriangle className="h-3 w-3" /> {t('pages.admin.scheduleGenerator.imbalance', { min: minPlayed, max: maxPlayed })}
+          </span>
+        )}
+        {generationStats && (
+          <span className="text-muted-foreground">
+            {t('pages.admin.scheduleGenerator.attemptsInfo', {
+              best: generationStats.bestAttemptIndex + 1,
+              total: generationStats.attemptsRun,
+            })}
           </span>
         )}
       </div>

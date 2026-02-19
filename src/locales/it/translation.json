@@ -468,6 +468,7 @@
         "repeats_one": "{{count}} ripetizione",
         "repeats_other": "{{count}} ripetizioni",
         "imbalance": "Squilibrio ({{min}}-{{max}} partite)",
+        "attemptsInfo": "Tentativo {{best}}/{{total}} selezionato",
         "statsTeam": "Squadra",
         "statsMatches": "Partite",
         "statsRefereed": "Arbitraggi",

@@ -468,6 +468,7 @@
         "repeats_one": "{{count}} herhaling",
         "repeats_other": "{{count}} herhalingen",
         "imbalance": "Onbalans ({{min}}-{{max}} wedstrijden)",
+        "attemptsInfo": "Poging {{best}} van {{total}} geselecteerd",
         "statsTeam": "Team",
         "statsMatches": "Wedstrijden",
         "statsRefereed": "Scheidsrechter",
