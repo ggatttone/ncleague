@@ -71,6 +71,21 @@ Vai su **Admin > Generatore Calendario** oppure clicca "Genera Calendario" dalla
 2. Controlla le partite generate nell'anteprima
 3. Clicca **Conferma e Salva Calendario** per salvare
 
+### Lettura Anteprima (Usabilità)
+
+- I blocchi per data/giornata sono **collassabili**: usa la freccia a destra dell'intestazione gruppo.
+- Ogni gruppo mostra intestazioni colonne: **Orario**, **Squadre**, **Campo** e (in modalità evento) **Arbitro**.
+- Le squadre sono rese più leggibili: **casa** in evidenza e **trasferta** in tono attenuato.
+- Campo e arbitro sono accompagnati da icone dedicate per una scansione visiva più rapida.
+- Se un accoppiamento squadra-squadra compare più volte:
+  - viene evidenziato in giallo nella riga partita
+  - compare l'icona di avviso con tooltip esplicativo
+  - appare un banner riepilogativo in alto con il numero di accoppiamenti ripetuti
+- Il pannello **Statistiche di generazione** è visibile sia in modalità **Classico** sia **Per Evento**.
+- Nel pannello statistiche:
+  - puoi espandere **Vedi N ripetizioni** per vedere quali coppie si ripetono
+  - la colonna partite include una mini barra visuale per il bilanciamento per team
+
 ---
 
 ## 3. Gestione Fasi (Dashboard Torneo)

@@ -520,12 +520,10 @@ const ScheduleGenerator = () => {
             )}
             {preview && (
               <>
-                {/* Generation stats for event mode */}
-                {isEventMode && (
-                  <div className="mb-4">
-                    <GenerationStats matches={preview} teamsMap={teamsMap} generationStats={generationStats} />
-                  </div>
-                )}
+                {/* Generation stats always visible when preview exists */}
+                <div className="mb-4">
+                  <GenerationStats matches={preview} teamsMap={teamsMap} generationStats={generationStats} />
+                </div>
 
                 <MatchPreviewList
                   matches={preview}
