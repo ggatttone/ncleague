@@ -17,7 +17,7 @@ So I jumped in.
 
 
 
-I started exploring different models like #Gemini Pro, OpenAI #GPT-4, Anthropic #Claude, each helping me think through the structure, logic, and development from a different angle. Using #dyad as my development environment, I connected everything to a Supabase database and deployed the final app on Vercel and GitHub. It was the first time I built something end-to-end using this “AI-augmented” approach… and it felt surprisingly natural.
+I started exploring different models like #Gemini Pro, OpenAI #GPT-4, Anthropic #Claude, each helping me think through the structure, logic, and development from a different angle. Using an AI-first development environment, I connected everything to a Supabase database and deployed the final app on Vercel and GitHub. It was the first time I built something end-to-end using this “AI-augmented” approach… and it felt surprisingly natural.
 
 
 
@@ -36,8 +36,6 @@ This little project reminded me that innovation doesn’t always need to start f
 
 
 https://www.ncleague.football/
-
-https://www.dyad.sh/
 
 ---
 

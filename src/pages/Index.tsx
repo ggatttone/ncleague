@@ -1,5 +1,4 @@
 import { useHomepageLayout } from "@/hooks/use-homepage-layout";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { WidgetRenderer } from "@/components/WidgetRenderer";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +40,6 @@ const Index = () => {
           </div>
         )}
       </main>
-      <MadeWithDyad />
     </div>
   );
 };
