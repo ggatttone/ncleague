@@ -17,6 +17,7 @@ import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide
 import { showError, showSuccess } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { formatMatchDateLocal, toWallClockUtcIsoString } from "@/lib/utils";
 
 const steps = [
   { label: "Carica File" },
@@ -225,7 +226,7 @@ const FixtureImportAdmin = () => {
         previewRow.data = {
           home_team_id: homeTeamId!,
           away_team_id: awayTeamId!,
-          match_date: matchDate!.toISOString(),
+          match_date: toWallClockUtcIsoString(matchDate!),
           home_score: status === 'completed' ? homeScore : 0,
           away_score: status === 'completed' ? awayScore : 0,
           venue_id: venueId,
@@ -335,7 +336,7 @@ const FixtureImportAdmin = () => {
                       </TableCell>
                       <TableCell>{row.original[mapping.home_team_name]}</TableCell>
                       <TableCell>{row.original[mapping.away_team_name]}</TableCell>
-                      <TableCell>{row.data?.match_date ? new Date(row.data.match_date).toLocaleString('it-IT') : 'Data invalida'}</TableCell>
+                      <TableCell>{row.data?.match_date ? formatMatchDateLocal(row.data.match_date, 'dd/MM/yyyy HH:mm') : 'Data invalida'}</TableCell>
                       <TableCell>{row.original[mapping.referee_team_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.competition_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.season_name] || '-'}</TableCell>

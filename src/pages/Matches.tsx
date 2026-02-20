@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Clock, Trophy, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { useState, useEffect, useMemo } from "react";
@@ -18,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { usePlayoffBracket } from "@/hooks/use-playoffs";
-import { cn } from "@/lib/utils";
+import { cn, formatMatchDateLocal } from "@/lib/utils";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -126,11 +125,11 @@ const Matches = () => {
               <div className="flex items-center gap-2 flex-wrap">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
+                  {formatMatchDateLocal(match.match_date, 'dd MMM yyyy', it)}
                 </span>
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  {format(new Date(match.match_date), 'HH:mm')}
+                  {formatMatchDateLocal(match.match_date, 'HH:mm')}
                 </span>
               </div>
               {getStatusBadge(match.status)}

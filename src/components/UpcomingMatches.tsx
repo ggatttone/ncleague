@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Loader2, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -20,7 +20,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Calendar className="h-3 w-3" />
-          <span>{format(new Date(match.match_date), 'dd MMM, HH:mm', { locale: it })}</span>
+          <span>{formatMatchDateLocal(match.match_date, 'dd MMM, HH:mm', it)}</span>
         </div>
       </div>
       <div className="flex items-center justify-between gap-2">

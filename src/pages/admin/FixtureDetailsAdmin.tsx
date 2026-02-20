@@ -29,6 +29,7 @@ import { GoalForm } from "@/components/admin/GoalForm";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -99,7 +100,7 @@ const FixtureDetailsAdmin = () => {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <div className="font-semibold">{t('pages.admin.fixtureDetails.dateLabel')}</div>
-              <div>{new Date(match.match_date).toLocaleString('it-IT')}</div>
+              <div>{formatMatchDateLocal(match.match_date, 'dd/MM/yyyy HH:mm')}</div>
             </div>
             <div>
               <div className="font-semibold">{t('pages.admin.fixtureDetails.venueLabel')}</div>

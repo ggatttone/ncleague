@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { formatDistanceToNow } from 'date-fns';
+import { format as formatDate, formatDistanceToNow, type Locale } from 'date-fns';
 import { it } from 'date-fns/locale';
 
 export function cn(...inputs: ClassValue[]) {
@@ -45,4 +45,42 @@ export function parseAsLocalTime(isoString: string): Date {
   const [, year, month, day, hour, minute, second] = match.map(Number);
   // Create date using local timezone (month is 0-indexed in JavaScript Date)
   return new Date(year, month - 1, day, hour, minute, second);
+}
+
+/**
+ * Format match datetime preserving wall-clock time (no timezone conversion).
+ */
+export function formatMatchDateLocal(
+  isoString: string,
+  pattern: string,
+  locale?: Locale
+): string {
+  const localDate = parseAsLocalTime(isoString);
+  return formatDate(localDate, pattern, locale ? { locale } : undefined);
+}
+
+/**
+ * Convert persisted datetime string to a value accepted by <input type="datetime-local" />.
+ */
+export function toDateTimeLocalInputValue(isoString: string): string {
+  const localDate = parseAsLocalTime(isoString);
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+  const hour = String(localDate.getHours()).padStart(2, '0');
+  const minute = String(localDate.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+}
+
+/**
+ * Serialize a local Date preserving wall-clock time using +00:00 suffix.
+ */
+export function toWallClockUtcIsoString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  const second = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}+00:00`;
 }

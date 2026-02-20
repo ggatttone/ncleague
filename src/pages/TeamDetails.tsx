@@ -7,10 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, ArrowLeft, Loader2, Trophy, Calendar, Star, Clock, MapPin } from "lucide-react";
-import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 const MatchCard = ({ match }: { match: MatchWithTeams }) => {
   const { t } = useTranslation();
@@ -35,11 +35,11 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => {
             <div className="flex items-center gap-2 flex-wrap">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
+                {formatMatchDateLocal(match.match_date, 'dd MMM yyyy', it)}
               </span>
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                {format(new Date(match.match_date), 'HH:mm')}
+                {formatMatchDateLocal(match.match_date, 'HH:mm')}
               </span>
             </div>
             {getStatusBadge(match.status)}
@@ -183,7 +183,7 @@ const TeamDetails = () => {
                           <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="h-4 w-4" />
-                              {format(new Date(match.match_date), 'dd MMM yyyy', { locale: it })}
+                              {formatMatchDateLocal(match.match_date, 'dd MMM yyyy', it)}
                             </div>
                             <div className="text-lg font-bold">
                               {match.home_teams.name} {match.home_score}-{match.away_score} {match.away_teams.name}

@@ -45,4 +45,5 @@ https://www.dyad.sh/
 
 - [Tournament Modes System](docs/TOURNAMENT_MODES.md) - Technical documentation for the flexible tournament mode system
 - [Development Guidelines](CLAUDE.md) - Coding conventions and project structure
+- [Timezone/Match Date handling (wall-clock model)](CLAUDE.md) - Fix applicata per evitare lo shift +1h post-salvataggio calendario
 

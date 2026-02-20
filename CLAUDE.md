@@ -205,14 +205,23 @@ Il generatore calendario (`/admin/schedule-generator`) supporta due modalità:
 - `src/components/admin/schedule-generator/GenerationStats.tsx` — statistiche post-generazione
 - `src/components/admin/schedule-generator/MatchPreviewList.tsx` — anteprima partite raggruppate per data/giornata
 - `supabase/functions/match-scheduler/index.ts` — logica generazione (classica + event mode)
-- `src/lib/utils.ts` — contiene `parseAsLocalTime()` per parsing date senza conversione timezone
+- `src/lib/utils.ts` — helper timezone wall-clock (`parseAsLocalTime`, `formatMatchDateLocal`, `toDateTimeLocalInputValue`, `toWallClockUtcIsoString`)
 
 ### Convenzioni
 - L'edge function distingue la modalità tramite `schedulingMode: 'classic' | 'event'`
 - Il match_day è incrementale per evento nell'ordine di creazione
 - I vincoli sono opzionali e indipendenti tra loro
 - Il codice classico non è stato modificato — le due modalità coesistono
-- **Gestione timezone**: L'edge function genera date in UTC (`+00:00`). Per visualizzare gli orari come inseriti dall'utente (senza conversione timezone), usare `parseAsLocalTime()` da `src/lib/utils.ts`
+- **Gestione timezone**: L'edge function genera date con suffisso UTC (`+00:00`). Il modello applicativo per `match_date` è **wall-clock locale**: in UI non va fatta conversione timezone implicita con `new Date(...)` per gli orari partita.
+
+#### Helper timezone (quando usare cosa)
+
+| Caso d'uso | Helper | Note |
+| --- | --- | --- |
+| Visualizzazione data/ora partita in pagine pubbliche/admin | `formatMatchDateLocal(iso, pattern, locale?)` | Preserva l'orario inserito (no shift +1h) |
+| Prefill di input `datetime-local` in modifica partita | `toDateTimeLocalInputValue(iso)` | Evita offset in apertura form |
+| Serializzazione da data locale (es. import Excel) | `toWallClockUtcIsoString(date)` | Mantiene l'ora wall-clock con suffisso `+00:00` |
+| Parsing base senza conversione timezone | `parseAsLocalTime(iso)` | Utility di basso livello |
 
 ---
 

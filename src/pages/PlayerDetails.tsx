@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -219,7 +220,7 @@ const PlayerDetails = () => {
                       {goal.matches.home_teams.name} vs {goal.matches.away_teams.name}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {goal.minute}' - {new Date(goal.matches.match_date).toLocaleDateString('it-IT')}
+                      {goal.minute}' - {formatMatchDateLocal(goal.matches.match_date, 'dd/MM/yyyy')}
                     </div>
                   </div>
                   <div className="text-sm font-medium">

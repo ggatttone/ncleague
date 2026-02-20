@@ -15,6 +15,7 @@ import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { useMatch, useCreateMatch, useUpdateMatch } from "@/hooks/use-matches";
 import { useTranslation } from "react-i18next";
+import { toDateTimeLocalInputValue } from "@/lib/utils";
 
 const matchSchema = z.object({
   home_team_id: z.string().min(1, "Squadra casa obbligatoria"),
@@ -82,7 +83,7 @@ const FixtureFormAdmin = () => {
         home_team_id: match.home_team_id,
         away_team_id: match.away_team_id,
         referee_team_id: match.referee_team_id || null,
-        match_date: match.match_date ? new Date(match.match_date).toISOString().substring(0, 16) : '',
+        match_date: match.match_date ? toDateTimeLocalInputValue(match.match_date) : '',
         status: match.status,
         venue_id: match.venue_id || null,
         competition_id: match.competition_id || null,

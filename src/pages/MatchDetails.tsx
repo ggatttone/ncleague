@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel, Video } from "lucide-react";
-import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { VideoPlayer } from "@/components/VideoPlayer";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -136,13 +136,13 @@ const MatchDetails = () => {
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <span className="text-lg">
-                  {format(new Date(match.match_date), 'dd MMMM yyyy', { locale: it })}
+                  {formatMatchDateLocal(match.match_date, 'dd MMMM yyyy', it)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground" />
                 <span className="text-lg">
-                  {format(new Date(match.match_date), 'HH:mm')}
+                  {formatMatchDateLocal(match.match_date, 'HH:mm')}
                 </span>
               </div>
             </div>

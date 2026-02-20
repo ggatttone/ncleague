@@ -45,6 +45,7 @@ import { showSuccess, showError } from "@/utils/toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
 import { useTranslation } from "react-i18next";
+import { formatMatchDateLocal } from "@/lib/utils";
 
 const FixturesAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -154,7 +155,7 @@ const FixturesAdmin = () => {
     setIsExporting(true);
     try {
       const dataToExport = filteredMatches.map(match => ({
-        'Data Partita': format(new Date(match.match_date), "dd/MM/yyyy HH:mm", { locale: it }),
+        'Data Partita': formatMatchDateLocal(match.match_date, "dd/MM/yyyy HH:mm", it),
         'Squadra Casa': match.home_teams.name,
         'Squadra Ospite': match.away_teams.name,
         'Punteggio Casa': match.status === 'completed' ? match.home_score : '',
@@ -208,7 +209,7 @@ const FixturesAdmin = () => {
   const data = filteredMatches?.map(match => ({
     select: <Checkbox checked={selectedMatches.includes(match.id)} onCheckedChange={(checked) => handleSelectRow(match.id, checked as boolean)} aria-label={`Select match ${match.id}`} />,
     match: <Link to={`/admin/fixtures/${match.id}`} className="text-primary underline hover:text-primary/80">{match.home_teams.name} vs {match.away_teams.name}</Link>,
-    date: format(new Date(match.match_date), "dd/MM/yyyy HH:mm", { locale: it }),
+    date: formatMatchDateLocal(match.match_date, "dd/MM/yyyy HH:mm", it),
     status: getStatusBadge(match.status),
     actions: (
       <div className="flex items-center gap-2">
@@ -272,7 +273,7 @@ const FixturesAdmin = () => {
           <AdminMobileCard
             key={match.id}
             title={<Link to={`/admin/fixtures/${match.id}`} className="hover:underline">{match.home_teams.name} vs {match.away_teams.name}</Link>}
-            subtitle={format(new Date(match.match_date), "dd/MM/yyyy HH:mm", { locale: it })}
+            subtitle={formatMatchDateLocal(match.match_date, "dd/MM/yyyy HH:mm", it)}
             actions={actions}
           >
             <div className="mt-2">{getStatusBadge(match.status)}</div>
