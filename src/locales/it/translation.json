@@ -128,7 +128,24 @@
       "newPost": "Nuovo Articolo",
       "noNews": "Nessuna notizia trovata.",
       "noNewsTitle": "Nessuna notizia ancora",
-      "noNewsSubtitle": "Torna più tardi per leggere gli ultimi aggiornamenti."
+      "noNewsSubtitle": "Torna più tardi per leggere gli ultimi aggiornamenti.",
+      "unknownAuthor": "Autore sconosciuto",
+      "pinned": "In evidenza",
+      "composer": {
+        "placeholder": "Condividi un aggiornamento con la community...",
+        "attachImage": "Allega immagine",
+        "removeImage": "Rimuovi immagine",
+        "charCounter": "{{count}}/{{max}}",
+        "publish": "Pubblica",
+        "saveDraft": "Salva bozza",
+        "advancedEditor": "Editor avanzato",
+        "publishSuccess": "Aggiornamento pubblicato con successo.",
+        "draftSuccess": "Bozza salvata con successo.",
+        "submitError": "Errore durante il salvataggio del post.",
+        "uploadSuccess": "Immagine caricata con successo.",
+        "uploadError": "Errore durante il caricamento dell'immagine.",
+        "validationMaxLength": "Il messaggio non può superare 280 caratteri."
+      }
     },
     "newsDetails": {
       "notFoundTitle": "Articolo non trovato",

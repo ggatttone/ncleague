@@ -128,7 +128,24 @@
       "newPost": "Nieuw Bericht",
       "noNews": "Geen nieuws gevonden.",
       "noNewsTitle": "Nog geen nieuws",
-      "noNewsSubtitle": "Kom later terug voor de laatste updates."
+      "noNewsSubtitle": "Kom later terug voor de laatste updates.",
+      "unknownAuthor": "Onbekende auteur",
+      "pinned": "Vastgezet",
+      "composer": {
+        "placeholder": "Deel een update met de community...",
+        "attachImage": "Afbeelding toevoegen",
+        "removeImage": "Afbeelding verwijderen",
+        "charCounter": "{{count}}/{{max}}",
+        "publish": "Publiceren",
+        "saveDraft": "Concept opslaan",
+        "advancedEditor": "Geavanceerde editor",
+        "publishSuccess": "Update succesvol gepubliceerd.",
+        "draftSuccess": "Concept succesvol opgeslagen.",
+        "submitError": "Fout bij het opslaan van het bericht.",
+        "uploadSuccess": "Afbeelding succesvol geüpload.",
+        "uploadError": "Fout bij het uploaden van de afbeelding.",
+        "validationMaxLength": "Het bericht mag niet langer zijn dan 280 tekens."
+      }
     },
     "newsDetails": {
       "notFoundTitle": "Artikel Niet Gevonden",

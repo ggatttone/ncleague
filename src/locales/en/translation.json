@@ -128,7 +128,24 @@
       "newPost": "New Post",
       "noNews": "No news found.",
       "noNewsTitle": "No news yet",
-      "noNewsSubtitle": "Check back later for the latest updates."
+      "noNewsSubtitle": "Check back later for the latest updates.",
+      "unknownAuthor": "Unknown author",
+      "pinned": "Pinned",
+      "composer": {
+        "placeholder": "Share an update with the community...",
+        "attachImage": "Attach image",
+        "removeImage": "Remove image",
+        "charCounter": "{{count}}/{{max}}",
+        "publish": "Publish",
+        "saveDraft": "Save draft",
+        "advancedEditor": "Advanced editor",
+        "publishSuccess": "Update published successfully.",
+        "draftSuccess": "Draft saved successfully.",
+        "submitError": "Error while saving the post.",
+        "uploadSuccess": "Image uploaded successfully.",
+        "uploadError": "Error while uploading the image.",
+        "validationMaxLength": "The message cannot exceed 280 characters."
+      }
     },
     "newsDetails": {
       "notFoundTitle": "Article Not Found",

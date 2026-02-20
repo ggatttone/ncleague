@@ -20,7 +20,7 @@ Claude è lo **sviluppatore principale** di questo progetto, nonché:
 - Visualizzazione bracket playoff
 - Profili giocatori e statistiche
 - Profili squadre e storico
-- News con sistema di commenti e like
+- News con sistema di commenti e like, feed in stile social e composer inline (`admin/editor`) con publish/draft
 - Gallerie fotografiche
 - Archivio stagioni
 - Supporto multilingua (IT, EN, NL)
@@ -63,6 +63,7 @@ src/
 │   ├── admin/              # Componenti admin (layout-builder, dialogs, ecc.)
 │   │   └── schedule-generator/  # Generatore calendario (presets, event entry, vincoli, stats)
 │   ├── auth/               # Autenticazione (RequireAuth, AvatarUploader)
+│   ├── news/               # Composer news inline (`NewsComposer`)
 │   ├── ui/                 # Componenti shadcn/ui (NON modificare)
 │   └── ...                 # Altri componenti feature
 ├── pages/                  # 54 pagine
@@ -72,6 +73,7 @@ src/
 ├── hooks/                  # 24 custom hooks (use-matches, use-teams, ecc.)
 ├── lib/
 │   ├── supabase/           # Client e auth context
+│   ├── news/               # Utilities news (`articleComposer`)
 │   ├── i18n.ts             # Configurazione traduzioni
 │   └── utils.ts            # Utilities generali
 ├── types/
@@ -242,6 +244,12 @@ Entità principali:
 - `Sponsor` - Sponsor con logo
 - `PlayoffBracket` - Gestione bracket torneo
 - `TournamentMode` - Formati torneo con impostazioni
+
+Note operative News:
+- Il composer inline della pagina `/news` crea record nella tabella `articles` senza nuove migrazioni DB.
+- `title` e `slug` vengono auto-generati lato frontend (`src/lib/news/articleComposer.ts`).
+- Flusso publish/draft: `published` mostra subito nel feed pubblico, `draft` resta fuori dal feed pubblico.
+- Nessuna modifica RLS aggiuntiva introdotta in questa iterazione.
 
 ---
 

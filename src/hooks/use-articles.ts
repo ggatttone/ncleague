@@ -1,6 +1,7 @@
 import { useSupabaseQuery, useSupabaseMutation } from './use-supabase-query';
 import { supabase } from '@/lib/supabase/client';
 import { Article } from '@/types/database';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Interfaccia per i dati di un articolo con l'autore
 export type ArticleWithAuthor = Article & {
@@ -101,10 +102,20 @@ export function usePublishedArticleBySlug(slug: string | undefined) {
 
 // Hook per creare un nuovo articolo
 export function useCreateArticle() {
+  const queryClient = useQueryClient();
+
   return useSupabaseMutation<Article>(
     ['articles'],
-    async (data: UpsertArticleData) => 
-      supabase.from('articles').insert([data]).select().single()
+    async (data: UpsertArticleData) =>
+      supabase.from('articles').insert([data]).select().single(),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['articles'] });
+        queryClient.invalidateQueries({ queryKey: ['published-articles'] });
+        queryClient.invalidateQueries({ queryKey: ['latest-articles'] });
+        queryClient.invalidateQueries({ queryKey: ['pinned-articles'] });
+      },
+    }
   );
 }
 

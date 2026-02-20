@@ -41,9 +41,20 @@ https://www.dyad.sh/
 
 ---
 
+## Recent Updates
+
+- News feed redesign with a denser social timeline look inspired by X/Twitter.
+- Inline News composer available in `/news` for `admin/editor` roles.
+- Composer behavior: max 280 characters, optional single image upload, publish or save draft.
+- Automatic `title` and `slug` generation for inline-created posts.
+- UI copy updated in all supported locales: Italian, English, Dutch.
+
+---
+
 ## Documentation
 
 - [Tournament Modes System](docs/TOURNAMENT_MODES.md) - Technical documentation for the flexible tournament mode system
 - [Development Guidelines](CLAUDE.md) - Coding conventions and project structure
 - [Timezone/Match Date handling (wall-clock model)](CLAUDE.md) - Fix applicata per evitare lo shift +1h post-salvataggio calendario
+- [News Feed + Inline Composer](CLAUDE.md) - Note operative su timeline News stile social e flusso composer admin/editor
 
