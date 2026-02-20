@@ -117,7 +117,7 @@ const Matches = () => {
   };
 
   const MatchCard = ({ match }: { match: MatchWithTeams }) => (
-    <div className="relative group">
+    <div>
       <Link to={`/matches/${match.id}`}>
         <Card className="hover:shadow-lg transition-shadow cursor-pointer">
           <CardHeader className="pb-3">
@@ -192,34 +192,6 @@ const Matches = () => {
           </CardContent>
         </Card>
       </Link>
-
-      {/* Admin Quick Actions */}
-      {user && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex gap-1">
-            <Link to={`/admin/fixtures/${match.id}/edit`}>
-              <Button 
-                size="sm" 
-                variant="secondary" 
-                className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm"
-                onClick={(e) => e.preventDefault()}
-              >
-                <Settings className="h-3 w-3" />
-              </Button>
-            </Link>
-            <Link to={`/admin/fixtures/${match.id}`}>
-              <Button 
-                size="sm" 
-                variant="secondary" 
-                className="h-8 px-2 bg-white/90 hover:bg-white shadow-sm text-xs"
-                onClick={(e) => e.preventDefault()}
-              >
-                Admin
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 

@@ -290,3 +290,4 @@ npx skills add anthropics/skills
 - Le traduzioni sono in `src/locales/{lang}/translation.json`
 - Il tema è personalizzabile via pannello admin (colori, logo, font)
 - Import Excel disponibile per giocatori e partite
+- Nelle pagine pubbliche `Teams`, `Players`, `Matches` sono stati rimossi i controlli hover "Admin Quick Actions" (icona ingranaggio + bottone Admin) per evitare CTA non operative.

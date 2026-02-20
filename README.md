@@ -48,6 +48,7 @@ https://www.dyad.sh/
 - Composer behavior: max 280 characters, optional single image upload, publish or save draft.
 - Automatic `title` and `slug` generation for inline-created posts.
 - UI copy updated in all supported locales: Italian, English, Dutch.
+- Deprecated hover-only public card controls (`Settings` + `Admin`) on `/teams`, `/players`, and `/matches` to avoid non-functional UI affordances.
 
 ---
 
