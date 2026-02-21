@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/lib/supabase/auth-context";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ModeProvider } from "@/components/theme/ModeProvider";
@@ -13,6 +13,7 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Navbar } from "@/components/Navbar";
 import { PageLoader } from "@/components/PageLoader";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Footer } from "@/components/Footer";
 
 // Lazy load all page components
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -89,6 +90,220 @@ const queryClient = new QueryClient({
   },
 });
 
+const AppShell = () => {
+  const { pathname } = useLocation();
+  const showFooter = !pathname.startsWith("/admin");
+
+  return (
+    <>
+      {/* Skip to main content link for keyboard navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none"
+      >
+        Vai al contenuto principale
+      </a>
+      <Navbar />
+      <ErrorBoundary>
+        <main id="main-content">
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/matches" element={<Matches />} />
+              <Route path="/matches/:id" element={<MatchDetails />} />
+              <Route path="/tables" element={<Tables />} />
+              <Route path="/playoffs" element={<Playoffs />} />
+              <Route
+                path="/playoffs/:competitionId/:seasonId"
+                element={<Playoffs />}
+              />
+              <Route path="/statistics" element={<Statistics />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:slug" element={<NewsDetails />} />
+              <Route path="/players" element={<Players />} />
+              <Route path="/players/:id" element={<PlayerDetails />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/teams/:id" element={<TeamDetails />} />
+              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/gallery/albums/:id" element={<AlbumDetails />} />
+              <Route
+                path="/season/:yyyy/:competition/:division"
+                element={<SeasonArchive />}
+              />
+
+              {/* Protected routes */}
+              <Route
+                path="/profile"
+                element={
+                  <RequireAuth>
+                    <ProfilePage />
+                  </RequireAuth>
+                }
+              />
+
+              {/* Protected admin routes */}
+              <Route
+                path="/admin/*"
+                element={
+                  <RequireAuth>
+                    <Routes>
+                      <Route path="/" element={<AdminIndex />} />
+                      <Route
+                        path="tournament-dashboard"
+                        element={<TournamentDashboard />}
+                      />
+                      <Route path="teams" element={<TeamsAdmin />} />
+                      <Route path="teams/new" element={<TeamFormAdmin />} />
+                      <Route path="teams/:id" element={<TeamDetailsAdmin />} />
+                      <Route
+                        path="teams/:id/edit"
+                        element={<TeamFormAdmin />}
+                      />
+                      <Route path="players" element={<PlayersAdmin />} />
+                      <Route
+                        path="players/new"
+                        element={<PlayerFormAdmin />}
+                      />
+                      <Route
+                        path="players/import"
+                        element={<PlayerImportAdmin />}
+                      />
+                      <Route
+                        path="players/:id"
+                        element={<PlayerDetailsAdmin />}
+                      />
+                      <Route
+                        path="players/:id/edit"
+                        element={<PlayerFormAdmin />}
+                      />
+                      <Route path="fixtures" element={<FixturesAdmin />} />
+                      <Route
+                        path="fixtures/new"
+                        element={<FixtureFormAdmin />}
+                      />
+                      <Route
+                        path="fixtures/new/bulk"
+                        element={<FixtureBulkFormAdmin />}
+                      />
+                      <Route
+                        path="fixtures/import"
+                        element={<FixtureImportAdmin />}
+                      />
+                      <Route
+                        path="fixtures/:id"
+                        element={<FixtureDetailsAdmin />}
+                      />
+                      <Route
+                        path="fixtures/:id/edit"
+                        element={<FixtureFormAdmin />}
+                      />
+                      <Route
+                        path="schedule-generator"
+                        element={<ScheduleGenerator />}
+                      />
+                      <Route path="users" element={<UsersAdmin />} />
+                      <Route path="venues" element={<VenuesAdmin />} />
+                      <Route path="venues/new" element={<VenueFormAdmin />} />
+                      <Route
+                        path="venues/:id/edit"
+                        element={<VenueFormAdmin />}
+                      />
+                      <Route
+                        path="competitions"
+                        element={<CompetitionsAdmin />}
+                      />
+                      <Route
+                        path="competitions/new"
+                        element={<CompetitionFormAdmin />}
+                      />
+                      <Route
+                        path="competitions/:id/edit"
+                        element={<CompetitionFormAdmin />}
+                      />
+                      <Route path="seasons" element={<SeasonsAdmin />} />
+                      <Route
+                        path="seasons/new"
+                        element={<SeasonFormAdmin />}
+                      />
+                      <Route
+                        path="seasons/wizard"
+                        element={<SeasonWizard />}
+                      />
+                      <Route
+                        path="seasons/wizard/:draftId"
+                        element={<SeasonWizard />}
+                      />
+                      <Route
+                        path="seasons/wizard/success/:seasonId"
+                        element={<SeasonWizardSuccess />}
+                      />
+                      <Route
+                        path="seasons/:seasonId/edit"
+                        element={<SeasonWizard />}
+                      />
+                      <Route
+                        path="tournament-modes"
+                        element={<TournamentModesAdmin />}
+                      />
+                      <Route
+                        path="tournament-modes/new"
+                        element={<TournamentModeFormAdmin />}
+                      />
+                      <Route
+                        path="tournament-modes/:id/edit"
+                        element={<TournamentModeFormAdmin />}
+                      />
+                      <Route path="articles" element={<ArticlesAdmin />} />
+                      <Route
+                        path="articles/new"
+                        element={<ArticleFormAdmin />}
+                      />
+                      <Route
+                        path="articles/:id/edit"
+                        element={<ArticleFormAdmin />}
+                      />
+                      <Route path="albums" element={<AlbumsAdmin />} />
+                      <Route path="albums/new" element={<AlbumFormAdmin />} />
+                      <Route
+                        path="albums/:id/edit"
+                        element={<AlbumFormAdmin />}
+                      />
+                      <Route path="sponsors" element={<SponsorsAdmin />} />
+                      <Route
+                        path="sponsors/new"
+                        element={<SponsorFormAdmin />}
+                      />
+                      <Route
+                        path="sponsors/:id/edit"
+                        element={<SponsorFormAdmin />}
+                      />
+                      <Route path="honors" element={<HonorsAdmin />} />
+                      <Route path="honors/new" element={<HonorFormAdmin />} />
+                      <Route
+                        path="honors/:id/edit"
+                        element={<HonorFormAdmin />}
+                      />
+                      <Route path="event" element={<EventAdmin />} />
+                      <Route path="homepage" element={<HomepageAdmin />} />
+                      <Route path="theme" element={<ThemeAdmin />} />
+                      <Route path="*" element={<NotFoundAdmin />} />
+                    </Routes>
+                  </RequireAuth>
+                }
+              />
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </main>
+      </ErrorBoundary>
+      {showFooter && <Footer />}
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -100,107 +315,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              {/* Skip to main content link for keyboard navigation */}
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none"
-              >
-                Vai al contenuto principale
-              </a>
-              <Navbar />
-              <ErrorBoundary>
-                <main id="main-content">
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                  {/* Public routes */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/matches" element={<Matches />} />
-                  <Route path="/matches/:id" element={<MatchDetails />} />
-                  <Route path="/tables" element={<Tables />} />
-                  <Route path="/playoffs" element={<Playoffs />} />
-                  <Route path="/playoffs/:competitionId/:seasonId" element={<Playoffs />} />
-                  <Route path="/statistics" element={<Statistics />} />
-                  <Route path="/news" element={<News />} />
-                  <Route path="/news/:slug" element={<NewsDetails />} />
-                  <Route path="/players" element={<Players />} />
-                  <Route path="/players/:id" element={<PlayerDetails />} />
-                  <Route path="/teams" element={<Teams />} />
-                  <Route path="/teams/:id" element={<TeamDetails />} />
-                  <Route path="/gallery" element={<GalleryPage />} />
-                  <Route path="/gallery/albums/:id" element={<AlbumDetails />} />
-                  <Route path="/season/:yyyy/:competition/:division" element={<SeasonArchive />} />
-                  
-                  {/* Protected routes */}
-                  <Route path="/profile" element={
-                    <RequireAuth>
-                      <ProfilePage />
-                    </RequireAuth>
-                  } />
-
-                  {/* Protected admin routes */}
-                  <Route path="/admin/*" element={
-                    <RequireAuth>
-                      <Routes>
-                        <Route path="/" element={<AdminIndex />} />
-                        <Route path="tournament-dashboard" element={<TournamentDashboard />} />
-                        <Route path="teams" element={<TeamsAdmin />} />
-                        <Route path="teams/new" element={<TeamFormAdmin />} />
-                        <Route path="teams/:id" element={<TeamDetailsAdmin />} />
-                        <Route path="teams/:id/edit" element={<TeamFormAdmin />} />
-                        <Route path="players" element={<PlayersAdmin />} />
-                        <Route path="players/new" element={<PlayerFormAdmin />} />
-                        <Route path="players/import" element={<PlayerImportAdmin />} />
-                        <Route path="players/:id" element={<PlayerDetailsAdmin />} />
-                        <Route path="players/:id/edit" element={<PlayerFormAdmin />} />
-                        <Route path="fixtures" element={<FixturesAdmin />} />
-                        <Route path="fixtures/new" element={<FixtureFormAdmin />} />
-                        <Route path="fixtures/new/bulk" element={<FixtureBulkFormAdmin />} />
-                        <Route path="fixtures/import" element={<FixtureImportAdmin />} />
-                        <Route path="fixtures/:id" element={<FixtureDetailsAdmin />} />
-                        <Route path="fixtures/:id/edit" element={<FixtureFormAdmin />} />
-                        <Route path="schedule-generator" element={<ScheduleGenerator />} />
-                        <Route path="users" element={<UsersAdmin />} />
-                        <Route path="venues" element={<VenuesAdmin />} />
-                        <Route path="venues/new" element={<VenueFormAdmin />} />
-                        <Route path="venues/:id/edit" element={<VenueFormAdmin />} />
-                        <Route path="competitions" element={<CompetitionsAdmin />} />
-                        <Route path="competitions/new" element={<CompetitionFormAdmin />} />
-                        <Route path="competitions/:id/edit" element={<CompetitionFormAdmin />} />
-                        <Route path="seasons" element={<SeasonsAdmin />} />
-                        <Route path="seasons/new" element={<SeasonFormAdmin />} />
-                        <Route path="seasons/wizard" element={<SeasonWizard />} />
-                        <Route path="seasons/wizard/:draftId" element={<SeasonWizard />} />
-                        <Route path="seasons/wizard/success/:seasonId" element={<SeasonWizardSuccess />} />
-                        <Route path="seasons/:seasonId/edit" element={<SeasonWizard />} />
-                        <Route path="tournament-modes" element={<TournamentModesAdmin />} />
-                        <Route path="tournament-modes/new" element={<TournamentModeFormAdmin />} />
-                        <Route path="tournament-modes/:id/edit" element={<TournamentModeFormAdmin />} />
-                        <Route path="articles" element={<ArticlesAdmin />} />
-                        <Route path="articles/new" element={<ArticleFormAdmin />} />
-                        <Route path="articles/:id/edit" element={<ArticleFormAdmin />} />
-                        <Route path="albums" element={<AlbumsAdmin />} />
-                        <Route path="albums/new" element={<AlbumFormAdmin />} />
-                        <Route path="albums/:id/edit" element={<AlbumFormAdmin />} />
-                        <Route path="sponsors" element={<SponsorsAdmin />} />
-                        <Route path="sponsors/new" element={<SponsorFormAdmin />} />
-                        <Route path="sponsors/:id/edit" element={<SponsorFormAdmin />} />
-                        <Route path="honors" element={<HonorsAdmin />} />
-                        <Route path="honors/new" element={<HonorFormAdmin />} />
-                        <Route path="honors/:id/edit" element={<HonorFormAdmin />} />
-                        <Route path="event" element={<EventAdmin />} />
-                        <Route path="homepage" element={<HomepageAdmin />} />
-                        <Route path="theme" element={<ThemeAdmin />} />
-                        <Route path="*" element={<NotFoundAdmin />} />
-                      </Routes>
-                    </RequireAuth>
-                  } />
-                  
-                  <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </main>
-              </ErrorBoundary>
+              <AppShell />
             </BrowserRouter>
           </TooltipProvider>
         </ModeProvider>

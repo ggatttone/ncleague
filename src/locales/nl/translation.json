@@ -16,6 +16,13 @@
     "logout": "Uitloggen",
     "login": "Inloggen"
   },
+  "footer": {
+    "followUs": "Volg ons",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "rights": "© {{year}} NC League. Alle rechten voorbehouden.",
+    "brandFallback": "NC League"
+  },
   "themeToggle": {
     "light": "Licht",
     "dark": "Donker",

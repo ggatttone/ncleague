@@ -16,6 +16,13 @@
     "logout": "Esci",
     "login": "Accedi"
   },
+  "footer": {
+    "followUs": "Seguici",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "rights": "© {{year}} NC League. Tutti i diritti riservati.",
+    "brandFallback": "NC League"
+  },
   "themeToggle": {
     "light": "Chiaro",
     "dark": "Scuro",
