@@ -47,6 +47,7 @@ https://www.ncleague.football/
 - Automatic `title` and `slug` generation for inline-created posts.
 - UI copy updated in all supported locales: Italian, English, Dutch.
 - Deprecated hover-only public card controls (`Settings` + `Admin`) on `/teams`, `/players`, and `/matches` to avoid non-functional UI affordances.
+- Added a global responsive public footer (hidden on `/admin`) with Instagram and YouTube social links, localized labels, and mobile-safe spacing.
 
 ---
 

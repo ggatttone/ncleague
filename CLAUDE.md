@@ -23,6 +23,7 @@ Claude è lo **sviluppatore principale** di questo progetto, nonché:
 - News con sistema di commenti e like, feed in stile social e composer inline (`admin/editor`) con publish/draft
 - Gallerie fotografiche
 - Archivio stagioni
+- Footer pubblico globale responsive con link social Instagram/YouTube (nascosto nelle route `/admin`)
 - Supporto multilingua (IT, EN, NL)
 
 ### Pannello Admin
