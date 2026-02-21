@@ -18,6 +18,8 @@ import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { usePlayoffBracket } from "@/hooks/use-playoffs";
 import { cn, formatMatchDateLocal } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileMatchesList } from "@/components/matches/MobileMatchesList";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -27,6 +29,7 @@ type MatchWithTeams = Match & {
 const Matches = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [selectedCompetition, setSelectedCompetition] = useState<string | undefined>();
   const [selectedSeason, setSelectedSeason] = useState<string | undefined>();
   const [selectedTeam, setSelectedTeam] = useState<string | undefined>();
@@ -116,7 +119,7 @@ const Matches = () => {
     }
   };
 
-  const MatchCard = ({ match }: { match: MatchWithTeams }) => (
+  const DesktopMatchCard = ({ match }: { match: MatchWithTeams }) => (
     <div>
       <Link to={`/matches/${match.id}`}>
         <Card className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -195,6 +198,20 @@ const Matches = () => {
     </div>
   );
 
+  const renderMatchesList = (matchesToRender: MatchWithTeams[]) => {
+    if (isMobile) {
+      return <MobileMatchesList matches={matchesToRender} />;
+    }
+
+    return (
+      <div className="space-y-4">
+        {matchesToRender.map((match) => (
+          <DesktopMatchCard key={match.id} match={match} />
+        ))}
+      </div>
+    );
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -253,11 +270,7 @@ const Matches = () => {
               )}
             </div>
           ) : (
-            <div className="space-y-4">
-              {upcomingMatches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
-            </div>
+            renderMatchesList(upcomingMatches)
           )}
         </TabsContent>
 
@@ -269,11 +282,7 @@ const Matches = () => {
               <p className="text-muted-foreground">{t('pages.matches.noCompletedSubtitle')}</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {completedMatches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
-            </div>
+            renderMatchesList(completedMatches)
           )}
         </TabsContent>
 
@@ -286,11 +295,7 @@ const Matches = () => {
                 <p className="text-muted-foreground">Le partite dei playoff appariranno qui.</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {finalStageMatches.map((match) => (
-                  <MatchCard key={match.id} match={match} />
-                ))}
-              </div>
+              renderMatchesList(finalStageMatches)
             )}
           </TabsContent>
         )}

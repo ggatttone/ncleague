@@ -48,6 +48,7 @@ https://www.ncleague.football/
 - UI copy updated in all supported locales: Italian, English, Dutch.
 - Deprecated hover-only public card controls (`Settings` + `Admin`) on `/teams`, `/players`, and `/matches` to avoid non-functional UI affordances.
 - Added a global responsive public footer (hidden on `/admin`) with Instagram and YouTube social links, localized labels, and mobile-safe spacing.
+- Mobile matches redesign on `/matches` with a denser LiveScore-inspired row layout for screens `<768px` while keeping desktop cards unchanged.
 
 ---
 
@@ -57,4 +58,6 @@ https://www.ncleague.football/
 - [Development Guidelines](CLAUDE.md) - Coding conventions and project structure
 - [Timezone/Match Date handling (wall-clock model)](CLAUDE.md) - Fix applicata per evitare lo shift +1h post-salvataggio calendario
 - [News Feed + Inline Composer](CLAUDE.md) - Note operative su timeline News stile social e flusso composer admin/editor
+- [Mobile Matches Redesign (LiveScore-inspired)](docs/dev/MATCHES_MOBILE_LIVESCORE.md) - Obiettivi UX, architettura componenti e checklist regressione
+- [Mobile Matches User Test Protocol](docs/dev/MATCHES_MOBILE_USER_TEST.md) - Setup test utenti, metriche e template go/no-go
 
