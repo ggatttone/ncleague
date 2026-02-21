@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
 import { useThemeContext } from './ThemeProvider';
 
+const DEFAULT_FAVICON_HREF = '/favicon.svg';
+const DEFAULT_FAVICON_TYPE = 'image/svg+xml';
+
 const getMimeType = (url: string): string | undefined => {
   if (!url) return undefined;
-  const extension = url.split('.').pop()?.toLowerCase();
+  const cleanUrl = url.split('#')[0].split('?')[0];
+  const extension = cleanUrl.split('.').pop()?.toLowerCase();
   switch (extension) {
     case 'png':
       return 'image/png';
@@ -26,19 +30,27 @@ export const DynamicFavicon = () => {
 
   useEffect(() => {
     const favicon = document.getElementById('dynamic-favicon') as HTMLLinkElement | null;
-    
-    if (favicon && theme?.logo_url) {
-      favicon.href = theme.logo_url;
-      const mimeType = getMimeType(theme.logo_url);
+
+    if (!favicon) {
+      return;
+    }
+
+    const themeLogoUrl = theme?.logo_url?.trim();
+
+    if (themeLogoUrl) {
+      favicon.href = themeLogoUrl;
+      const mimeType = getMimeType(themeLogoUrl);
       if (mimeType) {
         favicon.type = mimeType;
       } else {
-        // Rimuovi l'attributo type se non è riconosciuto per lasciare che il browser decida
         favicon.removeAttribute('type');
       }
+      return;
     }
-  }, [theme]);
 
-  // Questo componente non renderizza nulla a schermo
+    favicon.href = DEFAULT_FAVICON_HREF;
+    favicon.type = DEFAULT_FAVICON_TYPE;
+  }, [theme?.logo_url]);
+
   return null;
 };

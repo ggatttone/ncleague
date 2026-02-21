@@ -49,6 +49,8 @@ https://www.ncleague.football/
 - Deprecated hover-only public card controls (`Settings` + `Admin`) on `/teams`, `/players`, and `/matches` to avoid non-functional UI affordances.
 - Added a global responsive public footer (hidden on `/admin`) with Instagram and YouTube social links, localized labels, and mobile-safe spacing.
 - Mobile matches redesign on `/matches` with a denser LiveScore-inspired row layout for screens `<768px` while keeping desktop cards unchanged.
+- New league favicon package (web + PWA): `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `site.webmanifest`.
+- Dynamic favicon fallback improved: default league favicon is restored automatically when `theme.logo_url` is empty/removed, while keeping theme-based override when available.
 
 ---
 
