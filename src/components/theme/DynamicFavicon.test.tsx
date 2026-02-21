@@ -1,8 +1,30 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DynamicFavicon } from './DynamicFavicon';
 
 const useThemeContextMock = vi.fn();
+let imageLoadShouldFail = false;
+let imageNaturalWidth = 512;
+let imageNaturalHeight = 512;
+
+class MockImage {
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  naturalWidth = 0;
+  naturalHeight = 0;
+
+  set src(_: string) {
+    queueMicrotask(() => {
+      if (imageLoadShouldFail) {
+        this.onerror?.();
+        return;
+      }
+      this.naturalWidth = imageNaturalWidth;
+      this.naturalHeight = imageNaturalHeight;
+      this.onload?.();
+    });
+  }
+}
 
 vi.mock('./ThemeProvider', () => ({
   useThemeContext: () => useThemeContextMock(),
@@ -19,42 +41,50 @@ describe('DynamicFavicon', () => {
       isLoading: false,
     }));
     document.head.innerHTML = '';
+    imageLoadShouldFail = false;
+    imageNaturalWidth = 512;
+    imageNaturalHeight = 512;
+    vi.stubGlobal('Image', MockImage as unknown as typeof Image);
   });
 
   const createFaviconLink = () => {
     const link = document.createElement('link');
     link.id = 'dynamic-favicon';
     link.rel = 'icon';
-    link.href = '/favicon.svg';
-    link.type = 'image/svg+xml';
+    link.href = '/favicon.ico?v=20260221-1';
+    link.type = 'image/x-icon';
     document.head.appendChild(link);
     return link;
   };
 
-  it('applies the themed PNG logo and mime type', () => {
+  it('applies the themed PNG logo and mime type', async () => {
     const favicon = createFaviconLink();
     currentTheme = { logo_url: 'https://cdn.example.com/logo.png' };
 
     render(<DynamicFavicon />);
 
-    expect(favicon.getAttribute('href')).toBe('https://cdn.example.com/logo.png');
-    expect(favicon.getAttribute('type')).toBe('image/png');
+    await waitFor(() => {
+      expect(favicon.getAttribute('href')).toBe('https://cdn.example.com/logo.png');
+      expect(favicon.getAttribute('type')).toBe('image/png');
+    });
   });
 
-  it('restores the league favicon when theme logo becomes null', () => {
+  it('restores the league favicon when theme logo becomes null', async () => {
     const favicon = createFaviconLink();
     currentTheme = { logo_url: 'https://cdn.example.com/logo.png' };
 
     const { rerender } = render(<DynamicFavicon />);
 
-    expect(favicon.getAttribute('href')).toBe('https://cdn.example.com/logo.png');
-    expect(favicon.getAttribute('type')).toBe('image/png');
+    await waitFor(() => {
+      expect(favicon.getAttribute('href')).toBe('https://cdn.example.com/logo.png');
+      expect(favicon.getAttribute('type')).toBe('image/png');
+    });
 
     currentTheme = { logo_url: null };
     rerender(<DynamicFavicon />);
 
-    expect(favicon.getAttribute('href')).toBe('/favicon.svg');
-    expect(favicon.getAttribute('type')).toBe('image/svg+xml');
+    expect(favicon.getAttribute('href')).toBe('/favicon.ico?v=20260221-1');
+    expect(favicon.getAttribute('type')).toBe('image/x-icon');
   });
 
   it('removes type when extension is unknown', () => {
@@ -71,5 +101,19 @@ describe('DynamicFavicon', () => {
     currentTheme = { logo_url: 'https://cdn.example.com/logo.png' };
 
     expect(() => render(<DynamicFavicon />)).not.toThrow();
+  });
+
+  it('keeps local fallback when themed raster image is not square', async () => {
+    const favicon = createFaviconLink();
+    imageNaturalWidth = 500;
+    imageNaturalHeight = 499;
+    currentTheme = { logo_url: 'https://cdn.example.com/logo.png' };
+
+    render(<DynamicFavicon />);
+
+    await waitFor(() => {
+      expect(favicon.getAttribute('href')).toBe('/favicon.ico?v=20260221-1');
+      expect(favicon.getAttribute('type')).toBe('image/x-icon');
+    });
   });
 });
