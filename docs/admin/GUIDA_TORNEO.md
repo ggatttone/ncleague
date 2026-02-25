@@ -93,7 +93,7 @@ Attiva i vincoli tramite i toggle dedicati per ottenere un calendario ottimizzat
 |---------|--------------|
 | **Evita Ripetizioni** | Garantisce che la stessa coppia di squadre non si affronti più volte. Le coppie "fresche" (mai giocate) hanno sempre priorità. I repeat avvengono solo quando matematicamente inevitabili. |
 | **Bilancia Partite** | Distribuzione uniforme delle partite: ogni squadra gioca lo stesso numero di partite (±1 massimo). |
-| **Evita Back-to-Back** | Gap minimo di **2 slot** tra partite della stessa squadra (es. con slot da 15 min = almeno 30 min di pausa), anche su campi diversi. Questo vale anche tra eventi diversi nella stessa generazione. |
+| **Evita Back-to-Back** | Il sistema calcola automaticamente il gap ottimale in base al numero di squadre e campi. Con configurazioni grandi (es. 12+ squadre, 2 campi) il gap è 2 slot (≥30 min con slot da 15 min); con configurazioni più piccole viene ridotto automaticamente per garantire sempre il massimo riempimento degli slot. Il vincolo si applica cross-campo e cross-evento. |
 | **Auto Arbitro** | Assegnazione automatica degli arbitri dalle squadre non in campo. L'arbitro non è **mai** una squadra che gioca nello stesso slot orario. La distribuzione è bilanciata tra tutte le squadre. |
 
 #### Algoritmo Multi-Tentativo

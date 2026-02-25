@@ -191,12 +191,12 @@ Il generatore calendario (`/admin/schedule-generator`) supporta due modalità:
 - Ogni evento ha: data, orario inizio/fine, campi, squadre partecipanti
 - Durata partita e pausa configurabili (in minuti)
 - Calcolo automatico slot: `floor((endTime - startTime) / (duration + breakTime))` per campo
-- Algoritmo multi-tentativo: **24 tentativi** (`EVENT_MODE_ATTEMPTS`) con PRNG deterministico, selezione best-score con convergence detection
+- Algoritmo multi-tentativo: **24 tentativi** (`EVENT_MODE_ATTEMPTS`) con PRNG parzialmente deterministico (seed = `Date.now() + a * 1000003`), selezione best-score con convergence detection
 - **SharedEventState**: stato condiviso cross-evento per tentativo (timeSlotTeams, refereeCounts, teamMatchCounts, matchupCounts) — garantisce coerenza tra eventi multipli
 - Vincoli intelligenti (opzionali, attivabili via toggle):
   - **Evita ripetizioni**: tiered sorting (`repeatTier` in `ScoredPairing`) — coppie fresh hanno sempre priorità, repeat solo se matematicamente inevitabile
   - **Bilancia partite**: bonus scoring proporzionale al deficit `(maxCount - teamCount) * 100` per squadra
-  - **Evita back-to-back**: gap minimo di **2 slot** (`BACK_TO_BACK_GAP` costante) tra partite della stessa squadra, cross-campo e cross-evento
+  - **Evita back-to-back**: gap adattivo calcolato da `computeEffectiveGap(teamCount, venueCount)` — `BACK_TO_BACK_GAP = 2` è il cap massimo; il gap effettivo si riduce automaticamente per configurazioni piccole per garantire il riempimento completo degli slot (es. 10 sq + 2 campi → gap=1, 4 sq + 2 campi → gap=0). Vincolo applicato cross-campo e cross-evento.
   - **Auto arbitro**: funzione separata `assignReferees()` eseguita **dopo** tutti i match di un evento — zero conflitti arbitro-giocatore, bilanciamento cross-evento
 
 ### Colonne DB
@@ -209,7 +209,7 @@ Il generatore calendario (`/admin/schedule-generator`) supporta due modalità:
 - `src/components/admin/schedule-generator/ConstraintToggles.tsx` — toggle vincoli intelligenti
 - `src/components/admin/schedule-generator/GenerationStats.tsx` — statistiche post-generazione
 - `src/components/admin/schedule-generator/MatchPreviewList.tsx` — anteprima partite raggruppate per data/giornata
-- `supabase/functions/match-scheduler/index.ts` — logica generazione (classica + event mode), funzioni principali: `generateEventPairings()`, `assignMatchesToSlots()`, `assignReferees()`, `scoreScheduleQuality()`, `runEventModeMultiAttempt()`
+- `supabase/functions/match-scheduler/index.ts` — logica generazione (classica + event mode), funzioni principali: `generateEventPairings()`, `assignMatchesToSlots()`, `assignReferees()`, `scoreScheduleQuality()`, `runEventModeMultiAttempt()`, `computeEffectiveGap()`
 - `supabase/functions/match-scheduler/test-scheduler.ts` — test automatici algoritmo (18 asserzioni, 4 scenari). Run: `npx tsx supabase/functions/match-scheduler/test-scheduler.ts`
 - `src/lib/utils.ts` — helper timezone wall-clock (`parseAsLocalTime`, `formatMatchDateLocal`, `toDateTimeLocalInputValue`, `toWallClockUtcIsoString`)
 

@@ -602,7 +602,7 @@ Questo stato è creato una volta per tentativo e aggiornato in-place da ogni fun
 |---------|------|-------------|
 | Conflitto arbitro-giocatore | **Hard** | L'arbitro non può essere una squadra che gioca nello stesso slot. Garantito dall'assegnazione post-match. |
 | Back-to-back (slot consecutivo) | **Hard** | Una squadra non può giocare in due slot consecutivi. |
-| Near-back-to-back (gap < 2 slot) | **Hard** | Con `avoidBackToBack` attivo, il gap minimo è di 2 slot (costante `BACK_TO_BACK_GAP`). |
+| Near-back-to-back (gap adattivo) | **Hard** | Con `avoidBackToBack` attivo, il gap è calcolato da `computeEffectiveGap(teamCount, venueCount)`: massimo 2 slot, ridotto automaticamente se la configurazione non lo consente (es. 10 sq + 2 campi → gap=1). Garantisce sempre il massimo riempimento degli slot senza back-to-back diretti. |
 | Evita ripetizioni matchup | **Quasi-hard** | Le coppie "fresh" (mai giocate) hanno sempre priorità via tiered sorting (`repeatTier`). I repeat solo quando nessuna coppia fresh soddisfa i vincoli. |
 | Bilanciamento partite | **Soft** | Bonus scoring proporzionale al deficit: `(maxCount - teamCount) * 100` per squadra. |
 | Bilanciamento arbitraggi | **Soft** | L'arbitro viene scelto tra le squadre con meno arbitraggi cumulativi. |

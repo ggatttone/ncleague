@@ -196,16 +196,51 @@ Aggiorna i file in `supabase/functions/`:
 
 - **Path**: `supabase/functions/match-scheduler/index.ts`
 - **Invocato da**: `ScheduleGenerator.tsx`
-- **Input**: `{ dryRun, schedule: { season_id, stage, constraints } }`
-- **Output**: `{ success, matches[], total_matches }`
-- **Algoritmi**: Round-robin (circle method), bracket generation, Swiss pairing, group assignment
-- **Vincoli**: date range, giorni permessi, time slots, venues, distribuzione squadre
+- **Input**: `{ dryRun, schedule: { season_id, stage, constraints, schedulingMode?, events?, duration?, breakTime?, eventConstraints? } }`
+- **Output**: `{ success, matches[], total_matches, stats? }`
+- **Algoritmi**:
+  - **Classico**: Round-robin (circle method), bracket generation, Swiss pairing, group assignment
+  - **Event-Mode**: multi-tentativo (24 attempt), `SharedEventState` cross-evento, gap adattivo via `computeEffectiveGap(teamCount, venueCount)`
+- **Vincoli**: date range, giorni permessi, time slots, venues, distribuzione squadre, back-to-back (gap adattivo in event-mode)
 
 ### tournament-phase-manager
 
 - **Path**: `supabase/functions/tournament-phase-manager/index.ts`
 - **Invocato da**: Tournament Dashboard (chiusura fase)
 - **Funzionalità**: Tracking stato fase, valutazione regole avanzamento, determinazione fase successiva, calcolo classifiche
+
+### Event-Mode Scheduling (match-scheduler)
+
+La modalità "Per Evento" del generatore calendario utilizza un algoritmo multi-tentativo per ottimizzare calendari complessi:
+
+#### `computeEffectiveGap(teamCount, venueCount)`
+Calcola il gap back-to-back adattivo in base alla configurazione:
+```
+gap = clamp(0, BACK_TO_BACK_GAP, floor(teamCount / (venueCount * 2) - 1))
+```
+- **Esempio A**: 10 squadre, 2 campi → `floor(10/4 - 1) = 1` → gap=1
+- **Esempio B**: 12 squadre, 2 campi → `floor(12/4 - 1) = 2` → gap=2 (massimo)
+- **Esempio C**: 4 squadre, 2 campi → `floor(4/4 - 1) = 0` → gap=0 (back-to-back disabilitato)
+
+#### `SharedEventState`
+Stato condiviso tra tutti gli eventi di una generazione per garantire coerenza:
+- `timeSlotTeams`: squadre impegnate per slot orario (cross-evento)
+- `refereeCounts`: conteggio arbitraggi cumulativo
+- `teamMatchCounts`: partite cumulative per bilanciamento
+- `matchupCounts`: matchup cumulativi per evitare ripetizioni
+
+#### Funzioni Principali
+- `generateEventPairings()` — genera accoppiamenti con tiered sorting (fresh > repeat) e bilanciamento
+- `assignMatchesToSlots()` — piazza partite negli slot rispettando vincoli hard
+- `assignReferees()` — assegna arbitri dopo tutti i match dell'evento con bilanciamento cross-evento
+- `scoreScheduleQuality()` — calcola punteggio qualità (ripetizioni, back-to-back, bilanciamento)
+- `runEventModeMultiAttempt()` — loop 24 tentativi con convergence detection
+
+#### Algoritmo
+1. Esegue fino a 24 tentativi di generazione
+2. Per ogni tentativo: genera slot, pairings, assegna slot, assegna arbitri, calcola score
+3. Convergence: stop anticipato se 3 tentativi uguali o score perfetto
+4. Seleziona il tentativo con miglior score
 
 ---
 
