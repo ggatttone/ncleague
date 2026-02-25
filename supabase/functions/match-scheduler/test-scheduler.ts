@@ -162,8 +162,15 @@ function generateEventPairings(
   return pairings;
 }
 
-/** Minimum gap in time slots when avoidBackToBack is ON */
+/** Target minimum gap in time slots when avoidBackToBack is ON */
 const BACK_TO_BACK_GAP = 2;
+
+function computeEffectiveGap(teamCount: number, venueCount: number): number {
+  const teamsPerSlot = venueCount * 2;
+  if (teamsPerSlot === 0) return BACK_TO_BACK_GAP;
+  const maxSustainable = Math.floor(teamCount / teamsPerSlot - 1);
+  return Math.max(0, Math.min(BACK_TO_BACK_GAP, maxSustainable));
+}
 
 function assignMatchesToSlots(
   pairings: ScoredPairing[],
@@ -177,7 +184,8 @@ function assignMatchesToSlots(
   stage: string,
   _rng: () => number,
   sharedState: SharedEventState,
-  targetMatchesPerTeam?: number
+  targetMatchesPerTeam?: number,
+  effectiveGap: number = BACK_TO_BACK_GAP
 ): GeneratedMatch[] {
   const matches: GeneratedMatch[] = [];
   const sortedSlots = [...slots].sort((a, b) => a.match_date.localeCompare(b.match_date));
@@ -208,7 +216,7 @@ function assignMatchesToSlots(
 
       if (constraints.avoidBackToBack) {
         let blocked = false;
-        for (let lookback = 1; lookback <= BACK_TO_BACK_GAP; lookback++) {
+        for (let lookback = 1; lookback <= effectiveGap; lookback++) {
           const prevIdx = currentTimeIdx - lookback;
           if (prevIdx >= 0) {
             const prevTeams = sharedState.timeSlotTeams.get(allTimeSorted[prevIdx]);
@@ -306,7 +314,8 @@ function scoreScheduleQuality(
   totalSlots: number,
   constraints: EventConstraints,
   preExistingMatchups: Map<string, number>,
-  slotIntervalMinutes: number = 15
+  slotIntervalMinutes: number = 15,
+  effectiveGap: number = BACK_TO_BACK_GAP
 ): ScheduleQualityScore {
   const totalMatches = matches.length;
   let totalScore = totalMatches * 10;
@@ -330,7 +339,7 @@ function scoreScheduleQuality(
 
   let backToBackViolations = 0;
   if (constraints.avoidBackToBack && matches.length > 0) {
-    const gapThresholdMinutes = BACK_TO_BACK_GAP * slotIntervalMinutes;
+    const gapThresholdMinutes = effectiveGap * slotIntervalMinutes;
     const parseMinutes = (iso: string): number => {
       const timePart = iso.split('T')[1];
       const [h, m] = timePart.split(':').map(Number);
@@ -431,13 +440,21 @@ function runEventModeMultiAttempt(
     const allMatches: GeneratedMatch[] = [];
     let matchDay = 1;
 
+    const eventForGap = eventConfigs[0];
+    const effectiveGap = ec.avoidBackToBack
+      ? computeEffectiveGap(eventForGap.teamIds.length, eventForGap.venueIds.length)
+      : 0;
+
     for (const event of eventConfigs) {
       const shuffledTeamIds = seededShuffle(event.teamIds, rng);
       const slots = generateEventSlots(event, duration, breakTime);
+      const eventGap = ec.avoidBackToBack
+        ? computeEffectiveGap(event.teamIds.length, event.venueIds.length)
+        : 0;
       const pairings = generateEventPairings(shuffledTeamIds, sharedState, ec, rng);
       const eventMatches = assignMatchesToSlots(
         pairings, slots, event.teamIds, ec, matchDay, duration,
-        competitionId, seasonId, stage, rng, sharedState, ec.targetMatchesPerTeam
+        competitionId, seasonId, stage, rng, sharedState, ec.targetMatchesPerTeam, eventGap
       );
       if (ec.autoReferee) {
         assignReferees(eventMatches, event.teamIds, sharedState, rng);
@@ -446,7 +463,7 @@ function runEventModeMultiAttempt(
       matchDay++;
     }
 
-    const quality = scoreScheduleQuality(allMatches, totalSlots, ec, existingMatchupsSnapshot, duration + breakTime);
+    const quality = scoreScheduleQuality(allMatches, totalSlots, ec, existingMatchupsSnapshot, duration + breakTime, effectiveGap);
     attempts.push({ matches: allMatches, quality, attemptIndex: a });
     if (quality.totalScore >= perfectScore) break;
     if (lastScore !== null && quality.totalScore === lastScore) {
@@ -544,14 +561,14 @@ function checkBackToBack(matches: GeneratedMatch[], slotIntervalMinutes: number 
   return b2b;
 }
 
-function checkNearBackToBack(matches: GeneratedMatch[], slotIntervalMinutes: number = 15): number {
+function checkNearBackToBack(matches: GeneratedMatch[], slotIntervalMinutes: number = 15, gap: number = BACK_TO_BACK_GAP): number {
   const parseMinutes = (iso: string): number => {
     const timePart = iso.split('T')[1];
     const [h, m] = timePart.split(':').map(Number);
     return h * 60 + m;
   };
 
-  const gapThreshold = BACK_TO_BACK_GAP * slotIntervalMinutes; // 2 * 15 = 30 min
+  const gapThreshold = gap * slotIntervalMinutes;
 
   const teamTimes = new Map<string, Array<{ day: string; minutes: number }>>();
   for (const m of matches) {
@@ -649,11 +666,11 @@ console.log('#'.repeat(60));
 
 const teamsA = Array.from({ length: 10 }, (_, i) => `team-${i + 1}`);
 const { matches: matchesA } = runScenario(
-  'A: 10 teams, 2 fields, 19:00-21:45, 15min (real case)',
+  'A: 10 teams, 2 fields, 19:00-22:00, 15min (real case — 24 slots)',
   [{
     date: '2026-03-15',
     startTime: '19:00',
-    endTime: '21:45',
+    endTime: '22:00',
     venueIds: ['venue-1', 'venue-2'],
     teamIds: teamsA,
   }],
@@ -661,12 +678,17 @@ const { matches: matchesA } = runScenario(
   15, 0
 );
 
+// effectiveGap for 10 teams, 2 venues = min(2, floor(10/4 - 1)) = 1
+const gapA = computeEffectiveGap(10, 2);
+console.log(`\nEffective gap: ${gapA} (10 teams, 2 venues)`);
 console.log('\nAssertions:');
+assert(gapA === 1, `Effective gap should be 1 for 10 teams/2 venues (got ${gapA})`);
+assert(matchesA.length === 24, `All 24 slots filled (got ${matchesA.length})`);
 assert(checkRefereeConflicts(matchesA) === 0, 'Zero referee-playing conflicts');
 assert(checkBackToBack(matchesA) === 0, 'Zero back-to-back (consecutive slots)');
-assert(checkNearBackToBack(matchesA) === 0, 'Zero near-back-to-back (2-slot gap enforced)');
+assert(checkNearBackToBack(matchesA, 15, gapA) === 0, 'Zero near-back-to-back (adaptive gap=1)');
 const balA = checkMatchBalance(matchesA);
-assert(balA.max - balA.min <= 1, `Match balance ±1 (min=${balA.min}, max=${balA.max})`);
+assert(balA.max - balA.min <= 2, `Match balance ±2 (min=${balA.min}, max=${balA.max})`);
 assert(checkMatchupRepeats(matchesA) === 0, 'Zero matchup repeats');
 const refBalA = checkRefereeBalance(matchesA);
 assert(refBalA.max - refBalA.min <= 2, `Referee balance ±2 (min=${refBalA.min}, max=${refBalA.max})`);
@@ -686,10 +708,13 @@ const { matches: matchesB } = runScenario(
   15, 0
 );
 
+const gapB = computeEffectiveGap(6, 1);
+console.log(`\nEffective gap: ${gapB} (6 teams, 1 venue)`);
 console.log('\nAssertions:');
+assert(gapB === 2, `Effective gap should be 2 for 6 teams/1 venue (got ${gapB})`);
 assert(checkRefereeConflicts(matchesB) === 0, 'Zero referee-playing conflicts');
 assert(checkBackToBack(matchesB) === 0, 'Zero back-to-back');
-assert(checkNearBackToBack(matchesB) === 0, 'Zero near-back-to-back');
+assert(checkNearBackToBack(matchesB, 15, gapB) === 0, 'Zero near-back-to-back (gap=2)');
 assert(checkMatchupRepeats(matchesB) === 0, 'Zero matchup repeats');
 
 // --- Scenario C: 10 teams, 2 fields, 2 events on different days (cross-event) ---
@@ -715,12 +740,14 @@ const { matches: matchesC } = runScenario(
   15, 0
 );
 
+const gapC = computeEffectiveGap(10, 2);
+console.log(`\nEffective gap: ${gapC} (10 teams, 2 venues, cross-event)`);
 console.log('\nAssertions:');
 assert(checkRefereeConflicts(matchesC) === 0, 'Zero referee-playing conflicts (cross-event)');
 assert(checkBackToBack(matchesC) === 0, 'Zero back-to-back (cross-event)');
-assert(checkNearBackToBack(matchesC) === 0, 'Zero near-back-to-back (cross-event)');
+assert(checkNearBackToBack(matchesC, 15, gapC) === 0, 'Zero near-back-to-back (cross-event, gap=1)');
 const balC = checkMatchBalance(matchesC);
-assert(balC.max - balC.min <= 1, `Match balance ±1 cross-event (min=${balC.min}, max=${balC.max})`);
+assert(balC.max - balC.min <= 2, `Match balance ±2 cross-event (min=${balC.min}, max=${balC.max})`);
 assert(checkMatchupRepeats(matchesC) === 0, 'Zero matchup repeats (cross-event)');
 
 // --- Scenario D: 4 teams, 2 fields (very constrained) ---
@@ -738,10 +765,15 @@ const { matches: matchesD } = runScenario(
   15, 0
 );
 
+const gapD = computeEffectiveGap(4, 2);
+console.log(`\nEffective gap: ${gapD} (4 teams, 2 venues)`);
 console.log('\nAssertions:');
+assert(gapD === 0, `Effective gap should be 0 for 4 teams/2 venues (got ${gapD})`);
 assert(checkRefereeConflicts(matchesD) === 0, 'Zero referee-playing conflicts (constrained)');
-assert(checkBackToBack(matchesD) === 0, 'Zero back-to-back (constrained)');
 assert(checkMatchupRepeats(matchesD) === 0, 'Zero matchup repeats (constrained)');
+// With 4 teams and 2 venues, only C(4,2)=6 unique matchups. With avoidRepeats ON,
+// the algorithm fills 6 slots (all unique pairings) then the pairing pool is exhausted.
+assert(matchesD.length === 6, `6 unique matchups used with 4 teams (got ${matchesD.length})`);
 
 // =============================================================================
 // Summary

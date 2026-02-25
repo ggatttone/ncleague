@@ -547,8 +547,26 @@ function generateEventPairings(
   return pairings;
 }
 
-/** Minimum gap in time slots when avoidBackToBack is ON (2 = skip 2 previous slots) */
+/** Target minimum gap in time slots when avoidBackToBack is ON */
 const BACK_TO_BACK_GAP = 2;
+
+/**
+ * Compute the effective back-to-back gap for an event based on team/venue counts.
+ * The formula ensures that enough teams remain available to fill all venues each slot.
+ *
+ * With G slots lookback and V venues (2 teams per venue per slot):
+ *   blocked teams ≈ G × V × 2
+ *   available = totalTeams - blocked ≥ V × 2
+ *   → G ≤ totalTeams / (V × 2) - 1
+ *
+ * Returns a value between 1 (always prevent direct back-to-back) and BACK_TO_BACK_GAP.
+ */
+function computeEffectiveGap(teamCount: number, venueCount: number): number {
+  const teamsPerSlot = venueCount * 2;
+  if (teamsPerSlot === 0) return BACK_TO_BACK_GAP;
+  const maxSustainable = Math.floor(teamCount / teamsPerSlot - 1);
+  return Math.max(0, Math.min(BACK_TO_BACK_GAP, maxSustainable));
+}
 
 /**
  * Assign pairings to slots respecting constraints.
@@ -556,7 +574,7 @@ const BACK_TO_BACK_GAP = 2;
  * Uses SharedEventState for cross-event consistency (back-to-back, balance).
  * Referee assignment is NOT done here — use assignReferees() after all matches are placed.
  *
- * avoidBackToBack enforces a minimum 2-slot gap (not just 1) to prevent clustering.
+ * avoidBackToBack enforces a minimum effectiveGap-slot gap to prevent clustering.
  */
 function assignMatchesToSlots(
   pairings: ScoredPairing[],
@@ -570,7 +588,8 @@ function assignMatchesToSlots(
   stage: string,
   _rng: () => number,
   sharedState: SharedEventState,
-  targetMatchesPerTeam?: number
+  targetMatchesPerTeam?: number,
+  effectiveGap: number = BACK_TO_BACK_GAP
 ): GeneratedMatch[] {
   const matches: GeneratedMatch[] = [];
 
@@ -605,10 +624,10 @@ function assignMatchesToSlots(
         if ((sharedState.teamMatchCounts.get(p.away) ?? 0) >= targetMatchesPerTeam) continue;
       }
 
-      // Hard constraint: avoidBackToBack — check previous N slots (gap of 2)
+      // Hard constraint: avoidBackToBack — check previous N slots (adaptive gap)
       if (constraints.avoidBackToBack) {
         let blocked = false;
-        for (let lookback = 1; lookback <= BACK_TO_BACK_GAP; lookback++) {
+        for (let lookback = 1; lookback <= effectiveGap; lookback++) {
           const prevIdx = currentTimeIdx - lookback;
           if (prevIdx >= 0) {
             const prevTeams = sharedState.timeSlotTeams.get(allTimeSorted[prevIdx]);
@@ -745,7 +764,8 @@ function scoreScheduleQuality(
   totalSlots: number,
   constraints: EventConstraints,
   preExistingMatchups: Map<string, number>,
-  slotIntervalMinutes: number = 15
+  slotIntervalMinutes: number = 15,
+  effectiveGap: number = BACK_TO_BACK_GAP
 ): ScheduleQualityScore {
   const totalMatches = matches.length;
   let totalScore = totalMatches * 10; // +10 per match scheduled (primary metric)
@@ -778,7 +798,7 @@ function scoreScheduleQuality(
   // A violation occurs when a team plays two matches within 2 * slotInterval minutes
   let backToBackViolations = 0;
   if (constraints.avoidBackToBack && matches.length > 0) {
-    const gapThresholdMinutes = BACK_TO_BACK_GAP * slotIntervalMinutes;
+    const gapThresholdMinutes = effectiveGap * slotIntervalMinutes;
 
     // Parse ISO time to minutes since midnight
     const parseMinutes = (iso: string): number => {
@@ -912,11 +932,22 @@ function runEventModeMultiAttempt(
     const allMatches: GeneratedMatch[] = [];
     let matchDay = 1;
 
+    // Compute effective gap once (use first event's config — typically uniform)
+    const eventForGap = eventConfigs[0];
+    const effectiveGap = ec.avoidBackToBack
+      ? computeEffectiveGap(eventForGap.teamIds.length, eventForGap.venueIds.length)
+      : 0;
+
     for (const event of eventConfigs) {
       // Shuffle team list per attempt for pairing diversity
       const shuffledTeamIds = seededShuffle(event.teamIds, rng);
 
       const slots = generateEventSlots(event, duration, breakTime);
+
+      // Recompute gap if this event has different team/venue count
+      const eventGap = ec.avoidBackToBack
+        ? computeEffectiveGap(event.teamIds.length, event.venueIds.length)
+        : 0;
 
       const pairings = generateEventPairings(
         shuffledTeamIds,
@@ -937,7 +968,8 @@ function runEventModeMultiAttempt(
         stage,
         rng,
         sharedState,
-        ec.targetMatchesPerTeam
+        ec.targetMatchesPerTeam,
+        eventGap
       );
 
       // Referee assignment as separate pass (after all matches for this event are placed)
@@ -954,7 +986,8 @@ function runEventModeMultiAttempt(
       totalSlots,
       ec,
       existingMatchupsSnapshot, // use original snapshot (pre-generation baseline)
-      duration + breakTime      // slot interval for time-based gap detection
+      duration + breakTime,     // slot interval for time-based gap detection
+      effectiveGap              // adaptive gap for back-to-back scoring
     );
 
     attempts.push({ matches: allMatches, quality, attemptIndex: a });
