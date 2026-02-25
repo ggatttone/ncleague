@@ -71,6 +71,37 @@ Vai su **Admin > Generatore Calendario** oppure clicca "Genera Calendario" dalla
 2. Controlla le partite generate nell'anteprima
 3. Clicca **Conferma e Salva Calendario** per salvare
 
+### Modalità Per Evento
+
+Oltre alla modalità classica, il generatore supporta la modalità **Per Evento**, pensata per tornei che si svolgono in giornate singole con più partite consecutive.
+
+#### Configurazione Evento
+1. Seleziona la **data** dell'evento
+2. Imposta **ora inizio** e **ora fine** (es. 19:00 - 21:45)
+3. Seleziona i **campi** disponibili (es. Campo 1A, Campo 1B)
+4. Scegli le **squadre partecipanti** per l'evento
+5. Configura **durata partita** (in minuti) e **pausa** tra partite
+6. (Opzionale) Imposta il **target partite per squadra**
+
+Il sistema calcola automaticamente gli slot disponibili: `floor((oraFine - oraInizio) / (durata + pausa))` per campo.
+
+#### Vincoli Intelligenti
+
+Attiva i vincoli tramite i toggle dedicati per ottenere un calendario ottimizzato:
+
+| Vincolo | Comportamento |
+|---------|--------------|
+| **Evita Ripetizioni** | Garantisce che la stessa coppia di squadre non si affronti più volte. Le coppie "fresche" (mai giocate) hanno sempre priorità. I repeat avvengono solo quando matematicamente inevitabili. |
+| **Bilancia Partite** | Distribuzione uniforme delle partite: ogni squadra gioca lo stesso numero di partite (±1 massimo). |
+| **Evita Back-to-Back** | Gap minimo di **2 slot** tra partite della stessa squadra (es. con slot da 15 min = almeno 30 min di pausa), anche su campi diversi. Questo vale anche tra eventi diversi nella stessa generazione. |
+| **Auto Arbitro** | Assegnazione automatica degli arbitri dalle squadre non in campo. L'arbitro non è **mai** una squadra che gioca nello stesso slot orario. La distribuzione è bilanciata tra tutte le squadre. |
+
+#### Algoritmo Multi-Tentativo
+
+Il sistema esegue fino a **24 tentativi** di generazione con parametri casuali diversi e seleziona automaticamente il calendario con il miglior punteggio di qualità. Il punteggio tiene conto di: ripetizioni matchup, bilanciamento partite, violazioni back-to-back e bilanciamento arbitraggi.
+
+Se più eventi vengono generati insieme, lo stato è **condiviso tra eventi**: bilanciamento partite, conteggio arbitraggi e vincoli back-to-back sono coerenti cross-evento.
+
 ### Lettura Anteprima (Usabilità)
 
 - I blocchi per data/giornata sono **collassabili**: usa la freccia a destra dell'intestazione gruppo.
@@ -85,6 +116,7 @@ Vai su **Admin > Generatore Calendario** oppure clicca "Genera Calendario" dalla
 - Nel pannello statistiche:
   - puoi espandere **Vedi N ripetizioni** per vedere quali coppie si ripetono
   - la colonna partite include una mini barra visuale per il bilanciamento per team
+  - in modalità Per Evento: numero tentativi effettuati, punteggio qualità, violazioni back-to-back
 
 ---
 

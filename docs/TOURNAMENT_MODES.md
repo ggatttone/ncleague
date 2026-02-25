@@ -575,6 +575,64 @@ console.log('Defaults:', getDefaultSettings('league_only'));
 
 ---
 
+## Generazione Calendario Event-Mode
+
+### Panoramica Algoritmo
+
+La modalità "Per Evento" utilizza un algoritmo multi-tentativo per generare calendari ottimali. L'edge function (`supabase/functions/match-scheduler/index.ts`) esegue fino a **24 tentativi** con PRNG deterministico (Mulberry32) e seleziona il risultato con il miglior punteggio di qualità.
+
+### SharedEventState
+
+Per garantire coerenza tra più eventi nella stessa generazione, tutte le funzioni condividono uno stato:
+
+```typescript
+interface SharedEventState {
+  timeSlotTeams: Map<string, Set<string>>;  // squadre impegnate per slot (cross-evento)
+  refereeCounts: Map<string, number>;        // arbitraggi cumulativi
+  teamMatchCounts: Map<string, number>;      // partite cumulative per bilanciamento
+  matchupCounts: Map<string, number>;        // matchup cumulativi per evitare ripetizioni
+}
+```
+
+Questo stato è creato una volta per tentativo e aggiornato in-place da ogni funzione.
+
+### Vincoli Hard vs Soft
+
+| Vincolo | Tipo | Descrizione |
+|---------|------|-------------|
+| Conflitto arbitro-giocatore | **Hard** | L'arbitro non può essere una squadra che gioca nello stesso slot. Garantito dall'assegnazione post-match. |
+| Back-to-back (slot consecutivo) | **Hard** | Una squadra non può giocare in due slot consecutivi. |
+| Near-back-to-back (gap < 2 slot) | **Hard** | Con `avoidBackToBack` attivo, il gap minimo è di 2 slot (costante `BACK_TO_BACK_GAP`). |
+| Evita ripetizioni matchup | **Quasi-hard** | Le coppie "fresh" (mai giocate) hanno sempre priorità via tiered sorting (`repeatTier`). I repeat solo quando nessuna coppia fresh soddisfa i vincoli. |
+| Bilanciamento partite | **Soft** | Bonus scoring proporzionale al deficit: `(maxCount - teamCount) * 100` per squadra. |
+| Bilanciamento arbitraggi | **Soft** | L'arbitro viene scelto tra le squadre con meno arbitraggi cumulativi. |
+
+### Flusso di Generazione per Evento
+
+1. **`generateEventSlots()`** — Calcola gli slot temporali disponibili per evento
+2. **`generateEventPairings()`** — Genera gli accoppiamenti con tiered sorting (fresh > repeat) e bilanciamento potenziato
+3. **`assignMatchesToSlots()`** — Piazza le partite negli slot rispettando i vincoli hard (back-to-back, gap 2 slot). Aggiorna `SharedEventState`.
+4. **`assignReferees()`** — Assegna arbitri **dopo** tutti i match dell'evento. Raggruppa match per slot, identifica squadre impegnate, assegna solo da squadre libere con bilanciamento cross-evento.
+5. **`scoreScheduleQuality()`** — Calcola punteggio qualità considerando ripetizioni (pre-esistenti + intra-generazione), back-to-back basato su tempo reale, bilanciamento partite e arbitraggi.
+
+### Convergence Detection
+
+L'algoritmo si ferma prima dei 24 tentativi se:
+- Viene trovato un calendario con punteggio perfetto (0 penalità)
+- 3 tentativi consecutivi producono lo stesso punteggio (convergenza)
+
+### Test Automatici
+
+Il file `supabase/functions/match-scheduler/test-scheduler.ts` contiene test automatici per 4 scenari:
+- Scenario A: 10 squadre, 2 campi (caso reale)
+- Scenario B: 6 squadre, 1 campo (scenario ridotto)
+- Scenario C: 10 squadre, 2 eventi cross-evento
+- Scenario D: 4 squadre, caso molto vincolato
+
+Esecuzione: `npx tsx supabase/functions/match-scheduler/test-scheduler.ts`
+
+---
+
 ## Roadmap
 
 | Fase | Modalità | Stato |

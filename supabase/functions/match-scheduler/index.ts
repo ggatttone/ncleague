@@ -80,6 +80,23 @@ interface ScoredPairing {
   home: string;
   away: string;
   score: number;
+  repeatTier: number; // 0 = fresh (never played), 1+ = times previously played
+}
+
+/**
+ * Shared state that persists across events within a single scheduling attempt.
+ * Ensures cross-event consistency for back-to-back detection, referee balance,
+ * match balance, and repeat avoidance.
+ */
+interface SharedEventState {
+  /** Teams playing at each ISO datetime (across ALL events in this attempt) */
+  timeSlotTeams: Map<string, Set<string>>;
+  /** Referee assignment counts across all events */
+  refereeCounts: Map<string, number>;
+  /** Match counts per team across all events (for balance) */
+  teamMatchCounts: Map<string, number>;
+  /** Matchup counts (sorted key -> count) across all events */
+  matchupCounts: Map<string, number>;
 }
 
 interface ScheduleQualityScore {
@@ -473,22 +490,21 @@ function generateEventSlots(
 
 /**
  * Generate scored pairings for event mode.
- * All possible combinations of teamIds are generated and scored based on constraints.
+ * All possible combinations of teamIds are generated, tiered by repeat status,
+ * and scored based on constraints. Fresh pairings ALWAYS rank above repeats.
  * Uses a seeded PRNG for reproducible results per attempt.
  */
 function generateEventPairings(
   teamIds: string[],
-  existingMatchups: Map<string, number>,
-  teamMatchCounts: Map<string, number>,
+  sharedState: SharedEventState,
   constraints: EventConstraints,
   rng: () => number
 ): ScoredPairing[] {
   const pairings: ScoredPairing[] = [];
 
-  // Pre-compute max match count for normalized balance bonus
-  const maxCount = teamMatchCounts.size > 0
-    ? Math.max(...teamMatchCounts.values())
-    : 0;
+  // Pre-compute balance metrics from shared state
+  const allCounts = [...sharedState.teamMatchCounts.values()];
+  const maxCount = allCounts.length > 0 ? Math.max(...allCounts) : 0;
 
   // Generate all C(n,2) combinations
   for (let i = 0; i < teamIds.length; i++) {
@@ -496,92 +512,113 @@ function generateEventPairings(
       const home = teamIds[i];
       const away = teamIds[j];
       const key = [home, away].sort().join('-');
-      let score = 100; // base score
 
-      if (constraints.avoidRepeats) {
-        const timesPlayed = existingMatchups.get(key) ?? 0;
-        // Stronger penalty (-50 per repeat, was -30) so repeats are well-avoided
-        score -= timesPlayed * 50;
-      }
+      const timesPlayed = sharedState.matchupCounts.get(key) ?? 0;
+      // repeatTier: 0 = fresh (never played), 1+ = number of times already played
+      const repeatTier = constraints.avoidRepeats ? timesPlayed : 0;
 
+      // Base score
+      let score = 1000;
+
+      // Balance: strongly reward pairings that include underplayed teams
       if (constraints.balanceMatches) {
-        const homeCount = teamMatchCounts.get(home) ?? 0;
-        const awayCount = teamMatchCounts.get(away) ?? 0;
-        // Normalized bonus: reward teams further below the current max
-        const norm = maxCount > 0 ? maxCount : 1;
-        const homeBoost = Math.max(0, (norm - homeCount) / norm) * 20;
-        const awayBoost = Math.max(0, (norm - awayCount) / norm) * 20;
-        score += homeBoost + awayBoost; // up to +40 total (was +20)
+        const homeCount = sharedState.teamMatchCounts.get(home) ?? 0;
+        const awayCount = sharedState.teamMatchCounts.get(away) ?? 0;
+        // Each team contributes (maxCount - itsCount) * 100
+        // Range: 0 to 2 * maxCount * 100, dominating base score for imbalanced teams
+        const homeDeficit = Math.max(0, maxCount - homeCount);
+        const awayDeficit = Math.max(0, maxCount - awayCount);
+        score += (homeDeficit + awayDeficit) * 100;
       }
 
       // Tiny jitter (±1) to break ties — won't override real score differences
       score += rng() * 2 - 1;
 
-      pairings.push({ home, away, score });
+      pairings.push({ home, away, score, repeatTier });
     }
   }
 
-  // Sort descending by score (best pairings first)
-  pairings.sort((a, b) => b.score - a.score);
+  // Sort: first by repeatTier ASC (fresh first), then by score DESC
+  pairings.sort((a, b) => {
+    if (a.repeatTier !== b.repeatTier) return a.repeatTier - b.repeatTier;
+    return b.score - a.score;
+  });
+
   return pairings;
 }
+
+/** Minimum gap in time slots when avoidBackToBack is ON (2 = skip 2 previous slots) */
+const BACK_TO_BACK_GAP = 2;
 
 /**
  * Assign pairings to slots respecting constraints.
  * Returns the final list of assigned matches for one event.
- * Uses seeded PRNG for reproducibility and best-valid (not first-valid) selection.
+ * Uses SharedEventState for cross-event consistency (back-to-back, balance).
+ * Referee assignment is NOT done here — use assignReferees() after all matches are placed.
+ *
+ * avoidBackToBack enforces a minimum 2-slot gap (not just 1) to prevent clustering.
  */
 function assignMatchesToSlots(
   pairings: ScoredPairing[],
   slots: EventSlot[],
-  allTeamIds: string[],
+  _allTeamIds: string[],
   constraints: EventConstraints,
   matchDay: number,
   duration: number,
   competitionId: string,
   seasonId: string,
   stage: string,
-  rng: () => number,
+  _rng: () => number,
+  sharedState: SharedEventState,
   targetMatchesPerTeam?: number
 ): GeneratedMatch[] {
   const matches: GeneratedMatch[] = [];
-  const teamMatchCounts = new Map<string, number>();
-  const refereeCounts = new Map<string, number>(); // Track referee assignments for balanced distribution
 
   // Sort slots chronologically for back-to-back detection
   const sortedSlots = [...slots].sort((a, b) => a.match_date.localeCompare(b.match_date));
 
-  // Pre-compute unique time slots once (avoids O(n²) recomputation inside the loop)
-  const slotTimes = [...new Set(sortedSlots.map(s => s.match_date))].sort();
-  const slotTimeIndex = new Map<string, number>(slotTimes.map((t, i) => [t, i]));
+  // Compute global time ordering (across ALL events via sharedState + current slots)
+  const allKnownTimes = new Set([
+    ...sharedState.timeSlotTeams.keys(),
+    ...sortedSlots.map(s => s.match_date),
+  ]);
+  const allTimeSorted = [...allKnownTimes].sort();
+  const globalTimeIndex = new Map<string, number>(allTimeSorted.map((t, i) => [t, i]));
 
-  // Track teams playing at each time slot (across venues)
-  const timeSlotTeams = new Map<string, Set<string>>();
+  const remainingPairings = [...pairings]; // work on a copy
 
   for (const slot of sortedSlots) {
-    const currentTimeIdx = slotTimeIndex.get(slot.match_date) ?? -1;
-    const prevTime = currentTimeIdx > 0 ? slotTimes[currentTimeIdx - 1] : null;
-    const currentTeams = timeSlotTeams.get(slot.match_date);
+    const currentTimeIdx = globalTimeIndex.get(slot.match_date) ?? -1;
+    const currentTeams = sharedState.timeSlotTeams.get(slot.match_date);
 
-    // --- BEST-VALID selection: scan all pairings, pick highest score among valid ---
+    // --- BEST-VALID selection: prefer lower repeatTier, then highest score ---
     let bestIdx = -1;
     let bestScore = -Infinity;
+    let bestTier = Infinity;
 
-    for (let i = 0; i < pairings.length; i++) {
-      const p = pairings[i];
+    for (let i = 0; i < remainingPairings.length; i++) {
+      const p = remainingPairings[i];
 
-      // Hard constraint: target matches per team cap
+      // Hard constraint: target matches per team cap (uses shared global counts)
       if (targetMatchesPerTeam) {
-        if ((teamMatchCounts.get(p.home) ?? 0) >= targetMatchesPerTeam) continue;
-        if ((teamMatchCounts.get(p.away) ?? 0) >= targetMatchesPerTeam) continue;
+        if ((sharedState.teamMatchCounts.get(p.home) ?? 0) >= targetMatchesPerTeam) continue;
+        if ((sharedState.teamMatchCounts.get(p.away) ?? 0) >= targetMatchesPerTeam) continue;
       }
 
-      // Hard constraint: avoidBackToBack — skip if either team played previous slot
-      if (constraints.avoidBackToBack && prevTime) {
-        const prevTeams = timeSlotTeams.get(prevTime);
-        if (prevTeams && (prevTeams.has(p.home) || prevTeams.has(p.away))) {
-          continue;
+      // Hard constraint: avoidBackToBack — check previous N slots (gap of 2)
+      if (constraints.avoidBackToBack) {
+        let blocked = false;
+        for (let lookback = 1; lookback <= BACK_TO_BACK_GAP; lookback++) {
+          const prevIdx = currentTimeIdx - lookback;
+          if (prevIdx >= 0) {
+            const prevTeams = sharedState.timeSlotTeams.get(allTimeSorted[prevIdx]);
+            if (prevTeams && (prevTeams.has(p.home) || prevTeams.has(p.away))) {
+              blocked = true;
+              break;
+            }
+          }
         }
+        if (blocked) continue;
       }
 
       // Hard constraint: team can't play twice at the same time (parallel venues)
@@ -589,44 +626,30 @@ function assignMatchesToSlots(
         continue;
       }
 
-      // Valid candidate — select the one with highest score
-      if (p.score > bestScore) {
+      // Valid candidate — prefer lower repeatTier, then higher score
+      if (p.repeatTier < bestTier || (p.repeatTier === bestTier && p.score > bestScore)) {
         bestScore = p.score;
+        bestTier = p.repeatTier;
         bestIdx = i;
       }
     }
 
     if (bestIdx === -1) continue; // No valid pairing for this slot
 
-    const pairing = pairings.splice(bestIdx, 1)[0];
+    const pairing = remainingPairings.splice(bestIdx, 1)[0];
 
-    // Track team usage
-    teamMatchCounts.set(pairing.home, (teamMatchCounts.get(pairing.home) ?? 0) + 1);
-    teamMatchCounts.set(pairing.away, (teamMatchCounts.get(pairing.away) ?? 0) + 1);
+    // Update shared state immediately (visible to subsequent slots and events)
+    sharedState.teamMatchCounts.set(pairing.home, (sharedState.teamMatchCounts.get(pairing.home) ?? 0) + 1);
+    sharedState.teamMatchCounts.set(pairing.away, (sharedState.teamMatchCounts.get(pairing.away) ?? 0) + 1);
 
-    // Track time slot usage
-    if (!timeSlotTeams.has(slot.match_date)) {
-      timeSlotTeams.set(slot.match_date, new Set());
+    const matchupKey = [pairing.home, pairing.away].sort().join('-');
+    sharedState.matchupCounts.set(matchupKey, (sharedState.matchupCounts.get(matchupKey) ?? 0) + 1);
+
+    if (!sharedState.timeSlotTeams.has(slot.match_date)) {
+      sharedState.timeSlotTeams.set(slot.match_date, new Set());
     }
-    timeSlotTeams.get(slot.match_date)!.add(pairing.home);
-    timeSlotTeams.get(slot.match_date)!.add(pairing.away);
-
-    // Auto-referee: pick the available team that has refereed the least (balanced)
-    let refereeTeamId: string | undefined;
-    if (constraints.autoReferee) {
-      const busyTeams = timeSlotTeams.get(slot.match_date)!;
-      const available = allTeamIds.filter(t => !busyTeams.has(t));
-      if (available.length > 0) {
-        let minRefCount = Infinity;
-        for (const t of available) {
-          const count = refereeCounts.get(t) ?? 0;
-          if (count < minRefCount) minRefCount = count;
-        }
-        const candidates = available.filter(t => (refereeCounts.get(t) ?? 0) === minRefCount);
-        refereeTeamId = candidates[Math.floor(rng() * candidates.length)];
-        refereeCounts.set(refereeTeamId, (refereeCounts.get(refereeTeamId) ?? 0) + 1);
-      }
-    }
+    sharedState.timeSlotTeams.get(slot.match_date)!.add(pairing.home);
+    sharedState.timeSlotTeams.get(slot.match_date)!.add(pairing.away);
 
     matches.push({
       home_team_id: pairing.home,
@@ -641,11 +664,69 @@ function assignMatchesToSlots(
       away_score: 0,
       match_day: matchDay,
       match_duration_minutes: duration,
-      ...(refereeTeamId ? { referee_team_id: refereeTeamId } : {}),
     });
   }
 
   return matches;
+}
+
+/**
+ * Assign referees AFTER all matches for an event have been placed.
+ * This ensures no team is simultaneously playing and refereeing.
+ *
+ * For each time slot:
+ *  1. Identify ALL teams playing (across all venues at that time)
+ *  2. Pick available teams with the fewest referee assignments (balanced)
+ *  3. Each referee is added to the "busy" set so one team doesn't ref two matches at once
+ *
+ * Uses sharedState.refereeCounts for cross-event referee balance.
+ */
+function assignReferees(
+  matches: GeneratedMatch[],
+  allTeamIds: string[],
+  sharedState: SharedEventState,
+  rng: () => number
+): void {
+  // Group matches by time slot
+  const matchesByTime = new Map<string, GeneratedMatch[]>();
+  for (const m of matches) {
+    if (!matchesByTime.has(m.match_date)) matchesByTime.set(m.match_date, []);
+    matchesByTime.get(m.match_date)!.push(m);
+  }
+
+  // Process each time slot
+  const sortedTimes = [...matchesByTime.keys()].sort();
+  for (const time of sortedTimes) {
+    const timeMatches = matchesByTime.get(time)!;
+
+    // Collect ALL teams playing at this time (across all venues)
+    const busyTeams = new Set<string>();
+    for (const m of timeMatches) {
+      busyTeams.add(m.home_team_id);
+      busyTeams.add(m.away_team_id);
+    }
+
+    // Assign referees to each match at this time
+    for (const m of timeMatches) {
+      const available = allTeamIds.filter(t => !busyTeams.has(t));
+      if (available.length === 0) continue;
+
+      // Pick team with fewest referee assignments (balanced distribution)
+      let minRefCount = Infinity;
+      for (const t of available) {
+        const count = sharedState.refereeCounts.get(t) ?? 0;
+        if (count < minRefCount) minRefCount = count;
+      }
+      const candidates = available.filter(t => (sharedState.refereeCounts.get(t) ?? 0) === minRefCount);
+      const chosen = candidates[Math.floor(rng() * candidates.length)];
+
+      m.referee_team_id = chosen;
+      sharedState.refereeCounts.set(chosen, (sharedState.refereeCounts.get(chosen) ?? 0) + 1);
+
+      // Prevent same team from refereeing two matches at the same time
+      busyTeams.add(chosen);
+    }
+  }
 }
 
 // =============================================================================
@@ -655,12 +736,16 @@ function assignMatchesToSlots(
 /**
  * Compute a composite quality score for a complete event-mode schedule.
  * Higher is better. Used to select the best attempt from N runs.
+ *
+ * Now counts both pre-existing repeats AND within-generation repeats,
+ * and uses real time-based gap detection for back-to-back (not compressed indices).
  */
 function scoreScheduleQuality(
   matches: GeneratedMatch[],
   totalSlots: number,
   constraints: EventConstraints,
-  existingMatchupsSnapshot: Map<string, number>
+  preExistingMatchups: Map<string, number>,
+  slotIntervalMinutes: number = 15
 ): ScheduleQualityScore {
   const totalMatches = matches.length;
   let totalScore = totalMatches * 10; // +10 per match scheduled (primary metric)
@@ -669,52 +754,70 @@ function scoreScheduleQuality(
   const unfilledSlots = totalSlots - totalMatches;
   totalScore -= unfilledSlots * 20;
 
-  // Repeat violations
+  // Repeat violations — count BOTH pre-existing AND within-generation repeats
   let repeatViolations = 0;
   if (constraints.avoidRepeats) {
+    // Build matchup frequency from generated matches
+    const generatedMatchups = new Map<string, number>();
     for (const m of matches) {
       const key = [m.home_team_id, m.away_team_id].sort().join('-');
-      const prior = existingMatchupsSnapshot.get(key) ?? 0;
-      if (prior > 0) repeatViolations++;
+      generatedMatchups.set(key, (generatedMatchups.get(key) ?? 0) + 1);
     }
-    totalScore -= repeatViolations * 50;
+
+    for (const [key, count] of generatedMatchups) {
+      const priorCount = preExistingMatchups.get(key) ?? 0;
+      // Each generated occurrence of a pre-existing matchup is a violation
+      if (priorCount > 0) repeatViolations += count;
+      // Within-generation duplicates: extra occurrences beyond the first are violations
+      if (count > 1) repeatViolations += (count - 1);
+    }
+    totalScore -= repeatViolations * 100; // heavier penalty (was 50)
   }
 
-  // Back-to-back violations
+  // Back-to-back violations — use real time differences (not compressed indices)
+  // A violation occurs when a team plays two matches within 2 * slotInterval minutes
   let backToBackViolations = 0;
   if (constraints.avoidBackToBack && matches.length > 0) {
-    // Group matches by day
-    const byDay = new Map<string, GeneratedMatch[]>();
+    const gapThresholdMinutes = BACK_TO_BACK_GAP * slotIntervalMinutes;
+
+    // Parse ISO time to minutes since midnight
+    const parseMinutes = (iso: string): number => {
+      const timePart = iso.split('T')[1]; // "HH:MM:SS+00:00"
+      const [h, m] = timePart.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    // Build per-team schedule: list of (day, minutes) sorted
+    const teamTimes = new Map<string, Array<{ day: string; minutes: number }>>();
     for (const m of matches) {
       const day = m.match_date.split('T')[0];
-      if (!byDay.has(day)) byDay.set(day, []);
-      byDay.get(day)!.push(m);
-    }
-    for (const dayMatches of byDay.values()) {
-      const times = [...new Set(dayMatches.map(m => m.match_date))].sort();
-      const timeIdx = new Map<string, number>(times.map((t, i) => [t, i]));
-      const timeTeams = new Map<string, Set<string>>();
-      for (const m of dayMatches) {
-        if (!timeTeams.has(m.match_date)) timeTeams.set(m.match_date, new Set());
-        timeTeams.get(m.match_date)!.add(m.home_team_id);
-        timeTeams.get(m.match_date)!.add(m.away_team_id);
+      const minutes = parseMinutes(m.match_date);
+      for (const teamId of [m.home_team_id, m.away_team_id]) {
+        if (!teamTimes.has(teamId)) teamTimes.set(teamId, []);
+        teamTimes.get(teamId)!.push({ day, minutes });
       }
-      for (const m of dayMatches) {
-        const idx = timeIdx.get(m.match_date) ?? -1;
-        if (idx > 0) {
-          const prevTeams = timeTeams.get(times[idx - 1]);
-          if (prevTeams && (prevTeams.has(m.home_team_id) || prevTeams.has(m.away_team_id))) {
-            backToBackViolations++;
+    }
+
+    const violationSet = new Set<string>();
+    for (const [teamId, times] of teamTimes) {
+      // Sort by day then minutes
+      times.sort((a, b) => a.day.localeCompare(b.day) || a.minutes - b.minutes);
+      for (let i = 0; i < times.length - 1; i++) {
+        // Only check within the same day
+        if (times[i].day === times[i + 1].day) {
+          const gap = times[i + 1].minutes - times[i].minutes;
+          if (gap <= gapThresholdMinutes) {
+            const violKey = `${teamId}-${times[i].minutes}-${times[i + 1].minutes}-${times[i].day}`;
+            violationSet.add(violKey);
           }
         }
       }
     }
-    // Divide by 2: each violation counted once per team in a match pair
-    backToBackViolations = Math.floor(backToBackViolations / 2);
+    backToBackViolations = violationSet.size;
     totalScore -= backToBackViolations * 30;
   }
 
-  // Match count imbalance (std deviation across teams)
+  // Match count imbalance (std deviation across teams) — increased weight
   const teamCounts = new Map<string, number>();
   for (const m of matches) {
     teamCounts.set(m.home_team_id, (teamCounts.get(m.home_team_id) ?? 0) + 1);
@@ -726,10 +829,10 @@ function scoreScheduleQuality(
     const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
     const variance = counts.reduce((s, c) => s + (c - mean) ** 2, 0) / counts.length;
     matchImbalanceStdDev = Math.sqrt(variance);
-    totalScore -= matchImbalanceStdDev * 5;
+    totalScore -= matchImbalanceStdDev * 15; // increased from 5
   }
 
-  // Referee count imbalance (only when autoReferee is active)
+  // Referee count imbalance — increased weight
   let refereeImbalanceStdDev = 0;
   if (constraints.autoReferee) {
     const refCounts = new Map<string, number>();
@@ -743,7 +846,7 @@ function scoreScheduleQuality(
       const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
       const variance = counts.reduce((s, c) => s + (c - mean) ** 2, 0) / counts.length;
       refereeImbalanceStdDev = Math.sqrt(variance);
-      totalScore -= refereeImbalanceStdDev * 5;
+      totalScore -= refereeImbalanceStdDev * 10; // increased from 5
     }
   }
 
@@ -759,11 +862,15 @@ function scoreScheduleQuality(
 }
 
 /** Number of scheduling attempts to run in event mode. Best result is returned. */
-const EVENT_MODE_ATTEMPTS = 8;
+const EVENT_MODE_ATTEMPTS = 24;
 
 /**
  * Run event mode scheduling N times with different random seeds.
  * Returns the attempt with the highest quality score.
+ *
+ * Each attempt uses SharedEventState for cross-event consistency.
+ * Referee assignment is done as a separate pass after all matches are placed.
+ * Includes convergence detection (3 consecutive same-score → stop).
  */
 function runEventModeMultiAttempt(
   eventConfigs: EventDateConfig[],
@@ -786,15 +893,22 @@ function runEventModeMultiAttempt(
   const perfectScore = totalSlots * 10;
 
   const attempts: ScheduleAttempt[] = [];
+  let consecutiveSameScore = 0;
+  let lastScore: number | null = null;
 
   for (let a = 0; a < attemptCount; a++) {
     // Deterministic seed per attempt — large prime spacing to avoid collisions
     const seed = (Date.now() + a * 1000003) >>> 0;
     const rng = makePRNG(seed);
 
-    // Deep-clone Maps so each attempt starts from the same pre-generation state
-    const attemptMatchups = new Map(existingMatchupsSnapshot);
-    const attemptTeamCounts = new Map(globalTeamMatchCountsSnapshot);
+    // Create shared state for this attempt, seeded from pre-generation snapshots
+    const sharedState: SharedEventState = {
+      timeSlotTeams: new Map(),
+      refereeCounts: new Map(),
+      teamMatchCounts: new Map(globalTeamMatchCountsSnapshot),
+      matchupCounts: new Map(existingMatchupsSnapshot),
+    };
+
     const allMatches: GeneratedMatch[] = [];
     let matchDay = 1;
 
@@ -806,8 +920,7 @@ function runEventModeMultiAttempt(
 
       const pairings = generateEventPairings(
         shuffledTeamIds,
-        attemptMatchups,
-        attemptTeamCounts,
+        sharedState,
         ec,
         rng
       );
@@ -823,15 +936,13 @@ function runEventModeMultiAttempt(
         seasonId,
         stage,
         rng,
+        sharedState,
         ec.targetMatchesPerTeam
       );
 
-      // Update running state for subsequent events within this attempt
-      for (const m of eventMatches) {
-        const key = [m.home_team_id, m.away_team_id].sort().join('-');
-        attemptMatchups.set(key, (attemptMatchups.get(key) ?? 0) + 1);
-        attemptTeamCounts.set(m.home_team_id, (attemptTeamCounts.get(m.home_team_id) ?? 0) + 1);
-        attemptTeamCounts.set(m.away_team_id, (attemptTeamCounts.get(m.away_team_id) ?? 0) + 1);
+      // Referee assignment as separate pass (after all matches for this event are placed)
+      if (ec.autoReferee) {
+        assignReferees(eventMatches, event.teamIds, sharedState, rng);
       }
 
       allMatches.push(...eventMatches);
@@ -842,13 +953,23 @@ function runEventModeMultiAttempt(
       allMatches,
       totalSlots,
       ec,
-      existingMatchupsSnapshot // use original snapshot (pre-generation baseline)
+      existingMatchupsSnapshot, // use original snapshot (pre-generation baseline)
+      duration + breakTime      // slot interval for time-based gap detection
     );
 
     attempts.push({ matches: allMatches, quality, attemptIndex: a });
 
     // Early exit: if schedule is perfect, no need to run more attempts
     if (quality.totalScore >= perfectScore) break;
+
+    // Convergence detection: 3 consecutive attempts with same score → stop
+    if (lastScore !== null && quality.totalScore === lastScore) {
+      consecutiveSameScore++;
+      if (consecutiveSameScore >= 3) break;
+    } else {
+      consecutiveSameScore = 0;
+    }
+    lastScore = quality.totalScore;
   }
 
   // Select the attempt with the highest quality score
