@@ -11,6 +11,9 @@ import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { formatMatchDateLocal } from "@/lib/utils";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButton } from "@/components/ShareButton";
+import { buildSportsTeamJsonLd } from "@/lib/json-ld";
 
 const MatchCard = ({ match }: { match: MatchWithTeams }) => {
   const { t } = useTranslation();
@@ -138,8 +141,24 @@ const TeamDetails = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
+      <SEOHead
+        title={team.name}
+        description={`${team.name}${team.parish ? ` - ${team.parish}` : ''} | Profilo squadra, statistiche e partite`}
+        image={team.logo_url || team.squad_photo_url || undefined}
+        url={`/teams/${id}`}
+        jsonLd={buildSportsTeamJsonLd({
+          name: team.name,
+          logo: team.logo_url || undefined,
+          url: `/teams/${id}`,
+        })}
+      />
+      <div className="mb-6 flex items-center justify-between">
         <Link to="/teams"><Button variant="outline" size="sm"><ArrowLeft className="mr-2 h-4 w-4" />{t('pages.teamDetails.backToTeams')}</Button></Link>
+        <ShareButton
+          path={`/teams/${id}`}
+          title={team.name}
+          description={`${team.name}${team.parish ? ` - ${team.parish}` : ''}`}
+        />
       </div>
 
       {team.squad_photo_url && (

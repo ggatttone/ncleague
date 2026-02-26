@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<AuthContextType['profile']>(null);
   const [role, setRole] = useState<UserRole | null>(null);
+  const [captainTeamIds, setCaptainTeamIds] = useState<string[]>([]);
   const isFetchingRef = useRef(false);
 
   useEffect(() => {
@@ -103,9 +104,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(profileData as AuthContextType['profile']);
         setRole(profileData?.role || null);
 
+        // Pre-fetch captain's team IDs for synchronous permission checks
+        if (profileData?.role === 'captain') {
+          const { data: captainTeams } = await supabase
+            .from('teams')
+            .select('id')
+            .eq('captain_id', currentUser.id);
+          setCaptainTeamIds(captainTeams?.map(t => t.id) || []);
+        } else {
+          setCaptainTeamIds([]);
+        }
+
       } else {
         setProfile(null);
         setRole(null);
+        setCaptainTeamIds([]);
       }
       setLoading(false);
       } finally {
@@ -128,9 +141,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (role === 'admin') return true;
 
     if (requiredRoles.includes(role)) {
-      // TODO: captain check doesn't validate the captain belongs to teamId (would require async DB call)
+      // Captain can only access their own team(s)
       if (role === 'captain' && teamId) {
-        return true;
+        return captainTeamIds.includes(teamId);
       }
       return true;
     }
@@ -156,6 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located hook for AuthProvider context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

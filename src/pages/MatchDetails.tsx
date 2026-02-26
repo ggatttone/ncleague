@@ -9,6 +9,9 @@ import { ArrowLeft, Calendar, MapPin, Clock, Target, Trophy, Gavel, Video } from
 import { it } from "date-fns/locale";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { formatMatchDateLocal } from "@/lib/utils";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButton } from "@/components/ShareButton";
+import { buildSportsEventJsonLd } from "@/lib/json-ld";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -119,13 +122,31 @@ const MatchDetails = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
+      <SEOHead
+        title={`${match.home_teams.name} vs ${match.away_teams.name}${match.status === 'completed' ? ` ${match.home_score}-${match.away_score}` : ''}`}
+        description={`${match.home_teams.name} vs ${match.away_teams.name}${match.competitions?.name ? ` - ${match.competitions.name}` : ''}${match.venues?.name ? ` @ ${match.venues.name}` : ''}`}
+        image={match.home_teams.logo_url || undefined}
+        url={`/matches/${id}`}
+        jsonLd={buildSportsEventJsonLd({
+          name: `${match.home_teams.name} vs ${match.away_teams.name}`,
+          startDate: match.match_date,
+          homeTeam: match.home_teams.name,
+          awayTeam: match.away_teams.name,
+          location: match.venues?.name || undefined,
+          url: `/matches/${id}`,
+        })}
+      />
+      <div className="mb-6 flex items-center justify-between">
         <Link to="/matches">
-          <Button variant="outline" size="sm" className="mb-4">
+          <Button variant="outline" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Torna alle partite
           </Button>
         </Link>
+        <ShareButton
+          path={`/matches/${id}`}
+          title={`${match.home_teams.name} vs ${match.away_teams.name}`}
+        />
       </div>
 
       {/* Match Header */}

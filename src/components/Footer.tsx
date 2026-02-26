@@ -1,6 +1,7 @@
 import { useThemeContext } from "@/components/theme/ThemeProvider";
 import { Instagram, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const INSTAGRAM_URL = "https://www.instagram.com/nc_league25/";
 const YOUTUBE_URL = "https://www.youtube.com/@NCLeague.football";
@@ -42,6 +43,12 @@ export const Footer = () => {
             <p className="text-xs text-muted-foreground">
               {t("footer.rights", { year: currentYear })}
             </p>
+            <Link
+              to="/privacy"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
+            >
+              {t("footer.privacyPolicy")}
+            </Link>
           </div>
 
           <div className="flex flex-col items-center gap-2 sm:items-end">

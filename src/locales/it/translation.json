@@ -21,7 +21,20 @@
     "instagram": "Instagram",
     "youtube": "YouTube",
     "rights": "© {{year}} NC League. Tutti i diritti riservati.",
-    "brandFallback": "NC League"
+    "brandFallback": "NC League",
+    "privacyPolicy": "Informativa Privacy"
+  },
+  "cookieConsent": {
+    "ariaLabel": "Consenso cookie",
+    "message": "Utilizziamo i cookie per migliorare la tua esperienza di navigazione. Continuando a utilizzare questo sito, accetti l'uso dei cookie.",
+    "privacyLink": "Informativa Privacy",
+    "accept": "Accetta",
+    "reject": "Rifiuta"
+  },
+  "share": {
+    "button": "Condividi",
+    "ariaLabel": "Condividi questa pagina",
+    "copiedToClipboard": "Link copiato negli appunti!"
   },
   "themeToggle": {
     "light": "Chiaro",
@@ -1373,6 +1386,37 @@
       "notEnoughTeamsForPlayoffs": "Servono almeno {{required}} squadre per i playoff, ma ne hai {{available}}.",
       "allTeamsInPlayoffsWarning": "Tutte le squadre parteciperanno ai playoff. La fase campionato servirà solo per il seeding.",
       "invalidRoundRobinFinalSettings": "Configurazione Round Robin + Finale non valida."
+    },
+    "privacy": {
+      "title": "Informativa Privacy",
+      "description": "Informativa sulla privacy della piattaforma NC League",
+      "sections": {
+        "intro": {
+          "title": "Introduzione",
+          "content": "Questa informativa descrive come NC League raccoglie, utilizza e protegge i tuoi dati personali quando utilizzi la nostra piattaforma."
+        },
+        "dataCollected": {
+          "title": "Dati Raccolti",
+          "content": "Raccogliamo le informazioni personali che fornisci volontariamente durante la registrazione, la creazione del profilo o l'interazione con la piattaforma. Queste possono includere nome, indirizzo email e foto profilo."
+        },
+        "cookies": {
+          "title": "Cookie",
+          "content": "Utilizziamo cookie essenziali per il funzionamento del sito (autenticazione, preferenza lingua) e cookie analitici opzionali per comprendere come viene utilizzata la piattaforma. Puoi gestire le tue preferenze sui cookie in qualsiasi momento."
+        },
+        "thirdParty": {
+          "title": "Servizi di Terze Parti",
+          "content": "Utilizziamo Supabase per l'autenticazione e l'archiviazione dei dati. Possiamo incorporare contenuti da YouTube e Instagram. Questi servizi hanno le proprie informative sulla privacy."
+        },
+        "rights": {
+          "title": "I Tuoi Diritti",
+          "content": "In base al GDPR, hai il diritto di accedere, correggere o cancellare i tuoi dati personali. Puoi anche richiedere una copia dei tuoi dati o opporti al loro trattamento. Contattaci per esercitare questi diritti."
+        },
+        "contact": {
+          "title": "Contattaci",
+          "content": "Per richieste relative alla privacy, contattaci attraverso i nostri canali social o via email."
+        }
+      },
+      "lastUpdated": "Ultimo aggiornamento: {{date}}"
     }
   }
 }

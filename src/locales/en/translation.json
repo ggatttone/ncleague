@@ -21,7 +21,20 @@
     "instagram": "Instagram",
     "youtube": "YouTube",
     "rights": "© {{year}} NC League. All rights reserved.",
-    "brandFallback": "NC League"
+    "brandFallback": "NC League",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "cookieConsent": {
+    "ariaLabel": "Cookie consent",
+    "message": "We use cookies to enhance your browsing experience. By continuing to use this site, you agree to our use of cookies.",
+    "privacyLink": "Privacy Policy",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "share": {
+    "button": "Share",
+    "ariaLabel": "Share this page",
+    "copiedToClipboard": "Link copied to clipboard!"
   },
   "themeToggle": {
     "light": "Light",
@@ -1373,6 +1386,37 @@
       "notEnoughTeamsForPlayoffs": "At least {{required}} teams needed for playoffs, but you have {{available}}.",
       "allTeamsInPlayoffsWarning": "All teams will participate in playoffs. The league phase will only determine seeding.",
       "invalidRoundRobinFinalSettings": "Invalid Round Robin + Final configuration."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "Privacy policy for NC League platform",
+      "sections": {
+        "intro": {
+          "title": "Introduction",
+          "content": "This privacy policy describes how NC League collects, uses, and protects your personal data when you use our platform."
+        },
+        "dataCollected": {
+          "title": "Data We Collect",
+          "content": "We collect personal information that you voluntarily provide when registering, creating a profile, or interacting with the platform. This may include your name, email address, and profile photo."
+        },
+        "cookies": {
+          "title": "Cookies",
+          "content": "We use essential cookies for site functionality (authentication, language preference) and optional analytics cookies to understand how our platform is used. You can manage your cookie preferences at any time."
+        },
+        "thirdParty": {
+          "title": "Third-Party Services",
+          "content": "We use Supabase for authentication and data storage. We may embed content from YouTube and Instagram. These services have their own privacy policies."
+        },
+        "rights": {
+          "title": "Your Rights",
+          "content": "Under GDPR, you have the right to access, correct, or delete your personal data. You may also request a copy of your data or object to its processing. Contact us to exercise these rights."
+        },
+        "contact": {
+          "title": "Contact Us",
+          "content": "For privacy-related inquiries, please contact us through our social media channels or email."
+        }
+      },
+      "lastUpdated": "Last updated: {{date}}"
     }
   }
 }

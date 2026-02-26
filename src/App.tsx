@@ -14,6 +14,8 @@ import { Navbar } from "@/components/Navbar";
 import { PageLoader } from "@/components/PageLoader";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Footer } from "@/components/Footer";
+import { CookieConsent } from "@/components/CookieConsent";
+import { HelmetProvider } from "react-helmet-async";
 
 // Lazy load all page components
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -33,6 +35,7 @@ const TeamDetails = lazy(() => import("./pages/TeamDetails"));
 const GalleryPage = lazy(() => import("./pages/Gallery"));
 const AlbumDetails = lazy(() => import("./pages/AlbumDetails"));
 const SeasonArchive = lazy(() => import("./pages/SeasonArchive"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 const AdminIndex = lazy(() => import("./pages/admin/AdminIndex"));
 const TournamentDashboard = lazy(() => import("./pages/admin/TournamentDashboard"));
 const TeamsAdmin = lazy(() => import("./pages/admin/TeamsAdmin"));
@@ -132,6 +135,7 @@ const AppShell = () => {
                 path="/season/:yyyy/:competition/:division"
                 element={<SeasonArchive />}
               />
+              <Route path="/privacy" element={<Privacy />} />
 
               {/* Protected routes */}
               <Route
@@ -300,28 +304,31 @@ const AppShell = () => {
         </main>
       </ErrorBoundary>
       {showFooter && <Footer />}
+      {showFooter && <CookieConsent />}
     </>
   );
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ThemeProvider>
-        <ModeProvider>
-          <TooltipProvider>
-            <DynamicFavicon />
-            <DynamicTitle />
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppShell />
-            </BrowserRouter>
-          </TooltipProvider>
-        </ModeProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <ModeProvider>
+            <TooltipProvider>
+              <DynamicFavicon />
+              <DynamicTitle />
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppShell />
+              </BrowserRouter>
+            </TooltipProvider>
+          </ModeProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

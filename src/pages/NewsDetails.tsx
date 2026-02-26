@@ -10,6 +10,9 @@ import { LikeButton } from "@/components/LikeButton";
 import { CommentForm } from "@/components/comments/CommentForm";
 import { CommentList } from "@/components/comments/CommentList";
 import { useTranslation } from "react-i18next";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButton } from "@/components/ShareButton";
+import { buildArticleJsonLd } from "@/lib/json-ld";
 
 const NewsDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -54,6 +57,23 @@ const NewsDetails = () => {
 
   return (
     <MainLayout>
+      <SEOHead
+        title={article.title}
+        description={article.content?.substring(0, 160)}
+        image={article.cover_image_url || undefined}
+        type="article"
+        url={`/news/${slug}`}
+        jsonLd={buildArticleJsonLd({
+          title: article.title,
+          description: article.content?.substring(0, 160),
+          image: article.cover_image_url || undefined,
+          publishedAt: article.published_at || undefined,
+          authorName: article.profiles
+            ? `${article.profiles.first_name} ${article.profiles.last_name}`
+            : undefined,
+          url: `/news/${slug}`,
+        })}
+      />
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <Link to="/news" className="mb-8 inline-block">
           <Button variant="outline">
@@ -97,6 +117,11 @@ const NewsDetails = () => {
 
         <div className="flex items-center gap-4">
           <LikeButton articleId={article.id} />
+          <ShareButton
+            path={`/news/${slug}`}
+            title={article.title}
+            description={article.content?.substring(0, 160)}
+          />
         </div>
 
         <div id="comments" className="mt-8">

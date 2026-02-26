@@ -9,6 +9,9 @@ import { User, ArrowLeft, Calendar, Trophy, Target } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { formatMatchDateLocal } from "@/lib/utils";
+import { SEOHead } from "@/components/SEOHead";
+import { ShareButton } from "@/components/ShareButton";
+import { buildPersonJsonLd } from "@/lib/json-ld";
 
 const PlayerDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -89,13 +92,30 @@ const PlayerDetails = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
+      <SEOHead
+        title={`${playerData.first_name} ${playerData.last_name}`}
+        description={`${playerData.first_name} ${playerData.last_name}${playerData.teams?.name ? ` - ${playerData.teams.name}` : ''}${playerData.role ? ` | ${playerData.role}` : ''}`}
+        image={playerData.photo_url || undefined}
+        url={`/players/${id}`}
+        jsonLd={buildPersonJsonLd({
+          name: `${playerData.first_name} ${playerData.last_name}`,
+          image: playerData.photo_url || undefined,
+          teamName: playerData.teams?.name || undefined,
+          url: `/players/${id}`,
+        })}
+      />
+      <div className="mb-6 flex items-center justify-between">
         <Link to="/players">
-          <Button variant="outline" size="sm" className="mb-4">
+          <Button variant="outline" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('pages.playerDetails.backToPlayers')}
           </Button>
         </Link>
+        <ShareButton
+          path={`/players/${id}`}
+          title={`${playerData.first_name} ${playerData.last_name}`}
+          description={`${playerData.first_name} ${playerData.last_name}${playerData.teams?.name ? ` - ${playerData.teams.name}` : ''}`}
+        />
       </div>
 
       {/* Player Header */}

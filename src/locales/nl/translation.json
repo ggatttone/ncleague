@@ -21,7 +21,20 @@
     "instagram": "Instagram",
     "youtube": "YouTube",
     "rights": "© {{year}} NC League. Alle rechten voorbehouden.",
-    "brandFallback": "NC League"
+    "brandFallback": "NC League",
+    "privacyPolicy": "Privacybeleid"
+  },
+  "cookieConsent": {
+    "ariaLabel": "Cookie-toestemming",
+    "message": "Wij gebruiken cookies om uw browse-ervaring te verbeteren. Door deze site te blijven gebruiken, stemt u in met ons gebruik van cookies.",
+    "privacyLink": "Privacybeleid",
+    "accept": "Accepteren",
+    "reject": "Weigeren"
+  },
+  "share": {
+    "button": "Delen",
+    "ariaLabel": "Deel deze pagina",
+    "copiedToClipboard": "Link gekopieerd naar klembord!"
   },
   "themeToggle": {
     "light": "Licht",
@@ -1373,6 +1386,37 @@
       "notEnoughTeamsForPlayoffs": "Minimaal {{required}} teams nodig voor playoffs, maar je hebt {{available}}.",
       "allTeamsInPlayoffsWarning": "Alle teams doen mee aan de playoffs. De competitiefase bepaalt alleen de plaatsing.",
       "invalidRoundRobinFinalSettings": "Ongeldige Round Robin + Finale configuratie."
+    },
+    "privacy": {
+      "title": "Privacybeleid",
+      "description": "Privacybeleid van het NC League platform",
+      "sections": {
+        "intro": {
+          "title": "Inleiding",
+          "content": "Dit privacybeleid beschrijft hoe NC League uw persoonsgegevens verzamelt, gebruikt en beschermt wanneer u ons platform gebruikt."
+        },
+        "dataCollected": {
+          "title": "Gegevens die wij verzamelen",
+          "content": "Wij verzamelen persoonlijke informatie die u vrijwillig verstrekt bij registratie, het aanmaken van een profiel of interactie met het platform. Dit kan uw naam, e-mailadres en profielfoto omvatten."
+        },
+        "cookies": {
+          "title": "Cookies",
+          "content": "Wij gebruiken essentiële cookies voor de werking van de site (authenticatie, taalvoorkeur) en optionele analytische cookies om te begrijpen hoe ons platform wordt gebruikt. U kunt uw cookievoorkeuren op elk moment beheren."
+        },
+        "thirdParty": {
+          "title": "Diensten van derden",
+          "content": "Wij gebruiken Supabase voor authenticatie en gegevensopslag. Wij kunnen inhoud van YouTube en Instagram insluiten. Deze diensten hebben hun eigen privacybeleid."
+        },
+        "rights": {
+          "title": "Uw rechten",
+          "content": "Op grond van de AVG heeft u het recht om uw persoonsgegevens in te zien, te corrigeren of te verwijderen. U kunt ook een kopie van uw gegevens opvragen of bezwaar maken tegen de verwerking ervan. Neem contact met ons op om deze rechten uit te oefenen."
+        },
+        "contact": {
+          "title": "Contact",
+          "content": "Voor privacygerelateerde vragen kunt u contact met ons opnemen via onze sociale mediakanalen of e-mail."
+        }
+      },
+      "lastUpdated": "Laatst bijgewerkt: {{date}}"
     }
   }
 }
