@@ -127,6 +127,7 @@ export const NewsComposer = () => {
               <img
                 src={coverImageUrl}
                 alt="Composer preview"
+                loading="lazy"
                 className="h-auto max-h-72 w-full rounded-xl border object-cover"
               />
               <Button

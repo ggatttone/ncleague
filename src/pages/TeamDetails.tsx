@@ -52,9 +52,10 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => {
           <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4">
             <div className="flex items-center gap-3 flex-1">
               {match.home_teams.logo_url ? (
-                <img 
-                  src={match.home_teams.logo_url} 
+                <img
+                  src={match.home_teams.logo_url}
                   alt={`${match.home_teams.name} logo`}
+                  loading="lazy"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
@@ -68,9 +69,10 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => {
             <div className="flex items-center gap-3 flex-1 justify-end">
               <span className="font-medium text-sm sm:text-base">{match.away_teams.name}</span>
               {match.away_teams.logo_url ? (
-                <img 
-                  src={match.away_teams.logo_url} 
+                <img
+                  src={match.away_teams.logo_url}
                   alt={`${match.away_teams.name} logo`}
+                  loading="lazy"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
@@ -163,7 +165,7 @@ const TeamDetails = () => {
 
       {team.squad_photo_url && (
         <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
-          <img src={team.squad_photo_url} alt={`Foto rosa ${team.name}`} className="w-full h-auto max-h-96 object-cover" />
+          <img src={team.squad_photo_url} alt={`Foto rosa ${team.name}`} loading="lazy" className="w-full h-auto max-h-96 object-cover" />
         </div>
       )}
 
@@ -171,7 +173,7 @@ const TeamDetails = () => {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             {team.logo_url ? (
-              <img src={team.logo_url} alt={`${team.name} logo`} className="w-24 h-24 rounded-full object-cover border-2" />
+              <img src={team.logo_url} alt={`${team.name} logo`} loading="lazy" className="w-24 h-24 rounded-full object-cover border-2" />
             ) : (
               <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-2"><Users className="text-primary h-12 w-12" /></div>
             )}
@@ -271,7 +273,7 @@ const TeamDetails = () => {
                   {sponsors.map(sponsor => (
                     <a href={sponsor.website_url || '#'} key={sponsor.id} target="_blank" rel="noopener noreferrer">
                       {sponsor.logo_url ? (
-                        <img src={sponsor.logo_url} alt={sponsor.name} className="h-12 max-w-xs object-contain" />
+                        <img src={sponsor.logo_url} alt={sponsor.name} loading="lazy" className="h-12 max-w-xs object-contain" />
                       ) : (
                         <div className="flex items-center gap-2"><Star className="h-4 w-4" />{sponsor.name}</div>
                       )}

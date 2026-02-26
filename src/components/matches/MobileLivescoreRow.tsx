@@ -43,6 +43,7 @@ const TeamLine = ({ team }: { team: MobileLivescoreTeam }) => (
       <img
         src={team.logo_url}
         alt={`${team.name} logo`}
+        loading="lazy"
         className="h-5 w-5 rounded-full object-cover"
       />
     ) : (

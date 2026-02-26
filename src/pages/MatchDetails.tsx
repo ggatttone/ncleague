@@ -175,9 +175,10 @@ const MatchDetails = () => {
             {/* Home Team */}
             <div className="flex items-center gap-3 flex-1 justify-center sm:justify-start">
               {match.home_teams.logo_url ? (
-                <img 
-                  src={match.home_teams.logo_url} 
+                <img
+                  src={match.home_teams.logo_url}
                   alt={`${match.home_teams.name} logo`}
+                  loading="lazy"
                   className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
               ) : (
@@ -219,9 +220,10 @@ const MatchDetails = () => {
                 <p className="text-muted-foreground">Ospite</p>
               </div>
               {match.away_teams.logo_url ? (
-                <img 
-                  src={match.away_teams.logo_url} 
+                <img
+                  src={match.away_teams.logo_url}
                   alt={`${match.away_teams.name} logo`}
+                  loading="lazy"
                   className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                 />
               ) : (

@@ -33,6 +33,7 @@ export const Footer = () => {
               <img
                 src={theme.logo_url}
                 alt={t("footer.brandFallback")}
+                loading="lazy"
                 className="mx-auto h-9 max-w-[180px] object-contain sm:mx-0"
               />
             ) : (

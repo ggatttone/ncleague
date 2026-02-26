@@ -32,6 +32,7 @@ export const MediaViewer = ({ item, open, onOpenChange }: MediaViewerProps) => {
           <img
             src={publicURL}
             alt={item.title || 'Media visualizzato'}
+            loading="lazy"
             className="max-w-full max-h-[90vh] object-contain"
           />
         )}

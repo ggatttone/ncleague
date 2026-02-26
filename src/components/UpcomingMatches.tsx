@@ -26,7 +26,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {match.home_teams.logo_url ? (
-            <img src={match.home_teams.logo_url} alt={match.home_teams.name} className="w-6 h-6 rounded-full object-cover" />
+            <img src={match.home_teams.logo_url} alt={match.home_teams.name} loading="lazy" className="w-6 h-6 rounded-full object-cover" />
           ) : (
             <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"><Trophy className="h-3 w-3 text-muted-foreground" /></div>
           )}
@@ -36,7 +36,7 @@ const MatchCard = ({ match }: { match: MatchWithTeams }) => (
         <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
           <span className="font-medium text-sm truncate text-right">{match.away_teams.name}</span>
           {match.away_teams.logo_url ? (
-            <img src={match.away_teams.logo_url} alt={match.away_teams.name} className="w-6 h-6 rounded-full object-cover" />
+            <img src={match.away_teams.logo_url} alt={match.away_teams.name} loading="lazy" className="w-6 h-6 rounded-full object-cover" />
           ) : (
             <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"><Trophy className="h-3 w-3 text-muted-foreground" /></div>
           )}

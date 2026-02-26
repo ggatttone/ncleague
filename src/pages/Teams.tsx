@@ -132,9 +132,10 @@ const Teams = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
                       {team.logo_url ? (
-                        <img 
-                          src={team.logo_url} 
+                        <img
+                          src={team.logo_url}
                           alt={`${team.name} logo`}
+                          loading="lazy"
                           className="w-12 h-12 rounded-full object-cover border"
                         />
                       ) : (

@@ -104,6 +104,7 @@ const NewsDetails = () => {
             <img
               src={article.cover_image_url}
               alt={article.title}
+              loading="lazy"
               className="w-full h-auto max-h-96 object-cover rounded-lg mb-8"
             />
           )}

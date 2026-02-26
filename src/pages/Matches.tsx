@@ -143,9 +143,10 @@ const Matches = () => {
               {/* Home Team */}
               <div className="flex items-center gap-3 flex-1">
                 {match.home_teams.logo_url ? (
-                  <img 
-                    src={match.home_teams.logo_url} 
+                  <img
+                    src={match.home_teams.logo_url}
                     alt={`${match.home_teams.name} logo`}
+                    loading="lazy"
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
@@ -173,9 +174,10 @@ const Matches = () => {
               <div className="flex items-center gap-3 flex-1 justify-end">
                 <span className="font-medium text-sm sm:text-base">{match.away_teams.name}</span>
                 {match.away_teams.logo_url ? (
-                  <img 
-                    src={match.away_teams.logo_url} 
+                  <img
+                    src={match.away_teams.logo_url}
                     alt={`${match.away_teams.name} logo`}
+                    loading="lazy"
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (

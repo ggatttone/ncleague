@@ -62,7 +62,7 @@ export const MediaCarousel = () => {
                         {item.mime_type?.startsWith('video/') ? (
                           <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
+                          <img src={publicURL} alt={item.title || ''} loading="lazy" className="w-full h-full object-cover" />
                         )}
                       </CardContent>
                     </Card>

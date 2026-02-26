@@ -142,6 +142,7 @@ function BracketMatchCard({
                 <img
                   src={homeTeam.logo_url}
                   alt=""
+                  loading="lazy"
                   className="h-4 w-4 object-contain flex-shrink-0"
                 />
               )}
@@ -169,6 +170,7 @@ function BracketMatchCard({
                 <img
                   src={awayTeam.logo_url}
                   alt=""
+                  loading="lazy"
                   className="h-4 w-4 object-contain flex-shrink-0"
                 />
               )}

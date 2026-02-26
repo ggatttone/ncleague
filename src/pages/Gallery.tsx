@@ -189,7 +189,7 @@ const GalleryPage = () => {
                       <CardHeader className="p-0">
                         <div className="aspect-video bg-muted flex items-center justify-center">
                           {publicURL ? (
-                            <img src={publicURL} alt={album.name} className="w-full h-full object-cover" />
+                            <img src={publicURL} alt={album.name} loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             <Folder className="h-12 w-12 text-muted-foreground" />
                           )}
@@ -230,7 +230,7 @@ const GalleryPage = () => {
                         {item.mime_type?.startsWith('video/') ? (
                           <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} className="w-full h-full object-cover" />
+                          <img src={publicURL} alt={item.title || ''} loading="lazy" className="w-full h-full object-cover" />
                         )}
                       </div>
                     </CardContent>
