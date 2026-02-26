@@ -27,7 +27,7 @@ import { registerHandler, getHandlerPhases } from '@/lib/tournament/handler-regi
  * Type guard for GroupsKnockoutSettings
  */
 function isGroupsKnockoutSettings(
-  settings: TournamentModeSettings
+  settings: TournamentModeSettings,
 ): settings is GroupsKnockoutSettings {
   return (
     'groupCount' in settings &&
@@ -52,7 +52,7 @@ function getGroupId(index: number): string {
 /**
  * Shuffle array using Fisher-Yates algorithm
  */
-function shuffleArray<T>(array: T[]): T[] {
+function _shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -67,7 +67,7 @@ function shuffleArray<T>(array: T[]): T[] {
  */
 function distributeTeamsIntoGroups(
   teams: { id: string; seed?: number }[],
-  groupCount: number
+  groupCount: number,
 ): Map<string, { id: string; seed?: number }[]> {
   const groups = new Map<string, { id: string; seed?: number }[]>();
 
@@ -108,7 +108,7 @@ function distributeTeamsIntoGroups(
 function generateRoundRobinPairings(
   teamIds: string[],
   includeReturnGames: boolean,
-  groupId: string
+  groupId: string,
 ): Array<{ home: string; away: string; round: number; stage: string }> {
   const pairings: Array<{ home: string; away: string; round: number; stage: string }> = [];
   const teams = [...teamIds];
@@ -161,15 +161,11 @@ function generateRoundRobinPairings(
 /**
  * Calculate standings from match results for group stage
  */
-function calculateGroupStandings(
-  context: StandingsContext
-): LeagueTableRow[] {
+function calculateGroupStandings(context: StandingsContext): LeagueTableRow[] {
   const { matches, settings, stageFilter } = context;
 
   // Filter matches by stage/group if specified
-  const relevantMatches = stageFilter
-    ? matches.filter((m) => m.stage === stageFilter)
-    : matches;
+  const relevantMatches = stageFilter ? matches.filter((m) => m.stage === stageFilter) : matches;
 
   // Only count completed matches
   const completedMatches = relevantMatches.filter((m) => m.status === 'completed');
@@ -245,23 +241,18 @@ function calculateGroupStandings(
     : ['head_to_head', 'goal_difference', 'goals_scored'];
 
   // Convert to LeagueTableRow array
-  const rows: LeagueTableRow[] = Object.entries(teamStats).map(
-    ([teamId, stats]) => ({
-      team_id: teamId,
-      team_name: '', // Will be populated by caller
-      matches_played: stats.matches_played,
-      wins: stats.wins,
-      draws: stats.draws,
-      losses: stats.losses,
-      goals_for: stats.goals_for,
-      goals_against: stats.goals_against,
-      goal_difference: stats.goals_for - stats.goals_against,
-      points:
-        stats.wins * pointsPerWin +
-        stats.draws * pointsPerDraw +
-        stats.losses * pointsPerLoss,
-    })
-  );
+  const rows: LeagueTableRow[] = Object.entries(teamStats).map(([teamId, stats]) => ({
+    team_id: teamId,
+    team_name: '', // Will be populated by caller
+    matches_played: stats.matches_played,
+    wins: stats.wins,
+    draws: stats.draws,
+    losses: stats.losses,
+    goals_for: stats.goals_for,
+    goals_against: stats.goals_against,
+    goal_difference: stats.goals_for - stats.goals_against,
+    points: stats.wins * pointsPerWin + stats.draws * pointsPerDraw + stats.losses * pointsPerLoss,
+  }));
 
   // Sort by points, then by tie-breakers
   rows.sort((a, b) => {
@@ -314,10 +305,7 @@ export const GroupsKnockoutHandler: TournamentHandler = {
   phases: getHandlerPhases('groups_knockout'),
   defaultSettings: DEFAULT_GROUPS_KNOCKOUT_SETTINGS,
 
-  validateSettings(
-    settings: TournamentModeSettings,
-    teamCount?: number
-  ): ValidationResult {
+  validateSettings(settings: TournamentModeSettings, teamCount?: number): ValidationResult {
     const result: ValidationResult = {
       valid: true,
       errors: [],
@@ -425,7 +413,7 @@ export const GroupsKnockoutHandler: TournamentHandler = {
         const groupPairings = generateRoundRobinPairings(
           groupTeamIds,
           settings.doubleRoundRobin,
-          groupId
+          groupId,
         );
 
         for (const pairing of groupPairings) {
@@ -503,10 +491,7 @@ export const GroupsKnockoutHandler: TournamentHandler = {
     return nextPhases.sort((a, b) => a.order - b.order)[0];
   },
 
-  getAdvancingTeams(
-    standings: LeagueTableRow[],
-    rules: AdvancementRule[]
-  ): string[] {
+  getAdvancingTeams(standings: LeagueTableRow[], rules: AdvancementRule[]): string[] {
     const advancingTeams: string[] = [];
 
     for (const rule of rules) {

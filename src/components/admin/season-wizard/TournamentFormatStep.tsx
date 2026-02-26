@@ -1,19 +1,35 @@
-import { useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, ArrowRight, Save, Loader2, Trophy, Swords, Users, Shuffle, Award, ChevronRight, Settings2 } from "lucide-react";
-import { useTournamentModes } from "@/hooks/use-tournament-modes";
-import { getHandlerPhases, getHandlerMetadata, getAllHandlerMetadata, isValidHandlerKey } from "@/lib/tournament/handler-registry";
-import { TournamentSettingsForm } from "@/components/admin/tournament-settings";
-import { TournamentModeSettings } from "@/types/tournament-settings";
-import { TournamentHandlerKey, PhaseConfig } from "@/types/tournament-handlers";
-import { useWizard } from "./WizardContext";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Save,
+  Loader2,
+  Trophy,
+  Swords,
+  Users,
+  Shuffle,
+  Award,
+  ChevronRight,
+  Settings2,
+} from 'lucide-react';
+import { useTournamentModes } from '@/hooks/use-tournament-modes';
+import {
+  getHandlerPhases,
+  getHandlerMetadata,
+  isValidHandlerKey,
+} from '@/lib/tournament/handler-registry';
+import { TournamentSettingsForm } from '@/components/admin/tournament-settings';
+import { TournamentModeSettings } from '@/types/tournament-settings';
+import { TournamentHandlerKey } from '@/types/tournament-handlers';
+import { useWizard } from './WizardContext';
+import { cn } from '@/lib/utils';
 
 const HANDLER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Trophy,
@@ -33,13 +49,13 @@ export function TournamentFormatStep() {
   const { data: tournamentModes, isLoading: modesLoading } = useTournamentModes();
 
   const [selectedModeId, setSelectedModeId] = useState<string | undefined>(
-    formData.tournament.tournament_mode_id
+    formData.tournament.tournament_mode_id,
   );
   const [useCustomSettings, setUseCustomSettings] = useState<boolean>(
-    formData.tournament.use_custom_settings || false
+    formData.tournament.use_custom_settings || false,
   );
   const [customSettings, setCustomSettings] = useState<TournamentModeSettings | undefined>(
-    formData.tournament.custom_settings
+    formData.tournament.custom_settings,
   );
 
   // Ref to skip context update after syncing from context
@@ -53,22 +69,15 @@ export function TournamentFormatStep() {
     setCustomSettings(formData.tournament.custom_settings);
   }, [formData.tournament]);
 
-  // Get handler metadata for all modes
-  const handlerMetadata = getAllHandlerMetadata();
-
   // Get the selected mode and its handler key
-  const selectedMode = tournamentModes?.find(m => m.id === selectedModeId);
+  const selectedMode = tournamentModes?.find((m) => m.id === selectedModeId);
   const selectedHandlerKey = selectedMode?.handler_key as TournamentHandlerKey | undefined;
 
   // Get phases for preview
-  const phases = selectedHandlerKey && isValidHandlerKey(selectedHandlerKey)
-    ? getHandlerPhases(selectedHandlerKey).filter(p => p.id !== 'start')
-    : [];
-
-  // Get handler metadata for the selected mode
-  const selectedMetadata = selectedHandlerKey && isValidHandlerKey(selectedHandlerKey)
-    ? getHandlerMetadata(selectedHandlerKey)
-    : undefined;
+  const phases =
+    selectedHandlerKey && isValidHandlerKey(selectedHandlerKey)
+      ? getHandlerPhases(selectedHandlerKey).filter((p) => p.id !== 'start')
+      : [];
 
   // Update form data when selection changes
   useEffect(() => {
@@ -87,7 +96,7 @@ export function TournamentFormatStep() {
       useCustomSettings !== currentData.use_custom_settings ||
       JSON.stringify(newCustomSettings) !== JSON.stringify(currentData.custom_settings)
     ) {
-      setStepData("tournament", {
+      setStepData('tournament', {
         tournament_mode_id: selectedModeId,
         use_custom_settings: useCustomSettings,
         custom_settings: newCustomSettings,
@@ -124,9 +133,7 @@ export function TournamentFormatStep() {
     <Card>
       <CardHeader>
         <CardTitle>Formato Torneo</CardTitle>
-        <CardDescription>
-          Seleziona la modalità di torneo per questa stagione
-        </CardDescription>
+        <CardDescription>Seleziona la modalità di torneo per questa stagione</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -147,17 +154,19 @@ export function TournamentFormatStep() {
                     type="button"
                     onClick={() => handleModeSelect(mode.id)}
                     className={cn(
-                      "flex items-start gap-3 p-4 rounded-lg border-2 text-left transition-all",
-                      "hover:border-primary/50 hover:bg-accent/50",
+                      'flex items-start gap-3 p-4 rounded-lg border-2 text-left transition-all',
+                      'hover:border-primary/50 hover:bg-accent/50',
                       isSelected
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "border-border"
+                        ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                        : 'border-border',
                     )}
                   >
-                    <div className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-                      isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
-                    )}>
+                    <div
+                      className={cn(
+                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
+                        isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted',
+                      )}
+                    >
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -206,7 +215,7 @@ export function TournamentFormatStep() {
                 <div className="rounded-lg border bg-muted/30 p-4">
                   <TournamentSettingsForm
                     handlerKey={selectedHandlerKey}
-                    value={customSettings || selectedMode?.settings as TournamentModeSettings}
+                    value={customSettings || (selectedMode?.settings as TournamentModeSettings)}
                     onChange={handleSettingsChange}
                   />
                 </div>
@@ -240,23 +249,13 @@ export function TournamentFormatStep() {
 
           {/* Navigation Buttons */}
           <div className="flex flex-col-reverse sm:flex-row gap-2 justify-between pt-4 border-t">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={prevStep}
-              disabled={isSaving}
-            >
+            <Button type="button" variant="ghost" onClick={prevStep} disabled={isSaving}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Indietro
             </Button>
 
             <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={saveAndExit}
-                disabled={isSaving}
-              >
+              <Button type="button" variant="outline" onClick={saveAndExit} disabled={isSaving}>
                 <Save className="mr-2 h-4 w-4" />
                 Salva e Esci
               </Button>

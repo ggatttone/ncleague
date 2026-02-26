@@ -1,48 +1,53 @@
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
-import { supabase } from "@/lib/supabase/client";
-import { Player, Team } from "@/types/database";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { User, Search, Plus, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useState, useMemo } from "react";
-import { useAuth } from "@/lib/supabase/auth-context";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useTranslation } from "react-i18next";
-import { TeamCardSkeleton } from "@/components/skeletons";
-import { EmptyState } from "@/components/EmptyState";
+import { useSupabaseQuery } from '@/hooks/use-supabase-query';
+import { supabase } from '@/lib/supabase/client';
+import { Player, Team } from '@/types/database';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { User, Search, Plus, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { useAuth } from '@/lib/supabase/auth-context';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
+import { TeamCardSkeleton } from '@/components/skeletons';
 
 const Players = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const { user } = useAuth();
   const { t } = useTranslation();
 
-  const { data: playersData, isLoading, error } = useSupabaseQuery<(Player & { teams: Team | null })[]>(
-    ['players-with-teams'],
-    async () => supabase
+  const {
+    data: playersData,
+    isLoading,
+    error,
+  } = useSupabaseQuery<(Player & { teams: Team | null })[]>(['players-with-teams'], async () =>
+    supabase
       .from('players')
-      .select(`
+      .select(
+        `
         *,
         teams:teams!players_team_id_fkey (
           id,
           name,
           logo_url
         )
-      `)
-      .order('last_name')
+      `,
+      )
+      .order('last_name'),
   );
 
   const filteredPlayers = useMemo(() => {
     if (!playersData || !searchTerm) return playersData;
-    
+
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-    return playersData.filter(player => 
-      `${player.first_name} ${player.last_name}`.toLowerCase().includes(lowerCaseSearchTerm) ||
-      (player.teams?.name ?? '').toLowerCase().includes(lowerCaseSearchTerm) ||
-      (player.role ?? '').toLowerCase().includes(lowerCaseSearchTerm)
+    return playersData.filter(
+      (player) =>
+        `${player.first_name} ${player.last_name}`.toLowerCase().includes(lowerCaseSearchTerm) ||
+        (player.teams?.name ?? '').toLowerCase().includes(lowerCaseSearchTerm) ||
+        (player.role ?? '').toLowerCase().includes(lowerCaseSearchTerm),
     );
   }, [playersData, searchTerm]);
 
@@ -128,7 +133,7 @@ const Players = () => {
           </div>
         )}
       </div>
-      
+
       {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
@@ -146,10 +151,14 @@ const Players = () => {
         <div className="text-center py-12">
           <User className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <p className="text-xl text-muted-foreground mb-2">
-            {searchTerm ? t('pages.players.noPlayersFound') : t('pages.players.noPlayersRegistered')}
+            {searchTerm
+              ? t('pages.players.noPlayersFound')
+              : t('pages.players.noPlayersRegistered')}
           </p>
           <p className="text-muted-foreground mb-4">
-            {searchTerm ? t('pages.players.noPlayersFoundSubtitle') : t('pages.players.noPlayersRegisteredSubtitle')}
+            {searchTerm
+              ? t('pages.players.noPlayersFoundSubtitle')
+              : t('pages.players.noPlayersRegisteredSubtitle')}
           </p>
           {user && !searchTerm && (
             <Link to="/admin/players/new">
@@ -166,7 +175,7 @@ const Players = () => {
             {t('pages.players.playersFound', { count: filteredPlayers.length })}
             {searchTerm && ` ${t('pages.players.searchSuffix', { term: searchTerm })}`}
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {filteredPlayers.map((player) => (
               <div key={player.id}>
@@ -175,7 +184,10 @@ const Players = () => {
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-12 h-12">
-                          <AvatarImage src={player.photo_url || undefined} alt={`${player.first_name} ${player.last_name}`} />
+                          <AvatarImage
+                            src={player.photo_url || undefined}
+                            alt={`${player.first_name} ${player.last_name}`}
+                          />
                           <AvatarFallback className="bg-primary/10">
                             {player.jersey_number ? (
                               <span className="font-bold text-primary">{player.jersey_number}</span>
@@ -189,7 +201,9 @@ const Players = () => {
                             {player.first_name} {player.last_name}
                           </CardTitle>
                           {player.teams && (
-                            <p className="text-sm text-muted-foreground truncate">{player.teams.name}</p>
+                            <p className="text-sm text-muted-foreground truncate">
+                              {player.teams.name}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -203,7 +217,9 @@ const Players = () => {
                         )}
                         {player.date_of_birth && (
                           <div className="text-sm text-muted-foreground">
-                            {new Date().getFullYear() - new Date(player.date_of_birth).getFullYear()} {t('pages.players.yearsOld')}
+                            {new Date().getFullYear() -
+                              new Date(player.date_of_birth).getFullYear()}{' '}
+                            {t('pages.players.yearsOld')}
                           </div>
                         )}
                       </div>

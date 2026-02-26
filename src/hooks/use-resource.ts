@@ -5,7 +5,7 @@ interface BaseEntity {
   id: string;
 }
 
-interface ResourceConfig<T extends BaseEntity, TCreate = Omit<T, 'id'>, TUpdate = Partial<TCreate> & { id: string }> {
+interface ResourceConfig {
   tableName: string;
   queryKey: string;
   selectQuery?: string;
@@ -23,8 +23,8 @@ const DEFAULT_PAGE_SIZE = 50;
 export function createResourceHooks<
   T extends BaseEntity,
   TCreate = Omit<T, 'id'>,
-  TUpdate = Partial<TCreate> & { id: string }
->(config: ResourceConfig<T, TCreate, TUpdate>) {
+  TUpdate = Partial<TCreate> & { id: string },
+>(config: ResourceConfig) {
   const {
     tableName,
     queryKey,
@@ -40,11 +40,15 @@ export function createResourceHooks<
 
     return useSupabaseQuery<T[]>(
       [queryKey, { page, pageSize }],
-      async () => supabase
-        .from(tableName)
-        .select(selectQuery)
-        .order(orderBy.column, { ascending: orderBy.ascending ?? true })
-        .range(from, to) as unknown as Promise<{ data: T[] | null; error: import('@supabase/supabase-js').PostgrestError | null }>
+      async () =>
+        supabase
+          .from(tableName)
+          .select(selectQuery)
+          .order(orderBy.column, { ascending: orderBy.ascending ?? true })
+          .range(from, to) as unknown as Promise<{
+          data: T[] | null;
+          error: import('@supabase/supabase-js').PostgrestError | null;
+        }>,
     );
   }
 
@@ -52,55 +56,51 @@ export function createResourceHooks<
   function useListAll() {
     return useSupabaseQuery<T[]>(
       [queryKey],
-      async () => supabase
-        .from(tableName)
-        .select(selectQuery)
-        .order(orderBy.column, { ascending: orderBy.ascending ?? true }) as unknown as Promise<{ data: T[] | null; error: import('@supabase/supabase-js').PostgrestError | null }>
+      async () =>
+        supabase
+          .from(tableName)
+          .select(selectQuery)
+          .order(orderBy.column, { ascending: orderBy.ascending ?? true }) as unknown as Promise<{
+          data: T[] | null;
+          error: import('@supabase/supabase-js').PostgrestError | null;
+        }>,
     );
   }
 
   function useById(id: string | undefined) {
     return useSupabaseQuery<T>(
       [singularKey, id],
-      async () => supabase
-        .from(tableName)
-        .select(selectQuery)
-        .eq('id', id)
-        .single(),
-      { enabled: !!id }
+      async () => supabase.from(tableName).select(selectQuery).eq('id', id).single(),
+      { enabled: !!id },
     );
   }
 
   function useCreate() {
-    return useSupabaseMutation<T, TCreate>(
-      [queryKey],
-      async (data: TCreate) => supabase
+    return useSupabaseMutation<T, TCreate>([queryKey], async (data: TCreate) =>
+      supabase
         .from(tableName)
         .insert([data as Record<string, unknown>])
         .select(selectQuery)
-        .single()
+        .single(),
     );
   }
 
   function useUpdate() {
     return useSupabaseMutation<T, TUpdate>(
       [queryKey],
-      async ({ id, ...data }: TUpdate & { id: string }) => supabase
-        .from(tableName)
-        .update(data as Record<string, unknown>)
-        .eq('id', id)
-        .select(selectQuery)
-        .single()
+      async ({ id, ...data }: TUpdate & { id: string }) =>
+        supabase
+          .from(tableName)
+          .update(data as Record<string, unknown>)
+          .eq('id', id)
+          .select(selectQuery)
+          .single(),
     );
   }
 
   function useDelete() {
-    return useSupabaseMutation<void, string>(
-      [queryKey],
-      async (id: string) => supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id)
+    return useSupabaseMutation<void, string>([queryKey], async (id: string) =>
+      supabase.from(tableName).delete().eq('id', id),
     );
   }
 

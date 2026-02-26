@@ -1,16 +1,22 @@
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Table } from "@/components/Table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { useSeasons, useDeleteSeason } from "@/hooks/use-seasons";
-import { DraftsList } from "@/components/admin/season-wizard";
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Table } from '@/components/Table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useSeasons, useDeleteSeason } from '@/hooks/use-seasons';
+import { DraftsList } from '@/components/admin/season-wizard';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useMemo } from 'react';
 import {
-  Search, Loader2, Plus, Edit, Trash2, MoreHorizontal,
-  Calendar, LayoutDashboard,
-} from "lucide-react";
+  Search,
+  Loader2,
+  Plus,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  Calendar,
+  LayoutDashboard,
+} from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,32 +26,35 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { AdminMobileCard } from "@/components/admin/AdminMobileCard";
-import { useTranslation } from "react-i18next";
-import type { Season } from "@/types/database";
+} from '@/components/ui/dropdown-menu';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { AdminMobileCard } from '@/components/admin/AdminMobileCard';
+import { useTranslation } from 'react-i18next';
+import type { Season } from '@/types/database';
 
-function getSeasonStatus(season: Season): { label: string; variant: "default" | "secondary" | "destructive" | "outline" } {
+function getSeasonStatus(season: Season): {
+  label: string;
+  variant: 'default' | 'secondary' | 'destructive' | 'outline';
+} {
   const now = new Date();
   const start = season.start_date ? new Date(season.start_date) : null;
   const end = season.end_date ? new Date(season.end_date) : null;
 
-  if (!start || !end) return { label: "Bozza", variant: "outline" };
-  if (now > end) return { label: "Completata", variant: "secondary" };
-  if (now >= start && now <= end) return { label: "In corso", variant: "default" };
-  return { label: "Da schedulare", variant: "outline" };
+  if (!start || !end) return { label: 'Bozza', variant: 'outline' };
+  if (now > end) return { label: 'Completata', variant: 'secondary' };
+  if (now >= start && now <= end) return { label: 'In corso', variant: 'default' };
+  return { label: 'Da schedulare', variant: 'outline' };
 }
 
 const SeasonsAdmin = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const { data: seasons, isLoading, error } = useSeasons();
   const deleteSeasonMutation = useDeleteSeason();
@@ -55,9 +64,7 @@ const SeasonsAdmin = () => {
 
   const filteredSeasons = useMemo(() => {
     if (!seasons || !searchTerm) return seasons;
-    return seasons.filter(season =>
-      season.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return seasons.filter((season) => season.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [seasons, searchTerm]);
 
   const handleDelete = async (id: string) => {
@@ -66,11 +73,11 @@ const SeasonsAdmin = () => {
   };
 
   const columns = [
-    { key: "name", label: t('pages.admin.seasons.table.name') },
-    { key: "status", label: "Stato" },
-    { key: "start_date", label: t('pages.admin.seasons.table.startDate') },
-    { key: "end_date", label: t('pages.admin.seasons.table.endDate') },
-    { key: "actions", label: t('pages.admin.seasons.table.actions') },
+    { key: 'name', label: t('pages.admin.seasons.table.name') },
+    { key: 'status', label: 'Stato' },
+    { key: 'start_date', label: t('pages.admin.seasons.table.startDate') },
+    { key: 'end_date', label: t('pages.admin.seasons.table.endDate') },
+    { key: 'actions', label: t('pages.admin.seasons.table.actions') },
   ];
 
   const renderActions = (season: Season) => (
@@ -85,7 +92,9 @@ const SeasonsAdmin = () => {
           <Calendar className="mr-2 h-4 w-4" />
           Genera Calendario
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate(`/admin/tournament-dashboard?season=${season.id}`)}>
+        <DropdownMenuItem
+          onClick={() => navigate(`/admin/tournament-dashboard?season=${season.id}`)}
+        >
           <LayoutDashboard className="mr-2 h-4 w-4" />
           Dashboard Torneo
         </DropdownMenuItem>
@@ -110,13 +119,14 @@ const SeasonsAdmin = () => {
     return <Badge variant={variant}>{label}</Badge>;
   };
 
-  const data = filteredSeasons?.map(season => ({
-    name: season.name,
-    status: renderStatusBadge(season),
-    start_date: season.start_date ? new Date(season.start_date).toLocaleDateString('it-IT') : "-",
-    end_date: season.end_date ? new Date(season.end_date).toLocaleDateString('it-IT') : "-",
-    actions: renderActions(season),
-  })) || [];
+  const data =
+    filteredSeasons?.map((season) => ({
+      name: season.name,
+      status: renderStatusBadge(season),
+      start_date: season.start_date ? new Date(season.start_date).toLocaleDateString('it-IT') : '-',
+      end_date: season.end_date ? new Date(season.end_date).toLocaleDateString('it-IT') : '-',
+      actions: renderActions(season),
+    })) || [];
 
   if (error) {
     return (
@@ -131,11 +141,12 @@ const SeasonsAdmin = () => {
 
   const renderMobileList = () => (
     <div className="space-y-4">
-      {filteredSeasons?.map(season => {
-        const { label } = getSeasonStatus(season);
-        const subtitle = (season.start_date && season.end_date)
-          ? `${new Date(season.start_date).toLocaleDateString('it-IT')} - ${new Date(season.end_date).toLocaleDateString('it-IT')}`
-          : "Date non specificate";
+      {filteredSeasons?.map((season) => {
+        const { label: _label } = getSeasonStatus(season);
+        const subtitle =
+          season.start_date && season.end_date
+            ? `${new Date(season.start_date).toLocaleDateString('it-IT')} - ${new Date(season.end_date).toLocaleDateString('it-IT')}`
+            : 'Date non specificate';
         return (
           <AdminMobileCard
             key={season.id}
@@ -184,8 +195,10 @@ const SeasonsAdmin = () => {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      ) : isMobile ? (
+        renderMobileList()
       ) : (
-        isMobile ? renderMobileList() : <Table columns={columns} data={data} />
+        <Table columns={columns} data={data} />
       )}
 
       {/* Shared Delete Dialog */}

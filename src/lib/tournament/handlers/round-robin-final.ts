@@ -30,7 +30,7 @@ import { registerHandler, getHandlerPhases } from '@/lib/tournament/handler-regi
  * Type guard for RoundRobinFinalSettings
  */
 function isRoundRobinFinalSettings(
-  settings: TournamentModeSettings
+  settings: TournamentModeSettings,
 ): settings is RoundRobinFinalSettings {
   return (
     'pointsPerWin' in settings &&
@@ -47,7 +47,7 @@ function isRoundRobinFinalSettings(
  */
 function generateRoundRobinPairings(
   teamIds: string[],
-  includeReturnGames: boolean
+  includeReturnGames: boolean,
 ): Array<{ home: string; away: string; round: number }> {
   const pairings: Array<{ home: string; away: string; round: number }> = [];
   const teams = [...teamIds];
@@ -100,7 +100,9 @@ function generateRoundRobinPairings(
  * For 8 teams: [1,8], [4,5], [3,6], [2,7]
  * This ensures higher seeds meet lower seeds first
  */
-function arrangeBracketSeeding(teams: { id: string; seed: number }[]): { id: string; seed: number }[] {
+function arrangeBracketSeeding(
+  teams: { id: string; seed: number }[],
+): { id: string; seed: number }[] {
   const n = teams.length;
 
   // Sort by seed
@@ -135,9 +137,15 @@ function getBracketPositions(size: number): number[] {
 function generatePlayoffPairings(
   teams: { id: string; seed: number }[],
   settings: RoundRobinFinalSettings,
-  stage: string
+  stage: string,
 ): Array<{ home: string; away: string; stage: string; bracketPosition: number; leg?: number }> {
-  const pairings: Array<{ home: string; away: string; stage: string; bracketPosition: number; leg?: number }> = [];
+  const pairings: Array<{
+    home: string;
+    away: string;
+    stage: string;
+    bracketPosition: number;
+    leg?: number;
+  }> = [];
 
   // Use seeded bracket arrangement based on league standings
   const orderedTeams = arrangeBracketSeeding(teams);
@@ -198,15 +206,11 @@ function generatePlayoffPairings(
 /**
  * Calculate standings from match results
  */
-function calculateLeagueStandings(
-  context: StandingsContext
-): LeagueTableRow[] {
+function calculateLeagueStandings(context: StandingsContext): LeagueTableRow[] {
   const { matches, settings, stageFilter } = context;
 
   // Filter matches by stage if specified
-  const relevantMatches = stageFilter
-    ? matches.filter((m) => m.stage === stageFilter)
-    : matches;
+  const relevantMatches = stageFilter ? matches.filter((m) => m.stage === stageFilter) : matches;
 
   // Only count completed matches
   const completedMatches = relevantMatches.filter((m) => m.status === 'completed');
@@ -274,23 +278,21 @@ function calculateLeagueStandings(
   }
 
   // Convert to LeagueTableRow array
-  const rows: LeagueTableRow[] = Object.entries(teamStats).map(
-    ([teamId, stats]) => ({
-      team_id: teamId,
-      team_name: '', // Will be populated by caller
-      matches_played: stats.matches_played,
-      wins: stats.wins,
-      draws: stats.draws,
-      losses: stats.losses,
-      goals_for: stats.goals_for,
-      goals_against: stats.goals_against,
-      goal_difference: stats.goals_for - stats.goals_against,
-      points:
-        stats.wins * settings.pointsPerWin +
-        stats.draws * settings.pointsPerDraw +
-        stats.losses * settings.pointsPerLoss,
-    })
-  );
+  const rows: LeagueTableRow[] = Object.entries(teamStats).map(([teamId, stats]) => ({
+    team_id: teamId,
+    team_name: '', // Will be populated by caller
+    matches_played: stats.matches_played,
+    wins: stats.wins,
+    draws: stats.draws,
+    losses: stats.losses,
+    goals_for: stats.goals_for,
+    goals_against: stats.goals_against,
+    goal_difference: stats.goals_for - stats.goals_against,
+    points:
+      stats.wins * settings.pointsPerWin +
+      stats.draws * settings.pointsPerDraw +
+      stats.losses * settings.pointsPerLoss,
+  }));
 
   // Sort by points, then by tie-breakers
   rows.sort((a, b) => {
@@ -339,7 +341,7 @@ function calculateLeagueStandings(
 /**
  * Get knockout stage name based on number of teams
  */
-function getKnockoutStage(teamsRemaining: number): string {
+function _getKnockoutStage(teamsRemaining: number): string {
   switch (teamsRemaining) {
     case 2:
       return 'final';
@@ -362,10 +364,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
   phases: getHandlerPhases('round_robin_final'),
   defaultSettings: DEFAULT_ROUND_ROBIN_FINAL_SETTINGS,
 
-  validateSettings(
-    settings: TournamentModeSettings,
-    teamCount?: number
-  ): ValidationResult {
+  validateSettings(settings: TournamentModeSettings, teamCount?: number): ValidationResult {
     const result: ValidationResult = {
       valid: true,
       errors: [],
@@ -434,9 +433,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
 
       // Calculate total matches
       const leagueMatches = (teamCount * (teamCount - 1)) / 2;
-      const totalLeagueMatches = settings.doubleRoundRobin
-        ? leagueMatches * 2
-        : leagueMatches;
+      const totalLeagueMatches = settings.doubleRoundRobin ? leagueMatches * 2 : leagueMatches;
 
       // Calculate playoff matches based on format
       let playoffMatchesPerPairing = 1;
@@ -446,7 +443,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
         playoffMatchesPerPairing = 2; // Minimum, could be 3
       }
 
-      const playoffRounds = Math.log2(settings.playoffTeams);
+      const _playoffRounds = Math.log2(settings.playoffTeams);
       const playoffMatches = (settings.playoffTeams - 1) * playoffMatchesPerPairing;
       const thirdPlaceMatches = settings.thirdPlaceMatch ? playoffMatchesPerPairing : 0;
       const totalMatches = totalLeagueMatches + playoffMatches + thirdPlaceMatches;
@@ -464,7 +461,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
   },
 
   generateMatches(context: MatchGenerationContext): MatchGenerationResult {
-    const { teams, phase, settings, existingMatches } = context;
+    const { teams, phase, settings, existingMatches: _existingMatches } = context;
 
     if (!isRoundRobinFinalSettings(settings)) {
       return {
@@ -551,7 +548,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
       isRoundRobinFinalSettings(settings) &&
       settings.thirdPlaceMatch
     ) {
-      const thirdPlacePhase = allPhases.find(p => p.id === 'third-place_playoff');
+      const thirdPlacePhase = allPhases.find((p) => p.id === 'third-place_playoff');
       if (thirdPlacePhase) {
         return thirdPlacePhase;
       }
@@ -566,10 +563,7 @@ export const RoundRobinFinalHandler: TournamentHandler = {
     return nextPhases.sort((a, b) => a.order - b.order)[0];
   },
 
-  getAdvancingTeams(
-    standings: LeagueTableRow[],
-    rules: AdvancementRule[]
-  ): string[] {
+  getAdvancingTeams(standings: LeagueTableRow[], rules: AdvancementRule[]): string[] {
     const advancingTeams: string[] = [];
 
     for (const rule of rules) {

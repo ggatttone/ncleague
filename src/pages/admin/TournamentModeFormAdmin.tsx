@@ -1,31 +1,35 @@
-import { useState, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate, useParams } from "react-router-dom";
-import { useCreateTournamentMode, useUpdateTournamentMode, useTournamentMode } from "@/hooks/use-tournament-modes";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Loader2, Trophy, Swords, Users, Shuffle, Award, CheckCircle2 } from "lucide-react";
-import { showError } from "@/utils/toast";
-import { TournamentSettingsForm } from "@/components/admin/tournament-settings";
-import { getAllHandlerMetadata, getDefaultSettings } from "@/lib/tournament/handler-registry";
-import type { TournamentHandlerKey, TournamentHandlerMetadata } from "@/types/tournament-handlers";
-import type { TournamentModeSettings } from "@/types/tournament-settings";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  useCreateTournamentMode,
+  useUpdateTournamentMode,
+  useTournamentMode,
+} from '@/hooks/use-tournament-modes';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Loader2, Trophy, Swords, Users, Shuffle, Award, CheckCircle2 } from 'lucide-react';
+import { showError } from '@/utils/toast';
+import { TournamentSettingsForm } from '@/components/admin/tournament-settings';
+import { getAllHandlerMetadata, getDefaultSettings } from '@/lib/tournament/handler-registry';
+import type { TournamentHandlerKey, TournamentHandlerMetadata } from '@/types/tournament-handlers';
+import type { TournamentModeSettings } from '@/types/tournament-settings';
+import { cn } from '@/lib/utils';
 
 // Import handler to register it
-import "@/lib/tournament/handlers/league-only";
+import '@/lib/tournament/handlers/league-only';
 
 const tournamentModeSchema = z.object({
-  name: z.string().min(1, "tournament.validation.nameRequired"),
+  name: z.string().min(1, 'tournament.validation.nameRequired'),
   description: z.string().optional(),
-  handler_key: z.string().min(1, "tournament.validation.handlerRequired"),
+  handler_key: z.string().min(1, 'tournament.validation.handlerRequired'),
 });
 
 type TournamentModeFormData = z.infer<typeof tournamentModeSchema>;
@@ -57,9 +61,9 @@ function HandlerCard({
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-all hover:border-primary/50",
-        selected && "border-primary bg-primary/5",
-        disabled && "opacity-50 cursor-not-allowed"
+        'cursor-pointer transition-all hover:border-primary/50',
+        selected && 'border-primary bg-primary/5',
+        disabled && 'opacity-50 cursor-not-allowed',
       )}
       onClick={disabled ? undefined : onClick}
     >
@@ -71,9 +75,7 @@ function HandlerCard({
         <CardTitle className="text-base">{t(metadata.nameKey)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription className="text-sm">
-          {t(metadata.descriptionKey)}
-        </CardDescription>
+        <CardDescription className="text-sm">{t(metadata.descriptionKey)}</CardDescription>
       </CardContent>
     </Card>
   );
@@ -106,11 +108,11 @@ const TournamentModeFormAdmin = () => {
   } = useForm<TournamentModeFormData>({
     resolver: zodResolver(tournamentModeSchema),
     defaultValues: {
-      handler_key: "",
+      handler_key: '',
     },
   });
 
-  const selectedHandlerKey = watch("handler_key");
+  const selectedHandlerKey = watch('handler_key');
 
   // Initialize settings when handler changes
   useEffect(() => {
@@ -125,7 +127,7 @@ const TournamentModeFormAdmin = () => {
     if (mode && isEdit) {
       reset({
         name: mode.name,
-        description: mode.description || "",
+        description: mode.description || '',
         handler_key: mode.handler_key,
       });
       if (mode.settings) {
@@ -136,7 +138,7 @@ const TournamentModeFormAdmin = () => {
 
   // Handle handler selection
   const handleHandlerSelect = (handlerKey: string) => {
-    setValue("handler_key", handlerKey);
+    setValue('handler_key', handlerKey);
     // Reset settings to defaults for new handler
     const defaultSettings = getDefaultSettings(handlerKey as TournamentHandlerKey);
     setSettings(defaultSettings);
@@ -154,9 +156,9 @@ const TournamentModeFormAdmin = () => {
       } else {
         await createMutation.mutateAsync(submissionData);
       }
-      navigate("/admin/tournament-modes");
-    } catch (error) {
-      showError(t("common.error"));
+      navigate('/admin/tournament-modes');
+    } catch {
+      showError(t('common.error'));
     }
   };
 
@@ -175,35 +177,30 @@ const TournamentModeFormAdmin = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
           <h1 className="text-2xl font-bold">
-            {isEdit
-              ? t("admin.tournamentModes.editTitle")
-              : t("admin.tournamentModes.createTitle")}
+            {isEdit ? t('admin.tournamentModes.editTitle') : t('admin.tournamentModes.createTitle')}
           </h1>
-          <p className="text-muted-foreground mt-1">
-            {t("admin.tournamentModes.formDescription")}
-          </p>
+          <p className="text-muted-foreground mt-1">{t('admin.tournamentModes.formDescription')}</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Step 1: Basic Info */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("admin.tournamentModes.basicInfo")}</CardTitle>
+              <CardTitle>{t('admin.tournamentModes.basicInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="name">{t("common.name")}</Label>
-                <Input id="name" {...register("name")} autoFocus />
+                <Label htmlFor="name">{t('common.name')}</Label>
+                {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+                <Input id="name" {...register('name')} autoFocus />
                 {errors.name && (
-                  <p className="text-sm text-destructive mt-1">
-                    {t(errors.name.message || "")}
-                  </p>
+                  <p className="text-sm text-destructive mt-1">{t(errors.name.message || '')}</p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="description">{t("common.description")}</Label>
-                <Textarea id="description" {...register("description")} rows={3} />
+                <Label htmlFor="description">{t('common.description')}</Label>
+                <Textarea id="description" {...register('description')} rows={3} />
               </div>
             </CardContent>
           </Card>
@@ -211,9 +208,9 @@ const TournamentModeFormAdmin = () => {
           {/* Step 2: Handler Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("admin.tournamentModes.selectFormat")}</CardTitle>
+              <CardTitle>{t('admin.tournamentModes.selectFormat')}</CardTitle>
               <CardDescription>
-                {t("admin.tournamentModes.selectFormatDescription")}
+                {t('admin.tournamentModes.selectFormatDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -235,7 +232,7 @@ const TournamentModeFormAdmin = () => {
               />
               {errors.handler_key && (
                 <p className="text-sm text-destructive mt-2">
-                  {t(errors.handler_key.message || "")}
+                  {t(errors.handler_key.message || '')}
                 </p>
               )}
             </CardContent>
@@ -245,10 +242,8 @@ const TournamentModeFormAdmin = () => {
           {selectedHandlerKey && (
             <Card>
               <CardHeader>
-                <CardTitle>{t("admin.tournamentModes.settings")}</CardTitle>
-                <CardDescription>
-                  {t("admin.tournamentModes.settingsDescription")}
-                </CardDescription>
+                <CardTitle>{t('admin.tournamentModes.settings')}</CardTitle>
+                <CardDescription>{t('admin.tournamentModes.settingsDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <TournamentSettingsForm
@@ -265,10 +260,10 @@ const TournamentModeFormAdmin = () => {
             <Button
               type="button"
               variant="secondary"
-              onClick={() => navigate("/admin/tournament-modes")}
+              onClick={() => navigate('/admin/tournament-modes')}
               disabled={isSubmitting}
             >
-              {t("common.cancel")}
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
@@ -279,12 +274,10 @@ const TournamentModeFormAdmin = () => {
                 !selectedHandlerKey
               }
             >
-              {(isSubmitting ||
-                createMutation.isPending ||
-                updateMutation.isPending) && (
+              {(isSubmitting || createMutation.isPending || updateMutation.isPending) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isEdit ? t("common.saveChanges") : t("common.create")}
+              {isEdit ? t('common.saveChanges') : t('common.create')}
             </Button>
           </div>
         </form>

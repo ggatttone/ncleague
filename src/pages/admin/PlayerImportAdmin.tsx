@@ -1,20 +1,33 @@
-import { useState } from "react";
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Stepper } from "@/components/ui/stepper";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useTeams } from "@/hooks/use-teams";
-import { useCreateMultiplePlayers } from "@/hooks/use-players";
-import * as XLSX from "xlsx";
-import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { showError, showSuccess } from "@/utils/toast";
-import { useNavigate } from "react-router-dom";
-import { CreatePlayerData } from "@/hooks/use-players";
-import { useTranslation } from "react-i18next";
+import { useState } from 'react';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Stepper } from '@/components/ui/stepper';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useTeams } from '@/hooks/use-teams';
+import { useCreateMultiplePlayers } from '@/hooks/use-players';
+import * as XLSX from 'xlsx';
+import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { showError, showSuccess } from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
+import { CreatePlayerData } from '@/hooks/use-players';
+import { useTranslation } from 'react-i18next';
 
 type ExcelRow = Record<string, string | number | undefined>;
 
@@ -31,21 +44,21 @@ type PreviewRow = {
 };
 
 const parseDate = (dateInput: string | number | Date | null | undefined): Date | null => {
-    if (!dateInput) return null;
-    if (dateInput instanceof Date) return dateInput;
-    
-    // Prova a parsare come numero di serie di Excel
-    if (typeof dateInput === 'number') {
-        return new Date(Math.round((dateInput - 25569) * 86400 * 1000));
-    }
+  if (!dateInput) return null;
+  if (dateInput instanceof Date) return dateInput;
 
-    // Prova a parsare come stringa
-    if (typeof dateInput === 'string') {
-        const date = new Date(dateInput);
-        if (!isNaN(date.getTime())) return date;
-    }
+  // Prova a parsare come numero di serie di Excel
+  if (typeof dateInput === 'number') {
+    return new Date(Math.round((dateInput - 25569) * 86400 * 1000));
+  }
 
-    return null;
+  // Prova a parsare come stringa
+  if (typeof dateInput === 'string') {
+    const date = new Date(dateInput);
+    if (!isNaN(date.getTime())) return date;
+  }
+
+  return null;
 };
 
 const PlayerImportAdmin = () => {
@@ -70,11 +83,23 @@ const PlayerImportAdmin = () => {
     { id: 'first_name', label: t('pages.admin.playerImport.fields.firstName', 'Nome') },
     { id: 'last_name', label: t('pages.admin.playerImport.fields.lastName', 'Cognome') },
     { id: 'team_name', label: t('pages.admin.playerImport.fields.teamName', 'Nome Squadra') },
-    { id: 'date_of_birth', label: t('pages.admin.playerImport.fields.dateOfBirth', 'Data di Nascita (Opzionale)') },
+    {
+      id: 'date_of_birth',
+      label: t('pages.admin.playerImport.fields.dateOfBirth', 'Data di Nascita (Opzionale)'),
+    },
     { id: 'role', label: t('pages.admin.playerImport.fields.role', 'Ruolo (Opzionale)') },
-    { id: 'jersey_number', label: t('pages.admin.playerImport.fields.jerseyNumber', 'Numero Maglia (Opzionale)') },
-    { id: 'nationality', label: t('pages.admin.playerImport.fields.nationality', 'Nazionalità (Opzionale)') },
-    { id: 'document_id', label: t('pages.admin.playerImport.fields.documentId', 'ID Documento (Opzionale)') },
+    {
+      id: 'jersey_number',
+      label: t('pages.admin.playerImport.fields.jerseyNumber', 'Numero Maglia (Opzionale)'),
+    },
+    {
+      id: 'nationality',
+      label: t('pages.admin.playerImport.fields.nationality', 'Nazionalità (Opzionale)'),
+    },
+    {
+      id: 'document_id',
+      label: t('pages.admin.playerImport.fields.documentId', 'ID Documento (Opzionale)'),
+    },
   ];
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +116,7 @@ const PlayerImportAdmin = () => {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: true });
 
         if (jsonData.length === 0) {
-          showError("Il file è vuoto o non contiene dati validi.");
+          showError('Il file è vuoto o non contiene dati validi.');
           return;
         }
 
@@ -99,19 +124,21 @@ const PlayerImportAdmin = () => {
         setHeaders(fileHeaders);
         setRows(jsonData);
         setCurrentStep(1);
-      } catch (err) {
-        showError("Errore nella lettura del file. Assicurati che sia un formato valido (.xlsx, .csv).");
+      } catch {
+        showError(
+          'Errore nella lettura del file. Assicurati che sia un formato valido (.xlsx, .csv).',
+        );
       }
     };
     reader.readAsBinaryString(file);
   };
 
   const handleMappingSubmit = () => {
-    const teamsMap = new Map(teams?.map(t => [t.name.toLowerCase(), t.id]));
+    const teamsMap = new Map(teams?.map((t) => [t.name.toLowerCase(), t.id]));
 
-    const processedData = rows.map(row => {
+    const processedData = rows.map((row) => {
       const previewRow: PreviewRow = { original: row, isValid: true, errors: [], data: null };
-      
+
       const firstName = row[mapping.first_name]?.toString().trim();
       const lastName = row[mapping.last_name]?.toString().trim();
       const teamName = row[mapping.team_name]?.toString().trim().toLowerCase();
@@ -153,7 +180,7 @@ const PlayerImportAdmin = () => {
   };
 
   const handleImport = async () => {
-    const validPlayers = previewData.filter(p => p.isValid && p.data).map(p => p.data!);
+    const validPlayers = previewData.filter((p) => p.isValid && p.data).map((p) => p.data!);
     if (validPlayers.length === 0) {
       showError(t('validation.noValidPlayersToImport'));
       return;
@@ -161,8 +188,8 @@ const PlayerImportAdmin = () => {
     await createMultiplePlayersMutation.mutateAsync(validPlayers, {
       onSuccess: () => {
         showSuccess(`${validPlayers.length} giocatori importati con successo!`);
-        navigate("/admin/players");
-      }
+        navigate('/admin/players');
+      },
     });
   };
 
@@ -177,16 +204,29 @@ const PlayerImportAdmin = () => {
         <Card className="max-w-lg mx-auto">
           <CardHeader>
             <CardTitle>1. Carica il tuo file</CardTitle>
-            <CardDescription>Seleziona un file .xlsx o .csv contenente i dati dei giocatori.</CardDescription>
+            <CardDescription>
+              Seleziona un file .xlsx o .csv contenente i dati dei giocatori.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted">
+            <Label
+              htmlFor="file-upload"
+              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted"
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
-                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Clicca per caricare</span> o trascina il file</p>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  <span className="font-semibold">Clicca per caricare</span> o trascina il file
+                </p>
                 <p className="text-xs text-muted-foreground">XLSX, XLS, CSV</p>
               </div>
-              <Input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept=".xlsx, .xls, .csv" />
+              <Input
+                id="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept=".xlsx, .xls, .csv"
+              />
             </Label>
           </CardContent>
         </Card>
@@ -199,19 +239,29 @@ const PlayerImportAdmin = () => {
             <CardDescription>Associa le colonne del tuo file ai campi richiesti.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {REQUIRED_FIELDS.map(field => (
+            {REQUIRED_FIELDS.map((field) => (
               <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <Label>{field.label}</Label>
-                <Select onValueChange={(value) => setMapping(prev => ({ ...prev, [field.id]: value }))}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona colonna..." /></SelectTrigger>
+                <Select
+                  onValueChange={(value) => setMapping((prev) => ({ ...prev, [field.id]: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona colonna..." />
+                  </SelectTrigger>
                   <SelectContent>
-                    {headers.map(header => <SelectItem key={header} value={header}>{header}</SelectItem>)}
+                    {headers.map((header) => (
+                      <SelectItem key={header} value={header}>
+                        {header}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             ))}
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setCurrentStep(0)}>Indietro</Button>
+              <Button variant="outline" onClick={() => setCurrentStep(0)}>
+                Indietro
+              </Button>
               <Button onClick={handleMappingSubmit} disabled={teamsLoading}>
                 {teamsLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Vai all'Anteprima
@@ -225,7 +275,9 @@ const PlayerImportAdmin = () => {
         <Card>
           <CardHeader>
             <CardTitle>3. Anteprima e Conferma</CardTitle>
-            <CardDescription>Controlla i dati. Le righe con errori non verranno importate.</CardDescription>
+            <CardDescription>
+              Controlla i dati. Le righe con errori non verranno importate.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto border rounded-lg">
@@ -233,15 +285,21 @@ const PlayerImportAdmin = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-12">Stato</TableHead>
-                    {REQUIRED_FIELDS.map(f => <TableHead key={f.id}>{f.label}</TableHead>)}
+                    {REQUIRED_FIELDS.map((f) => (
+                      <TableHead key={f.id}>{f.label}</TableHead>
+                    ))}
                     <TableHead>Errori</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {previewData.map((row, index) => (
-                    <TableRow key={index} className={!row.isValid ? "bg-destructive/10" : ""}>
+                    <TableRow key={index} className={!row.isValid ? 'bg-destructive/10' : ''}>
                       <TableCell>
-                        {row.isValid ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <AlertTriangle className="h-5 w-5 text-destructive" />}
+                        {row.isValid ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
+                        )}
                       </TableCell>
                       <TableCell>{row.original[mapping.first_name]}</TableCell>
                       <TableCell>{row.original[mapping.last_name]}</TableCell>
@@ -252,7 +310,11 @@ const PlayerImportAdmin = () => {
                       <TableCell>{row.original[mapping.nationality] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.document_id] || '-'}</TableCell>
                       <TableCell>
-                        {row.errors.map((e, i) => <div key={i} className="text-xs text-destructive">{e}</div>)}
+                        {row.errors.map((e, i) => (
+                          <div key={i} className="text-xs text-destructive">
+                            {e}
+                          </div>
+                        ))}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -260,11 +322,15 @@ const PlayerImportAdmin = () => {
               </Table>
             </div>
             <div className="flex justify-end gap-2 pt-6">
-              <Button variant="outline" onClick={() => setCurrentStep(1)}>Indietro</Button>
+              <Button variant="outline" onClick={() => setCurrentStep(1)}>
+                Indietro
+              </Button>
               <Button onClick={handleImport} disabled={createMultiplePlayersMutation.isPending}>
-                {createMultiplePlayersMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {createMultiplePlayersMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 <FileCheck2 className="mr-2 h-4 w-4" />
-                Importa {previewData.filter(r => r.isValid).length} Giocatori Validi
+                Importa {previewData.filter((r) => r.isValid).length} Giocatori Validi
               </Button>
             </div>
           </CardContent>

@@ -20,10 +20,7 @@ import type {
   StandingsContext,
   NextPhaseContext,
 } from '@/types/tournament-handlers';
-import type {
-  SwissSystemSettings,
-  TieBreakerCriteria,
-} from '@/types/tournament-settings';
+import type { SwissSystemSettings } from '@/types/tournament-settings';
 import { DEFAULT_SWISS_SYSTEM_SETTINGS } from '@/types/tournament-settings';
 import { registerHandler, getHandlerPhases } from '../handler-registry';
 import type { LeagueTableRow } from '@/hooks/use-league-table';
@@ -35,12 +32,12 @@ import type { LeagueTableRow } from '@/hooks/use-league-table';
 function generateSwissPairings(
   teams: Array<{ id: string; name: string }>,
   standings: LeagueTableRow[],
-  previousPairings: Set<string>
+  previousPairings: Set<string>,
 ): Array<{ home: string; away: string }> {
   // Sort teams by current standings
   const sortedTeams = [...teams].sort((a, b) => {
-    const aRank = standings.findIndex(s => s.team_id === a.id);
-    const bRank = standings.findIndex(s => s.team_id === b.id);
+    const aRank = standings.findIndex((s) => s.team_id === a.id);
+    const bRank = standings.findIndex((s) => s.team_id === b.id);
     // If not in standings, place at end
     if (aRank === -1) return 1;
     if (bRank === -1) return -1;
@@ -108,14 +105,14 @@ function generateSwissPairings(
  */
 function applySnakeSeeding(
   standings: LeagueTableRow[],
-  pattern: number[][]
+  pattern: number[][],
 ): Array<{ poule: string; teams: string[] }> {
   const poules: Array<{ poule: string; teams: string[] }> = [];
 
   pattern.forEach((positions, pouleIndex) => {
     const pouleTeams: string[] = [];
 
-    positions.forEach(pos => {
+    positions.forEach((pos) => {
       // positions are 1-indexed
       const team = standings[pos - 1];
       if (team) {
@@ -137,7 +134,7 @@ function applySnakeSeeding(
  */
 function generatePoulePairings(
   teams: string[],
-  doubleRoundRobin: boolean
+  doubleRoundRobin: boolean,
 ): Array<{ home: string; away: string }> {
   const pairings: Array<{ home: string; away: string }> = [];
 
@@ -153,7 +150,7 @@ function generatePoulePairings(
 
   // Double round-robin: add return fixtures
   if (doubleRoundRobin) {
-    const returnFixtures = pairings.map(p => ({
+    const returnFixtures = pairings.map((p) => ({
       home: p.away,
       away: p.home,
     }));
@@ -206,7 +203,7 @@ export const SwissSystemHandler: TournamentHandler = {
       }
 
       // Check all poules have same size
-      const pouleSizes = s.snakeSeedingPattern.map(p => p.length);
+      const pouleSizes = s.snakeSeedingPattern.map((p) => p.length);
       if (new Set(pouleSizes).size > 1) {
         errors.push('tournament.validation.equalPouleSize');
       }
@@ -224,8 +221,7 @@ export const SwissSystemHandler: TournamentHandler = {
 
     // Team count validation
     if (teamCount !== undefined) {
-      const requiredTeams = s.snakeSeedingPattern ?
-        Math.max(...s.snakeSeedingPattern.flat()) : 8;
+      const requiredTeams = s.snakeSeedingPattern ? Math.max(...s.snakeSeedingPattern.flat()) : 8;
 
       if (teamCount < requiredTeams) {
         errors.push('tournament.validation.notEnoughTeamsForSwiss');
@@ -266,12 +262,12 @@ export const SwissSystemHandler: TournamentHandler = {
       case 'regular_season': {
         // Generate Swiss pairings for Phase 1
         const pairings = generateSwissPairings(
-          teams.map(t => ({ id: t.id, name: t.name })),
+          teams.map((t) => ({ id: t.id, name: t.name })),
           standings,
-          previousPairings
+          previousPairings,
         );
 
-        pairings.forEach(pairing => {
+        pairings.forEach((pairing) => {
           matches.push({
             home_team_id: pairing.home,
             away_team_id: pairing.away,
@@ -285,7 +281,7 @@ export const SwissSystemHandler: TournamentHandler = {
       case 'poule_b': {
         // Apply snake seeding to get poule assignments
         const poules = applySnakeSeeding(standings, s.snakeSeedingPattern);
-        const poule = poules.find(p => p.poule === phaseId);
+        const poule = poules.find((p) => p.poule === phaseId);
 
         if (!poule) {
           return {
@@ -298,10 +294,10 @@ export const SwissSystemHandler: TournamentHandler = {
         // Generate round-robin for this poule
         const poulePairings = generatePoulePairings(
           poule.teams,
-          s.pouleFormat === 'round_robin' && s.doubleRoundRobin
+          s.pouleFormat === 'round_robin' && s.doubleRoundRobin,
         );
 
-        poulePairings.forEach(pairing => {
+        poulePairings.forEach((pairing) => {
           matches.push({
             home_team_id: pairing.home,
             away_team_id: pairing.away,
@@ -319,8 +315,8 @@ export const SwissSystemHandler: TournamentHandler = {
         // Get poule assignments based on Phase 1 standings
         // Note: In production, the caller should provide poule-specific standings
         const poules = applySnakeSeeding(standings, s.snakeSeedingPattern);
-        const pouleA = poules.find(p => p.poule === 'poule_a');
-        const pouleB = poules.find(p => p.poule === 'poule_b');
+        const pouleA = poules.find((p) => p.poule === 'poule_a');
+        const pouleB = poules.find((p) => p.poule === 'poule_b');
 
         if (!pouleA || !pouleB) {
           return {
@@ -331,13 +327,13 @@ export const SwissSystemHandler: TournamentHandler = {
         }
 
         // Get standings for each poule (teams in order of their poule position)
-        const pouleAStandings = pouleA.teams.map(teamId =>
-          standings.find(s => s.team_id === teamId)
-        ).filter(Boolean) as LeagueTableRow[];
+        const pouleAStandings = pouleA.teams
+          .map((teamId) => standings.find((s) => s.team_id === teamId))
+          .filter(Boolean) as LeagueTableRow[];
 
-        const pouleBStandings = pouleB.teams.map(teamId =>
-          standings.find(s => s.team_id === teamId)
-        ).filter(Boolean) as LeagueTableRow[];
+        const pouleBStandings = pouleB.teams
+          .map((teamId) => standings.find((s) => s.team_id === teamId))
+          .filter(Boolean) as LeagueTableRow[];
 
         const teamsInFinal = s.finalStageTeams;
         const teamsPerPoule = Math.floor(teamsInFinal / 2);
@@ -391,7 +387,7 @@ export const SwissSystemHandler: TournamentHandler = {
     // Build team stats map
     const teamStats = new Map<string, LeagueTableRow>();
 
-    matches.forEach(match => {
+    matches.forEach((match) => {
       if (match.status !== 'completed') return;
       if (!match.home_team?.id || !match.away_team?.id) return;
 
@@ -518,7 +514,7 @@ export const SwissSystemHandler: TournamentHandler = {
   getNextPhase(context: NextPhaseContext): PhaseConfig | null {
     const { currentPhaseId, phases } = context;
 
-    const currentIndex = phases.findIndex(p => p.id === currentPhaseId);
+    const currentIndex = phases.findIndex((p) => p.id === currentPhaseId);
     if (currentIndex === -1) return null;
 
     const nextPhase = phases[currentIndex + 1];
@@ -532,16 +528,16 @@ export const SwissSystemHandler: TournamentHandler = {
    */
   getAdvancingTeams(
     standings: LeagueTableRow[],
-    rules?: { count?: number; positions?: number[] }
+    rules?: { count?: number; positions?: number[] },
   ): string[] {
     if (rules?.positions) {
       return rules.positions
-        .filter(pos => standings[pos - 1])
-        .map(pos => standings[pos - 1].team_id);
+        .filter((pos) => standings[pos - 1])
+        .map((pos) => standings[pos - 1].team_id);
     }
 
     const count = rules?.count || standings.length;
-    return standings.slice(0, count).map(s => s.team_id);
+    return standings.slice(0, count).map((s) => s.team_id);
   },
 };
 

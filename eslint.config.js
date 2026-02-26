@@ -4,9 +4,10 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import tseslint from "typescript-eslint";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default tseslint.config(
-  { ignores: ["dist", ".agents/**", "node_modules", "tailwind.config.ts"] },
+  { ignores: ["dist", ".agents/**", "node_modules", "tailwind.config.ts", "e2e/**"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -26,7 +27,7 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn", // Existing code has some any types
       // Accessibility rules - warn initially to avoid breaking build
       "jsx-a11y/alt-text": "warn",
@@ -41,4 +42,5 @@ export default tseslint.config(
       "prefer-const": "warn",
     },
   },
+  eslintConfigPrettier,
 );

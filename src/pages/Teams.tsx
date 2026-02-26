@@ -1,33 +1,35 @@
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
-import { supabase } from "@/lib/supabase/client";
-import { Team } from "@/types/database";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MapPin, Users, Plus, Settings, Search } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useAuth } from "@/lib/supabase/auth-context";
-import { useTranslation } from "react-i18next";
-import { useState, useMemo } from "react";
-import { TeamCardSkeleton } from "@/components/skeletons";
-import { EmptyState } from "@/components/EmptyState";
+import { useSupabaseQuery } from '@/hooks/use-supabase-query';
+import { supabase } from '@/lib/supabase/client';
+import { Team } from '@/types/database';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { MapPin, Users, Plus, Settings, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/lib/supabase/auth-context';
+import { useTranslation } from 'react-i18next';
+import { useState, useMemo } from 'react';
+import { TeamCardSkeleton } from '@/components/skeletons';
+import { EmptyState } from '@/components/EmptyState';
 
 const Teams = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState("");
-  const { data: teams, isLoading, error } = useSupabaseQuery<Team[]>(
-    ['teams'],
-    async () => supabase.from('teams').select('*, venues(name)').order('name')
+  const [searchTerm, setSearchTerm] = useState('');
+  const {
+    data: teams,
+    isLoading,
+    error,
+  } = useSupabaseQuery<Team[]>(['teams'], async () =>
+    supabase.from('teams').select('*, venues(name)').order('name'),
   );
 
   const filteredTeams = useMemo(() => {
     if (!teams || !searchTerm) return teams;
     const lower = searchTerm.toLowerCase();
-    return teams.filter(t =>
-      t.name.toLowerCase().includes(lower) ||
-      (t.parish ?? '').toLowerCase().includes(lower)
+    return teams.filter(
+      (t) => t.name.toLowerCase().includes(lower) || (t.parish ?? '').toLowerCase().includes(lower),
     );
   }, [teams, searchTerm]);
 
@@ -107,12 +109,16 @@ const Teams = () => {
             icon={Users}
             title={t('pages.teams.noTeamsFound')}
             subtitle={t('pages.teams.noTeamsFoundSubtitle')}
-            action={user ? { label: t('pages.teams.addFirstTeam'), to: '/admin/teams/new', icon: Plus } : undefined}
+            action={
+              user
+                ? { label: t('pages.teams.addFirstTeam'), to: '/admin/teams/new', icon: Plus }
+                : undefined
+            }
           />
         )
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {teams.map((team) => (
+          {filteredTeams.map((team) => (
             <div key={team.id}>
               <Link to={`/teams/${team.id}`}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer">

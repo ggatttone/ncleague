@@ -13,7 +13,7 @@ const getYouTubeEmbedUrl = (url: string | null | undefined): string | null => {
 
   try {
     const urlObject = new URL(url);
-    
+
     if (urlObject.hostname.includes('youtube.com')) {
       if (urlObject.pathname.includes('/watch')) {
         videoId = urlObject.searchParams.get('v');
@@ -23,11 +23,10 @@ const getYouTubeEmbedUrl = (url: string | null | undefined): string | null => {
     } else if (urlObject.hostname.includes('youtu.be')) {
       videoId = urlObject.pathname.split('/')[1];
     }
-  } catch (error) {
-    console.error("Invalid URL provided to VideoPlayer:", url);
+  } catch {
+    console.error('Invalid URL provided to VideoPlayer:', url);
     return null;
   }
-
 
   if (videoId) {
     // Rimuove eventuali parametri aggiuntivi dall'ID del video

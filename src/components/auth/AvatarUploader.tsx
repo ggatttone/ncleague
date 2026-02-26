@@ -38,13 +38,13 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
       // If an old avatar exists, find its path to remove it later
       let oldAvatarPath: string | null = null;
       if (profile?.avatar_url) {
-          try {
-              const url = new URL(profile.avatar_url);
-              // The path is the part after '/avatars/'
-              oldAvatarPath = url.pathname.split('/avatars/')[1];
-          } catch (e) {
-              console.error("Invalid old avatar URL", profile.avatar_url);
-          }
+        try {
+          const url = new URL(profile.avatar_url);
+          // The path is the part after '/avatars/'
+          oldAvatarPath = url.pathname.split('/avatars/')[1];
+        } catch {
+          console.error('Invalid old avatar URL', profile.avatar_url);
+        }
       }
 
       const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
@@ -55,18 +55,21 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
 
       // If upload is successful and an old avatar existed, remove it
       if (oldAvatarPath) {
-          const { error: removeError } = await supabase.storage.from('avatars').remove([oldAvatarPath]);
-          if (removeError) {
-              console.error("Failed to remove old avatar:", removeError.message);
-          }
+        const { error: removeError } = await supabase.storage
+          .from('avatars')
+          .remove([oldAvatarPath]);
+        if (removeError) {
+          console.error('Failed to remove old avatar:', removeError.message);
+        }
       }
 
-      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('avatars').getPublicUrl(filePath);
+
       setAvatarUrl(publicUrl);
       onUpload(publicUrl);
-      showSuccess("Avatar aggiornato con successo!");
-
+      showSuccess('Avatar aggiornato con successo!');
     } catch (error: unknown) {
       showError(`Errore: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     } finally {
@@ -86,9 +89,11 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
 
       setAvatarUrl(null);
       onUpload(null);
-      showSuccess("Avatar rimosso.");
+      showSuccess('Avatar rimosso.');
     } catch (error: unknown) {
-      showError(`Errore nella rimozione: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
+      showError(
+        `Errore nella rimozione: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`,
+      );
     } finally {
       setUploading(false);
     }
@@ -105,13 +110,30 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
       <div className="flex flex-col gap-2">
         <Button asChild size="sm" variant="outline" disabled={uploading}>
           <label htmlFor="avatar-upload" className="cursor-pointer">
-            {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+            {uploading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="mr-2 h-4 w-4" />
+            )}
             {uploading ? 'Caricamento...' : 'Cambia foto'}
           </label>
         </Button>
-        <Input id="avatar-upload" type="file" className="hidden" accept="image/*" onChange={handleUpload} disabled={uploading} />
+        <Input
+          id="avatar-upload"
+          type="file"
+          className="hidden"
+          accept="image/*"
+          onChange={handleUpload}
+          disabled={uploading}
+        />
         {avatarUrl && (
-          <Button size="sm" variant="ghost" className="text-destructive" onClick={handleDelete} disabled={uploading}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive"
+            onClick={handleDelete}
+            disabled={uploading}
+          >
             <Trash2 className="mr-2 h-4 w-4" />
             Rimuovi
           </Button>

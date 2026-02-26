@@ -1,28 +1,41 @@
-import { useState } from "react";
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Stepper } from "@/components/ui/stepper";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useTeams } from "@/hooks/use-teams";
-import { useVenues } from "@/hooks/use-venues";
-import { useCompetitions } from "@/hooks/use-competitions";
-import { useSeasons } from "@/hooks/use-seasons";
-import { useCreateMultipleMatches } from "@/hooks/use-matches";
-import * as XLSX from "xlsx";
-import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { showError, showSuccess } from "@/utils/toast";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { formatMatchDateLocal, toWallClockUtcIsoString } from "@/lib/utils";
+import { useState } from 'react';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Stepper } from '@/components/ui/stepper';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useTeams } from '@/hooks/use-teams';
+import { useVenues } from '@/hooks/use-venues';
+import { useCompetitions } from '@/hooks/use-competitions';
+import { useSeasons } from '@/hooks/use-seasons';
+import { useCreateMultipleMatches } from '@/hooks/use-matches';
+import * as XLSX from 'xlsx';
+import { Loader2, Upload, FileCheck2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { showError, showSuccess } from '@/utils/toast';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { formatMatchDateLocal, toWallClockUtcIsoString } from '@/lib/utils';
 
 const steps = [
-  { label: "Carica File" },
-  { label: "Mappa Colonne" },
-  { label: "Anteprima e Importa" },
+  { label: 'Carica File' },
+  { label: 'Mappa Colonne' },
+  { label: 'Anteprima e Importa' },
 ];
 
 type ExcelRow = Record<string, string | number | undefined>;
@@ -69,12 +82,11 @@ const parseItalianDate = (dateString: string): Date => {
   return new Date(year, month - 1, day, hours, minutes);
 };
 
-
 const FixtureImportAdmin = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
-  const [fileName, setFileName] = useState("");
+  const [_fileName, setFileName] = useState('');
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ExcelRow[]>([]);
   const [mapping, setMapping] = useState<Record<string, string>>({});
@@ -110,7 +122,10 @@ const FixtureImportAdmin = () => {
         const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false, dateNF: 'dd/mm/yyyy hh:mm' });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          raw: false,
+          dateNF: 'dd/mm/yyyy hh:mm',
+        });
 
         if (jsonData.length === 0) {
           showError(t('pages.admin.fixtureImport.errors.emptyFile'));
@@ -121,7 +136,7 @@ const FixtureImportAdmin = () => {
         setHeaders(fileHeaders);
         setRows(jsonData);
         setCurrentStep(1);
-      } catch (err) {
+      } catch {
         showError(t('pages.admin.fixtureImport.errors.readFileError'));
       }
     };
@@ -129,14 +144,14 @@ const FixtureImportAdmin = () => {
   };
 
   const handleMappingSubmit = () => {
-    const teamsMap = new Map(teams?.map(t => [t.name.toLowerCase(), t.id]));
-    const venuesMap = new Map(venues?.map(v => [v.name.toLowerCase(), v.id]));
-    const competitionsMap = new Map(competitions?.map(c => [c.name.toLowerCase(), c.id]));
-    const seasonsMap = new Map(seasons?.map(s => [s.name.toLowerCase(), s.id]));
+    const teamsMap = new Map(teams?.map((t) => [t.name.toLowerCase(), t.id]));
+    const venuesMap = new Map(venues?.map((v) => [v.name.toLowerCase(), v.id]));
+    const competitionsMap = new Map(competitions?.map((c) => [c.name.toLowerCase(), c.id]));
+    const seasonsMap = new Map(seasons?.map((s) => [s.name.toLowerCase(), s.id]));
 
-    const processedData = rows.map(row => {
+    const processedData = rows.map((row) => {
       const previewRow: PreviewRow = { original: row, isValid: true, errors: [], data: null };
-      
+
       const homeTeamName = row[mapping.home_team_name]?.toString().trim().toLowerCase();
       const awayTeamName = row[mapping.away_team_name]?.toString().trim().toLowerCase();
       const homeTeamId = teamsMap.get(homeTeamName);
@@ -144,11 +159,19 @@ const FixtureImportAdmin = () => {
 
       if (!homeTeamId) {
         previewRow.isValid = false;
-        previewRow.errors.push(t('pages.admin.fixtureImport.errors.homeTeamNotFound', { name: row[mapping.home_team_name] }));
+        previewRow.errors.push(
+          t('pages.admin.fixtureImport.errors.homeTeamNotFound', {
+            name: row[mapping.home_team_name],
+          }),
+        );
       }
       if (!awayTeamId) {
         previewRow.isValid = false;
-        previewRow.errors.push(t('pages.admin.fixtureImport.errors.awayTeamNotFound', { name: row[mapping.away_team_name] }));
+        previewRow.errors.push(
+          t('pages.admin.fixtureImport.errors.awayTeamNotFound', {
+            name: row[mapping.away_team_name],
+          }),
+        );
       }
       if (homeTeamId && awayTeamId && homeTeamId === awayTeamId) {
         previewRow.isValid = false;
@@ -157,10 +180,12 @@ const FixtureImportAdmin = () => {
 
       const dateValue = row[mapping.match_date];
       const matchDate = dateValue instanceof Date ? dateValue : parseItalianDate(dateValue);
-      
+
       if (!dateValue || isNaN(matchDate.getTime())) {
         previewRow.isValid = false;
-        previewRow.errors.push(t('pages.admin.fixtureImport.errors.invalidDate', { date: row[mapping.match_date] }));
+        previewRow.errors.push(
+          t('pages.admin.fixtureImport.errors.invalidDate', { date: row[mapping.match_date] }),
+        );
       }
 
       const status = matchDate && matchDate < new Date() ? 'completed' : 'scheduled';
@@ -171,21 +196,30 @@ const FixtureImportAdmin = () => {
       const awayScore = parseInt(awayScoreRaw, 10);
 
       if (status === 'completed') {
-        if (homeScoreRaw === undefined || awayScoreRaw === undefined || isNaN(homeScore) || isNaN(awayScore)) {
+        if (
+          homeScoreRaw === undefined ||
+          awayScoreRaw === undefined ||
+          isNaN(homeScore) ||
+          isNaN(awayScore)
+        ) {
           previewRow.isValid = false;
           previewRow.errors.push(t('pages.admin.fixtureImport.errors.scoresRequired'));
         }
       }
 
       let venueId, competitionId, seasonId, refereeTeamId;
-      
+
       const refereeNameRaw = row[mapping.referee_team_name];
       if (refereeNameRaw) {
         const refereeName = refereeNameRaw.toString().trim().toLowerCase();
         refereeTeamId = teamsMap.get(refereeName);
         if (!refereeTeamId) {
           previewRow.isValid = false;
-          previewRow.errors.push(t('pages.admin.fixtureImport.errors.refereeNotFound', { name: row[mapping.referee_team_name] }));
+          previewRow.errors.push(
+            t('pages.admin.fixtureImport.errors.refereeNotFound', {
+              name: row[mapping.referee_team_name],
+            }),
+          );
         } else if (refereeTeamId === homeTeamId || refereeTeamId === awayTeamId) {
           previewRow.isValid = false;
           previewRow.errors.push(t('pages.admin.fixtureImport.errors.refereeSameAsTeam'));
@@ -198,7 +232,9 @@ const FixtureImportAdmin = () => {
         venueId = venuesMap.get(venueName);
         if (!venueId) {
           previewRow.isValid = false;
-          previewRow.errors.push(t('pages.admin.fixtureImport.errors.venueNotFound', { name: row[mapping.venue_name] }));
+          previewRow.errors.push(
+            t('pages.admin.fixtureImport.errors.venueNotFound', { name: row[mapping.venue_name] }),
+          );
         }
       }
 
@@ -208,7 +244,11 @@ const FixtureImportAdmin = () => {
         competitionId = competitionsMap.get(competitionName);
         if (!competitionId) {
           previewRow.isValid = false;
-          previewRow.errors.push(t('pages.admin.fixtureImport.errors.competitionNotFound', { name: row[mapping.competition_name] }));
+          previewRow.errors.push(
+            t('pages.admin.fixtureImport.errors.competitionNotFound', {
+              name: row[mapping.competition_name],
+            }),
+          );
         }
       }
 
@@ -218,7 +258,11 @@ const FixtureImportAdmin = () => {
         seasonId = seasonsMap.get(seasonName);
         if (!seasonId) {
           previewRow.isValid = false;
-          previewRow.errors.push(t('pages.admin.fixtureImport.errors.seasonNotFound', { name: row[mapping.season_name] }));
+          previewRow.errors.push(
+            t('pages.admin.fixtureImport.errors.seasonNotFound', {
+              name: row[mapping.season_name],
+            }),
+          );
         }
       }
 
@@ -244,7 +288,7 @@ const FixtureImportAdmin = () => {
   };
 
   const handleImport = async () => {
-    const validMatches = previewData.filter(p => p.isValid && p.data).map(p => p.data!);
+    const validMatches = previewData.filter((p) => p.isValid && p.data).map((p) => p.data!);
     if (validMatches.length === 0) {
       showError(t('pages.admin.fixtureImport.errors.noValidMatches'));
       return;
@@ -252,8 +296,8 @@ const FixtureImportAdmin = () => {
     await createMultipleMatchesMutation.mutateAsync(validMatches, {
       onSuccess: () => {
         showSuccess(`${validMatches.length} partite importate con successo!`);
-        navigate("/admin/fixtures");
-      }
+        navigate('/admin/fixtures');
+      },
     });
   };
 
@@ -261,7 +305,10 @@ const FixtureImportAdmin = () => {
     <AdminLayout>
       <h1 className="text-2xl font-bold mb-6">{t('pages.admin.fixtureImport.title')}</h1>
       <div className="mb-12">
-        <Stepper steps={steps.map(s => ({ label: t(s.label, { ns: 'pages.admin.fixtureImport' }) }))} currentStep={currentStep} />
+        <Stepper
+          steps={steps.map((s) => ({ label: t(s.label, { ns: 'pages.admin.fixtureImport' }) }))}
+          currentStep={currentStep}
+        />
       </div>
 
       {currentStep === 0 && (
@@ -271,13 +318,27 @@ const FixtureImportAdmin = () => {
             <CardDescription>{t('pages.admin.fixtureImport.step1Description')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted">
+            <Label
+              htmlFor="file-upload"
+              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted"
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-10 h-10 mb-3 text-muted-foreground" />
-                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">{t('pages.admin.fixtureImport.uploadBoxClick')}</span> {t('pages.admin.fixtureImport.uploadBoxDrag')}</p>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  <span className="font-semibold">
+                    {t('pages.admin.fixtureImport.uploadBoxClick')}
+                  </span>{' '}
+                  {t('pages.admin.fixtureImport.uploadBoxDrag')}
+                </p>
                 <p className="text-xs text-muted-foreground">XLSX, XLS, CSV</p>
               </div>
-              <Input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept=".xlsx, .xls, .csv" />
+              <Input
+                id="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept=".xlsx, .xls, .csv"
+              />
             </Label>
           </CardContent>
         </Card>
@@ -290,21 +351,36 @@ const FixtureImportAdmin = () => {
             <CardDescription>{t('pages.admin.fixtureImport.step2Description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {REQUIRED_FIELDS.map(field => (
+            {REQUIRED_FIELDS.map((field) => (
               <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 <Label>{field.label}</Label>
-                <Select onValueChange={(value) => setMapping(prev => ({ ...prev, [field.id]: value }))}>
-                  <SelectTrigger><SelectValue placeholder="Seleziona colonna..." /></SelectTrigger>
+                <Select
+                  onValueChange={(value) => setMapping((prev) => ({ ...prev, [field.id]: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona colonna..." />
+                  </SelectTrigger>
                   <SelectContent>
-                    {headers.map(header => <SelectItem key={header} value={header}>{header}</SelectItem>)}
+                    {headers.map((header) => (
+                      <SelectItem key={header} value={header}>
+                        {header}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             ))}
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setCurrentStep(0)}>{t('pages.admin.fixtureImport.backButton')}</Button>
-              <Button onClick={handleMappingSubmit} disabled={teamsLoading || venuesLoading || competitionsLoading || seasonsLoading}>
-                {(teamsLoading || venuesLoading || competitionsLoading || seasonsLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button variant="outline" onClick={() => setCurrentStep(0)}>
+                {t('pages.admin.fixtureImport.backButton')}
+              </Button>
+              <Button
+                onClick={handleMappingSubmit}
+                disabled={teamsLoading || venuesLoading || competitionsLoading || seasonsLoading}
+              >
+                {(teamsLoading || venuesLoading || competitionsLoading || seasonsLoading) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {t('pages.admin.fixtureImport.previewButton')}
               </Button>
             </div>
@@ -323,20 +399,32 @@ const FixtureImportAdmin = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-12">{t('pages.admin.fixtureImport.tableStatus')}</TableHead>
-                    {REQUIRED_FIELDS.map(f => <TableHead key={f.id}>{f.label}</TableHead>)}
+                    <TableHead className="w-12">
+                      {t('pages.admin.fixtureImport.tableStatus')}
+                    </TableHead>
+                    {REQUIRED_FIELDS.map((f) => (
+                      <TableHead key={f.id}>{f.label}</TableHead>
+                    ))}
                     <TableHead>{t('pages.admin.fixtureImport.tableErrors')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {previewData.map((row, index) => (
-                    <TableRow key={index} className={!row.isValid ? "bg-destructive/10" : ""}>
+                    <TableRow key={index} className={!row.isValid ? 'bg-destructive/10' : ''}>
                       <TableCell>
-                        {row.isValid ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <AlertTriangle className="h-5 w-5 text-destructive" />}
+                        {row.isValid ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
+                        )}
                       </TableCell>
                       <TableCell>{row.original[mapping.home_team_name]}</TableCell>
                       <TableCell>{row.original[mapping.away_team_name]}</TableCell>
-                      <TableCell>{row.data?.match_date ? formatMatchDateLocal(row.data.match_date, 'dd/MM/yyyy HH:mm') : 'Data invalida'}</TableCell>
+                      <TableCell>
+                        {row.data?.match_date
+                          ? formatMatchDateLocal(row.data.match_date, 'dd/MM/yyyy HH:mm')
+                          : 'Data invalida'}
+                      </TableCell>
                       <TableCell>{row.original[mapping.referee_team_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.competition_name] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.season_name] || '-'}</TableCell>
@@ -344,7 +432,11 @@ const FixtureImportAdmin = () => {
                       <TableCell>{row.original[mapping.away_score]}</TableCell>
                       <TableCell>{row.original[mapping.venue_name] || '-'}</TableCell>
                       <TableCell>
-                        {row.errors.map((e, i) => <div key={i} className="text-xs text-destructive">{e}</div>)}
+                        {row.errors.map((e, i) => (
+                          <div key={i} className="text-xs text-destructive">
+                            {e}
+                          </div>
+                        ))}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -352,11 +444,17 @@ const FixtureImportAdmin = () => {
               </Table>
             </div>
             <div className="flex justify-end gap-2 pt-6">
-              <Button variant="outline" onClick={() => setCurrentStep(1)}>{t('pages.admin.fixtureImport.backButton')}</Button>
+              <Button variant="outline" onClick={() => setCurrentStep(1)}>
+                {t('pages.admin.fixtureImport.backButton')}
+              </Button>
               <Button onClick={handleImport} disabled={createMultipleMatchesMutation.isPending}>
-                {createMultipleMatchesMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {createMultipleMatchesMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 <FileCheck2 className="mr-2 h-4 w-4" />
-                {t('pages.admin.fixtureImport.importButton', { count: previewData.filter(r => r.isValid).length })}
+                {t('pages.admin.fixtureImport.importButton', {
+                  count: previewData.filter((r) => r.isValid).length,
+                })}
               </Button>
             </div>
           </CardContent>

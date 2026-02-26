@@ -26,20 +26,14 @@ import { registerHandler, getHandlerPhases } from '@/lib/tournament/handler-regi
 /**
  * Type guard for KnockoutSettings
  */
-function isKnockoutSettings(
-  settings: TournamentModeSettings
-): settings is KnockoutSettings {
-  return (
-    'bracketSize' in settings &&
-    'seedingMethod' in settings &&
-    'thirdPlaceMatch' in settings
-  );
+function isKnockoutSettings(settings: TournamentModeSettings): settings is KnockoutSettings {
+  return 'bracketSize' in settings && 'seedingMethod' in settings && 'thirdPlaceMatch' in settings;
 }
 
 /**
  * Get knockout stage name based on number of teams remaining
  */
-function getKnockoutStage(teamsRemaining: number): string {
+function _getKnockoutStage(teamsRemaining: number): string {
   switch (teamsRemaining) {
     case 2:
       return 'final';
@@ -73,7 +67,9 @@ function shuffleArray<T>(array: T[]): T[] {
  * For 8 teams: [1,8], [4,5], [3,6], [2,7]
  * This ensures higher seeds meet lower seeds first
  */
-function arrangeBracketSeeding(teams: { id: string; seed?: number }[]): { id: string; seed?: number }[] {
+function arrangeBracketSeeding(
+  teams: { id: string; seed?: number }[],
+): { id: string; seed?: number }[] {
   const n = teams.length;
 
   // Sort by seed if available
@@ -101,8 +97,8 @@ function getBracketPositions(size: number): number[] {
   if (size === 16) return [0, 15, 8, 7, 4, 11, 12, 3, 2, 13, 10, 5, 6, 9, 14, 1];
   if (size === 32) {
     return [
-      0, 31, 16, 15, 8, 23, 24, 7, 4, 27, 20, 11, 12, 19, 28, 3,
-      2, 29, 18, 13, 10, 21, 26, 5, 6, 25, 22, 9, 14, 17, 30, 1
+      0, 31, 16, 15, 8, 23, 24, 7, 4, 27, 20, 11, 12, 19, 28, 3, 2, 29, 18, 13, 10, 21, 26, 5, 6,
+      25, 22, 9, 14, 17, 30, 1,
     ];
   }
   // Fallback: sequential
@@ -115,9 +111,10 @@ function getBracketPositions(size: number): number[] {
 function generateKnockoutPairings(
   teams: { id: string; seed?: number }[],
   settings: KnockoutSettings,
-  phase: PhaseConfig
+  phase: PhaseConfig,
 ): Array<{ home: string; away: string; stage: string; bracketPosition: number }> {
-  const pairings: Array<{ home: string; away: string; stage: string; bracketPosition: number }> = [];
+  const pairings: Array<{ home: string; away: string; stage: string; bracketPosition: number }> =
+    [];
 
   // Apply seeding method
   let orderedTeams: { id: string; seed?: number }[];
@@ -158,15 +155,11 @@ function generateKnockoutPairings(
  * Calculate standings from knockout match results
  * For knockout, standings show elimination order (winners advance)
  */
-function calculateKnockoutStandings(
-  context: StandingsContext
-): LeagueTableRow[] {
+function calculateKnockoutStandings(context: StandingsContext): LeagueTableRow[] {
   const { matches, stageFilter } = context;
 
   // Filter matches by stage if specified
-  const relevantMatches = stageFilter
-    ? matches.filter((m) => m.stage === stageFilter)
-    : matches;
+  const relevantMatches = stageFilter ? matches.filter((m) => m.stage === stageFilter) : matches;
 
   // Only count completed matches
   const completedMatches = relevantMatches.filter((m) => m.status === 'completed');
@@ -232,21 +225,19 @@ function calculateKnockoutStandings(
   }
 
   // Convert to LeagueTableRow array
-  const rows: LeagueTableRow[] = Object.entries(teamStats).map(
-    ([teamId, stats]) => ({
-      team_id: teamId,
-      team_name: '', // Will be populated by caller
-      matches_played: stats.matches_played,
-      wins: stats.wins,
-      draws: 0, // No draws in knockout
-      losses: stats.losses,
-      goals_for: stats.goals_for,
-      goals_against: stats.goals_against,
-      goal_difference: stats.goals_for - stats.goals_against,
-      // Points based on advancement: more wins = higher ranking
-      points: stats.wins * 3 - stats.losses,
-    })
-  );
+  const rows: LeagueTableRow[] = Object.entries(teamStats).map(([teamId, stats]) => ({
+    team_id: teamId,
+    team_name: '', // Will be populated by caller
+    matches_played: stats.matches_played,
+    wins: stats.wins,
+    draws: 0, // No draws in knockout
+    losses: stats.losses,
+    goals_for: stats.goals_for,
+    goals_against: stats.goals_against,
+    goal_difference: stats.goals_for - stats.goals_against,
+    // Points based on advancement: more wins = higher ranking
+    points: stats.wins * 3 - stats.losses,
+  }));
 
   // Sort by wins (advancement), then goal difference
   rows.sort((a, b) => {
@@ -260,18 +251,16 @@ function calculateKnockoutStandings(
 /**
  * Determine current knockout phase based on matches played
  */
-function determineCurrentKnockoutPhase(
+function _determineCurrentKnockoutPhase(
   matches: StandingsContext['matches'],
-  phases: PhaseConfig[]
+  phases: PhaseConfig[],
 ): PhaseConfig | null {
   // Get knockout phases in order
-  const knockoutPhases = phases
-    .filter(p => p.id !== 'start')
-    .sort((a, b) => a.order - b.order);
+  const knockoutPhases = phases.filter((p) => p.id !== 'start').sort((a, b) => a.order - b.order);
 
   for (const phase of knockoutPhases) {
-    const phaseMatches = matches.filter(m => m.stage === phase.id);
-    const completedMatches = phaseMatches.filter(m => m.status === 'completed');
+    const phaseMatches = matches.filter((m) => m.stage === phase.id);
+    const completedMatches = phaseMatches.filter((m) => m.status === 'completed');
 
     // If this phase has matches and not all are completed, we're in this phase
     if (phaseMatches.length > 0 && completedMatches.length < phaseMatches.length) {
@@ -298,10 +287,7 @@ export const KnockoutHandler: TournamentHandler = {
   phases: getHandlerPhases('knockout'),
   defaultSettings: DEFAULT_KNOCKOUT_SETTINGS,
 
-  validateSettings(
-    settings: TournamentModeSettings,
-    teamCount?: number
-  ): ValidationResult {
+  validateSettings(settings: TournamentModeSettings, teamCount?: number): ValidationResult {
     const result: ValidationResult = {
       valid: true,
       errors: [],
@@ -430,7 +416,7 @@ export const KnockoutHandler: TournamentHandler = {
   },
 
   getNextPhase(context: PhaseTransitionContext): PhaseConfig | null {
-    const { currentPhase, allPhases, standings, settings } = context;
+    const { currentPhase, allPhases, standings: _standings, settings } = context;
 
     if (currentPhase.isTerminal) {
       return null;
@@ -443,7 +429,7 @@ export const KnockoutHandler: TournamentHandler = {
       settings.thirdPlaceMatch
     ) {
       // Check if third place match exists and not yet generated
-      const thirdPlacePhase = allPhases.find(p => p.id === 'third-place_playoff');
+      const thirdPlacePhase = allPhases.find((p) => p.id === 'third-place_playoff');
       if (thirdPlacePhase) {
         // Return both third place and final (they can happen in parallel)
         // For simplicity, return third place first
@@ -460,10 +446,7 @@ export const KnockoutHandler: TournamentHandler = {
     return nextPhases.sort((a, b) => a.order - b.order)[0];
   },
 
-  getAdvancingTeams(
-    standings: LeagueTableRow[],
-    rules: AdvancementRule[]
-  ): string[] {
+  getAdvancingTeams(standings: LeagueTableRow[], rules: AdvancementRule[]): string[] {
     // For knockout, advancing teams are simply the winners
     // They are determined by match results, not standings
     const advancingTeams: string[] = [];
@@ -472,9 +455,9 @@ export const KnockoutHandler: TournamentHandler = {
       // In knockout, 'top' means winners
       const count = rule.count;
       const winners = standings
-        .filter(row => row.wins > row.losses)
+        .filter((row) => row.wins > row.losses)
         .slice(0, count)
-        .map(row => row.team_id);
+        .map((row) => row.team_id);
 
       advancingTeams.push(...winners);
     }

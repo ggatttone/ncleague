@@ -10,7 +10,13 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   role: UserRole | null;
-  profile: { id: string; first_name?: string; last_name?: string; avatar_url?: string; role: UserRole } | null;
+  profile: {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    avatar_url?: string;
+    role: UserRole;
+  } | null;
   signOut: () => Promise<void>;
   hasPermission: (requiredRoles: UserRole[], teamId?: string) => boolean;
 }
@@ -39,88 +45,90 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
       try {
-      setLoading(true);
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error("Error fetching session:", sessionError);
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-        setRole(null);
-        setLoading(false);
-        return;
-      }
+        setLoading(true);
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-      setSession(session);
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        const { data: initialProfileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentUser.id)
-          .single();
-
-        let profileData = initialProfileData;
-
-        if (profileError && profileError.code === 'PGRST116') {
-          const { count: adminCount, error: countError } = await supabase
-            .from('profiles')
-            .select('*', { count: 'exact', head: true })
-            .eq('role', 'admin');
-
-          if (countError) {
-            console.error("Error checking for admins:", countError);
-            setProfile(null);
-            setRole(null);
-            setLoading(false);
-            return;
-          }
-
-          const newRole = (adminCount === 0) ? 'admin' : 'player';
-
-          const { data: newProfile, error: insertError } = await supabase
-            .from('profiles')
-            .insert({ 
-              id: currentUser.id, 
-              role: newRole, 
-              first_name: currentUser.user_metadata?.first_name, 
-              last_name: currentUser.user_metadata?.last_name 
-            })
-            .select()
-            .single();
-          
-          if (insertError) {
-            console.error("Error creating profile:", insertError);
-          } else {
-            profileData = newProfile;
-          }
-        } else if (profileError) {
-          console.error("Error fetching profile:", profileError);
+        if (sessionError) {
+          console.error('Error fetching session:', sessionError);
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setRole(null);
+          setLoading(false);
+          return;
         }
 
-        setProfile(profileData as AuthContextType['profile']);
-        setRole(profileData?.role || null);
+        setSession(session);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
 
-        // Pre-fetch captain's team IDs for synchronous permission checks
-        if (profileData?.role === 'captain') {
-          const { data: captainTeams } = await supabase
-            .from('teams')
-            .select('id')
-            .eq('captain_id', currentUser.id);
-          setCaptainTeamIds(captainTeams?.map(t => t.id) || []);
+        if (currentUser) {
+          const { data: initialProfileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+
+          let profileData = initialProfileData;
+
+          if (profileError && profileError.code === 'PGRST116') {
+            const { count: adminCount, error: countError } = await supabase
+              .from('profiles')
+              .select('*', { count: 'exact', head: true })
+              .eq('role', 'admin');
+
+            if (countError) {
+              console.error('Error checking for admins:', countError);
+              setProfile(null);
+              setRole(null);
+              setLoading(false);
+              return;
+            }
+
+            const newRole = adminCount === 0 ? 'admin' : 'player';
+
+            const { data: newProfile, error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: currentUser.id,
+                role: newRole,
+                first_name: currentUser.user_metadata?.first_name,
+                last_name: currentUser.user_metadata?.last_name,
+              })
+              .select()
+              .single();
+
+            if (insertError) {
+              console.error('Error creating profile:', insertError);
+            } else {
+              profileData = newProfile;
+            }
+          } else if (profileError) {
+            console.error('Error fetching profile:', profileError);
+          }
+
+          setProfile(profileData as AuthContextType['profile']);
+          setRole(profileData?.role || null);
+
+          // Pre-fetch captain's team IDs for synchronous permission checks
+          if (profileData?.role === 'captain') {
+            const { data: captainTeams } = await supabase
+              .from('teams')
+              .select('id')
+              .eq('captain_id', currentUser.id);
+            setCaptainTeamIds(captainTeams?.map((t) => t.id) || []);
+          } else {
+            setCaptainTeamIds([]);
+          }
         } else {
+          setProfile(null);
+          setRole(null);
           setCaptainTeamIds([]);
         }
-
-      } else {
-        setProfile(null);
-        setRole(null);
-        setCaptainTeamIds([]);
-      }
-      setLoading(false);
+        setLoading(false);
       } finally {
         isFetchingRef.current = false;
       }
@@ -128,7 +136,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     fetchSessionAndProfile();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, _session) => {
       fetchSessionAndProfile();
     });
 
@@ -162,11 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     hasPermission,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components -- co-located hook for AuthProvider context
