@@ -45,8 +45,8 @@ export const ImageUploader = ({ bucketName, currentImageUrl, onUploadSuccess, la
       onUploadSuccess(publicUrl);
       showSuccess("Immagine caricata con successo!");
 
-    } catch (error: any) {
-      showError(`Errore: ${error.message}`);
+    } catch (error: unknown) {
+      showError(`Errore: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     } finally {
       if (uploadToastId) dismissToast(uploadToastId as string);
       setUploading(false);

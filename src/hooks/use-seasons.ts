@@ -69,7 +69,7 @@ export function useCreateSeason() {
         .single();
 
       if (seasonError) return { data: null, error: seasonError };
-      if (!newSeason) return { data: null, error: { message: "Failed to create season" } as any };
+      if (!newSeason) throw new Error("Failed to create season");
 
       // 2. Insert team associations
       if (team_ids && team_ids.length > 0) {
@@ -99,7 +99,7 @@ export function useUpdateSeason() {
         .single();
 
       if (seasonError) return { data: null, error: seasonError };
-      if (!updatedSeason) return { data: null, error: { message: "Failed to update season" } as any };
+      if (!updatedSeason) throw new Error("Failed to update season");
 
       // 2. Delete existing team associations for this season
       const { error: deleteError } = await supabase

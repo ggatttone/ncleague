@@ -24,7 +24,7 @@ interface HeroWidgetFormProps {
   widget: Widget | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: any) => void;
+  onSave: (data: HeroFormData) => void;
   isSaving: boolean;
 }
 

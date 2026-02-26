@@ -79,7 +79,7 @@ const UsersAdmin = () => {
       showSuccess('Stato utente aggiornato con successo!');
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       showError(`Errore: ${err.message}`);
     },
   });

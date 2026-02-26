@@ -93,8 +93,8 @@ const ScheduleGenerator = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  const [preview, setPreview] = useState<any[] | null>(null);
-  const [generationStats, setGenerationStats] = useState<any>(null);
+  const [preview, setPreview] = useState<Record<string, unknown>[] | null>(null);
+  const [generationStats, setGenerationStats] = useState<Record<string, unknown> | null>(null);
   const [schedulingMode, setSchedulingMode] = useState<SchedulingMode>("classic");
   const { t } = useTranslation();
 
@@ -210,7 +210,7 @@ const ScheduleGenerator = () => {
   });
 
   const saveScheduleMutation = useMutation({
-    mutationFn: async (schedule: any[]) => {
+    mutationFn: async (schedule: Record<string, unknown>[]) => {
       const { data, error } = await supabase.functions.invoke('match-scheduler', {
         body: { dryRun: false, schedule }
       });

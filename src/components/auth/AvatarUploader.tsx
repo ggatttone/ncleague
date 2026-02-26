@@ -67,8 +67,8 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
       onUpload(publicUrl);
       showSuccess("Avatar aggiornato con successo!");
 
-    } catch (error: any) {
-      showError(`Errore: ${error.message}`);
+    } catch (error: unknown) {
+      showError(`Errore: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     } finally {
       setUploading(false);
     }
@@ -80,15 +80,15 @@ export const AvatarUploader = ({ onUpload }: AvatarUploaderProps) => {
       setUploading(true);
       const url = new URL(avatarUrl);
       const filePath = url.pathname.split('/avatars/')[1];
-      
+
       const { error } = await supabase.storage.from('avatars').remove([filePath]);
       if (error) throw error;
-      
+
       setAvatarUrl(null);
       onUpload(null);
       showSuccess("Avatar rimosso.");
-    } catch (error: any) {
-      showError(`Errore nella rimozione: ${error.message}`);
+    } catch (error: unknown) {
+      showError(`Errore nella rimozione: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     } finally {
       setUploading(false);
     }

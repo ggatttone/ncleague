@@ -20,7 +20,14 @@ import {
   isValidHandlerKey,
 } from "@/lib/tournament/handler-registry";
 import type { TournamentHandlerKey } from "@/types/tournament-handlers";
-import type { TournamentModeSettings } from "@/types/tournament-settings";
+import type {
+  TournamentModeSettings,
+  LeagueOnlySettings,
+  KnockoutSettings,
+  GroupsKnockoutSettings,
+  SwissSystemSettings,
+  RoundRobinFinalSettings,
+} from "@/types/tournament-settings";
 import { cn } from "@/lib/utils";
 
 interface TournamentModePreviewProps {
@@ -62,24 +69,27 @@ function calculateMatchCount(
 
   switch (handlerKey) {
     case "league_only": {
-      const double = (settings as any)?.doubleRoundRobin ?? true;
+      const s = settings as LeagueOnlySettings | undefined;
+      const double = s?.doubleRoundRobin ?? true;
       const count = roundRobinMatches(teamCount, double);
       breakdown.push({ phase: "Regular Season", count });
       break;
     }
 
     case "knockout": {
-      const thirdPlace = (settings as any)?.thirdPlaceMatch ?? false;
+      const s = settings as KnockoutSettings | undefined;
+      const thirdPlace = s?.thirdPlaceMatch ?? false;
       const count = knockoutMatches(teamCount, thirdPlace);
       breakdown.push({ phase: "Knockout", count });
       break;
     }
 
     case "groups_knockout": {
-      const groupCount = (settings as any)?.groupCount ?? 4;
+      const s = settings as GroupsKnockoutSettings | undefined;
+      const groupCount = s?.groupCount ?? 4;
       const teamsPerGroup = Math.ceil(teamCount / groupCount);
-      const double = (settings as any)?.doubleRoundRobin ?? false;
-      const advancingPerGroup = (settings as any)?.advancingPerGroup ?? 2;
+      const double = s?.doubleRoundRobin ?? false;
+      const advancingPerGroup = s?.advancingPerGroup ?? 2;
 
       // Group stage matches
       const groupMatches = groupCount * roundRobinMatches(teamsPerGroup, double);
@@ -87,14 +97,15 @@ function calculateMatchCount(
 
       // Knockout matches
       const knockoutTeams = groupCount * advancingPerGroup;
-      const thirdPlace = (settings as any)?.knockoutSettings?.thirdPlaceMatch ?? false;
+      const thirdPlace = s?.knockoutSettings?.thirdPlaceMatch ?? false;
       const koMatches = knockoutMatches(knockoutTeams, thirdPlace);
       breakdown.push({ phase: "Knockout", count: koMatches });
       break;
     }
 
     case "swiss_system": {
-      const phase1Rounds = (settings as any)?.phase1Rounds ?? 5;
+      const s = settings as SwissSystemSettings | undefined;
+      const phase1Rounds = s?.phase1Rounds ?? 5;
       const matchesPerRound = Math.floor(teamCount / 2);
 
       // Phase 1 matches
@@ -112,9 +123,10 @@ function calculateMatchCount(
     }
 
     case "round_robin_final": {
-      const double = (settings as any)?.doubleRoundRobin ?? true;
-      const playoffTeams = (settings as any)?.playoffTeams ?? 4;
-      const thirdPlace = (settings as any)?.thirdPlaceMatch ?? false;
+      const s = settings as RoundRobinFinalSettings | undefined;
+      const double = s?.doubleRoundRobin ?? true;
+      const playoffTeams = s?.playoffTeams ?? 4;
+      const thirdPlace = s?.thirdPlaceMatch ?? false;
 
       // Regular season
       const regularMatches = roundRobinMatches(teamCount, double);
@@ -157,7 +169,8 @@ function validateConfiguration(
     }
 
     case "groups_knockout": {
-      const groupCount = (settings as any)?.groupCount ?? 4;
+      const s = settings as GroupsKnockoutSettings | undefined;
+      const groupCount = s?.groupCount ?? 4;
       const teamsPerGroup = Math.ceil(teamCount / groupCount);
       if (teamCount < groupCount * 2) {
         errors.push(`Need at least ${groupCount * 2} teams for ${groupCount} groups`);
@@ -179,7 +192,8 @@ function validateConfiguration(
     }
 
     case "round_robin_final": {
-      const playoffTeams = (settings as any)?.playoffTeams ?? 4;
+      const s = settings as RoundRobinFinalSettings | undefined;
+      const playoffTeams = s?.playoffTeams ?? 4;
       if (teamCount < playoffTeams) {
         errors.push(`Need at least ${playoffTeams} teams for playoffs`);
       }

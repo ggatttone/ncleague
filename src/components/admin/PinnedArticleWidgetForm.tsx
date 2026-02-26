@@ -21,7 +21,7 @@ interface PinnedArticleWidgetFormProps {
   widget: Widget | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: any) => void;
+  onSave: (data: PinnedArticleFormData) => void;
   isSaving: boolean;
 }
 

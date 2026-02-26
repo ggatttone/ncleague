@@ -101,9 +101,9 @@ const GalleryPage = () => {
       queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
       setUploadOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       dismissToast(uploadToastId);
-      showError(`Errore durante il caricamento: ${err.message}`);
+      showError(`Errore durante il caricamento: ${err instanceof Error ? err.message : 'Errore sconosciuto'}`);
     }
   };
 

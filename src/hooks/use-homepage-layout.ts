@@ -7,7 +7,7 @@ import { useSupabaseQuery } from './use-supabase-query';
 export interface Widget {
   id: string;
   widget_type: string;
-  settings: any;
+  settings: Record<string, unknown>;
 }
 
 export interface Column {
