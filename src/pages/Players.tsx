@@ -11,6 +11,8 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { TeamCardSkeleton } from "@/components/skeletons";
+import { EmptyState } from "@/components/EmptyState";
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,21 +68,9 @@ const Players = () => {
             </div>
           )}
         </div>
-        <div className="mb-6">
-          <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {[...Array(9)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              </CardContent>
-            </Card>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <TeamCardSkeleton key={i} />
           ))}
         </div>
       </div>
@@ -109,9 +99,9 @@ const Players = () => {
             </div>
           )}
         </div>
-        <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento dei giocatori</p>
-          <p className="text-muted-foreground">{error.message}</p>
+        <div className="text-center py-12 bg-destructive/10 text-destructive rounded-lg">
+          <p className="font-semibold mb-2">{t('errors.loadingPlayers')}</p>
+          <p className="text-sm">{error.message}</p>
         </div>
       </div>
     );
@@ -159,7 +149,7 @@ const Players = () => {
             {searchTerm ? t('pages.players.noPlayersFound') : t('pages.players.noPlayersRegistered')}
           </p>
           <p className="text-muted-foreground mb-4">
-            {searchTerm ? t('pages.players.noPlayersFoundSubtitle') : "I giocatori verranno visualizzati qui una volta aggiunti."}
+            {searchTerm ? t('pages.players.noPlayersFoundSubtitle') : t('pages.players.noPlayersRegisteredSubtitle')}
           </p>
           {user && !searchTerm && (
             <Link to="/admin/players/new">
@@ -174,7 +164,7 @@ const Players = () => {
         <>
           <div className="mb-4 text-sm text-muted-foreground">
             {t('pages.players.playersFound', { count: filteredPlayers.length })}
-            {searchTerm && ` per "${searchTerm}"`}
+            {searchTerm && ` ${t('pages.players.searchSuffix', { term: searchTerm })}`}
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">

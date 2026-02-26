@@ -1,24 +1,40 @@
 import { MainLayout } from "@/components/MainLayout";
 import { usePublishedArticles } from "@/hooks/use-articles";
 import { ArticlePostCard } from "@/components/ArticlePostCard";
-import { Loader2, MessageSquare, Plus } from "lucide-react";
+import { MessageSquare, Plus, Search } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { NewsComposer } from "@/components/news/NewsComposer";
+import { useState, useMemo } from "react";
+import { ArticlePostSkeleton } from "@/components/skeletons";
+import { EmptyState } from "@/components/EmptyState";
 
 const News = () => {
   const { data: articles, isLoading, error } = usePublishedArticles();
   const { hasPermission } = useAuth();
   const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState("");
   const canCreate = hasPermission(['admin', 'editor']);
+
+  const filteredArticles = useMemo(() => {
+    if (!articles || !searchTerm) return articles;
+    const lower = searchTerm.toLowerCase();
+    return articles.filter(a =>
+      a.title.toLowerCase().includes(lower) ||
+      (a.content ?? '').toLowerCase().includes(lower)
+    );
+  }, [articles, searchTerm]);
 
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center items-center py-14">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ArticlePostSkeleton key={i} />
+          ))}
         </div>
       );
     }
@@ -31,8 +47,12 @@ const News = () => {
       );
     }
 
-    if (!articles || articles.length === 0) {
-      return (
+    if (!filteredArticles || filteredArticles.length === 0) {
+      return searchTerm ? (
+        <div className="py-8 px-4">
+          <EmptyState icon={Search} title={t('pages.news.noNewsForSearch')} subtitle={t('pages.news.noNewsForSearchSubtitle')} />
+        </div>
+      ) : (
         <div className="text-center py-16 px-4">
           <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
           <h2 className="text-lg font-semibold">{t('pages.news.noNewsTitle')}</h2>
@@ -43,7 +63,7 @@ const News = () => {
 
     return (
       <div>
-        {articles.map(article => (
+        {filteredArticles.map(article => (
           <ArticlePostCard key={article.id} article={article} />
         ))}
       </div>
@@ -70,6 +90,19 @@ const News = () => {
             <NewsComposer />
           </div>
         )}
+
+        {/* Search */}
+        <div className="px-4 sm:px-0 mb-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder={t('pages.news.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
 
         <div className="border-y sm:border rounded-none sm:rounded-xl overflow-hidden bg-card">
           {renderContent()}

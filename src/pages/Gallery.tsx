@@ -15,12 +15,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Image as ImageIcon, Folder } from "lucide-react";
+import { Loader2, Plus, Image as ImageIcon, Folder, Search } from "lucide-react";
 import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
+import { AlbumCardSkeleton, GalleryItemSkeleton } from "@/components/skeletons";
+import { EmptyState } from "@/components/EmptyState";
 
 const getUploadSchema = (t: (key: string) => string) => z.object({
   album_id: z.string().optional().nullable(),
@@ -39,7 +42,20 @@ const GalleryPage = () => {
   const updateAlbumMutation = useUpdateAlbum();
   const [isUploadOpen, setUploadOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
+
+  const filteredAlbums = useMemo(() => {
+    if (!albums || !searchTerm) return albums;
+    const lower = searchTerm.toLowerCase();
+    return albums.filter(a => a.name.toLowerCase().includes(lower));
+  }, [albums, searchTerm]);
+
+  const filteredItems = useMemo(() => {
+    if (!allItems || !searchTerm) return allItems;
+    const lower = searchTerm.toLowerCase();
+    return allItems.filter(i => (i.title ?? '').toLowerCase().includes(lower) || (i.file_name ?? '').toLowerCase().includes(lower));
+  }, [allItems, searchTerm]);
 
   const uploadSchema = getUploadSchema(t);
 
@@ -50,7 +66,7 @@ const GalleryPage = () => {
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    const uploadToastId = showLoading(`Caricamento di ${data.file.length} file...`);
+    const uploadToastId = showLoading(t('pages.gallery.uploadingFiles', { count: data.file.length }));
     
     try {
       const filesToUpload = Array.from(data.file);
@@ -64,7 +80,7 @@ const GalleryPage = () => {
           .upload(filePath, file);
 
         if (uploadError) {
-          throw new Error(`Caricamento fallito per ${file.name}: ${uploadError.message}`);
+          throw new Error(t('pages.gallery.uploadFailedFile', { name: file.name, message: uploadError.message }));
         }
         
         return {
@@ -96,14 +112,14 @@ const GalleryPage = () => {
       }
 
       dismissToast(uploadToastId);
-      showSuccess(`${uploadResults.length} file caricati con successo!`);
+      showSuccess(t('pages.gallery.uploadSuccess', { count: uploadResults.length }));
       queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
       queryClient.invalidateQueries({ queryKey: ['albums'] });
       reset();
       setUploadOpen(false);
     } catch (err: unknown) {
       dismissToast(uploadToastId);
-      showError(`Errore durante il caricamento: ${err instanceof Error ? err.message : 'Errore sconosciuto'}`);
+      showError(t('pages.gallery.uploadError', { message: err instanceof Error ? err.message : t('errors.unknownError') }));
     }
   };
 
@@ -164,6 +180,19 @@ const GalleryPage = () => {
           )}
         </div>
 
+        {/* Search */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder={t('pages.gallery.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
         <Tabs defaultValue="albums" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="albums">{t('pages.gallery.tabs.albums')}</TabsTrigger>
@@ -171,17 +200,27 @@ const GalleryPage = () => {
           </TabsList>
 
           <TabsContent value="albums" className="mt-6">
-            {albumsLoading && <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-            {albumsError && <p className="text-center text-destructive">Errore nel caricamento degli album.</p>}
-            {!albumsLoading && albums && albums.length === 0 && (
-              <div className="text-center py-20">
-                <Folder className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold">{t('pages.gallery.noAlbumsTitle')}</h2>
-                <p className="text-muted-foreground mt-2">{t('pages.gallery.noAlbumsSubtitle')}</p>
+            {albumsLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <AlbumCardSkeleton key={i} />
+                ))}
               </div>
             )}
+            {albumsError && <p className="text-center text-destructive">{t('errors.loadingAlbums')}</p>}
+            {!albumsLoading && filteredAlbums && filteredAlbums.length === 0 && (
+              searchTerm ? (
+                <EmptyState icon={Search} title={t('pages.gallery.noAlbumsForSearch')} subtitle={t('pages.gallery.noAlbumsForSearchSubtitle')} />
+              ) : (
+                <div className="text-center py-20">
+                  <Folder className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h2 className="text-xl font-semibold">{t('pages.gallery.noAlbumsTitle')}</h2>
+                  <p className="text-muted-foreground mt-2">{t('pages.gallery.noAlbumsSubtitle')}</p>
+                </div>
+              )
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {albums?.map(album => {
+              {filteredAlbums?.map(album => {
                 const publicURL = album.cover_image_path ? supabase.storage.from('gallery_media').getPublicUrl(album.cover_image_path).data.publicUrl : null;
                 return (
                   <Link to={`/gallery/albums/${album.id}`} key={album.id}>
@@ -207,17 +246,27 @@ const GalleryPage = () => {
           </TabsContent>
 
           <TabsContent value="all-media" className="mt-6">
-            {itemsLoading && <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-            {itemsError && <p className="text-center text-destructive">Errore nel caricamento dei media.</p>}
-            {!itemsLoading && allItems && allItems.length === 0 && (
-              <div className="text-center py-20">
-                <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold">{t('pages.gallery.noMediaTitle')}</h2>
-                <p className="text-muted-foreground mt-2">{t('pages.gallery.noMediaSubtitle')}</p>
+            {itemsLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <GalleryItemSkeleton key={i} />
+                ))}
               </div>
             )}
+            {itemsError && <p className="text-center text-destructive">{t('errors.loadingMedia')}</p>}
+            {!itemsLoading && filteredItems && filteredItems.length === 0 && (
+              searchTerm ? (
+                <EmptyState icon={Search} title={t('pages.gallery.noMediaForSearch')} subtitle={t('pages.gallery.noMediaForSearchSubtitle')} />
+              ) : (
+                <div className="text-center py-20">
+                  <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h2 className="text-xl font-semibold">{t('pages.gallery.noMediaTitle')}</h2>
+                  <p className="text-muted-foreground mt-2">{t('pages.gallery.noMediaSubtitle')}</p>
+                </div>
+              )
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {allItems?.map(item => {
+              {filteredItems?.map(item => {
                 const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
                 return (
                   <Card

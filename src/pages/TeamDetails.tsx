@@ -6,7 +6,8 @@ import { useTeamMatches, MatchWithTeams } from "@/hooks/use-matches";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, ArrowLeft, Loader2, Trophy, Calendar, Star, Clock, MapPin } from "lucide-react";
+import { Users, ArrowLeft, Trophy, Calendar, Star, Clock, MapPin } from "lucide-react";
+import { DetailPageSkeleton } from "@/components/skeletons";
 import { it } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
@@ -109,11 +110,7 @@ const TeamDetails = () => {
   const isLoading = teamLoading || sponsorsLoading || honorsLoading || matchesLoading;
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4 flex justify-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    );
+    return <DetailPageSkeleton />;
   }
 
   if (!team) {
@@ -165,7 +162,7 @@ const TeamDetails = () => {
 
       {team.squad_photo_url && (
         <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
-          <img src={team.squad_photo_url} alt={`Foto rosa ${team.name}`} loading="lazy" className="w-full h-auto max-h-96 object-cover" />
+          <img src={team.squad_photo_url} alt={t('pages.gallery.squadPhoto', { name: team.name })} loading="lazy" className="w-full h-auto max-h-96 object-cover" />
         </div>
       )}
 

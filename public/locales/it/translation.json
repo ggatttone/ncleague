@@ -46,7 +46,12 @@
     "passwordMinLength": "La password deve essere di almeno 6 caratteri",
     "loadingMatches": "Errore nel caricamento delle partite",
     "loadingTables": "Errore nel caricamento della classifica",
-    "loadingNews": "Errore nel caricamento delle notizie"
+    "loadingNews": "Errore nel caricamento delle notizie",
+    "loadingTeams": "Errore nel caricamento delle squadre",
+    "loadingPlayers": "Errore nel caricamento dei giocatori",
+    "loadingAlbums": "Errore nel caricamento degli album.",
+    "loadingMedia": "Errore nel caricamento dei media.",
+    "unknownError": "Errore sconosciuto"
   },
   "matchStatus": {
     "scheduled": "Programmata",
@@ -141,7 +146,25 @@
       "noCompletedSubtitle": "I risultati appariranno qui non appena le partite saranno concluse.",
       "noMatchesForFilter": "Nessuna partita trovata per i filtri selezionati.",
       "selectTeam": "Seleziona Squadra",
-      "allTeams": "Tutte le squadre"
+      "allTeams": "Tutte le squadre",
+      "noFinalStage": "Nessuna partita della fase finale",
+      "noFinalStageSubtitle": "Le partite dei playoff appariranno qui.",
+      "newMatch": "Nuova partita",
+      "manage": "Gestisci",
+      "selectCompetition": "Seleziona Competizione",
+      "selectSeason": "Seleziona Stagione"
+    },
+    "matchDetails": {
+      "notFound": "Partita non trovata",
+      "backToMatches": "Torna alle partite",
+      "home": "Casa",
+      "away": "Ospite",
+      "referee": "Arbitro",
+      "scorers": "Marcatori",
+      "scorersCount": "Marcatori ({{count}})",
+      "noGoals": "Nessun goal registrato per questa partita",
+      "noGoalsForTeam": "Nessun goal",
+      "highlights": "Highlights"
     },
     "news": {
       "title": "Notizie",
@@ -149,6 +172,9 @@
       "noNews": "Nessuna notizia trovata.",
       "noNewsTitle": "Nessuna notizia ancora",
       "noNewsSubtitle": "Torna più tardi per leggere gli ultimi aggiornamenti.",
+      "searchPlaceholder": "Cerca notizie...",
+      "noNewsForSearch": "Nessuna notizia corrisponde alla ricerca",
+      "noNewsForSearchSubtitle": "Prova con un altro termine.",
       "unknownAuthor": "Autore sconosciuto",
       "pinned": "In evidenza",
       "composer": {
@@ -194,7 +220,9 @@
       "addFirstPlayer": "Aggiungi il primo giocatore",
       "playersFound_one": "{{count}} giocatore trovato",
       "playersFound_other": "{{count}} giocatori trovati",
-      "yearsOld": "anni"
+      "yearsOld": "anni",
+      "noPlayersRegisteredSubtitle": "I giocatori verranno visualizzati qui una volta aggiunti.",
+      "searchSuffix": "per \"{{term}}\""
     },
     "playerDetails": {
       "playerNotFound": "Giocatore non trovato",
@@ -274,7 +302,12 @@
       "manage": "Gestisci",
       "noTeamsFound": "Nessuna squadra trovata",
       "noTeamsFoundSubtitle": "Le squadre verranno visualizzate qui una volta aggiunte.",
-      "addFirstTeam": "Aggiungi la prima squadra"
+      "addFirstTeam": "Aggiungi la prima squadra",
+      "searchPlaceholder": "Cerca squadre...",
+      "noTeamsForSearch": "Nessuna squadra corrisponde alla ricerca",
+      "noTeamsForSearchSubtitle": "Prova con un altro termine di ricerca.",
+      "teamsFound_one": "{{count}} squadra trovata",
+      "teamsFound_other": "{{count}} squadre trovate"
     },
     "teamDetails": {
       "teamNotFound": "Squadra non trovata",
@@ -318,7 +351,17 @@
       "noMediaTitle": "Nessun media caricato",
       "noMediaSubtitle": "Inizia caricando le tue prime foto o video.",
       "itemCount_one": "{{count}} elemento",
-      "itemCount_other": "{{count}} elementi"
+      "itemCount_other": "{{count}} elementi",
+      "searchPlaceholder": "Cerca album...",
+      "noAlbumsForSearch": "Nessun album corrisponde alla ricerca",
+      "noAlbumsForSearchSubtitle": "Prova con un altro termine.",
+      "noMediaForSearch": "Nessun media corrisponde alla ricerca",
+      "noMediaForSearchSubtitle": "Prova con un altro termine.",
+      "uploadingFiles": "Caricamento di {{count}} file...",
+      "uploadSuccess": "{{count}} file caricati con successo!",
+      "uploadError": "Errore durante il caricamento: {{message}}",
+      "uploadFailedFile": "Caricamento fallito per {{name}}: {{message}}",
+      "squadPhoto": "Foto rosa {{name}}"
     },
     "albumDetails": {
       "notFoundTitle": "Album non trovato",

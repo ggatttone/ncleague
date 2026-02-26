@@ -4,7 +4,9 @@ import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasonWithTournamentMode } from "@/hooks/use-seasons";
 import { useNclStandings } from "@/hooks/use-ncl-standings";
 import { useState, useEffect, useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileStandingsCard } from "@/components/standings/MobileStandingsCard";
+import { StandingsTableSkeleton } from "@/components/skeletons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -31,6 +33,23 @@ const DEFAULT_PHASES: PhaseConfig[] = [
 
 const StandingsTable = ({ data, playoffTeamCount }: { data: LeagueTableRow[], playoffTeamCount?: number }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="space-y-2">
+        {data.map((row, index) => (
+          <MobileStandingsCard
+            key={row.team_id}
+            row={row}
+            position={index + 1}
+            isPlayoffSpot={!!playoffTeamCount && index < playoffTeamCount}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-card">
       <Table>
@@ -81,7 +100,7 @@ const StandingsTabContent = ({ competitionId, seasonId, stage, playoffTeamCount 
   const { t } = useTranslation();
   const { data: tableData, isLoading, isError, error } = useNclStandings(competitionId, seasonId, stage);
 
-  if (isLoading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  if (isLoading) return <StandingsTableSkeleton />;
   if (isError) return <div className="text-center py-12 bg-destructive/10 text-destructive rounded-lg"><p className="font-semibold mb-2">{t('errors.loadingTables')}</p><p className="text-sm">{error.message}</p></div>;
   if (!tableData || tableData.length === 0) return <div className="text-center py-12 bg-muted/50 rounded-lg"><p className="text-muted-foreground">{t('components.leagueTableWidget.noData')}</p></div>;
 
@@ -157,11 +176,11 @@ const Tables = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          <StandingsTableSkeleton />
         ) : !selectedCompetition || !selectedSeason ? (
           <div className="text-center py-12 bg-muted/50 rounded-lg"><p className="text-muted-foreground">{t('pages.tables.selectToView')}</p></div>
         ) : seasonModeLoading ? (
-          <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          <StandingsTableSkeleton />
         ) : (
           <>
             {playoffsActive && (

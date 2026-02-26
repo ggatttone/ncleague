@@ -14,8 +14,8 @@ import { useCompetitions } from "@/hooks/use-competitions";
 import { useSeasons } from "@/hooks/use-seasons";
 import { useTeams } from "@/hooks/use-teams";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { MatchCardSkeleton } from "@/components/skeletons";
 import { usePlayoffBracket } from "@/hooks/use-playoffs";
 import { cn, formatMatchDateLocal } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -217,8 +217,10 @@ const Matches = () => {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <MatchCardSkeleton key={i} />
+          ))}
         </div>
       );
     }
@@ -293,8 +295,8 @@ const Matches = () => {
             {finalStageMatches.length === 0 ? (
               <div className="text-center py-12">
                 <Trophy className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-xl text-muted-foreground mb-2">Nessuna partita della fase finale</p>
-                <p className="text-muted-foreground">Le partite dei playoff appariranno qui.</p>
+                <p className="text-xl text-muted-foreground mb-2">{t('pages.matches.noFinalStage')}</p>
+                <p className="text-muted-foreground">{t('pages.matches.noFinalStageSubtitle')}</p>
               </div>
             ) : (
               renderMatchesList(finalStageMatches)
@@ -314,13 +316,13 @@ const Matches = () => {
             <Link to="/admin/fixtures/new">
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nuova partita
+                {t('pages.matches.newMatch')}
               </Button>
             </Link>
             <Link to="/admin/fixtures">
               <Button variant="outline" size="sm">
                 <Settings className="mr-2 h-4 w-4" />
-                Gestisci
+                {t('pages.matches.manage')}
               </Button>
             </Link>
           </div>
@@ -330,7 +332,7 @@ const Matches = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-3xl">
         <Select onValueChange={setSelectedCompetition} value={selectedCompetition} disabled={competitionsLoading}>
           <SelectTrigger>
-            <SelectValue placeholder="Seleziona Competizione" />
+            <SelectValue placeholder={t('pages.matches.selectCompetition')} />
           </SelectTrigger>
           <SelectContent>
             {competitions?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
@@ -338,7 +340,7 @@ const Matches = () => {
         </Select>
         <Select onValueChange={setSelectedSeason} value={selectedSeason} disabled={seasonsLoading}>
           <SelectTrigger>
-            <SelectValue placeholder="Seleziona Stagione" />
+            <SelectValue placeholder={t('pages.matches.selectSeason')} />
           </SelectTrigger>
           <SelectContent>
             {seasons?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}

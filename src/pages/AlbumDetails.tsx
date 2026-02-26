@@ -6,7 +6,8 @@ import { useGalleryItemsByAlbum } from "@/hooks/use-gallery";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MediaViewer } from "@/components/MediaViewer";
 import { GalleryItem } from "@/types/database";
 import { useTranslation } from "react-i18next";
@@ -23,8 +24,17 @@ const AlbumDetails = () => {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex justify-center py-20">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <div className="container mx-auto px-4 py-8 space-y-6">
+          <Skeleton className="h-9 w-40" />
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-square w-full rounded-lg" />
+            ))}
+          </div>
         </div>
       </MainLayout>
     );

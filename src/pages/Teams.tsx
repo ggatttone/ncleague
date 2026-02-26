@@ -4,53 +4,42 @@ import { Team } from "@/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Plus, Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MapPin, Users, Plus, Settings, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { useTranslation } from "react-i18next";
+import { useState, useMemo } from "react";
+import { TeamCardSkeleton } from "@/components/skeletons";
+import { EmptyState } from "@/components/EmptyState";
 
 const Teams = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState("");
   const { data: teams, isLoading, error } = useSupabaseQuery<Team[]>(
     ['teams'],
     async () => supabase.from('teams').select('*, venues(name)').order('name')
   );
+
+  const filteredTeams = useMemo(() => {
+    if (!teams || !searchTerm) return teams;
+    const lower = searchTerm.toLowerCase();
+    return teams.filter(t =>
+      t.name.toLowerCase().includes(lower) ||
+      (t.parish ?? '').toLowerCase().includes(lower)
+    );
+  }, [teams, searchTerm]);
 
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold">{t('pages.teams.title')}</h1>
-          {user && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Link to="/admin/teams/new">
-                <Button size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('pages.teams.newTeam')}
-                </Button>
-              </Link>
-              <Link to="/admin/teams">
-                <Button variant="outline" size="sm">
-                  <Settings className="mr-2 h-4 w-4" />
-                  {t('pages.teams.manage')}
-                </Button>
-              </Link>
-            </div>
-          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              </CardContent>
-            </Card>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TeamCardSkeleton key={i} />
           ))}
         </div>
       </div>
@@ -62,26 +51,10 @@ const Teams = () => {
       <div className="container mx-auto py-8 px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
           <h1 className="text-2xl md:text-3xl font-bold">{t('pages.teams.title')}</h1>
-          {user && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Link to="/admin/teams/new">
-                <Button size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('pages.teams.newTeam')}
-                </Button>
-              </Link>
-              <Link to="/admin/teams">
-                <Button variant="outline" size="sm">
-                  <Settings className="mr-2 h-4 w-4" />
-                  {t('pages.teams.manage')}
-                </Button>
-              </Link>
-            </div>
-          )}
         </div>
-        <div className="text-center py-12">
-          <p className="text-red-600 mb-4">Errore nel caricamento delle squadre</p>
-          <p className="text-muted-foreground">{error.message}</p>
+        <div className="text-center py-12 bg-destructive/10 text-destructive rounded-lg">
+          <p className="font-semibold mb-2">{t('errors.loadingTeams')}</p>
+          <p className="text-sm">{error.message}</p>
         </div>
       </div>
     );
@@ -103,26 +76,40 @@ const Teams = () => {
               <Button variant="outline" size="sm">
                 <Settings className="mr-2 h-4 w-4" />
                 {t('pages.teams.manage')}
-                </Button>
+              </Button>
             </Link>
           </div>
         )}
       </div>
-      
-      {!teams || teams.length === 0 ? (
-        <div className="text-center py-12">
-          <Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-xl text-muted-foreground mb-2">{t('pages.teams.noTeamsFound')}</p>
-          <p className="text-muted-foreground mb-4">{t('pages.teams.noTeamsFoundSubtitle')}</p>
-          {user && (
-            <Link to="/admin/teams/new">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('pages.teams.addFirstTeam')}
-              </Button>
-            </Link>
-          )}
+
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder={t('pages.teams.searchPlaceholder')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
+      </div>
+
+      {!filteredTeams || filteredTeams.length === 0 ? (
+        searchTerm ? (
+          <EmptyState
+            icon={Search}
+            title={t('pages.teams.noTeamsForSearch')}
+            subtitle={t('pages.teams.noTeamsForSearchSubtitle')}
+          />
+        ) : (
+          <EmptyState
+            icon={Users}
+            title={t('pages.teams.noTeamsFound')}
+            subtitle={t('pages.teams.noTeamsFoundSubtitle')}
+            action={user ? { label: t('pages.teams.addFirstTeam'), to: '/admin/teams/new', icon: Plus } : undefined}
+          />
+        )
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {teams.map((team) => (

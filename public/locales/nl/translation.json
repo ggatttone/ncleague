@@ -46,7 +46,12 @@
     "passwordMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
     "loadingMatches": "Fout bij het laden van wedstrijden",
     "loadingTables": "Fout bij het laden van klassement",
-    "loadingNews": "Fout bij het laden van nieuws"
+    "loadingNews": "Fout bij het laden van nieuws",
+    "loadingTeams": "Fout bij het laden van teams",
+    "loadingPlayers": "Fout bij het laden van spelers",
+    "loadingAlbums": "Fout bij het laden van albums.",
+    "loadingMedia": "Fout bij het laden van media.",
+    "unknownError": "Onbekende fout"
   },
   "matchStatus": {
     "scheduled": "Gepland",
@@ -141,7 +146,25 @@
       "noCompletedSubtitle": "Resultaten verschijnen hier zodra de wedstrijden zijn afgelopen.",
       "noMatchesForFilter": "Geen wedstrijden gevonden voor de geselecteerde filters.",
       "selectTeam": "Selecteer Team",
-      "allTeams": "Alle teams"
+      "allTeams": "Alle teams",
+      "noFinalStage": "Geen wedstrijden in de eindfase",
+      "noFinalStageSubtitle": "Play-off wedstrijden verschijnen hier.",
+      "newMatch": "Nieuwe wedstrijd",
+      "manage": "Beheren",
+      "selectCompetition": "Selecteer Competitie",
+      "selectSeason": "Selecteer Seizoen"
+    },
+    "matchDetails": {
+      "notFound": "Wedstrijd niet gevonden",
+      "backToMatches": "Terug naar wedstrijden",
+      "home": "Thuis",
+      "away": "Uit",
+      "referee": "Scheidsrechter",
+      "scorers": "Doelpuntenmakers",
+      "scorersCount": "Doelpuntenmakers ({{count}})",
+      "noGoals": "Geen doelpunten geregistreerd voor deze wedstrijd",
+      "noGoalsForTeam": "Geen doelpunten",
+      "highlights": "Hoogtepunten"
     },
     "news": {
       "title": "Nieuws",
@@ -149,6 +172,9 @@
       "noNews": "Geen nieuws gevonden.",
       "noNewsTitle": "Nog geen nieuws",
       "noNewsSubtitle": "Kom later terug voor de laatste updates.",
+      "searchPlaceholder": "Zoek nieuws...",
+      "noNewsForSearch": "Geen nieuws gevonden voor uw zoekopdracht",
+      "noNewsForSearchSubtitle": "Probeer een andere zoekterm.",
       "unknownAuthor": "Onbekende auteur",
       "pinned": "Vastgezet",
       "composer": {
@@ -194,7 +220,9 @@
       "addFirstPlayer": "Voeg de eerste speler toe",
       "playersFound_one": "{{count}} speler gevonden",
       "playersFound_other": "{{count}} spelers gevonden",
-      "yearsOld": "jaar oud"
+      "yearsOld": "jaar oud",
+      "noPlayersRegisteredSubtitle": "Spelers worden hier weergegeven zodra ze zijn toegevoegd.",
+      "searchSuffix": "voor \"{{term}}\""
     },
     "playerDetails": {
       "playerNotFound": "Speler niet gevonden",
@@ -274,7 +302,12 @@
       "manage": "Beheren",
       "noTeamsFound": "Geen teams gevonden",
       "noTeamsFoundSubtitle": "Teams worden hier weergegeven zodra ze zijn toegevoegd.",
-      "addFirstTeam": "Voeg het eerste team toe"
+      "addFirstTeam": "Voeg het eerste team toe",
+      "searchPlaceholder": "Zoek teams...",
+      "noTeamsForSearch": "Geen teams gevonden voor uw zoekopdracht",
+      "noTeamsForSearchSubtitle": "Probeer een andere zoekterm.",
+      "teamsFound_one": "{{count}} team gevonden",
+      "teamsFound_other": "{{count}} teams gevonden"
     },
     "teamDetails": {
       "teamNotFound": "Team niet gevonden",
@@ -318,7 +351,17 @@
       "noMediaTitle": "Geen media geüpload",
       "noMediaSubtitle": "Begin met het uploaden van je eerste foto's of video's.",
       "itemCount_one": "{{count}} item",
-      "itemCount_other": "{{count}} items"
+      "itemCount_other": "{{count}} items",
+      "searchPlaceholder": "Zoek albums...",
+      "noAlbumsForSearch": "Geen albums gevonden voor uw zoekopdracht",
+      "noAlbumsForSearchSubtitle": "Probeer een andere zoekterm.",
+      "noMediaForSearch": "Geen media gevonden voor uw zoekopdracht",
+      "noMediaForSearchSubtitle": "Probeer een andere zoekterm.",
+      "uploadingFiles": "{{count}} bestanden uploaden...",
+      "uploadSuccess": "{{count}} bestanden succesvol geüpload!",
+      "uploadError": "Fout bij het uploaden: {{message}}",
+      "uploadFailedFile": "Upload mislukt voor {{name}}: {{message}}",
+      "squadPhoto": "Teamfoto {{name}}"
     },
     "albumDetails": {
       "notFoundTitle": "Album niet gevonden",

@@ -12,6 +12,8 @@ import { formatMatchDateLocal } from "@/lib/utils";
 import { SEOHead } from "@/components/SEOHead";
 import { ShareButton } from "@/components/ShareButton";
 import { buildSportsEventJsonLd } from "@/lib/json-ld";
+import { useTranslation } from "react-i18next";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type MatchWithTeams = Match & {
   home_teams: Team;
@@ -27,6 +29,7 @@ type GoalWithPlayer = Goal & {
 
 const MatchDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
 
   const { data: match, isLoading: matchLoading } = useSupabaseQuery<MatchWithTeams>(
     ['match', id],
@@ -73,30 +76,69 @@ const MatchDetails = () => {
   );
 
   const getStatusBadge = (status: string) => {
+    const statusKey = `matchStatus.${status}`;
+    const statusText = t(statusKey, { defaultValue: status });
     switch (status) {
       case 'scheduled':
-        return <Badge variant="outline">Programmata</Badge>;
+        return <Badge variant="outline">{statusText}</Badge>;
       case 'ongoing':
-        return <Badge variant="default" className="bg-green-600">In corso</Badge>;
+        return <Badge variant="default" className="bg-green-600">{statusText}</Badge>;
       case 'completed':
-        return <Badge variant="secondary">Completata</Badge>;
+        return <Badge variant="secondary">{statusText}</Badge>;
       case 'postponed':
-        return <Badge variant="destructive">Rinviata</Badge>;
+        return <Badge variant="destructive">{statusText}</Badge>;
       case 'cancelled':
-        return <Badge variant="destructive">Cancellata</Badge>;
+        return <Badge variant="destructive">{statusText}</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline">{statusText}</Badge>;
     }
   };
 
   if (matchLoading) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="h-32 bg-gray-200 rounded mb-6"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
-        </div>
+      <div className="container mx-auto py-8 px-4 space-y-6">
+        <Skeleton className="h-9 w-40" />
+        <Card>
+          <CardHeader className="space-y-4">
+            <div className="flex justify-between">
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1">
+                <Skeleton className="w-16 h-16 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <Skeleton className="h-12 w-24" />
+              <div className="flex items-center gap-3 flex-1 justify-end">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="w-16 h-16 rounded-full" />
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="w-8 h-8 rounded-full" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-12" />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -105,11 +147,11 @@ const MatchDetails = () => {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold mb-4">Partita non trovata</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('pages.matchDetails.notFound')}</h1>
           <Link to="/matches">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Torna alle partite
+              {t('pages.matchDetails.backToMatches')}
             </Button>
           </Link>
         </div>
@@ -140,7 +182,7 @@ const MatchDetails = () => {
         <Link to="/matches">
           <Button variant="outline" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Torna alle partite
+            {t('pages.matchDetails.backToMatches')}
           </Button>
         </Link>
         <ShareButton
@@ -192,7 +234,7 @@ const MatchDetails = () => {
                     {match.home_teams.name}
                   </h2>
                 </Link>
-                <p className="text-muted-foreground">Casa</p>
+                <p className="text-muted-foreground">{t('pages.matchDetails.home')}</p>
               </div>
             </div>
 
@@ -217,7 +259,7 @@ const MatchDetails = () => {
                     {match.away_teams.name}
                   </h2>
                 </Link>
-                <p className="text-muted-foreground">Ospite</p>
+                <p className="text-muted-foreground">{t('pages.matchDetails.away')}</p>
               </div>
               {match.away_teams.logo_url ? (
                 <img
@@ -250,7 +292,7 @@ const MatchDetails = () => {
             {match.referee_teams?.name && (
               <div className="flex items-center gap-2">
                 <Gavel className="h-4 w-4" />
-                <span>Arbitro: {match.referee_teams.name}</span>
+                <span>{t('pages.matchDetails.referee')}: {match.referee_teams.name}</span>
               </div>
             )}
           </div>
@@ -263,18 +305,18 @@ const MatchDetails = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Marcatori ({goals?.length || 0})
+              {t('pages.matchDetails.scorersCount', { count: goals?.length || 0 })}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {goalsLoading ? (
               <div className="space-y-3">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 animate-pulse">
-                    <div className="w-12 h-12 bg-gray-200 rounded"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                    <div className="flex-1 space-y-1">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-12" />
                     </div>
                   </div>
                 ))}
@@ -282,7 +324,7 @@ const MatchDetails = () => {
             ) : !goals || goals.length === 0 ? (
               <div className="text-center py-8">
                 <Target className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nessun goal registrato per questa partita</p>
+                <p className="text-muted-foreground">{t('pages.matchDetails.noGoals')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -291,7 +333,7 @@ const MatchDetails = () => {
                   <h3 className="font-semibold mb-3 text-center">{match.home_teams.name}</h3>
                   <div className="space-y-2">
                     {homeGoals.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-4">Nessun goal</p>
+                      <p className="text-center text-muted-foreground py-4">{t('pages.matchDetails.noGoalsForTeam')}</p>
                     ) : (
                       homeGoals.map((goal) => (
                         <div key={goal.id} className="flex items-center gap-3 p-2 rounded-lg border">
@@ -318,7 +360,7 @@ const MatchDetails = () => {
                   <h3 className="font-semibold mb-3 text-center">{match.away_teams.name}</h3>
                   <div className="space-y-2">
                     {awayGoals.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-4">Nessun goal</p>
+                      <p className="text-center text-muted-foreground py-4">{t('pages.matchDetails.noGoalsForTeam')}</p>
                     ) : (
                       awayGoals.map((goal) => (
                         <div key={goal.id} className="flex items-center gap-3 p-2 rounded-lg border">
@@ -351,7 +393,7 @@ const MatchDetails = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Video className="h-5 w-5" />
-              Highlights
+              {t('pages.matchDetails.highlights')}
             </CardTitle>
           </CardHeader>
           <CardContent>
