@@ -233,7 +233,10 @@
       "dataUnavailable": "Dato non disponibile",
       "avgGoals": "Media Goal/Partita",
       "goalsHistory": "Storico Goal",
-      "noGoals": "Nessun goal registrato per questo giocatore."
+      "noGoals": "Nessun goal registrato per questo giocatore.",
+      "bio": "Profilo",
+      "viewPhoto": "Visualizza foto",
+      "matchesScoredIn": "Partite con Goal"
     },
     "profile": {
       "title": "Il Mio Profilo",
@@ -647,8 +650,8 @@
         "roleLabel": "Ruolo",
         "rolePlaceholder": "Seleziona un ruolo...",
         "jerseyNumberLabel": "Numero Maglia",
-        "documentIdLabel": "ID Documento",
-        "documentIdPlaceholder": "Es. AA12345BB"
+        "bioLabel": "Biografia",
+        "bioPlaceholder": "Scrivi una breve biografia per questo giocatore..."
       },
       "fixtures": {
         "title": "Gestione Partite",
@@ -689,7 +692,8 @@
           "match": "Partita",
           "date": "Data",
           "status": "Stato",
-          "actions": "Azioni"
+          "actions": "Azioni",
+          "viewResult": "Risultato"
         },
         "bulkEdit": {
           "statusTitle": "Modifica Stato Partite",
@@ -805,12 +809,19 @@
         "addScorerDialogDescription": "Seleziona il giocatore e il minuto del goal.",
         "deleteScorerDialogTitle": "Eliminare marcatore?",
         "deleteScorerDialogDescription": "Questa azione rimuoverà il goal dalla partita.",
+        "resultSectionTitle": "Risultato Partita",
+        "editScoreButton": "Modifica punteggio",
+        "saveScoreButton": "Salva",
+        "cancelScoreButton": "Annulla",
         "goalForm": {
           "teamLabel": "Squadra",
           "teamPlaceholder": "Seleziona una squadra",
           "playerLabel": "Giocatore",
           "playerLoading": "Caricamento giocatori...",
           "playerPlaceholder": "Seleziona un giocatore",
+          "playerSearchPlaceholder": "Cerca giocatore per nome...",
+          "playerSelectTrigger": "Seleziona giocatore",
+          "noPlayersFound": "Nessun giocatore trovato.",
           "minuteLabel": "Minuto",
           "addButton": "Aggiungi"
         }

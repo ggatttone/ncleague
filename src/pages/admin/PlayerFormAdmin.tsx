@@ -1,37 +1,73 @@
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useNavigate, useParams } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
-import { usePlayer, useCreatePlayer, useUpdatePlayer } from "@/hooks/use-players";
-import { useTeams } from "@/hooks/use-teams";
-import { ImageUploader } from "@/components/admin/ImageUploader";
-import { useTranslation } from "react-i18next";
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { usePlayer, useCreatePlayer, useUpdatePlayer } from '@/hooks/use-players';
+import { useTeams } from '@/hooks/use-teams';
+import { ImageUploader } from '@/components/admin/ImageUploader';
+import { useTranslation } from 'react-i18next';
 
 // Schema for form validation
 const playerSchema = z.object({
-  first_name: z.string().min(1, "Il nome è obbligatorio"),
-  last_name: z.string().min(1, "Il cognome è obbligatorio"),
+  first_name: z.string().min(1, 'Il nome è obbligatorio'),
+  last_name: z.string().min(1, 'Il cognome è obbligatorio'),
   date_of_birth: z.string().optional(),
   nationality: z.string().optional(),
   role: z.string().optional(),
   jersey_number: z.coerce.number().optional(),
-  document_id: z.string().optional(),
   team_id: z.string().optional().nullable(),
-  photo_url: z.string().url("URL non valido").optional().nullable(),
+  photo_url: z.string().url('URL non valido').optional().nullable(),
+  bio: z.string().max(2000, 'La biografia non può superare i 2000 caratteri').optional(),
 });
 
 type PlayerFormData = z.infer<typeof playerSchema>;
 
-const playerRoles = ["Portiere", "Difensore", "Centrocampista", "Attaccante"];
+const playerRoles = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'];
 const nationalities = [
-  "Italiana", "Albanese", "Argentina", "Belga", "Brasiliana", "Croata", "Danese", "Egiziana", "Francese", "Tedesca", "Inglese", "Ghanese", "Greca", "Ivoriana", "Marocchina", "Olandese", "Nigeriana", "Polacca", "Portoghese", "Rumena", "Senegalese", "Serba", "Spagnola", "Svedese", "Svizzera", "Tunisina", "Turca", "Uruguayana", "Statunitense", "Altra"
+  'Italiana',
+  'Albanese',
+  'Argentina',
+  'Belga',
+  'Brasiliana',
+  'Croata',
+  'Danese',
+  'Egiziana',
+  'Francese',
+  'Tedesca',
+  'Inglese',
+  'Ghanese',
+  'Greca',
+  'Ivoriana',
+  'Marocchina',
+  'Olandese',
+  'Nigeriana',
+  'Polacca',
+  'Portoghese',
+  'Rumena',
+  'Senegalese',
+  'Serba',
+  'Spagnola',
+  'Svedese',
+  'Svizzera',
+  'Tunisina',
+  'Turca',
+  'Uruguayana',
+  'Statunitense',
+  'Altra',
 ].sort();
 
 const PlayerFormAdmin = () => {
@@ -57,16 +93,16 @@ const PlayerFormAdmin = () => {
   } = useForm<PlayerFormData>({
     resolver: zodResolver(playerSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      date_of_birth: "",
-      nationality: "",
-      role: "",
+      first_name: '',
+      last_name: '',
+      date_of_birth: '',
+      nationality: '',
+      role: '',
       jersey_number: undefined,
-      document_id: "",
       team_id: null,
       photo_url: null,
-    }
+      bio: '',
+    },
   });
 
   const photoUrlValue = watch('photo_url');
@@ -77,9 +113,10 @@ const PlayerFormAdmin = () => {
       reset({
         ...player,
         date_of_birth: player.date_of_birth ? player.date_of_birth.split('T')[0] : '',
-        nationality: player.nationality || "",
+        nationality: player.nationality || '',
         team_id: player.team_id || null,
         photo_url: player.photo_url || null,
+        bio: player.bio || '',
       });
     }
   }, [player, isEdit, reset]);
@@ -93,8 +130,8 @@ const PlayerFormAdmin = () => {
       nationality: data.nationality || null,
       role: data.role || null,
       jersey_number: data.jersey_number && !isNaN(data.jersey_number) ? data.jersey_number : null,
-      document_id: data.document_id || null,
       photo_url: data.photo_url || null,
+      bio: data.bio || null,
     };
 
     if (isEdit && id) {
@@ -102,11 +139,12 @@ const PlayerFormAdmin = () => {
     } else {
       await createPlayerMutation.mutateAsync(cleanData);
     }
-    navigate("/admin/players");
+    navigate('/admin/players');
   };
 
   const isLoading = (playerLoading || teamsLoading) && isEdit;
-  const isMutating = isSubmitting || createPlayerMutation.isPending || updatePlayerMutation.isPending;
+  const isMutating =
+    isSubmitting || createPlayerMutation.isPending || updatePlayerMutation.isPending;
 
   if (isLoading) {
     return (
@@ -126,12 +164,20 @@ const PlayerFormAdmin = () => {
             {isEdit ? t('pages.admin.playerForm.editTitle') : t('pages.admin.playerForm.newTitle')}
           </h1>
           <div className="flex gap-2 w-full sm:w-auto">
-            <Button type="button" variant="secondary" onClick={() => navigate("/admin/players")} disabled={isMutating} className="w-full">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate('/admin/players')}
+              disabled={isMutating}
+              className="w-full"
+            >
               {t('pages.admin.playerForm.cancelButton')}
             </Button>
             <Button type="submit" disabled={isMutating} className="w-full">
               {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? t('pages.admin.playerForm.saveButton') : t('pages.admin.playerForm.createButton')}
+              {isEdit
+                ? t('pages.admin.playerForm.saveButton')
+                : t('pages.admin.playerForm.createButton')}
             </Button>
           </div>
         </div>
@@ -140,21 +186,37 @@ const PlayerFormAdmin = () => {
           <ImageUploader
             bucketName="player-photos"
             currentImageUrl={photoUrlValue}
-            onUploadSuccess={(url) => setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })}
+            onUploadSuccess={(url) =>
+              setValue('photo_url', url, { shouldValidate: true, shouldDirty: true })
+            }
             label={t('pages.admin.playerForm.photoLabel')}
           />
-          {errors.photo_url && <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>}
+          {errors.photo_url && (
+            <p className="text-sm text-destructive mt-1">{errors.photo_url.message}</p>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="first_name">{t('pages.admin.playerForm.firstNameLabel')}</Label>
-              <Input id="first_name" {...register("first_name")} placeholder={t('pages.admin.playerForm.firstNamePlaceholder')} autoFocus />
-              {errors.first_name && <p className="text-sm text-destructive mt-1">{errors.first_name.message}</p>}
+              <Input
+                id="first_name"
+                {...register('first_name')}
+                placeholder={t('pages.admin.playerForm.firstNamePlaceholder')}
+              />
+              {errors.first_name && (
+                <p className="text-sm text-destructive mt-1">{errors.first_name.message}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="last_name">{t('pages.admin.playerForm.lastNameLabel')}</Label>
-              <Input id="last_name" {...register("last_name")} placeholder={t('pages.admin.playerForm.lastNamePlaceholder')} />
-              {errors.last_name && <p className="text-sm text-destructive mt-1">{errors.last_name.message}</p>}
+              <Input
+                id="last_name"
+                {...register('last_name')}
+                placeholder={t('pages.admin.playerForm.lastNamePlaceholder')}
+              />
+              {errors.last_name && (
+                <p className="text-sm text-destructive mt-1">{errors.last_name.message}</p>
+              )}
             </div>
           </div>
 
@@ -165,8 +227,8 @@ const PlayerFormAdmin = () => {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => field.onChange(value === "no-team" ? null : value)}
-                  value={field.value || "no-team"}
+                  onValueChange={(value) => field.onChange(value === 'no-team' ? null : value)}
+                  value={field.value || 'no-team'}
                   disabled={teamsLoading}
                 >
                   <SelectTrigger>
@@ -188,7 +250,7 @@ const PlayerFormAdmin = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="date_of_birth">{t('pages.admin.playerForm.dobLabel')}</Label>
-              <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
+              <Input id="date_of_birth" type="date" {...register('date_of_birth')} />
             </div>
             <div>
               <Label htmlFor="nationality">{t('pages.admin.playerForm.nationalityLabel')}</Label>
@@ -196,16 +258,17 @@ const PlayerFormAdmin = () => {
                 name="nationality"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value || ''}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('pages.admin.playerForm.nationalityPlaceholder')} />
+                      <SelectValue
+                        placeholder={t('pages.admin.playerForm.nationalityPlaceholder')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {nationalities.map(nat => (
-                        <SelectItem key={nat} value={nat}>{nat}</SelectItem>
+                      {nationalities.map((nat) => (
+                        <SelectItem key={nat} value={nat}>
+                          {nat}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -221,16 +284,15 @@ const PlayerFormAdmin = () => {
                 name="role"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value || ''}>
                     <SelectTrigger>
                       <SelectValue placeholder={t('pages.admin.playerForm.rolePlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {playerRoles.map(role => (
-                        <SelectItem key={role} value={role}>{role}</SelectItem>
+                      {playerRoles.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -239,13 +301,26 @@ const PlayerFormAdmin = () => {
             </div>
             <div>
               <Label htmlFor="jersey_number">{t('pages.admin.playerForm.jerseyNumberLabel')}</Label>
-              <Input id="jersey_number" type="number" min={1} max={99} {...register("jersey_number")} />
+              <Input
+                id="jersey_number"
+                type="number"
+                min={1}
+                max={99}
+                {...register('jersey_number')}
+              />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="document_id">{t('pages.admin.playerForm.documentIdLabel')}</Label>
-            <Input id="document_id" {...register("document_id")} placeholder={t('pages.admin.playerForm.documentIdPlaceholder')} />
+            <Label htmlFor="bio">{t('pages.admin.playerForm.bioLabel')}</Label>
+            <Textarea
+              id="bio"
+              {...register('bio')}
+              placeholder={t('pages.admin.playerForm.bioPlaceholder')}
+              rows={4}
+              maxLength={2000}
+            />
+            {errors.bio && <p className="text-sm text-destructive mt-1">{errors.bio.message}</p>}
           </div>
         </div>
       </form>

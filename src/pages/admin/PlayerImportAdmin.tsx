@@ -96,10 +96,6 @@ const PlayerImportAdmin = () => {
       id: 'nationality',
       label: t('pages.admin.playerImport.fields.nationality', 'Nazionalità (Opzionale)'),
     },
-    {
-      id: 'document_id',
-      label: t('pages.admin.playerImport.fields.documentId', 'ID Documento (Opzionale)'),
-    },
   ];
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,7 +165,6 @@ const PlayerImportAdmin = () => {
           role: row[mapping.role]?.toString() || null,
           jersey_number: !isNaN(jerseyNumber) ? jerseyNumber : null,
           nationality: row[mapping.nationality]?.toString() || null,
-          document_id: row[mapping.document_id]?.toString() || null,
         };
       }
       return previewRow;
@@ -308,7 +303,6 @@ const PlayerImportAdmin = () => {
                       <TableCell>{row.original[mapping.role] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.jersey_number] || '-'}</TableCell>
                       <TableCell>{row.original[mapping.nationality] || '-'}</TableCell>
-                      <TableCell>{row.original[mapping.document_id] || '-'}</TableCell>
                       <TableCell>
                         {row.errors.map((e, i) => (
                           <div key={i} className="text-xs text-destructive">

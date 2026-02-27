@@ -233,7 +233,10 @@
       "dataUnavailable": "Gegevens niet beschikbaar",
       "avgGoals": "Gem. Goals/Wedstrijd",
       "goalsHistory": "Doelpunten Geschiedenis",
-      "noGoals": "Geen doelpunten geregistreerd voor deze speler."
+      "noGoals": "Geen doelpunten geregistreerd voor deze speler.",
+      "bio": "Over",
+      "viewPhoto": "Volledige foto bekijken",
+      "matchesScoredIn": "Wedstrijden met Doelpunt"
     },
     "profile": {
       "title": "Mijn Profiel",
@@ -647,8 +650,8 @@
         "roleLabel": "Rol",
         "rolePlaceholder": "Selecteer een rol...",
         "jerseyNumberLabel": "Rugnummer",
-        "documentIdLabel": "Document ID",
-        "documentIdPlaceholder": "Bijv. AA12345BB"
+        "bioLabel": "Biografie",
+        "bioPlaceholder": "Schrijf een korte biografie voor deze speler..."
       },
       "fixtures": {
         "title": "Beheer Wedstrijden",
@@ -689,7 +692,8 @@
           "match": "Wedstrijd",
           "date": "Datum",
           "status": "Status",
-          "actions": "Acties"
+          "actions": "Acties",
+          "viewResult": "Resultaat"
         },
         "bulkEdit": {
           "statusTitle": "Wedstrijdstatus Bewerken",
@@ -805,12 +809,19 @@
         "addScorerDialogDescription": "Selecteer de speler en de minuut van het doelpunt.",
         "deleteScorerDialogTitle": "Doelpuntenmaker verwijderen?",
         "deleteScorerDialogDescription": "Deze actie zal het doelpunt uit de wedstrijd verwijderen.",
+        "resultSectionTitle": "Wedstrijdresultaat",
+        "editScoreButton": "Score bewerken",
+        "saveScoreButton": "Opslaan",
+        "cancelScoreButton": "Annuleren",
         "goalForm": {
           "teamLabel": "Team",
           "teamPlaceholder": "Selecteer een team",
           "playerLabel": "Speler",
           "playerLoading": "Spelers laden...",
           "playerPlaceholder": "Selecteer een speler",
+          "playerSearchPlaceholder": "Zoek speler op naam...",
+          "playerSelectTrigger": "Selecteer speler",
+          "noPlayersFound": "Geen spelers gevonden.",
           "minuteLabel": "Minuut",
           "addButton": "Toevoegen"
         }

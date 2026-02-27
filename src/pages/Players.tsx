@@ -12,6 +12,8 @@ import { useAuth } from '@/lib/supabase/auth-context';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
 import { TeamCardSkeleton } from '@/components/skeletons';
+import { computeAge } from '@/lib/utils';
+import { FlagIcon } from '@/components/FlagIcon';
 
 const Players = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -216,10 +218,13 @@ const Players = () => {
                           </Badge>
                         )}
                         {player.date_of_birth && (
-                          <div className="text-sm text-muted-foreground">
-                            {new Date().getFullYear() -
-                              new Date(player.date_of_birth).getFullYear()}{' '}
-                            {t('pages.players.yearsOld')}
+                          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            {player.nationality && (
+                              <FlagIcon nationality={player.nationality} size={16} />
+                            )}
+                            <span>
+                              {computeAge(player.date_of_birth)} {t('pages.players.yearsOld')}
+                            </span>
                           </div>
                         )}
                       </div>

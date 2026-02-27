@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { format as formatDate, formatDistanceToNow, type Locale } from 'date-fns';
 import { it } from 'date-fns/locale';
 
@@ -13,7 +13,7 @@ export function formatDateRelative(dateString: string | null | undefined): strin
     // Imposta la data corrente come riferimento per evitare discrepanze
     return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: it });
   } catch (error) {
-    console.error("Error formatting date:", error);
+    console.error('Error formatting date:', error);
     return '';
   }
 }
@@ -50,11 +50,7 @@ export function parseAsLocalTime(isoString: string): Date {
 /**
  * Format match datetime preserving wall-clock time (no timezone conversion).
  */
-export function formatMatchDateLocal(
-  isoString: string,
-  pattern: string,
-  locale?: Locale
-): string {
+export function formatMatchDateLocal(isoString: string, pattern: string, locale?: Locale): string {
   const localDate = parseAsLocalTime(isoString);
   return formatDate(localDate, pattern, locale ? { locale } : undefined);
 }
@@ -83,4 +79,54 @@ export function toWallClockUtcIsoString(date: Date): string {
   const minute = String(date.getMinutes()).padStart(2, '0');
   const second = String(date.getSeconds()).padStart(2, '0');
   return `${year}-${month}-${day}T${hour}:${minute}:${second}+00:00`;
+}
+
+export function computeAge(dateOfBirth: string): number {
+  const today = new Date();
+  const birth = new Date(dateOfBirth);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+const NATIONALITY_FLAGS: Record<string, string> = {
+  Italiana: 'IT',
+  Albanese: 'AL',
+  Argentina: 'AR',
+  Belga: 'BE',
+  Brasiliana: 'BR',
+  Croata: 'HR',
+  Danese: 'DK',
+  Egiziana: 'EG',
+  Francese: 'FR',
+  Tedesca: 'DE',
+  Inglese: 'GB',
+  Ghanese: 'GH',
+  Greca: 'GR',
+  Ivoriana: 'CI',
+  Marocchina: 'MA',
+  Olandese: 'NL',
+  Nigeriana: 'NG',
+  Polacca: 'PL',
+  Portoghese: 'PT',
+  Rumena: 'RO',
+  Senegalese: 'SN',
+  Serba: 'RS',
+  Spagnola: 'ES',
+  Svedese: 'SE',
+  Svizzera: 'CH',
+  Tunisina: 'TN',
+  Turca: 'TR',
+  Uruguayana: 'UY',
+  Statunitense: 'US',
+};
+
+export function getNationalityCountryCode(nationality: string): string | null {
+  return NATIONALITY_FLAGS[nationality] || null;
+}
+
+/** @deprecated Use FlagIcon component instead for cross-platform flag rendering */
+export function getNationalityFlag(nationality: string): string {
+  return NATIONALITY_FLAGS[nationality] || '🌍';
 }

@@ -233,7 +233,10 @@
       "dataUnavailable": "Data unavailable",
       "avgGoals": "Avg Goals/Match",
       "goalsHistory": "Goal History",
-      "noGoals": "No goals recorded for this player."
+      "noGoals": "No goals recorded for this player.",
+      "bio": "About",
+      "viewPhoto": "View full photo",
+      "matchesScoredIn": "Matches Scored In"
     },
     "profile": {
       "title": "My Profile",
@@ -647,8 +650,8 @@
         "roleLabel": "Role",
         "rolePlaceholder": "Select a role...",
         "jerseyNumberLabel": "Jersey Number",
-        "documentIdLabel": "Document ID",
-        "documentIdPlaceholder": "e.g., AA12345BB"
+        "bioLabel": "Biography",
+        "bioPlaceholder": "Write a short biography for this player..."
       },
       "fixtures": {
         "title": "Manage Fixtures",
@@ -689,7 +692,8 @@
           "match": "Match",
           "date": "Date",
           "status": "Status",
-          "actions": "Actions"
+          "actions": "Actions",
+          "viewResult": "Result"
         },
         "bulkEdit": {
           "statusTitle": "Edit Match Status",
@@ -805,12 +809,19 @@
         "addScorerDialogDescription": "Select the player and the minute of the goal.",
         "deleteScorerDialogTitle": "Delete scorer?",
         "deleteScorerDialogDescription": "This action will remove the goal from the match.",
+        "resultSectionTitle": "Match Result",
+        "editScoreButton": "Edit score",
+        "saveScoreButton": "Save",
+        "cancelScoreButton": "Cancel",
         "goalForm": {
           "teamLabel": "Team",
           "teamPlaceholder": "Select a team",
           "playerLabel": "Player",
           "playerLoading": "Loading players...",
           "playerPlaceholder": "Select a player",
+          "playerSearchPlaceholder": "Search player by name...",
+          "playerSelectTrigger": "Select player",
+          "noPlayersFound": "No players found.",
           "minuteLabel": "Minute",
           "addButton": "Add"
         }

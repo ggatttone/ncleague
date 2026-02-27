@@ -9,9 +9,9 @@ export interface CreatePlayerData {
   date_of_birth?: string | null;
   role?: string | null;
   jersey_number?: number | null;
-  document_id?: string | null;
   nationality?: string | null;
   photo_url?: string | null;
+  bio?: string | null;
 }
 
 export interface UpdatePlayerData extends CreatePlayerData {
@@ -19,48 +19,47 @@ export interface UpdatePlayerData extends CreatePlayerData {
 }
 
 export function usePlayers() {
-  return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })[]>(
+  return useSupabaseQuery<(Player & { teams: { id: string; name: string } | null })[]>(
     ['players'],
-    async () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').order('last_name')
+    async () =>
+      supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').order('last_name'),
   );
 }
 
 export function usePlayer(id: string | undefined) {
-  return useSupabaseQuery<(Player & { teams: { id: string, name: string } | null })>(
+  return useSupabaseQuery<Player & { teams: { id: string; name: string } | null }>(
     ['player', id],
-    async () => supabase.from('players').select('*, teams!players_team_id_fkey(id, name)').eq('id', id).single(),
-    { enabled: !!id }
+    async () =>
+      supabase
+        .from('players')
+        .select('*, teams!players_team_id_fkey(id, name)')
+        .eq('id', id)
+        .single(),
+    { enabled: !!id },
   );
 }
 
 export function useCreatePlayer() {
-  return useSupabaseMutation<Player>(
-    ['players'],
-    async (data: CreatePlayerData) => 
-      supabase.from('players').insert([data]).select().single()
+  return useSupabaseMutation<Player>(['players'], async (data: CreatePlayerData) =>
+    supabase.from('players').insert([data]).select().single(),
   );
 }
 
 export function useCreateMultiplePlayers() {
   return useSupabaseMutation<Player[], CreatePlayerData[]>(
-      ['players'],
-      async (data: CreatePlayerData[]) =>
-          supabase.from('players').insert(data).select()
+    ['players'],
+    async (data: CreatePlayerData[]) => supabase.from('players').insert(data).select(),
   );
 }
 
 export function useUpdatePlayer() {
-  return useSupabaseMutation<Player>(
-    ['players'],
-    async ({ id, ...data }: UpdatePlayerData) => 
-      supabase.from('players').update(data).eq('id', id).select().single()
+  return useSupabaseMutation<Player>(['players'], async ({ id, ...data }: UpdatePlayerData) =>
+    supabase.from('players').update(data).eq('id', id).select().single(),
   );
 }
 
 export function useDeletePlayer() {
-  return useSupabaseMutation<void>(
-    ['players'],
-    async (id: string) => 
-      supabase.from('players').delete().eq('id', id)
+  return useSupabaseMutation<void>(['players'], async (id: string) =>
+    supabase.from('players').delete().eq('id', id),
   );
 }

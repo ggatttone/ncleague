@@ -211,7 +211,8 @@ Il generatore calendario (`/admin/schedule-generator`) supporta due modalità:
 - `src/components/admin/schedule-generator/MatchPreviewList.tsx` — anteprima partite raggruppate per data/giornata
 - `supabase/functions/match-scheduler/index.ts` — logica generazione (classica + event mode), funzioni principali: `generateEventPairings()`, `assignMatchesToSlots()`, `assignReferees()`, `scoreScheduleQuality()`, `runEventModeMultiAttempt()`, `computeEffectiveGap()`
 - `supabase/functions/match-scheduler/test-scheduler.ts` — test automatici algoritmo (18 asserzioni, 4 scenari). Run: `npx tsx supabase/functions/match-scheduler/test-scheduler.ts`
-- `src/lib/utils.ts` — helper timezone wall-clock (`parseAsLocalTime`, `formatMatchDateLocal`, `toDateTimeLocalInputValue`, `toWallClockUtcIsoString`)
+- `src/lib/utils.ts` — helper timezone wall-clock (`parseAsLocalTime`, `formatMatchDateLocal`, `toDateTimeLocalInputValue`, `toWallClockUtcIsoString`) + player helpers (`computeAge`, `getNationalityCountryCode`)
+- `src/components/FlagIcon.tsx` — bandiere nazionalità cross-platform via immagini CDN (flagcdn.com), necessario perché Windows non supporta emoji bandiera
 
 ### Convenzioni
 - L'edge function distingue la modalità tramite `schedulingMode: 'classic' | 'event'`
@@ -237,7 +238,7 @@ Entità principali:
 - `Competition` - Campionati/tornei
 - `Season` - Stagioni con date
 - `Team` - Squadre con logo, colori, capitano
-- `Player` - Rosa giocatori con bio, posizione, numero
+- `Player` - Rosa giocatori con bio, posizione, numero (campo `document_id` rimosso)
 - `Match` - Partite con punteggi, stato, fase
   - `match_day` (int) — raggruppamento per evento
   - `match_duration_minutes` (int) — durata partita in minuti
@@ -295,3 +296,5 @@ npx skills add anthropics/skills
 - Il tema è personalizzabile via pannello admin (colori, logo, font)
 - Import Excel disponibile per giocatori e partite
 - Nelle pagine pubbliche `Teams`, `Players`, `Matches` sono stati rimossi i controlli hover "Admin Quick Actions" (icona ingranaggio + bottone Admin) per evitare CTA non operative.
+- **Bandiere nazionalità**: Windows non supporta emoji bandiera (regional indicator symbols). Usare sempre il componente `<FlagIcon nationality="..." />` che renderizza immagini PNG da CDN. Non usare `getNationalityFlag()` (deprecata).
+- **Profilo giocatore** (`/players/:id`): foto grande cliccabile con lightbox, sezione bio, statistiche reali (gol segnati, partite con gol), cronologia gol con link alla partita.

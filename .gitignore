@@ -37,6 +37,9 @@ _tmp_*
 .cursor/
 .opencode/
 
+# MCP configuration (contains API keys)
+.mcp.json
+
 # Supabase CLI temp files
 supabase/.temp/
 supabase_dump.sql

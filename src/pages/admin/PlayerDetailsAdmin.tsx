@@ -1,9 +1,9 @@
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import { EntityCard } from "@/components/EntityCard";
-import { usePlayer } from "@/hooks/use-players";
-import { useParams, Link } from "react-router-dom";
-import { Loader2, Edit } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { EntityCard } from '@/components/EntityCard';
+import { usePlayer } from '@/hooks/use-players';
+import { useParams, Link } from 'react-router-dom';
+import { Loader2, Edit } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const PlayerDetailsAdmin = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +25,7 @@ const PlayerDetailsAdmin = () => {
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Giocatore non trovato</h1>
           <p className="text-muted-foreground mb-4">
-            {error?.message || "Il giocatore richiesto non esiste."}
+            {error?.message || 'Il giocatore richiesto non esiste.'}
           </p>
           <Link to="/admin/players">
             <Button variant="outline">Torna ai giocatori</Button>
@@ -35,10 +35,7 @@ const PlayerDetailsAdmin = () => {
     );
   }
 
-  const subtitle = [
-    player.role,
-    player.teams?.name
-  ].filter(Boolean).join(" | ");
+  const subtitle = [player.role, player.teams?.name].filter(Boolean).join(' | ');
 
   return (
     <AdminLayout>
@@ -59,7 +56,9 @@ const PlayerDetailsAdmin = () => {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <span className="font-semibold">Data di nascita: </span>
-            {player.date_of_birth ? new Date(player.date_of_birth).toLocaleDateString('it-IT') : 'N/A'}
+            {player.date_of_birth
+              ? new Date(player.date_of_birth).toLocaleDateString('it-IT')
+              : 'N/A'}
           </div>
           <div>
             <span className="font-semibold">Nazionalità: </span>
@@ -70,10 +69,6 @@ const PlayerDetailsAdmin = () => {
             {player.jersey_number || 'N/A'}
           </div>
           <div>
-            <span className="font-semibold">Documento ID: </span>
-            {player.document_id || 'N/A'}
-          </div>
-           <div>
             <span className="font-semibold">Squadra: </span>
             {player.teams?.name || 'Nessuna squadra'}
           </div>
