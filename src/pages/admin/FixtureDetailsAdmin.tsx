@@ -114,9 +114,6 @@ const FixtureDetailsAdmin = () => {
                 {t('pages.admin.fixtureDetails.homeLabel')}
               </div>
             </div>
-            <div className="text-3xl font-bold">
-              {match.home_score} - {match.away_score}
-            </div>
             <div className="text-center">
               <div className="text-xl font-bold">{match.away_teams.name}</div>
               <div className="text-muted-foreground">
@@ -152,23 +149,11 @@ const FixtureDetailsAdmin = () => {
           </h2>
 
           {/* Punteggio inline editabile */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-center">
-              <div className="text-lg font-semibold">{match.home_teams.name}</div>
-              <div className="text-sm text-muted-foreground">
-                {t('pages.admin.fixtureDetails.homeLabel')}
-              </div>
-            </div>
+          <div className="flex justify-center mb-6">
             <MatchScoreEditor
               match={match}
               onSaved={() => queryClient.invalidateQueries({ queryKey: matchQueryKey })}
             />
-            <div className="text-center">
-              <div className="text-lg font-semibold">{match.away_teams.name}</div>
-              <div className="text-sm text-muted-foreground">
-                {t('pages.admin.fixtureDetails.awayLabel')}
-              </div>
-            </div>
           </div>
 
           <hr className="border-border mb-4" />

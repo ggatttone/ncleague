@@ -692,6 +692,7 @@
           "match": "Wedstrijd",
           "date": "Datum",
           "status": "Status",
+          "result": "Resultaat",
           "actions": "Acties",
           "viewResult": "Resultaat"
         },

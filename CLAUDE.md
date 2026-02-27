@@ -62,6 +62,8 @@ src/
 ├── globals.css             # Stili globali
 ├── components/             # 94+ componenti React
 │   ├── admin/              # Componenti admin (layout-builder, dialogs, ecc.)
+│   │   ├── MatchScoreEditor.tsx # Inline score editor per FixtureDetailsAdmin (read/edit mode)
+│   │   ├── GoalForm.tsx         # Form aggiunta marcatori con Combobox ricercabile per giocatore
 │   │   └── schedule-generator/  # Generatore calendario (presets, event entry, vincoli, stats)
 │   ├── auth/               # Autenticazione (RequireAuth, AvatarUploader)
 │   ├── news/               # Composer news inline (`NewsComposer`)
@@ -296,5 +298,6 @@ npx skills add anthropics/skills
 - Il tema è personalizzabile via pannello admin (colori, logo, font)
 - Import Excel disponibile per giocatori e partite
 - Nelle pagine pubbliche `Teams`, `Players`, `Matches` sono stati rimossi i controlli hover "Admin Quick Actions" (icona ingranaggio + bottone Admin) per evitare CTA non operative.
+- **Gestione Risultati partita**: il punto di accesso unico è `FixtureDetailsAdmin` (`/admin/fixtures/{id}`). La card "Risultato Partita" contiene `MatchScoreEditor` (punteggio inline editabile, solo se stato=completed) e `GoalForm` (aggiunta marcatori tramite Combobox ricercabile per nome, giocatori raggruppati per squadra). La lista partite `FixturesAdmin` mostra il punteggio finale nella colonna "Risultato".
 - **Bandiere nazionalità**: Windows non supporta emoji bandiera (regional indicator symbols). Usare sempre il componente `<FlagIcon nationality="..." />` che renderizza immagini PNG da CDN. Non usare `getNationalityFlag()` (deprecata).
 - **Profilo giocatore** (`/players/:id`): foto grande cliccabile con lightbox, sezione bio, statistiche reali (gol segnati, partite con gol), cronologia gol con link alla partita.

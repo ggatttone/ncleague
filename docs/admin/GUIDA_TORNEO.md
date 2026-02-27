@@ -166,6 +166,21 @@ Il sistema genera il calendario con un turno di riposo per una squadra ogni gior
 ### Posso rigenerare il calendario?
 Sì, ma le partite esistenti dovranno essere gestite. Il wizard chiederà se mantenerle o eliminarle.
 
+### Come inserisco il risultato di una partita?
+Vai su **Admin > Partite**, clicca il nome della partita per aprire il dettaglio. Nella sezione **Risultato Partita**:
+- Il punteggio attuale è mostrato in grande al centro
+- Se la partita è in stato "Completata", appare il bottone **Modifica punteggio** — clicca per editare i gol inline (Enter = salva, Esc = annulla)
+- Il punteggio è visibile anche direttamente nella lista partite, colonna **Risultato**
+
+### Come aggiungo i marcatori?
+Dal dettaglio partita (`/admin/fixtures/{id}`), nella sezione **Risultato Partita**:
+1. Clicca **+ Aggiungi Marcatore**
+2. Seleziona il giocatore dal menu (ricerca per nome, giocatori raggruppati per squadra)
+3. Inserisci il minuto del gol
+4. Conferma — il marcatore appare immediatamente nella lista
+
+Per eliminare un marcatore, clicca **Elimina** accanto al nome e conferma il dialogo.
+
 ### Come aggiungo partite manualmente?
 Vai su **Admin > Partite > Nuova Partita** o usa la creazione in blocco per più partite.
 

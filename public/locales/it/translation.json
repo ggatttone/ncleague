@@ -692,6 +692,7 @@
           "match": "Partita",
           "date": "Data",
           "status": "Stato",
+          "result": "Risultato",
           "actions": "Azioni",
           "viewResult": "Risultato"
         },

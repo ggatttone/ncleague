@@ -692,6 +692,7 @@
           "match": "Match",
           "date": "Date",
           "status": "Status",
+          "result": "Result",
           "actions": "Actions",
           "viewResult": "Result"
         },

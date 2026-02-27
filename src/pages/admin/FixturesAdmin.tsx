@@ -25,7 +25,6 @@ import {
   FileDown,
   Filter,
   X,
-  ClipboardList,
 } from 'lucide-react';
 import {
   Select,
@@ -263,6 +262,7 @@ const FixturesAdmin = () => {
     { key: 'match', label: t('pages.admin.fixtures.table.match') },
     { key: 'date', label: t('pages.admin.fixtures.table.date') },
     { key: 'status', label: t('pages.admin.fixtures.table.status') },
+    { key: 'result', label: t('pages.admin.fixtures.table.result') },
     { key: 'actions', label: t('pages.admin.fixtures.table.actions') },
   ];
 
@@ -285,16 +285,16 @@ const FixturesAdmin = () => {
       ),
       date: formatMatchDateLocal(match.match_date, 'dd/MM/yyyy HH:mm', it),
       status: getStatusBadge(match.status),
+      result:
+        match.status === 'completed' ? (
+          <span className="font-bold tabular-nums text-sm">
+            {match.home_score} – {match.away_score}
+          </span>
+        ) : (
+          <span className="text-muted-foreground text-sm">—</span>
+        ),
       actions: (
         <div className="flex items-center gap-2">
-          <Link
-            to={`/admin/fixtures/${match.id}`}
-            title={t('pages.admin.fixtures.table.viewResult')}
-          >
-            <Button variant="ghost" size="sm" className="text-primary">
-              <ClipboardList className="h-4 w-4" />
-            </Button>
-          </Link>
           <Link to={`/admin/fixtures/${match.id}/edit`}>
             <Button variant="ghost" size="sm">
               <Edit className="h-4 w-4" />
@@ -405,14 +405,6 @@ const FixturesAdmin = () => {
       {filteredMatches?.map((match) => {
         const actions = (
           <>
-            <Link
-              to={`/admin/fixtures/${match.id}`}
-              title={t('pages.admin.fixtures.table.viewResult')}
-            >
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-primary">
-                <ClipboardList className="h-4 w-4" />
-              </Button>
-            </Link>
             <Link to={`/admin/fixtures/${match.id}/edit`}>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Edit className="h-4 w-4" />
@@ -462,7 +454,16 @@ const FixturesAdmin = () => {
                 {match.home_teams.name} vs {match.away_teams.name}
               </Link>
             }
-            subtitle={formatMatchDateLocal(match.match_date, 'dd/MM/yyyy HH:mm', it)}
+            subtitle={
+              <>
+                {formatMatchDateLocal(match.match_date, 'dd/MM/yyyy HH:mm', it)}
+                {match.status === 'completed' && (
+                  <span className="ml-2 font-bold">
+                    {match.home_score} – {match.away_score}
+                  </span>
+                )}
+              </>
+            }
             actions={actions}
           >
             <div className="mt-2">{getStatusBadge(match.status)}</div>
