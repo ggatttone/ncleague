@@ -92,7 +92,7 @@ export const MatchScoreEditor = ({ match, onSaved }: MatchScoreEditorProps) => {
           onChange={(e) => setHomeInput(e.target.value)}
           onKeyDown={handleKeyDown}
           className="w-16 h-10 text-xl sm:w-20 sm:h-12 sm:text-2xl text-center font-bold"
-          autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+          autoFocus
         />
         <span className="text-2xl sm:text-3xl font-light text-muted-foreground">–</span>
         <Input

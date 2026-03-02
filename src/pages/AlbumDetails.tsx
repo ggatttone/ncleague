@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { MainLayout } from "@/components/MainLayout";
-import { useAlbum } from "@/hooks/use-albums";
-import { useGalleryItemsByAlbum } from "@/hooks/use-gallery";
-import { supabase } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Image as ImageIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MediaViewer } from "@/components/MediaViewer";
-import { GalleryItem } from "@/types/database";
-import { useTranslation } from "react-i18next";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { MainLayout } from '@/components/MainLayout';
+import { useAlbum } from '@/hooks/use-albums';
+import { useGalleryItemsByAlbum } from '@/hooks/use-gallery';
+import { supabase } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { MediaViewer } from '@/components/MediaViewer';
+import { GalleryItem } from '@/types/database';
+import { useTranslation } from 'react-i18next';
 
 const AlbumDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,25 +67,47 @@ const AlbumDetails = () => {
         </Link>
         <div className="mb-8">
           <h1 className="text-3xl font-bold">{album.name}</h1>
-          {album.description && <p className="text-muted-foreground mt-2 max-w-2xl">{album.description}</p>}
+          {album.description && (
+            <p className="text-muted-foreground mt-2 max-w-2xl">{album.description}</p>
+          )}
         </div>
 
         {items && items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {items.map(item => {
-              const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
+            {items.map((item) => {
+              const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path)
+                .data.publicUrl;
               return (
                 <Card
                   key={item.id}
                   className="overflow-hidden group cursor-pointer"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedMedia(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedMedia(item);
+                    }
+                  }}
                 >
                   <CardContent className="p-0">
                     <div className="aspect-square bg-muted flex items-center justify-center">
                       {item.mime_type?.startsWith('video/') ? (
-                        <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
+                        <video
+                          src={publicURL}
+                          className="w-full h-full object-cover"
+                          muted
+                          loop
+                          playsInline
+                        />
                       ) : (
-                        <img src={publicURL} alt={item.title || ''} loading="lazy" className="w-full h-full object-cover" />
+                        <img
+                          src={publicURL}
+                          alt={item.title || ''}
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
                       )}
                     </div>
                   </CardContent>
@@ -97,7 +119,9 @@ const AlbumDetails = () => {
           <div className="text-center py-20">
             <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h2 className="text-xl font-semibold">{t('pages.albumDetails.emptyAlbumTitle')}</h2>
-            <p className="text-muted-foreground mt-2">{t('pages.albumDetails.emptyAlbumSubtitle')}</p>
+            <p className="text-muted-foreground mt-2">
+              {t('pages.albumDetails.emptyAlbumSubtitle')}
+            </p>
           </div>
         )}
       </div>

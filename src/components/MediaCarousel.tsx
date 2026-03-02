@@ -1,28 +1,29 @@
-import { useState } from "react";
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
-import { supabase } from "@/lib/supabase/client";
-import { GalleryItem } from "@/types/database";
+import { useState } from 'react';
+import { useSupabaseQuery } from '@/hooks/use-supabase-query';
+import { supabase } from '@/lib/supabase/client';
+import { GalleryItem } from '@/types/database';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { MediaViewer } from "@/components/MediaViewer";
+} from '@/components/ui/carousel';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import { MediaViewer } from '@/components/MediaViewer';
 
 export const MediaCarousel = () => {
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
 
   const { data: items, isLoading } = useSupabaseQuery<GalleryItem[]>(
     ['latest-gallery-items'],
-    async () => supabase
-      .from('gallery_items')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10)
+    async () =>
+      supabase
+        .from('gallery_items')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10),
   );
 
   if (isLoading) {
@@ -43,26 +44,46 @@ export const MediaCarousel = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">Ultimi Media Caricati</h2>
         <Carousel
           opts={{
-            align: "start",
+            align: 'start',
             loop: true,
           }}
           className="w-full"
         >
           <CarouselContent>
             {items.map((item) => {
-              const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
+              const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path)
+                .data.publicUrl;
               return (
                 <CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/3">
                   <div className="p-1">
                     <Card
                       className="overflow-hidden cursor-pointer"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelectedMedia(item)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedMedia(item);
+                        }
+                      }}
                     >
                       <CardContent className="flex aspect-video items-center justify-center p-0 bg-muted">
                         {item.mime_type?.startsWith('video/') ? (
-                          <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
+                          <video
+                            src={publicURL}
+                            className="w-full h-full object-cover"
+                            muted
+                            loop
+                            playsInline
+                          />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} loading="lazy" className="w-full h-full object-cover" />
+                          <img
+                            src={publicURL}
+                            alt={item.title || ''}
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                          />
                         )}
                       </CardContent>
                     </Card>

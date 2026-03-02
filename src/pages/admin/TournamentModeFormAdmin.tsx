@@ -191,7 +191,6 @@ const TournamentModeFormAdmin = () => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="name">{t('common.name')}</Label>
-                {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
                 <Input id="name" {...register('name')} autoFocus />
                 {errors.name && (
                   <p className="text-sm text-destructive mt-1">{t(errors.name.message || '')}</p>

@@ -1,36 +1,50 @@
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Link } from "react-router-dom";
-import { MainLayout } from "@/components/MainLayout";
-import { useAlbums, useUpdateAlbum } from "@/hooks/use-albums";
-import { useGalleryItems } from "@/hooks/use-gallery";
-import { useAuth } from "@/lib/supabase/auth-context";
-import { supabase } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Image as ImageIcon, Folder, Search } from "lucide-react";
-import { showError, showSuccess, showLoading, dismissToast } from "@/utils/toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { MediaViewer } from "@/components/MediaViewer";
-import { GalleryItem } from "@/types/database";
-import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
-import { AlbumCardSkeleton, GalleryItemSkeleton } from "@/components/skeletons";
-import { EmptyState } from "@/components/EmptyState";
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Link } from 'react-router-dom';
+import { MainLayout } from '@/components/MainLayout';
+import { useAlbums, useUpdateAlbum } from '@/hooks/use-albums';
+import { useGalleryItems } from '@/hooks/use-gallery';
+import { useAuth } from '@/lib/supabase/auth-context';
+import { supabase } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Plus, Image as ImageIcon, Folder, Search } from 'lucide-react';
+import { showError, showSuccess, showLoading, dismissToast } from '@/utils/toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { MediaViewer } from '@/components/MediaViewer';
+import { GalleryItem } from '@/types/database';
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
+import { AlbumCardSkeleton, GalleryItemSkeleton } from '@/components/skeletons';
+import { EmptyState } from '@/components/EmptyState';
 
-const getUploadSchema = (t: (key: string) => string) => z.object({
-  album_id: z.string().optional().nullable(),
-  file: z.instanceof(FileList)
-    .refine(files => files.length > 0, t('pages.gallery.fileError'))
-    .refine(files => files.length <= 10, t('pages.gallery.fileLimitError')),
-});
+const getUploadSchema = (t: (key: string) => string) =>
+  z.object({
+    album_id: z.string().optional().nullable(),
+    file: z
+      .instanceof(FileList)
+      .refine((files) => files.length > 0, t('pages.gallery.fileError'))
+      .refine((files) => files.length <= 10, t('pages.gallery.fileLimitError')),
+  });
 
 type UploadFormData = z.infer<ReturnType<typeof getUploadSchema>>;
 
@@ -42,35 +56,47 @@ const GalleryPage = () => {
   const updateAlbumMutation = useUpdateAlbum();
   const [isUploadOpen, setUploadOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<GalleryItem | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
 
   const filteredAlbums = useMemo(() => {
     if (!albums || !searchTerm) return albums;
     const lower = searchTerm.toLowerCase();
-    return albums.filter(a => a.name.toLowerCase().includes(lower));
+    return albums.filter((a) => a.name.toLowerCase().includes(lower));
   }, [albums, searchTerm]);
 
   const filteredItems = useMemo(() => {
     if (!allItems || !searchTerm) return allItems;
     const lower = searchTerm.toLowerCase();
-    return allItems.filter(i => (i.title ?? '').toLowerCase().includes(lower) || (i.file_name ?? '').toLowerCase().includes(lower));
+    return allItems.filter(
+      (i) =>
+        (i.title ?? '').toLowerCase().includes(lower) ||
+        (i.file_name ?? '').toLowerCase().includes(lower),
+    );
   }, [allItems, searchTerm]);
 
   const uploadSchema = getUploadSchema(t);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, control } = useForm<UploadFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    control,
+  } = useForm<UploadFormData>({
     resolver: zodResolver(uploadSchema),
   });
 
   const onUploadSubmit = async (data: UploadFormData) => {
     if (!user || data.file.length === 0) return;
 
-    const uploadToastId = showLoading(t('pages.gallery.uploadingFiles', { count: data.file.length }));
-    
+    const uploadToastId = showLoading(
+      t('pages.gallery.uploadingFiles', { count: data.file.length }),
+    );
+
     try {
       const filesToUpload = Array.from(data.file);
-      
+
       const uploadPromises = filesToUpload.map(async (file) => {
         const fileExt = file.name.split('.').pop();
         const filePath = `${user.id}/${Date.now()}_${Math.random()}.${fileExt}`;
@@ -80,9 +106,11 @@ const GalleryPage = () => {
           .upload(filePath, file);
 
         if (uploadError) {
-          throw new Error(t('pages.gallery.uploadFailedFile', { name: file.name, message: uploadError.message }));
+          throw new Error(
+            t('pages.gallery.uploadFailedFile', { name: file.name, message: uploadError.message }),
+          );
         }
-        
+
         return {
           filePath,
           originalFile: file,
@@ -104,10 +132,15 @@ const GalleryPage = () => {
       if (dbError) throw dbError;
 
       if (data.album_id) {
-        const targetAlbum = albums?.find(a => a.id === data.album_id);
-        const firstImage = uploadResults.find(({ originalFile }) => originalFile.type.startsWith('image/'));
+        const targetAlbum = albums?.find((a) => a.id === data.album_id);
+        const firstImage = uploadResults.find(({ originalFile }) =>
+          originalFile.type.startsWith('image/'),
+        );
         if (targetAlbum && !targetAlbum.cover_image_path && firstImage) {
-          await updateAlbumMutation.mutateAsync({ id: data.album_id, cover_image_path: firstImage.filePath });
+          await updateAlbumMutation.mutateAsync({
+            id: data.album_id,
+            cover_image_path: firstImage.filePath,
+          });
         }
       }
 
@@ -119,7 +152,11 @@ const GalleryPage = () => {
       setUploadOpen(false);
     } catch (err: unknown) {
       dismissToast(uploadToastId);
-      showError(t('pages.gallery.uploadError', { message: err instanceof Error ? err.message : t('errors.unknownError') }));
+      showError(
+        t('pages.gallery.uploadError', {
+          message: err instanceof Error ? err.message : t('errors.unknownError'),
+        }),
+      );
     }
   };
 
@@ -145,8 +182,16 @@ const GalleryPage = () => {
                   <form onSubmit={handleSubmit(onUploadSubmit)} className="space-y-4">
                     <div>
                       <Label htmlFor="file">{t('pages.gallery.fileLabel')}</Label>
-                      <Input id="file" type="file" {...register("file")} accept="image/jpeg, image/png, image/webp, image/gif, video/*" multiple />
-                      {errors.file && <p className="text-sm text-destructive mt-1">{errors.file.message}</p>}
+                      <Input
+                        id="file"
+                        type="file"
+                        {...register('file')}
+                        accept="image/jpeg, image/png, image/webp, image/gif, video/*"
+                        multiple
+                      />
+                      {errors.file && (
+                        <p className="text-sm text-destructive mt-1">{errors.file.message}</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="album_id">{t('pages.gallery.albumLabel')}</Label>
@@ -155,13 +200,21 @@ const GalleryPage = () => {
                         control={control}
                         render={({ field }) => (
                           <Select
-                            onValueChange={(value) => field.onChange(value === "no-album" ? null : value)}
-                            value={field.value || "no-album"}
+                            onValueChange={(value) =>
+                              field.onChange(value === 'no-album' ? null : value)
+                            }
+                            value={field.value || 'no-album'}
                           >
-                            <SelectTrigger><SelectValue placeholder={t('pages.gallery.noAlbum')} /></SelectTrigger>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t('pages.gallery.noAlbum')} />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="no-album">{t('pages.gallery.noAlbum')}</SelectItem>
-                              {albums?.map(album => <SelectItem key={album.id} value={album.id}>{album.name}</SelectItem>)}
+                              {albums?.map((album) => (
+                                <SelectItem key={album.id} value={album.id}>
+                                  {album.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         )}
@@ -207,36 +260,57 @@ const GalleryPage = () => {
                 ))}
               </div>
             )}
-            {albumsError && <p className="text-center text-destructive">{t('errors.loadingAlbums')}</p>}
-            {!albumsLoading && filteredAlbums && filteredAlbums.length === 0 && (
-              searchTerm ? (
-                <EmptyState icon={Search} title={t('pages.gallery.noAlbumsForSearch')} subtitle={t('pages.gallery.noAlbumsForSearchSubtitle')} />
+            {albumsError && (
+              <p className="text-center text-destructive">{t('errors.loadingAlbums')}</p>
+            )}
+            {!albumsLoading &&
+              filteredAlbums &&
+              filteredAlbums.length === 0 &&
+              (searchTerm ? (
+                <EmptyState
+                  icon={Search}
+                  title={t('pages.gallery.noAlbumsForSearch')}
+                  subtitle={t('pages.gallery.noAlbumsForSearchSubtitle')}
+                />
               ) : (
                 <div className="text-center py-20">
                   <Folder className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h2 className="text-xl font-semibold">{t('pages.gallery.noAlbumsTitle')}</h2>
-                  <p className="text-muted-foreground mt-2">{t('pages.gallery.noAlbumsSubtitle')}</p>
+                  <p className="text-muted-foreground mt-2">
+                    {t('pages.gallery.noAlbumsSubtitle')}
+                  </p>
                 </div>
-              )
-            )}
+              ))}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredAlbums?.map(album => {
-                const publicURL = album.cover_image_path ? supabase.storage.from('gallery_media').getPublicUrl(album.cover_image_path).data.publicUrl : null;
+              {filteredAlbums?.map((album) => {
+                const publicURL = album.cover_image_path
+                  ? supabase.storage.from('gallery_media').getPublicUrl(album.cover_image_path).data
+                      .publicUrl
+                  : null;
                 return (
                   <Link to={`/gallery/albums/${album.id}`} key={album.id}>
                     <Card className="overflow-hidden group hover:shadow-lg transition-shadow">
                       <CardHeader className="p-0">
                         <div className="aspect-video bg-muted flex items-center justify-center">
                           {publicURL ? (
-                            <img src={publicURL} alt={album.name} loading="lazy" className="w-full h-full object-cover" />
+                            <img
+                              src={publicURL}
+                              alt={album.name}
+                              loading="lazy"
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <Folder className="h-12 w-12 text-muted-foreground" />
                           )}
                         </div>
                       </CardHeader>
                       <CardContent className="p-4">
-                        <CardTitle className="text-base font-semibold truncate">{album.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{t('pages.gallery.itemCount', { count: album.item_count })}</p>
+                        <CardTitle className="text-base font-semibold truncate">
+                          {album.name}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          {t('pages.gallery.itemCount', { count: album.item_count })}
+                        </p>
                       </CardContent>
                     </Card>
                   </Link>
@@ -253,33 +327,61 @@ const GalleryPage = () => {
                 ))}
               </div>
             )}
-            {itemsError && <p className="text-center text-destructive">{t('errors.loadingMedia')}</p>}
-            {!itemsLoading && filteredItems && filteredItems.length === 0 && (
-              searchTerm ? (
-                <EmptyState icon={Search} title={t('pages.gallery.noMediaForSearch')} subtitle={t('pages.gallery.noMediaForSearchSubtitle')} />
+            {itemsError && (
+              <p className="text-center text-destructive">{t('errors.loadingMedia')}</p>
+            )}
+            {!itemsLoading &&
+              filteredItems &&
+              filteredItems.length === 0 &&
+              (searchTerm ? (
+                <EmptyState
+                  icon={Search}
+                  title={t('pages.gallery.noMediaForSearch')}
+                  subtitle={t('pages.gallery.noMediaForSearchSubtitle')}
+                />
               ) : (
                 <div className="text-center py-20">
                   <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h2 className="text-xl font-semibold">{t('pages.gallery.noMediaTitle')}</h2>
                   <p className="text-muted-foreground mt-2">{t('pages.gallery.noMediaSubtitle')}</p>
                 </div>
-              )
-            )}
+              ))}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredItems?.map(item => {
-                const publicURL = supabase.storage.from('gallery_media').getPublicUrl(item.file_path).data.publicUrl;
+              {filteredItems?.map((item) => {
+                const publicURL = supabase.storage
+                  .from('gallery_media')
+                  .getPublicUrl(item.file_path).data.publicUrl;
                 return (
                   <Card
                     key={item.id}
                     className="overflow-hidden group cursor-pointer"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedMedia(item)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setSelectedMedia(item);
+                      }
+                    }}
                   >
                     <CardContent className="p-0">
                       <div className="aspect-square bg-muted flex items-center justify-center">
                         {item.mime_type?.startsWith('video/') ? (
-                          <video src={publicURL} className="w-full h-full object-cover" muted loop playsInline />
+                          <video
+                            src={publicURL}
+                            className="w-full h-full object-cover"
+                            muted
+                            loop
+                            playsInline
+                          />
                         ) : (
-                          <img src={publicURL} alt={item.title || ''} loading="lazy" className="w-full h-full object-cover" />
+                          <img
+                            src={publicURL}
+                            alt={item.title || ''}
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                          />
                         )}
                       </div>
                     </CardContent>

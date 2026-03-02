@@ -34,17 +34,11 @@ const ALL_TIE_BREAKERS: TieBreakerCriteria[] = [
   'fair_play',
 ];
 
-export function TieBreakersConfig({
-  value,
-  onChange,
-  disabled = false,
-}: TieBreakersConfigProps) {
+export function TieBreakersConfig({ value, onChange, disabled = false }: TieBreakersConfigProps) {
   const { t } = useTranslation();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  const availableTieBreakers = ALL_TIE_BREAKERS.filter(
-    (tb) => !value.includes(tb)
-  );
+  const availableTieBreakers = ALL_TIE_BREAKERS.filter((tb) => !value.includes(tb));
 
   const handleDragStart = (index: number) => {
     if (disabled) return;
@@ -83,9 +77,7 @@ export function TieBreakersConfig({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          {t('tournament.settings.tieBreakers')}
-        </CardTitle>
+        <CardTitle className="text-base">{t('tournament.settings.tieBreakers')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
@@ -97,6 +89,7 @@ export function TieBreakersConfig({
           {value.map((tieBreaker, index) => (
             <div
               key={tieBreaker}
+              role="listitem"
               draggable={!disabled}
               onDragStart={() => handleDragStart(index)}
               onDragOver={(e) => handleDragOver(e, index)}
@@ -108,12 +101,8 @@ export function TieBreakersConfig({
               `}
             >
               <GripVertical className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground mr-2">
-                {index + 1}.
-              </span>
-              <span className="flex-1">
-                {t(`tournament.settings.tieBreaker.${tieBreaker}`)}
-              </span>
+              <span className="text-sm font-medium text-muted-foreground mr-2">{index + 1}.</span>
+              <span className="flex-1">{t(`tournament.settings.tieBreaker.${tieBreaker}`)}</span>
               {value.length > 1 && !disabled && (
                 <Button
                   type="button"
@@ -133,9 +122,7 @@ export function TieBreakersConfig({
         {availableTieBreakers.length > 0 && !disabled && (
           <Select onValueChange={(v) => handleAdd(v as TieBreakerCriteria)}>
             <SelectTrigger className="w-full">
-              <SelectValue
-                placeholder={t('tournament.settings.addTieBreaker')}
-              />
+              <SelectValue placeholder={t('tournament.settings.addTieBreaker')} />
             </SelectTrigger>
             <SelectContent>
               {availableTieBreakers.map((tieBreaker) => (
