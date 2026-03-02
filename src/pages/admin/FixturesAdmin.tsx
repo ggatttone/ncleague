@@ -1,6 +1,6 @@
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Table } from '@/components/Table';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   useMatches,
   useDeleteMatch,
@@ -64,6 +64,7 @@ import { useTranslation } from 'react-i18next';
 import { formatMatchDateLocal } from '@/lib/utils';
 
 const FixturesAdmin = () => {
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMatches, setSelectedMatches] = useState<string[]>([]);
   const [dialogState, setDialogState] = useState<{
@@ -73,9 +74,9 @@ const FixturesAdmin = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterCompetition, setFilterCompetition] = useState<string>('all');
-  const [filterSeason, setFilterSeason] = useState<string>('all');
+  const [filterSeason, setFilterSeason] = useState<string>(searchParams.get('season') || 'all');
   const [filterVenue, setFilterVenue] = useState<string>('all');
-  const [filterStage, setFilterStage] = useState<string>('all');
+  const [filterStage, setFilterStage] = useState<string>(searchParams.get('stage') || 'all');
   const isMobile = useIsMobile();
   const { t } = useTranslation();
 
